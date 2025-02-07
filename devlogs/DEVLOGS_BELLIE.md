@@ -1,0 +1,6 @@
+# BELLIE JOE JANDUSAY DEVELOPMENT LOGS
+
+## February 07, 2024
+- Added devlogs folder and DATABASE_LOGS.md and DEVLOGS_BELLIE.md file
+- 
+ 
