@@ -14,7 +14,8 @@ use App\Http\Controllers\PermitteeController;
 use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\LtpRequirementController;
 use App\Http\Controllers\MyApplicationController;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -141,7 +142,7 @@ Route::get('/test-email', function () {
 
     try {
         Mail::raw($details['body'], function ($message) use ($details) {
-            $message->to('it.jordanlaman@gmail.com')
+            $message->to('jandusayjoe14@gmail.com')
                     ->subject($details['subject']);
         });
         return 'Email sent successfully!';
@@ -149,3 +150,9 @@ Route::get('/test-email', function () {
         return 'Error: ' . $e->getMessage();
     }
 });
+
+Route::get("/generate-password", function (Request $request) {
+    $password = $request->password;
+    return Hash::make($password);
+});
+
