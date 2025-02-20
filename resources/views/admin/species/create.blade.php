@@ -88,7 +88,7 @@ active
                 	</div>
                 	<div class="col-sm-5">
                 		<label for="local_name" class="form-label">Common/Local Name</label>
-                		<input type="text" class="form-control" name="local_name" id="local_name" placeholder="Common/Local Name" value="{{ old('local_name') }}">
+                		<input type="text" class="form-control" name="local_name" id="local_name" placeholder="Common/Local Name" value="{{ old('local_name') }}" >
                         @error('local_name')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
