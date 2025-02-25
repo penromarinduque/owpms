@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function (){
                 Route::get('/', [SpecieTypeController::class, 'index'])->name('specietypes.index');
                 Route::get('create', [SpecieTypeController::class, 'create'])->name('specietypes.create');
                 Route::post('/', [SpecieTypeController::class, 'store'])->name('specietypes.store');
+                Route::get('/apiSearch', [SpecieTypeController::class, 'apiSearch'])->name('specietypes.apiSearch');
                 Route::get('/{id}', [SpecieTypeController::class, 'edit'])->name('specietypes.edit');
                 Route::post('/update/{id}', [SpecieTypeController::class, 'update'])->name('specietypes.update');
             });
