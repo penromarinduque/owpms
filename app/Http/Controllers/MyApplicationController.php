@@ -40,6 +40,10 @@ class MyApplicationController extends Controller
     {
         // return $request;
         try {
+            $request->validate([
+                
+            ]);
+            
             $ltp_application = LtpApplication::create([
                 'permittee_id' => Auth::user()->id, 
                 'application_id' => '33213-12', 
