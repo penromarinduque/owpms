@@ -37,10 +37,15 @@ class SpecieFamilyController extends Controller
         $validated = $request->validate([
             'family' => 'required|max:150|unique:specie_families',
             'is_active_family' => 'required',
+            'specie_class' => 'required',
         ], [
             'family.unique' => 'specie family already exist.'
         ]);
-        SpecieFamily::create($validated);
+        SpecieFamily::create([
+            'specie_class_id' => $request->specie_class,
+            'family' => $request->family,
+            'is_active_family' => $request->is_active_family
+        ]);
 
         return Redirect::route('speciefamilies.index')->withInput()->with('success', 'Successfully saved!');
     }

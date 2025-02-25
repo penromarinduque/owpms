@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\SpecieClass;
+use App\Models\SpecieFamily;
 
 class SpecieClassController extends Controller
 {
@@ -91,6 +92,14 @@ class SpecieClassController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function apiSearch(Request $request){
+        $search = $request->keyword;
+        $specie_classes = SpecieClass::selectRaw("*, specie_class as text")->where('specie_class', 'like', '%' . $search . '%')
+            ->where("is_active_class", 1)
+            ->get();
+        return response()->json($specie_classes);
     }
 
     

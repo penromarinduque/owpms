@@ -11,5 +11,5 @@ class SpecieClass extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['specie_class', 'is_active_class'];
+    protected $fillable = ['specie_class', 'is_active_class', 'specie_type_id'];
 }

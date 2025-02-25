@@ -50,3 +50,31 @@ active
     </div>
 </div>
 @endsection
+
+@section('script-extra')    
+<script>
+    $(function(){
+        $("#specie_class").select2({
+            // theme: 'bootstrap-5',
+            ajax : {
+                url : '{{ route('specieclasses.apiSearch') }}',
+                dataType : 'json',
+                delay : 250,
+                data : function(params) {
+                    var query = {
+                        keyword: params.term,
+                        type: 'query'
+                    }
+
+                    return query;
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        })
+    })
+</script>
+@endsection
