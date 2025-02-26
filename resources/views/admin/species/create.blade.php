@@ -35,7 +35,7 @@ active
                 <div class="row mb-3">
                 	<div class="col-sm-4">
                 		<label for="specie_type_id" class="form-label">Wildlife Type</label>
-                		<select class="form-select" name="specie_type_id" id="specie_type_id" onchange="onSelectType(event)">
+                		<select class="form-select" name="specie_type_id" id="specie_type_id" onchange="onSelectType(event)" required>
                 			<option value="">- Please Select Type-</option>
                             @foreach($specie_types as $specie_type)
                                 <option value="{{ $specie_type->id }}">{{ $specie_type->specie_type }}</option>
@@ -45,14 +45,14 @@ active
                 	</div>
                 	<div class="col-sm-4">
                 		<label for="specie_class_id" class="form-label">Specie Class</label>
-                		<select class="form-select" name="specie_class_id" id="specie_class_id" onchange="onSelectClass(event)">
+                		<select class="form-select" name="specie_class_id" id="specie_class_id" onchange="onSelectClass(event)" required>
                 			<option value="">- Please Select Class -</option>
                 		</select>
                         @error('specie_class_id')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
                 	<div class="col-sm-4">
                 		<label for="specie_family_id" class="form-label">Specie Family</label>
-                		<select class="form-select" name="specie_family_id" id="specie_family_id">
+                		<select class="form-select" name="specie_family_id" id="specie_family_id" required>
                 			<option value="">- Please Select Family -</option>
                 		</select>
                         @error('specie_family_id')<small class="text-danger">{{ $message }}</small>@enderror
@@ -61,7 +61,7 @@ active
                 <div class="row mb-3">
                 	<div class="col-sm-5">
                 		<label for="specie_name" class="form-label">Scientific Name</label>
-                		<input type="text" class="form-control" name="specie_name" id="specie_name" placeholder="Scientific Name" value="{{ old('specie_name') }}">
+                		<input type="text" class="form-control" name="specie_name" id="specie_name" placeholder="Scientific Name" value="{{ old('specie_name') }}" required>
                         @error('specie_name')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
                 	<div class="col-sm-2 pt-4">
@@ -95,12 +95,12 @@ active
                 <div class="row mb-3">
                     <div class="col-sm-6">
                         <label for="color_description" class="form-label">Color Description</label>
-                        <textarea class="form-control" name="color_description" id="color_description">{{ old('color_description') }}</textarea>
+                        <textarea class="form-control" name="color_description" id="color_description" required>{{ old('color_description') }}</textarea>
                         @error('color_description')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                     <div class="col-sm-6">
                         <label for="food_plant" class="form-label">Food Plant</label>
-                        <textarea class="form-control" name="food_plant" id="food_plant">{{ old('food_plant') }}</textarea>
+                        <textarea class="form-control" name="food_plant" id="food_plant" required>{{ old('food_plant') }}</textarea>
                         @error('food_plant')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                 </div>
@@ -151,7 +151,7 @@ active
                 $('#specie_family_id').empty();
                 $('#specie_family_id').append('<option value="">-Select Specie Family-</option>');
                 $.each(data, function(index, specie_family){
-                    $('#specie_family_id').append('<option value="'+specie_family.id+'">'+specie_family.specie_family+'</option>');
+                    $('#specie_family_id').append('<option value="'+specie_family.id+'">'+specie_family.family+'</option>');
                 });
             }
         );
