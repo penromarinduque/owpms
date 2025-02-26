@@ -12,4 +12,8 @@ class SpecieClass extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['specie_class', 'is_active_class', 'specie_type_id'];
+
+    public function specieType(){
+        return $this->belongsTo(SpecieType::class, 'specie_type_id', 'id');
+    }
 }

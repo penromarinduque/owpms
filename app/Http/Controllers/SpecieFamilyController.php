@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SpecieClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -14,7 +15,7 @@ class SpecieFamilyController extends Controller
      */
     public function index()
     {
-        $specie_families = SpecieFamily::select('specie_families.*')->orderBy('family','ASC')->get();
+        $specie_families = SpecieFamily::select('specie_families.*')->orderBy('family','ASC')->with("specieClass")->get();
 
         return view('admin.maintenance.speciefamilies.index', [
             'specie_families' => $specie_families
@@ -63,8 +64,12 @@ class SpecieFamilyController extends Controller
      */
     public function edit(string $id)
     {
-        $specie_family = SpecieFamily::find($id);
-        return view('admin.maintenance.speciefamilies.edit', ['specie_family'=>$specie_family]);
+        $specie_family  = SpecieFamily::where("id", $id)->with(['specieClass'])->first();
+        $specie_classes = SpecieClass::where('is_active_class', 1)->get();
+        return view('admin.maintenance.speciefamilies.edit', [
+            'specie_family' => $specie_family,
+            'specie_classes' => $specie_classes
+        ]);
     }
 
     /**
@@ -74,10 +79,12 @@ class SpecieFamilyController extends Controller
     {
         $validated = $request->validate([
             'family' => 'required|max:150',
+            'specie_class' => 'required',
             'is_active_family' => 'required',
         ]);
         SpecieFamily::find($id)->update([
             'family' => $request->input('family'),
+            'specie_class_id' => $request->input('specie_class'),
             'is_active_family' => $request->input('is_active_family'),
         ]);
 

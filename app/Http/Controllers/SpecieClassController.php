@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\SpecieClass;
 use App\Models\SpecieFamily;
+use App\Models\SpecieType;
 
 class SpecieClassController extends Controller
 {
@@ -65,8 +66,12 @@ class SpecieClassController extends Controller
      */
     public function edit($id)
     {
-        $specie_class = SpecieClass::find($id);
-        return view('admin.maintenance.specieclasses.edit', ['specie_class'=>$specie_class]);
+        $specie_class = SpecieClass::with("specieType")->find($id);
+        $specie_types = SpecieType::where("is_active_type", 1)->get();
+        return view('admin.maintenance.specieclasses.edit', [
+            'specie_class' => $specie_class,
+            'specie_types' => $specie_types
+        ]);
     }
 
     /**
@@ -77,9 +82,11 @@ class SpecieClassController extends Controller
         $validated = $request->validate([
             'specie_class' => 'required|max:150',
             'is_active_class' => 'required',
+            'specie_type' => 'required',
         ]);
         SpecieClass::find($id)->update([
             'specie_class' => $request->input('specie_class'),
+            'specie_type_id' => $request->input('specie_type'),
             'is_active_class' => $request->input('is_active_class'),
         ]);
 
