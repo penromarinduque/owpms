@@ -98,4 +98,10 @@ class SpecieFamilyController extends Controller
     {
         //
     }
+
+    public function apiGetByClass(Request $request){
+        $id = $request->specie_class_id;
+        $specie_families = SpecieFamily::select('specie_families.*')->where('specie_class_id', $id)->get();
+        return response()->json($specie_families);
+    }
 }

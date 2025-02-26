@@ -101,11 +101,17 @@ class SpecieClassController extends Controller
         //
     }
 
-    public function apiSearch(Request $request){
+    public function apiSearch(Request $request) {
         $search = $request->keyword;
         $specie_classes = SpecieClass::selectRaw("*, specie_class as text")->where('specie_class', 'like', '%' . $search . '%')
             ->where("is_active_class", 1)
             ->get();
+        return response()->json($specie_classes);
+    }
+
+    public function apiGetByType(Request $request) {
+        $specie_type_id = $request->specie_type_id;
+        $specie_classes = SpecieClass::where('specie_type_id', $specie_type_id)->get();
         return response()->json($specie_classes);
     }
 

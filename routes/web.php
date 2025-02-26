@@ -102,6 +102,7 @@ Route::middleware('auth')->group(function (){
                 Route::get('create', [SpecieClassController::class, 'create'])->name('specieclasses.create');
                 Route::post('/', [SpecieClassController::class, 'store'])->name('specieclasses.store');
                 Route::get('/apiSearch', [SpecieClassController::class, 'apiSearch'])->name('specieclasses.apiSearch');
+                Route::get('/apiGetByType', [SpecieClassController::class, 'apiGetByType'])->name('specieclasses.apiGetByType');
                 Route::get('/{id}', [SpecieClassController::class, 'edit'])->name('specieclasses.edit');
                 Route::post('/update/{id}', [SpecieClassController::class, 'update'])->name('specieclasses.update');
             });
@@ -111,6 +112,7 @@ Route::middleware('auth')->group(function (){
                 Route::get('/', [SpecieFamilyController::class, 'index'])->name('speciefamilies.index');
                 Route::get('create', [SpecieFamilyController::class, 'create'])->name('speciefamilies.create');
                 Route::post('/', [SpecieFamilyController::class, 'store'])->name('speciefamilies.store');
+                Route::get('/apiGetByClass', [SpecieFamilyController::class, 'apiGetByClass'])->name('speciefamilies.apiGetByClass');
                 Route::get('/{id}', [SpecieFamilyController::class, 'edit'])->name('speciefamilies.edit');
                 Route::post('/update/{id}', [SpecieFamilyController::class, 'update'])->name('speciefamilies.update');
             });
