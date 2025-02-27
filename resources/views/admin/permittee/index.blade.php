@@ -92,17 +92,18 @@ active
         if (chkd) {
             stat = 1;
         }
-        // console.log(stat);
+
         $.ajax({
             type: 'POST',
             url: "{{ route('permittees.ajaxupdatestatus') }}",
             data: {permittee_id:permittee_id, is_active_permittee:stat},
             success: function (result){
                 console.log("success" , result);
+                showToast("primary", "Permittee Status Updated");
             },
             error: function (result){
                 console.log("failed", result);
-                alert('Oops! Something went wrong. Please reload the page and try again.');
+                showToast("danger", "Oops! Something went wrong. Please reload the page and try again.");
                 $(`#${chkbox_id}`).prop('checked', !chkd);
             }
         });

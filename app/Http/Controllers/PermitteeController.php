@@ -255,7 +255,7 @@ class PermitteeController extends Controller
         $user_id = Crypt::decrypt($request->permittee_id);
         $is_active_user= $request->is_active_permittee;
         $update = User::find($user_id)->update(['is_active_user'=>$is_active_user]);
-        
+
         if ($update) {
             return Response()->json(['success'=>'Updated', 200]);
         } else {
