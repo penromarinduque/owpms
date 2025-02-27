@@ -67,7 +67,7 @@ active
                         </td>
                         <td>
                             <div class="form-check form-switch">
-                              <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus('chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_permittee==1) ? 'checked' : '' }}>
+                              <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus(event,'chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_user==1) ? 'checked' : '' }}>
                             </div>
                         </td>
                         <td>
@@ -85,14 +85,8 @@ active
 
 @section('script-extra')
 <script type="text/javascript">
-    // function showDetails(id, show_to) {
-    //     $(this).ajaxRequestLaravel({
-    //         show_result: ['/permittees/show/'+id, show_to],
-    //         show_result_loader: true,
-    //     });
-    // }
 
-    function ajaxUpdateStatus(chkbox_id, permittee_id) {
+    function ajaxUpdateStatus(e, chkbox_id, permittee_id) {
         var chkd = $('#'+chkbox_id).is(':checked');
         var stat = 0;
         if (chkd) {
@@ -104,13 +98,16 @@ active
             url: "{{ route('permittees.ajaxupdatestatus') }}",
             data: {permittee_id:permittee_id, is_active_permittee:stat},
             success: function (result){
-                // console.log(result);
+                console.log("success" , result);
             },
             error: function (result){
-                // console.log(result);
+                console.log("failed", result);
                 alert('Oops! Something went wrong. Please reload the page and try again.');
+                $(`#${chkbox_id}`).prop('checked', !chkd);
             }
         });
     }
 </script>
 @endsection
+
+@include('components.confirmActivate');

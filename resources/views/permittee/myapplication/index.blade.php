@@ -74,6 +74,8 @@ active
 </div>
 @endsection
 
+
+
 @section('script-extra')
 <script type="text/javascript">
     // function showDetails(id, show_to) {
@@ -105,3 +107,4 @@ active
     }
 </script>
 @endsection
+
