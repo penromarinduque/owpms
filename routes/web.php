@@ -14,6 +14,7 @@ use App\Http\Controllers\PermitteeController;
 use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\LtpRequirementController;
 use App\Http\Controllers\MyApplicationController;
+use App\Http\Controllers\PermitteeSpecieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -72,6 +73,11 @@ Route::middleware('auth')->group(function (){
         Route::post('/update/{id}', [SpecieController::class, 'update'])->name('species.update');
         Route::get('/show/{id}', [SpecieController::class, 'show'])->name('species.show');
         Route::post('/ajaxupdatestatus', [SpecieController::class, 'ajaxUpdateStatus'])->name('species.ajaxupdatestatus');
+    });
+
+    // Permittee Species
+    Route::prefix('permitteespecies')->group(function () {
+        Route::get('/', [PermitteeSpecieController::class, 'index'])->name('permitteespecies.index');
     });
 
     // Client Application
