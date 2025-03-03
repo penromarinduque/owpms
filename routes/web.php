@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/ajaxupdatestatus', [SpecieController::class, 'ajaxUpdateStatus'])->name('species.ajaxupdatestatus');
     });
 
+
     // Permittee Species
     Route::prefix('permitteespecies')->group(function () {
         Route::get('/', [PermitteeSpecieController::class, 'index'])->name('permitteespecies.index');
@@ -166,3 +167,7 @@ Route::get("/generate-password", function (Request $request) {
     return Hash::make($password);
 });
 
+
+Route::view('/oop', 'doc_templates.oop');
+Route::view('/oop-dashboard', 'doc_templates.oop-dashboard');
+Route::view('/oop-form', 'doc_templates.oop-form');
