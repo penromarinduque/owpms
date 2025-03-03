@@ -32,17 +32,50 @@ active
         <div class="card-body">
             <form method="POST" action="{{ route('specieclasses.store') }}" onsubmit="disableSubmitButton('btn_save');">
                 @csrf
+                <input type="hidden" class="form-control" name="is_active_class" id="is_active_class" value="1">
+                <div class="mb-3">
+                    <label class="form-label" for="specie_type_id">Specie Type</label>
+                    <select class="form-select" name="specie_type" id="specie_type">
+                        <option value="">-Select Specie Type-</option>
+                    </select>
+                </div>
                 <div class="mb-3">
                     <label for="specie_class" class="form-label">Specie Class</label>
                     <input type="text" class="form-control" name="specie_class" id="specie_class" required value="{{ old('specie_class') }}">
-                    @error('specie_class')
-                    <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                    <input type="hidden" class="form-control" name="is_active_class" id="is_active_class" value="1">
+                    @error('specie_class')<small class="text-danger">{{ $message }}</small>@enderror
                 </div>
                 <button type="submit" id="btn_save" class="btn btn-primary btn-block">Save</button>
             </form>
         </div>
     </div>
 </div>
+
+@endsection
+
+@section('script-extra')    
+<script>
+    $(function(){
+        $("#specie_type").select2({
+            // theme: 'bootstrap-5',
+            ajax : {
+                url : '{{ route('specietypes.apiSearch') }}',
+                dataType : 'json',
+                delay : 250,
+                data : function(params) {
+                    var query = {
+                        keyword: params.term,
+                        type: 'query'
+                    }
+
+                    return query;
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        })
+    })
+</script>
 @endsection

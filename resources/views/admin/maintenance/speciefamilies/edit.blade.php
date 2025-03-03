@@ -34,6 +34,15 @@ active
             <form method="POST" action="{{ route('speciefamilies.update', [$specie_family->id]) }}" onsubmit="disableSubmitButton('btn_update');">
                 @csrf
                 <div class="mb-3">
+                  <label for="specie_class" class="form-label">Specie Class</label>
+                  <select class="form-select select2" name="specie_class" id="specie_class">
+                    <option value="">-Select Class-</option>
+                    @foreach($specie_classes as $specie_class)
+                      <option value="{{ $specie_class->id }}" {{ ($specie_class->id==$specie_family->specie_class_id) ? 'selected' : '' }}>{{ $specie_class->specie_class }}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="mb-3">
                     <label for="family" class="form-label">Specie Type</label>
                     <input type="text" class="form-control" name="family" id="family" required value="{{ $specie_family->family }}">
                     @error('family')

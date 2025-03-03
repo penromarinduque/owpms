@@ -36,6 +36,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    const TYPE_ADMIN  = "admin";
+    const TYPE_INTERNAL  = "internal";
+    const TYPE_PERMITTEE = "permittee";
     /**
      * Get the attributes that should be cast.
      *

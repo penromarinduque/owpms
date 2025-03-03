@@ -12,4 +12,5 @@ class SpecieType extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['specie_type', 'is_active_type'];
+
 }

@@ -86,4 +86,13 @@ class SpecieTypeController extends Controller
     {
         //
     }
+
+    public function apiSearch(Request $request)
+    {
+        $search = $request->keyword;
+        $specie_classes = SpecieType::selectRaw("*, specie_type as text")->where('specie_type', 'like', '%' . $search . '%')
+            ->where("is_active_type", 1)
+            ->get();
+        return response()->json($specie_classes);
+    }
 }

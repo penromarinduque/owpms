@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\SpecieClass;
+use App\Models\SpecieFamily;
+use App\Models\SpecieType;
 
 class SpecieClassController extends Controller
 {
@@ -34,13 +36,19 @@ class SpecieClassController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'specie_class' => 'required|max:150|unique:specie_classes',
             'is_active_class' => 'required',
+            'specie_type' => 'required',
         ], [
             'specie_type.unique' => 'specie class already exist.'
         ]);
-        SpecieClass::create($validated);
+
+        SpecieClass::create([
+            'specie_type_id' => $request->specie_type,
+            'specie_class' => $request->specie_class,
+            'is_active_class' => $request->is_active_class
+        ]);
 
         return Redirect::route('specieclasses.index')->withInput()->with('success', 'Successfully saved!');
     }
@@ -58,8 +66,12 @@ class SpecieClassController extends Controller
      */
     public function edit($id)
     {
-        $specie_class = SpecieClass::find($id);
-        return view('admin.maintenance.specieclasses.edit', ['specie_class'=>$specie_class]);
+        $specie_class = SpecieClass::with("specieType")->find($id);
+        $specie_types = SpecieType::where("is_active_type", 1)->get();
+        return view('admin.maintenance.specieclasses.edit', [
+            'specie_class' => $specie_class,
+            'specie_types' => $specie_types
+        ]);
     }
 
     /**
@@ -70,9 +82,11 @@ class SpecieClassController extends Controller
         $validated = $request->validate([
             'specie_class' => 'required|max:150',
             'is_active_class' => 'required',
+            'specie_type' => 'required',
         ]);
         SpecieClass::find($id)->update([
             'specie_class' => $request->input('specie_class'),
+            'specie_type_id' => $request->input('specie_type'),
             'is_active_class' => $request->input('is_active_class'),
         ]);
 
@@ -86,4 +100,20 @@ class SpecieClassController extends Controller
     {
         //
     }
+
+    public function apiSearch(Request $request) {
+        $search = $request->keyword;
+        $specie_classes = SpecieClass::selectRaw("*, specie_class as text")->where('specie_class', 'like', '%' . $search . '%')
+            ->where("is_active_class", 1)
+            ->get();
+        return response()->json($specie_classes);
+    }
+
+    public function apiGetByType(Request $request) {
+        $specie_type_id = $request->specie_type_id;
+        $specie_classes = SpecieClass::where('specie_type_id', $specie_type_id)->get();
+        return response()->json($specie_classes);
+    }
+
+    
 }

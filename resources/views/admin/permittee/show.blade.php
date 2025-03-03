@@ -26,7 +26,37 @@ active
         </div>
         <div class="card-body">
             <div class="row">
-                
+                <div class="col-4">
+                    <table class="table table-sm table-bordered">
+                        <tr>
+                            <th >Permit Number</th>
+                            <td>{{ $permittee->permit_number }}</td>
+                        </tr>
+                        <tr>
+                            <th >Permit Type</th>
+                            <td>{{ strtoupper($permit_type) }}</td>
+                        </tr>
+                        <tr>
+                            <th >Validity</th>
+                            <td>{{ Carbon\Carbon::parse($permittee->valid_from)->format('F d, Y') }} - {{ Carbon\Carbon::parse($permittee->valid_to)->format('F d, Y') }}</td>
+                        </tr>
+                        <tr>
+                            <th >Date Issued</th>
+                            <td>{{ Carbon\Carbon::parse($permittee->date_of_issue)->format('F d, Y') }}</td>
+                        </tr>
+                        <tr>
+                            <th >Status</th>
+                            @php
+                                $status_color = [
+                                    "valid" => "success",
+                                    "expired" => "danger",
+                                    "pending" => "secondary"
+                        ];
+                            @endphp
+                            <td><span class="badge bg-{{ $status_color[$permittee->status] }}">{{ ucfirst($permittee->status) }}</span></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
