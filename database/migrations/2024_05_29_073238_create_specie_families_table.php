@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('specie_families', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('specie_class_id');
             $table->string('family', 150)->unique();
             $table->tinyInteger('is_active_family')->default(0);
             $table->timestamps();

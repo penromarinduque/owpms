@@ -72,3 +72,5 @@
         @yield('script-extra')
     </body>
 </html>
+
+@include('components.toast')

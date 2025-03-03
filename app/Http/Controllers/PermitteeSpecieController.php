@@ -12,6 +12,7 @@ class PermitteeSpecieController extends Controller
     public function index()
     {
         //
+        return view("admin.permitteespecies.index", []);
     }
 
     /**
@@ -28,6 +29,11 @@ class PermitteeSpecieController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            "permittee_id" => "required",
+            "specie_id" => "required",
+            "quantity" => "required",
+        ]);
     }
 
     /**

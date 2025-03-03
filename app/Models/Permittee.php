@@ -12,6 +12,12 @@ class Permittee extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['user_id', 'permit_number', 'permit_type', 'valid_from', 'valid_to', 'date_of_issue', 'status'];
+    
+    protected $dates = ['valid_from', 'valid_to'];
+    
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 
     public function wildlifePermits()
     {
