@@ -153,7 +153,7 @@ active
                     method: "POST",
                     data: { searchkey: searchkey },
                     success: function (data) {
-                        // console.log(data);
+                         console.log(data);
                         $("#results").html(data).show();
                     },
                     errr: function (data) {
@@ -179,7 +179,7 @@ active
                         <input type="text" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" required />
                     </td>
                     <td align="center">
-                        <a href="#" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
+                        <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
                     </td>
                 </tr>
             `;
