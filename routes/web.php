@@ -44,6 +44,18 @@ Route::middleware('auth')->group(function (){
 
     // Permittee
     Route::prefix('permittees')->group(function () {
+
+        // Permittee Species
+        Route::prefix('permitteespecies')->group(function () {
+            Route::get('/create', [PermitteeSpecieController::class, 'create'])->name('permitteespecies.create');
+            Route::post('/store', [PermitteeSpecieController::class, 'store'])->name('permitteespecies.store');
+            Route::put('/update', [PermitteeSpecieController::class, 'update'])->name('permitteespecies.update');
+            Route::delete('/delete/{id}', [PermitteeSpecieController::class, 'destroy'])->name('permitteespecies.delete');
+            Route::get('/ajaxgetspecies', [PermitteeSpecieController::class, 'ajaxGetSpecies'])->name('permitteespecies.ajaxgetspecies');
+            Route::get('/ajaxGetPermittees', [PermitteeSpecieController::class, 'ajaxGetPermittees'])->name('permitteespecies.ajaxGetPermittees');
+            Route::get('/{id}', [PermitteeSpecieController::class, 'index'])->name('permitteespecies.index');
+        });
+
         Route::get('/', [PermitteeController::class, 'index'])->name('permittees.index');
         Route::get('create', [PermitteeController::class, 'create'])->name('permittees.create');
         Route::post('/store', [PermitteeController::class, 'store'])->name('permittees.store');
@@ -51,6 +63,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/{id}', [PermitteeController::class, 'edit'])->name('permittees.edit');
         Route::post('/update/{id}', [PermitteeController::class, 'update'])->name('permittees.update');
         Route::post('/ajaxupdatestatus', [PermitteeController::class, 'ajaxUpdateStatus'])->name('permittees.ajaxupdatestatus');
+
+        
     });
 
     // Users
@@ -73,12 +87,6 @@ Route::middleware('auth')->group(function (){
         Route::post('/update/{id}', [SpecieController::class, 'update'])->name('species.update');
         Route::get('/show/{id}', [SpecieController::class, 'show'])->name('species.show');
         Route::post('/ajaxupdatestatus', [SpecieController::class, 'ajaxUpdateStatus'])->name('species.ajaxupdatestatus');
-    });
-
-
-    // Permittee Species
-    Route::prefix('permitteespecies')->group(function () {
-        Route::get('/', [PermitteeSpecieController::class, 'index'])->name('permitteespecies.index');
     });
 
     // Client Application

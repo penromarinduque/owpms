@@ -26,7 +26,7 @@ class Specie extends Model implements Auditable
 
     public function searchSpecies($searchkey)
     {
-        $species = $this->select('species.*', 'specie_types.specie_type', 'specie_classes.specie_class', 'specie_families.family')
+        $species = $this->select('species.*', 'specie_types.specie_type', 'specie_classes.specie_class', 'specie_families.family', 'species.specie_name as text')
             ->leftJoin('specie_types', 'specie_types.id', 'species.specie_type_id')
             ->leftJoin('specie_classes', 'specie_classes.id', 'species.specie_class_id')
             ->leftJoin('specie_families', 'specie_families.id', 'species.specie_family_id')

@@ -71,7 +71,15 @@ active
                             </div>
                         </td>
                         <td>
-                            <a href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}" title="Edit" alt="Edit"><i class="fas fa-edit fa-lg"></i></a>
+                            <div class="dropdown dropstart">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Actions
+                                </button>
+                                <ul class="dropdown-menu">
+                                  <li><a class="dropdown-item" href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}"><i class="fas fa-edit fa-lg me-2"></i>Edit Permittee</a></li>
+                                  <li><a class="dropdown-item" href="{{ route('permitteespecies.index', Crypt::encryptString($permittee->wildlifePermits()->firstWhere('permit_type', 'wcp')->id)) }}"><i class="fa-solid fa-bars-staggered me-2"></i>Species</a></li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 @empty

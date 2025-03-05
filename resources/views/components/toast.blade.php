@@ -12,6 +12,14 @@
 
 <!-- JavaScript to Show Toast -->
 <script>
+    $(function () {
+        @if (session()->has('success'))
+            showToast('success', '{{ session('success') }}');
+        @elseif (session()->has('error'))
+            showToast('danger', '{{ session('error') }}');
+        @endif
+    });
+
     function showToast(color, message) {
         var $toast = document.getElementById('customToast');
         if (!$toast) return; // Prevent errors if the toast element is missing
@@ -27,5 +35,4 @@
         var toast = new bootstrap.Toast($toast);
         toast.show();
     }
-
-    </script>
+</script>

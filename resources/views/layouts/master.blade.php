@@ -65,7 +65,25 @@
             jQuery(document).ready(function ($){
 
                 // Select2
-                $(".select2").select2();
+                $(".select2").select2({
+                    ajax : {
+                        delay: 250,
+                        data : function(params){
+                            var query = {
+                                search: params.term,
+                                type: 'public'
+                            }
+
+                            // Query parameters will be ?search=[term]&type=public
+                            return query;
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data
+                            };
+                        },
+                    }
+                });
             });
         </script>
         <!-- on page scripts -->

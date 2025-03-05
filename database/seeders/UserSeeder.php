@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
         //
         User::create([
             "email" => "admin@penromarinduque.gov.ph",
-            "password" => Hash::make("*OWPMS_2025*"),
+            "password" => Hash::make("123456789"),
             "username" => "administrator",
             "usertype" => User::TYPE_ADMIN,
             "is_active_user" => 1
