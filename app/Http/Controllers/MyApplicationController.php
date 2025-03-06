@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\User;
 use App\Models\Permittee;
 use App\Models\LtpApplication;
+use App\Models\LtpApplicationProgress;
 use App\Models\LtpApplicationSpecie;
 use App\Models\PermitteeSpecie;
 use App\Models\Specie;
@@ -218,18 +219,6 @@ class MyApplicationController extends Controller
 
         $id = Crypt::decryptString($id);
 
-        // $validated = $request->validate([
-        //     'transport_date' => 'required|date',
-        //     'city' => 'required|string|max:255',
-        //     'state' => 'nullable|string|max:255',
-        //     'country' => 'required|string|max:255',
-        //     'purpose' => 'required|string',
-        //     'species' => 'nullable|string',
-        //     'specie_id' => 'array|required',
-        //     'quantity' => 'array|required',
-        //     'quantity.*' => 'required|integer|min:1', // Validate each quantity
-        // ]);
-
         $application = LtpApplication::where([
             "id" => $id
         ])
@@ -249,5 +238,24 @@ class MyApplicationController extends Controller
             "wfp" => $wfp,
             "wcp" => $wcp
         ]);
+    }
+
+    public function submit(string $id) {
+        return DB::transaction(function () use ($id) {
+            $ltp_application = LtpApplication::find($id);
+
+            if(!$ltp_application) {
+                return redirect()->back()->with('error', 'Application not found!');
+            }
+            $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
+            $ltp_application->save();
+            
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $ltp_application->id,
+                "status" => LtpApplicationProgress::STATUS_SUBMITTED
+            ]);
+
+            return Redirect::route('myapplication.index')->with('success', 'Application successfully submitted!');
+        });
     }
 }
