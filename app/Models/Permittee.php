@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
+use PDO;
 
 class Permittee extends Model implements Auditable
 {
@@ -48,6 +49,7 @@ class Permittee extends Model implements Auditable
             ->join('wildlife_farms', 'wildlife_farms.permittee_id', 'permittees.id')
             ->where('permittees.user_id', $user_id)
             ->where('permit_type', $permit_type)
+            ->with('wildlifeFarm')
             ->first();
     }
 
@@ -56,6 +58,7 @@ class Permittee extends Model implements Auditable
         return $this->select('permittees.*')
             ->where('permittees.user_id', $user_id)
             ->where('permit_type', $permit_type)
+            ->with('wildlifeFarm')
             ->first();
     }
 
@@ -89,6 +92,10 @@ class Permittee extends Model implements Auditable
                 ->orWhere('wildlife_farms.farm_name', 'like', '%' . $query . '%')
                 ->orWhere(DB::raw("CONCAT(permittees.permit_number, ' - ', UPPER(personal_infos.first_name), ' ', UPPER(personal_infos.last_name))"), 'like', '%' . $query . '%');
         });
+    }
+
+    public function wildlifeFarm(){
+        return $this->hasOne(WildlifeFarm::class, 'permittee_id', 'id');
     }
 
 }

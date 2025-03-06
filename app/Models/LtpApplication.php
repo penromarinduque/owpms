@@ -28,4 +28,13 @@ class LtpApplication extends Model
     //     return $this->select('permittee_id', 'application_id', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature')
     //         ->where('')
     // }
+
+    public function ltpApplicationSpecies(){
+        return $this->hasMany(LtpApplicationSpecie::class);
+    }
+
+
+    public function permittee(){
+        return $this->belongsTo(Permittee::class);
+    }
 }

@@ -93,9 +93,10 @@ Route::middleware('auth')->group(function (){
         Route::get('create', [MyApplicationController::class, 'create'])->name('myapplication.create');
         Route::get('edit/{id}', [MyApplicationController::class, 'edit'])->name('myapplication.edit');
         Route::patch('update/{id}', [MyApplicationController::class, 'update'])->name('myapplication.update');
+        Route::post('submit/{id}', [MyApplicationController::class, 'submit'])->name('myapplication.submit');
+        Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
-        Route::post('/preview', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::post('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
     });
 

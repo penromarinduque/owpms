@@ -90,7 +90,7 @@
         <!-- Letterhead -->
         <div class="letterhead text-center">
             <h5 class="mb-0">Republic of the Philippines</h5>
-            <h4 class="fw-bold mt-0 mb-0">{{ $permittee_wfp['farm_name'] }}</h4>
+            <h4 class="fw-bold mt-0 mb-0">{{ $wfp->wildlifeFarm->farm_name }}</h4>
             <p class="mt-0 mb-0">Cawit, Boac, Marinduque 4900</p>
             <p class="mt-1 mb-0">Contact No. 099971036106 | Email: anthonydelapena@gmail.com</p>
         </div>
@@ -133,23 +133,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if(!empty($ltp_species))
-                                        @php
-                                            $c = 1;
-                                            $total = 0;
-                                        @endphp
-                                        @foreach($ltp_species as $ltp_specie)
-                                                        @php
-                                                            $total += $ltp_specie->quantity;
-                                                        @endphp
-                                                        <tr>
-                                                            <td>{{$c++}}</td>
-                                                            <td>{{$ltp_specie->local_name}}</td>
-                                                            <td>{{$ltp_specie->specie_name}}</td>
-                                                            <td>{{$ltp_specie->family_name}}</td>
-                                                            <td>{{$ltp_specie->quantity}}</td>
-                                                        </tr>
-                                        @endforeach
+                    @if(!empty($application->ltpApplicationSpecies))
+                        @php
+                            $c = 1;
+                            $total = 0;
+                        @endphp
+                        @foreach($application->ltpApplicationSpecies as $ltp_specie)
+                            @php
+                                $total += $ltp_specie->quantity;
+                            @endphp
+                            <tr>
+                                <td>{{$c++}}</td>
+                                <td>{{$ltp_specie->specie->local_name}}</td>
+                                <td>{{$ltp_specie->specie->specie_name}}</td>
+                                <td>{{$ltp_specie->specie->family->family}}</td>
+                                <td>{{$ltp_specie->quantity}}</td>
+                            </tr>
+                        @endforeach
                     @endif
                     <tr class="fw-bold">
                         <td colspan="4" class="text-end">TOTAL</td>
@@ -162,9 +162,8 @@
             <div class="mb-4">
                 <p>
                     The listed pupae/live species will be transported on or before
-                    <strong>{{date('F j, Y', strtotime($data['transport_date']))}}</strong> for the purpose of
-                    <u>&nbsp;{{$data['purpose']}}&nbsp;</u> at <strong>{{ $data['city'] }}, {{ $data['state'] }},
-                        {{ $data['country'] }}</strong>.
+                    <strong>{{date('F j, Y', strtotime($application->transport_date))}}</strong> for the purpose of
+                    <u>&nbsp;{{$application->purpose}}&nbsp;</u> at <strong>{{ $application->destination }}</strong>.
                 </p>
                 <p>Thank you.</p>
             </div>

@@ -212,54 +212,42 @@ class MyApplicationController extends Controller
         }
     }
 
-    public function preview(Request $request)
+    public function preview(Request $request, string $id)
     {
         $_permittee = new Permittee;
 
-        $user_id = $request->user_id;
+        $id = Crypt::decryptString($id);
 
-        $validated = $request->validate([
-            'transport_date' => 'required|date',
-            'city' => 'required|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'country' => 'required|string|max:255',
-            'purpose' => 'required|string',
-            'species' => 'nullable|string',
-            'specie_id' => 'array|required',
-            'quantity' => 'array|required',
-            'quantity.*' => 'required|integer|min:1', // Validate each quantity
-        ]);
+        // $validated = $request->validate([
+        //     'transport_date' => 'required|date',
+        //     'city' => 'required|string|max:255',
+        //     'state' => 'nullable|string|max:255',
+        //     'country' => 'required|string|max:255',
+        //     'purpose' => 'required|string',
+        //     'species' => 'nullable|string',
+        //     'specie_id' => 'array|required',
+        //     'quantity' => 'array|required',
+        //     'quantity.*' => 'required|integer|min:1', // Validate each quantity
+        // ]);
 
-        $permittee_wfp = $_permittee->getPermitteeWFP($user_id, 'wfp');
+        $application = LtpApplication::where([
+            "id" => $id
+        ])
+        ->with([
+            "permittee",
+            "ltpApplicationSpecies",
+        ])
+        ->first();
+        
+        $wfp = $_permittee->getPermitteeWFP($application->permittee->user_id, "wfp");
+        $wcp = $_permittee->getPermitteeWCP($application->permittee->user_id, "wcp");
 
-        $ltp_species = [];
-        if (!empty($request->specie_id)) {
-            $species = Specie::select('species.*', 'specie_types.specie_type', 'specie_classes.specie_class', 'specie_families.family')
-                ->leftJoin('specie_types', 'specie_types.id', 'species.specie_type_id')
-                ->leftJoin('specie_classes', 'specie_classes.id', 'species.specie_class_id')
-                ->leftJoin('specie_families', 'specie_families.id', 'species.specie_family_id')
-                ->whereIn('species.id', $request->specie_id)
-                ->get();
-
-            foreach ($request->specie_id as $key => $value) {
-                if (!empty($species)) {
-                    foreach ($species as $specie) {
-                        if ($request->specie_id[$key] == $specie->id) {
-                            $arr_data = (object) ['specie_name' => $specie->specie_name, 'local_name' => $specie->local_name, 'family_name' => $specie->family, 'quantity' => $request->quantity[$key]];
-                            array_push($ltp_species, $arr_data);
-                        }
-                    }
-                }
-            }
-        }
+        // return $wfp;
 
         return view('permittee.myapplication.preview', [
-            'data' => $validated,
-            'permittee_wfp' => $permittee_wfp,
-            'ltp_species' => $ltp_species,
+            "application" => $application,
+            "wfp" => $wfp,
+            "wcp" => $wcp
         ]);
     }
 }
-
-
-// ILV0v4q8
