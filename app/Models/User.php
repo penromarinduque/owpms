@@ -56,4 +56,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Permittee::class, 'user_id');
     }
+
+    public function wcp(){
+        return $this->wildlifePermits()->where('permit_type', Permittee::PERMIT_TYPE_WCP)->first();
+    }
+
+    public function wfp(){
+        return $this->wildlifePermits()->where('permit_type', Permittee::PERMIT_TYPE_WFP)->first();
+    }
 }

@@ -88,8 +88,7 @@ class Permittee extends Model implements Auditable
                 ->orWhere('personal_infos.last_name', 'like', '%' . $query . '%')
                 ->orWhere('wildlife_farms.farm_name', 'like', '%' . $query . '%')
                 ->orWhere(DB::raw("CONCAT(permittees.permit_number, ' - ', UPPER(personal_infos.first_name), ' ', UPPER(personal_infos.last_name))"), 'like', '%' . $query . '%');
-        })
-        ->get();
+        });
     }
 
 }

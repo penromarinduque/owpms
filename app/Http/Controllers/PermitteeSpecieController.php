@@ -108,7 +108,7 @@ class PermitteeSpecieController extends Controller
         $_specie = new Specie;
         try {
             $searchkey = $request->search;
-            $species = $_specie->searchSpecies($searchkey);
+            $species = $_specie->searchSpecies($searchkey)->paginate(20);
             return $species;
         } catch (\Exception $e) {
             return $e;
@@ -119,7 +119,7 @@ class PermitteeSpecieController extends Controller
         $_permittee = new Permittee;
         try {
             $searchkey = $request->search;
-            $permittees = $_permittee->searchWcpPermittee($searchkey);
+            $permittees = $_permittee->searchWcpPermittee($searchkey)->paginate(20);
             return $permittees;
         } catch (\Exception $e) {
             return $e;

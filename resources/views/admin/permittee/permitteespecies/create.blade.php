@@ -30,7 +30,7 @@ active
                         <select 
                             name="permittee_id" 
                             id="permittee_id" 
-                            class="form-select select2" 
+                            class="form-select select2Paginate" 
                             data-placeholder="Select Permittee" 
                             data-ajax--url="{{ route('permitteespecies.ajaxGetPermittees') }}"
                             data-allow-clear="true"
@@ -43,7 +43,7 @@ active
                         <select 
                             name="specie_id" 
                             id="specie_id" 
-                            class="form-select select2" 
+                            class="form-select select2Paginate" 
                             data-placeholder="Select Species" 
                             data-ajax--url="{{ route('permitteespecies.ajaxgetspecies') }}"
                             data-allow-clear="true"

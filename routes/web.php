@@ -63,8 +63,6 @@ Route::middleware('auth')->group(function (){
         Route::get('/{id}', [PermitteeController::class, 'edit'])->name('permittees.edit');
         Route::post('/update/{id}', [PermitteeController::class, 'update'])->name('permittees.update');
         Route::post('/ajaxupdatestatus', [PermitteeController::class, 'ajaxUpdateStatus'])->name('permittees.ajaxupdatestatus');
-
-        
     });
 
     // Users
@@ -93,6 +91,9 @@ Route::middleware('auth')->group(function (){
     Route::prefix('myapplication')->group(function () {
         Route::get('/', [MyApplicationController::class, 'index'])->name('myapplication.index');
         Route::get('create', [MyApplicationController::class, 'create'])->name('myapplication.create');
+        Route::get('edit/{id}', [MyApplicationController::class, 'edit'])->name('myapplication.edit');
+        Route::patch('update/{id}', [MyApplicationController::class, 'update'])->name('myapplication.update');
+        Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
         Route::post('/preview', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::post('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');

@@ -53,6 +53,7 @@ active
                         @endforelse
                     </tbody>
                 </table>
+                {{ $permittee_species->links() }}
             </div>
         </div>
     </div>

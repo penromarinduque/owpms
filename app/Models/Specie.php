@@ -36,8 +36,7 @@ class Specie extends Model implements Auditable
                     ->orWhere('specie_types.specie_type','LIKE',"%".$searchkey."%")
                     ->orWhere('specie_classes.specie_class','LIKE',"%".$searchkey."%")
                     ->orWhere('specie_families.family','LIKE',"%".$searchkey."%");
-            })
-            ->get();
+            });
         return $species;
     }
 

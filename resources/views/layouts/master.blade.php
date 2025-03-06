@@ -65,13 +65,14 @@
             jQuery(document).ready(function ($){
 
                 // Select2
-                $(".select2").select2({
+                $(".select2Paginate").select2({
                     ajax : {
                         delay: 250,
                         data : function(params){
                             var query = {
                                 search: params.term,
-                                type: 'public'
+                                type: 'public',
+                                page: params.page || 1
                             }
 
                             // Query parameters will be ?search=[term]&type=public
@@ -79,7 +80,10 @@
                         },
                         processResults: function (data) {
                             return {
-                                results: data
+                                results: data.data,
+                                pagination: {
+                                    more: (data.current_page < data.last_page)
+                                }
                             };
                         },
                     }
