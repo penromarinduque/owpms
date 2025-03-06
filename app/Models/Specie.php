@@ -14,6 +14,10 @@ class Specie extends Model implements Auditable
     protected $fillable = ['specie_type_id', 'specie_class_id', 'specie_family_id', 'specie_name', 'is_present', 'local_name', 'wing_span', 'conservation_status', 'color_description', 'food_plant', 'is_active_specie'];
 
         
+    public function family(){
+        return $this->belongsTo(SpecieFamily::class, 'specie_family_id', 'id');
+    }
+
     public function getSpecies()
     {
         $species = $this->select('species.*', 'specie_types.specie_type', 'specie_classes.specie_class', 'specie_families.family')

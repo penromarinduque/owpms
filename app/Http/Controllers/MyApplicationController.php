@@ -11,6 +11,7 @@ use App\Models\LtpApplication;
 use App\Models\LtpApplicationSpecie;
 use App\Models\PermitteeSpecie;
 use App\Models\Specie;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
@@ -114,7 +115,14 @@ class MyApplicationController extends Controller
             return redirect()->back()->with('error', 'Application not found!');
         }
 
-        $ltp_application_species = LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)->with(["specie"])->get();
+        $ltp_application_species = LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)->with([
+            "specie.family", 
+            "specie",
+            "permitteeSpecies" => function (Builder $query) use ($ltp_application) {
+                $query->where("permittee_id", Auth::user()->wcp()->id)
+                ->first();
+            }
+        ])->get();
 
         return view('permittee.myapplication.edit', [
             'title' => 'Edit Application',
@@ -129,6 +137,39 @@ class MyApplicationController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        return DB::transaction(function () use ($request, $id) {
+            $request->validate([
+                "transport_date" => "required|date",
+                "purpose" => "required|string",
+                "specie_id" => "required|array",
+                "quantity" => "required|array"
+            ]);
+
+            $ltp_application = LtpApplication::find($id);
+
+            if(!$ltp_application) {
+                return redirect()->back()->with('error', 'Application not found!');
+            }
+
+            $ltp_application->transport_date = $request->transport_date;
+            $ltp_application->purpose = $request->purpose;
+            $ltp_application->save();
+
+            LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)->delete();
+
+            if ($request->specie_id) {
+                foreach ($request->specie_id as $key => $value) {
+                    LtpApplicationSpecie::create([
+                        'ltp_application_id' => $ltp_application->id, 
+                        'specie_id' => $request->specie_id[$key], 
+                        'quantity' => $request->quantity[$key], 
+                        'is_endangered' => 0
+                    ]);
+                }
+            }           
+
+            return Redirect::route('myapplication.index')->with('success', 'Application successfully updated!');            
+        });
     }
 
     /**

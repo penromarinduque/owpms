@@ -20,7 +20,7 @@ active
     <div class="card mb-4">
     	<div class="card-header">
             <div class="float-end">
-                <a href="{{ route('myapplication.index') }}" class="btn btn-sm btn-secondary"><i class="fas fa-chevron-left"></i> Back</a>
+                <a href="{{ route('myapplication.index', $ltp_application->id) }}" class="btn btn-sm btn-secondary"><i class="fas fa-chevron-left"></i> Back</a>
             </div>
             <i class="fas fa-edit me-1"></i>
             Edit Application
@@ -83,17 +83,17 @@ active
                             </thead>
                             <tbody>
                                 @foreach ($ltp_application_species as $key => $species)
-                                    <tr id="row_{{$species->id}}">
+                                    <tr id="row_{{$species->specie->id}}">
                                         <td align="center">{{ $key+1 }}</td>
-                                        <td align="center">{{ $species->commonname }}</td>
-                                        <td align="center">{{ $species->scientifcname}}</td>
-                                        <td align="center">{{ $species->family }}</td>
+                                        <td align="center">{{ $species->specie->local_name }}</td>
+                                        <td align="center">{{ $species->specie->specie_name }}</td>
+                                        <td align="center">{{ $species->specie->family->family }}</td>
                                         <td align="center">
-                                            <input type="hidden" name="specie_id[]" id="specie_id" value="${itemData.id}" />
-                                            <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" max="${itemData.maxqty}" required />
+                                            <input type="hidden" name="specie_id[]" id="specie_id" value="{{ $species->specie->id }}" />
+                                            <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" max="{{ $species->permitteeSpecies->first()->quantity }}" value="{{ $species->quantity }}" required />
                                         </td>
                                         <td align="center">
-                                            <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
+                                            <a href="#" class="btn btn-sm mx-1" onclick="removeAdded({{ $species->specie->id }}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -108,6 +108,9 @@ active
                         </table>
                     </div>
                 </div>
+                <div class="float-end mt-4">
+                    <button type="submit" id="btn_save" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Save</button>
+                </div>
             </form>
         </div>
     </div>
@@ -117,6 +120,12 @@ active
 @section('script-extra')
 <script type="text/javascript">
     // Function to calculate and update the sum
+    $(document).ready(function() {
+        updateDynamicSum('quantity', 'txt_total');
+        addOneMonth('transport_date', 'validity_result');
+
+    });
+
     function updateDynamicSum(fld_class, result_element) {
         let sum = 0;
         const inputs = document.querySelectorAll('.'+fld_class); // Select all inputs with the class "dynamic-input"
