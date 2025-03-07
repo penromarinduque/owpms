@@ -10,4 +10,14 @@ class LtpApplicationSpecie extends Model
     use HasFactory;
 
     protected $fillable = ['ltp_application_id', 'specie_id',  'quantity', 'is_endangered'];
+
+    public function specie()
+    {
+        return $this->hasOne(Specie::class, "id", "specie_id");
+    }
+
+    public function permitteeSpecies()
+    {
+        return $this->hasMany(PermitteeSpecie::class, "specie_id", "specie_id"); 
+    }
 }

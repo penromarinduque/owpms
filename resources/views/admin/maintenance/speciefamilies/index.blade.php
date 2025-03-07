@@ -46,6 +46,7 @@ active
                 <thead>
                     <tr>
                         <th>Specie Family</th>
+                        <th>Specie Class</th>
                         <th>Is Active?</th>
                         <th><i class="fas fa-ellipsis-h" title="Action" alt="Action"></i></th>
                     </tr>
@@ -54,13 +55,16 @@ active
                     @forelse($specie_families as $specie_family)
                     <tr>
                         <td>{{ $specie_family->family }}</td>
+                        <td>{{ ($specie_family->specieClass->specie_class) }}</td>
                         <td>{{ ($specie_family->is_active_family==1) ? 'YES' : 'NO' }}</td>
                         <td>
                             <a href="{{ route('speciefamilies.edit', ['id'=>$specie_family->id]) }}" title="Edit" alt="Edit"><i class="fas fa-edit fa-lg"></i></a>
                         </td>
                     </tr>
                     @empty
-
+                    <tr>
+                        <td colspan="4" class="text-center">No Data</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

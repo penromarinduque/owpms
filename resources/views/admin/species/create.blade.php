@@ -35,51 +35,34 @@ active
                 <div class="row mb-3">
                 	<div class="col-sm-4">
                 		<label for="specie_type_id" class="form-label">Wildlife Type</label>
-                		<select class="form-select" name="specie_type_id" id="specie_type_id">
+                		<select class="form-select" name="specie_type_id" id="specie_type_id" onchange="onSelectType(event)" required>
                 			<option value="">- Please Select Type-</option>
-                            @forelse($specie_types as $specie_type)
-                            <option value="{{ $specie_type->id }}">{{ $specie_type->specie_type }}</option>
-                            @empty
-                            @endforelse
+                            @foreach($specie_types as $specie_type)
+                                <option value="{{ $specie_type->id }}">{{ $specie_type->specie_type }}</option>
+                            @endforeach
                 		</select>
-                        @error('specie_type_id')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        @error('specie_type_id')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
                 	<div class="col-sm-4">
                 		<label for="specie_class_id" class="form-label">Specie Class</label>
-                		<select class="form-select" name="specie_class_id" id="specie_class_id">
+                		<select class="form-select" name="specie_class_id" id="specie_class_id" onchange="onSelectClass(event)" required>
                 			<option value="">- Please Select Class -</option>
-                            @forelse($specie_classes as $specie_class)
-                            <option value="{{ $specie_class->id }}">{{ $specie_class->specie_class }}</option>
-                            @empty
-                            @endforelse
                 		</select>
-                        @error('specie_class_id')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        @error('specie_class_id')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
                 	<div class="col-sm-4">
                 		<label for="specie_family_id" class="form-label">Specie Family</label>
-                		<select class="form-select" name="specie_family_id" id="specie_family_id">
+                		<select class="form-select" name="specie_family_id" id="specie_family_id" required>
                 			<option value="">- Please Select Family -</option>
-                            @forelse($specie_families as $specie_family)
-                            <option value="{{ $specie_family->id }}">{{ $specie_family->family }}</option>
-                            @empty
-                            @endforelse
                 		</select>
-                        @error('specie_family_id')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        @error('specie_family_id')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
                 </div>
                 <div class="row mb-3">
                 	<div class="col-sm-5">
                 		<label for="specie_name" class="form-label">Scientific Name</label>
-                		<input type="text" class="form-control" name="specie_name" id="specie_name" placeholder="Scientific Name" value="{{ old('specie_name') }}">
-                        @error('specie_name')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                		<input type="text" class="form-control" name="specie_name" id="specie_name" placeholder="Scientific Name" value="{{ old('specie_name') }}" required>
+                        @error('specie_name')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
                 	<div class="col-sm-2 pt-4">
                       	<input type="checkbox" id="present" name="present">
@@ -89,9 +72,7 @@ active
                 	<div class="col-sm-5">
                 		<label for="local_name" class="form-label">Common/Local Name</label>
                 		<input type="text" class="form-control" name="local_name" id="local_name" placeholder="Common/Local Name" value="{{ old('local_name') }}" >
-                        @error('local_name')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        @error('local_name')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
                 </div>
                 <div class="row mb-3">
@@ -107,26 +88,20 @@ active
                         <label for="threatened">Threatened</label> &nbsp;
                         <input type="radio" value="vulnerable" id="vulnerable" name="conservation_status">
                         <label for="vulnerable">Vulnerable</label> &nbsp;
-                        @error('conservation_status')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        @error('conservation_status')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                 	<div class="col-sm-4"></div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-sm-6">
                         <label for="color_description" class="form-label">Color Description</label>
-                        <textarea class="form-control" name="color_description" id="color_description">{{ old('color_description') }}</textarea>
-                        @error('color_description')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        <textarea class="form-control" name="color_description" id="color_description" required>{{ old('color_description') }}</textarea>
+                        @error('color_description')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                     <div class="col-sm-6">
                         <label for="food_plant" class="form-label">Food Plant</label>
-                        <textarea class="form-control" name="food_plant" id="food_plant">{{ old('food_plant') }}</textarea>
-                        @error('food_plant')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        <textarea class="form-control" name="food_plant" id="food_plant" required>{{ old('food_plant') }}</textarea>
+                        @error('food_plant')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                 </div>
                 <button type="submit" id="btn_save" class="btn btn-primary btn-block float-end"><i class="fas fa-save"></i> Save</button>
@@ -134,4 +109,53 @@ active
         </div>
     </div>
 </div>
+@endsection
+
+@section('script-extra')
+<script>
+    function onSelectType(e){
+        const value = e.target.value;
+        if(!value){
+            return;
+        }
+
+        $.get(
+            "{{ route('specieclasses.apiGetByType') }}",
+            {
+                specie_type_id : value
+            },
+            function(data){
+                console.log(data);
+                $('#specie_class_id').empty();
+                $('#specie_class_id').append('<option value="">-Select Specie Class-</option>');
+                $.each(data, function(index, specie_class){
+                    $('#specie_class_id').append('<option value="'+specie_class.id+'">'+specie_class.specie_class+'</option>');
+                });
+            }
+        );
+    }
+
+    function onSelectClass(e){
+        const value = e.target.value;
+        if(!value){
+            return;
+        }
+
+        $.get(
+            "{{ route('speciefamilies.apiGetByClass') }}",
+            {
+                specie_class_id : value
+            },
+            function(data){
+                console.log(data);
+                $('#specie_family_id').empty();
+                $('#specie_family_id').append('<option value="">-Select Specie Family-</option>');
+                $.each(data, function(index, specie_family){
+                    $('#specie_family_id').append('<option value="'+specie_family.id+'">'+specie_family.family+'</option>');
+                });
+            }
+        );
+    }
+
+</script>
 @endsection

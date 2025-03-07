@@ -14,6 +14,10 @@ class Specie extends Model implements Auditable
     protected $fillable = ['specie_type_id', 'specie_class_id', 'specie_family_id', 'specie_name', 'is_present', 'local_name', 'wing_span', 'conservation_status', 'color_description', 'food_plant', 'is_active_specie'];
 
         
+    public function family(){
+        return $this->belongsTo(SpecieFamily::class, 'specie_family_id', 'id');
+    }
+
     public function getSpecies()
     {
         $species = $this->select('species.*', 'specie_types.specie_type', 'specie_classes.specie_class', 'specie_families.family')
@@ -26,7 +30,7 @@ class Specie extends Model implements Auditable
 
     public function searchSpecies($searchkey)
     {
-        $species = $this->select('species.*', 'specie_types.specie_type', 'specie_classes.specie_class', 'specie_families.family')
+        $species = $this->select('species.*', 'specie_types.specie_type', 'specie_classes.specie_class', 'specie_families.family', 'species.specie_name as text')
             ->leftJoin('specie_types', 'specie_types.id', 'species.specie_type_id')
             ->leftJoin('specie_classes', 'specie_classes.id', 'species.specie_class_id')
             ->leftJoin('specie_families', 'specie_families.id', 'species.specie_family_id')
@@ -36,8 +40,7 @@ class Specie extends Model implements Auditable
                     ->orWhere('specie_types.specie_type','LIKE',"%".$searchkey."%")
                     ->orWhere('specie_classes.specie_class','LIKE',"%".$searchkey."%")
                     ->orWhere('specie_families.family','LIKE',"%".$searchkey."%");
-            })
-            ->get();
+            });
         return $species;
     }
 

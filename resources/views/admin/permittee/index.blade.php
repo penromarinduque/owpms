@@ -67,11 +67,19 @@ active
                         </td>
                         <td>
                             <div class="form-check form-switch">
-                              <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus('chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_permittee==1) ? 'checked' : '' }}>
+                              <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus(event,'chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_user==1) ? 'checked' : '' }}>
                             </div>
                         </td>
                         <td>
-                            <a href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}" title="Edit" alt="Edit"><i class="fas fa-edit fa-lg"></i></a>
+                            <div class="dropdown dropstart">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Actions
+                                </button>
+                                <ul class="dropdown-menu">
+                                  <li><a class="dropdown-item" href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}"><i class="fas fa-edit fa-lg me-2"></i>Edit Permittee</a></li>
+                                  <li><a class="dropdown-item" href="{{ route('permitteespecies.index', Crypt::encryptString($permittee->wildlifePermits()->firstWhere('permit_type', 'wcp')->id)) }}"><i class="fa-solid fa-bars-staggered me-2"></i>Species</a></li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 @empty
@@ -85,32 +93,30 @@ active
 
 @section('script-extra')
 <script type="text/javascript">
-    // function showDetails(id, show_to) {
-    //     $(this).ajaxRequestLaravel({
-    //         show_result: ['/permittees/show/'+id, show_to],
-    //         show_result_loader: true,
-    //     });
-    // }
 
-    function ajaxUpdateStatus(chkbox_id, permittee_id) {
+    function ajaxUpdateStatus(e, chkbox_id, permittee_id) {
         var chkd = $('#'+chkbox_id).is(':checked');
         var stat = 0;
         if (chkd) {
             stat = 1;
         }
-        // console.log(stat);
+
         $.ajax({
             type: 'POST',
             url: "{{ route('permittees.ajaxupdatestatus') }}",
             data: {permittee_id:permittee_id, is_active_permittee:stat},
             success: function (result){
-                // console.log(result);
+                console.log("success" , result);
+                showToast("primary", "Permittee Status Updated");
             },
             error: function (result){
-                // console.log(result);
-                alert('Oops! Something went wrong. Please reload the page and try again.');
+                console.log("failed", result);
+                showToast("danger", "Oops! Something went wrong. Please reload the page and try again.");
+                $(`#${chkbox_id}`).prop('checked', !chkd);
             }
         });
     }
 </script>
 @endsection
+
+@include('components.confirmActivate');

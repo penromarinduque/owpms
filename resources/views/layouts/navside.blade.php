@@ -17,7 +17,7 @@
                 <nav class="sb-sidenav-menu-nested nav">
                     <a class="nav-link" href="">Local Transport Permit</a>
                     <a class="nav-link" href="{{route('permittees.index')}}">Permittee</a>
-                    <a class="nav-link" href="">Butterfly Species</a>
+                    {{-- <a class="nav-link" href="{{ route('permitteespecies.index') }}">Permittee Species</a> --}}
                     <a class="nav-link" href="">10% Release</a>
                 </nav>
             </div>

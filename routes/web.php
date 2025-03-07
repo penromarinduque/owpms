@@ -14,6 +14,7 @@ use App\Http\Controllers\PermitteeController;
 use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\LtpRequirementController;
 use App\Http\Controllers\MyApplicationController;
+use App\Http\Controllers\PermitteeSpecieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -43,6 +44,18 @@ Route::middleware('auth')->group(function (){
 
     // Permittee
     Route::prefix('permittees')->group(function () {
+
+        // Permittee Species
+        Route::prefix('permitteespecies')->group(function () {
+            Route::get('/create', [PermitteeSpecieController::class, 'create'])->name('permitteespecies.create');
+            Route::post('/store', [PermitteeSpecieController::class, 'store'])->name('permitteespecies.store');
+            Route::put('/update', [PermitteeSpecieController::class, 'update'])->name('permitteespecies.update');
+            Route::delete('/delete/{id}', [PermitteeSpecieController::class, 'destroy'])->name('permitteespecies.delete');
+            Route::get('/ajaxgetspecies', [PermitteeSpecieController::class, 'ajaxGetSpecies'])->name('permitteespecies.ajaxgetspecies');
+            Route::get('/ajaxGetPermittees', [PermitteeSpecieController::class, 'ajaxGetPermittees'])->name('permitteespecies.ajaxGetPermittees');
+            Route::get('/{id}', [PermitteeSpecieController::class, 'index'])->name('permitteespecies.index');
+        });
+
         Route::get('/', [PermitteeController::class, 'index'])->name('permittees.index');
         Route::get('create', [PermitteeController::class, 'create'])->name('permittees.create');
         Route::post('/store', [PermitteeController::class, 'store'])->name('permittees.store');
@@ -78,8 +91,12 @@ Route::middleware('auth')->group(function (){
     Route::prefix('myapplication')->group(function () {
         Route::get('/', [MyApplicationController::class, 'index'])->name('myapplication.index');
         Route::get('create', [MyApplicationController::class, 'create'])->name('myapplication.create');
+        Route::get('edit/{id}', [MyApplicationController::class, 'edit'])->name('myapplication.edit');
+        Route::patch('update/{id}', [MyApplicationController::class, 'update'])->name('myapplication.update');
+        Route::post('submit/{id}', [MyApplicationController::class, 'submit'])->name('myapplication.submit');
+        Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
+        Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
-        Route::post('/preview', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::post('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
     });
 
@@ -91,6 +108,7 @@ Route::middleware('auth')->group(function (){
                 Route::get('/', [SpecieTypeController::class, 'index'])->name('specietypes.index');
                 Route::get('create', [SpecieTypeController::class, 'create'])->name('specietypes.create');
                 Route::post('/', [SpecieTypeController::class, 'store'])->name('specietypes.store');
+                Route::get('/apiSearch', [SpecieTypeController::class, 'apiSearch'])->name('specietypes.apiSearch');
                 Route::get('/{id}', [SpecieTypeController::class, 'edit'])->name('specietypes.edit');
                 Route::post('/update/{id}', [SpecieTypeController::class, 'update'])->name('specietypes.update');
             });
@@ -100,6 +118,8 @@ Route::middleware('auth')->group(function (){
                 Route::get('/', [SpecieClassController::class, 'index'])->name('specieclasses.index');
                 Route::get('create', [SpecieClassController::class, 'create'])->name('specieclasses.create');
                 Route::post('/', [SpecieClassController::class, 'store'])->name('specieclasses.store');
+                Route::get('/apiSearch', [SpecieClassController::class, 'apiSearch'])->name('specieclasses.apiSearch');
+                Route::get('/apiGetByType', [SpecieClassController::class, 'apiGetByType'])->name('specieclasses.apiGetByType');
                 Route::get('/{id}', [SpecieClassController::class, 'edit'])->name('specieclasses.edit');
                 Route::post('/update/{id}', [SpecieClassController::class, 'update'])->name('specieclasses.update');
             });
@@ -109,6 +129,7 @@ Route::middleware('auth')->group(function (){
                 Route::get('/', [SpecieFamilyController::class, 'index'])->name('speciefamilies.index');
                 Route::get('create', [SpecieFamilyController::class, 'create'])->name('speciefamilies.create');
                 Route::post('/', [SpecieFamilyController::class, 'store'])->name('speciefamilies.store');
+                Route::get('/apiGetByClass', [SpecieFamilyController::class, 'apiGetByClass'])->name('speciefamilies.apiGetByClass');
                 Route::get('/{id}', [SpecieFamilyController::class, 'edit'])->name('speciefamilies.edit');
                 Route::post('/update/{id}', [SpecieFamilyController::class, 'update'])->name('speciefamilies.update');
             });
@@ -156,3 +177,7 @@ Route::get("/generate-password", function (Request $request) {
     return Hash::make($password);
 });
 
+
+Route::view('/oop', 'doc_templates.oop');
+Route::view('/oop-dashboard', 'doc_templates.oop-dashboard');
+Route::view('/oop-form', 'doc_templates.oop-form');

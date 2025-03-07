@@ -25,7 +25,7 @@ class PermitteeController extends Controller
      */
     public function index()
     {
-        $permittees = User::select('users.id', 'users.username', 'users.email', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name', 'personal_infos.gender', 'personal_infos.email', 'personal_infos.contact_no', 'personal_infos.barangay_id', 'barangays.barangay_name', 'municipalities.municipality_name', 'provinces.province_name')
+        $permittees = User::select('users.id', 'users.username', 'users.email', 'users.is_active_user', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name', 'personal_infos.gender', 'personal_infos.email', 'personal_infos.contact_no', 'personal_infos.barangay_id', 'barangays.barangay_name', 'municipalities.municipality_name', 'provinces.province_name')
             ->with(['wildlifePermits' => function ($wildlifePermits) {
                 $wildlifePermits->select('id', 'user_id', 'permit_number', 'permit_type', 'valid_from', 'valid_to', 'date_of_issue', 'status');
             }])
@@ -252,14 +252,14 @@ class PermitteeController extends Controller
 
     public function ajaxUpdateStatus(Request $request)
     {
-        $permittee_id = Crypt::decrypt($request->permittee_id);
-        $is_active_permittee = $request->is_active_permittee;
+        $user_id = Crypt::decrypt($request->permittee_id);
+        $is_active_user= $request->is_active_permittee;
+        $update = User::find($user_id)->update(['is_active_user'=>$is_active_user]);
 
-        $update = Permittee::find($permittee_id)->update(['is_active_permittee'=>$is_active_permittee]);
         if ($update) {
-            return Response()->json(['success'=>'Updated']);
+            return Response()->json(['success'=>'Updated', 200]);
         } else {
-           return Response()->json(['failed'=>'Failed']); 
+           return Response()->json(['failed'=>'Failed'], 500); 
         }
     }
 }

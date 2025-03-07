@@ -1,10 +1,10 @@
 @extends('layouts.master')
 
 @section('title')
-{{$title}}
+Permittees
 @endsection
 
-@section('active-myapplication')
+@section('active-myapplications')
 active
 @endsection
 
@@ -20,37 +20,24 @@ active
     <div class="card mb-4">
     	<div class="card-header">
             <div class="float-end">
-                <a href="{{ route('myapplication.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
+                <a href="{{ route('myapplication.index', $ltp_application->id) }}" class="btn btn-sm btn-secondary"><i class="fas fa-chevron-left"></i> Back</a>
             </div>
-            <i class="fas fa-plus-square me-1"></i>
-            Create New Application
+            <i class="fas fa-edit me-1"></i>
+            Edit Application
         </div>
         <div class="card-body">
-            @if(session('failed'))
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                <strong>{{ session('failed') }}</strong>
-            </div>
-            @endif
-
-            @if(session('success'))
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                <strong>{{ session('success') }}</strong>
-            </div>
-            @endif
-        	<form id="form_create" method="POST" action="{{ route('myapplication.store') }}" onsubmit="disableSubmitButton('btn_save');">
-        	    @csrf
-                <input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->id}}">
+            <form action="{{ route('myapplication.update', $ltp_application->id) }}" method="POST">
+                @csrf
+                @method('PATCH')
                 <div class="row mb-2">
                     <div class="col-md-7">
                         <div class="form-group">
                             <label>Date of Transport [on or before] <span class="text-danger">*</span>:</label>
-                            <input type="date" name="transport_date" id="transport_date" class="form-control" onchange="addOneMonth('transport_date', 'validity_result');" required>
+                            <input type="date" name="transport_date" id="transport_date" class="form-control" value="{{ $ltp_application->transport_date }}"  onchange="addOneMonth('transport_date', 'validity_result');" required>
                             <h5 class="mt-2">Validity: <span id="validity_result"></span></h5>
                         </div>
                     </div>
-                    <div class="col-md-7">
+                    {{-- <div class="col-md-7">
                         <label>Place of Transport <span class="text-danger">*</span>:</label>
                         <div class="row">
                             <div class="col-md-3 mb-2">
@@ -63,10 +50,10 @@ active
                                 <input type="text" name="country" id="country" class="form-control" required placeholder="Country">
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-md-7">
                         <label>Purpose <span class="text-danger">*</span>:</label>
-                        <textarea class="form-control" name="purpose" id="purpose" required placeholder="Purpose"></textarea>
+                        <textarea class="form-control" name="purpose" id="purpose" required placeholder="Purpose">{{ $ltp_application->purpose }}</textarea>
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -95,6 +82,21 @@ active
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($ltp_application_species as $key => $species)
+                                    <tr id="row_{{$species->specie->id}}">
+                                        <td align="center">{{ $key+1 }}</td>
+                                        <td align="center">{{ $species->specie->local_name }}</td>
+                                        <td align="center">{{ $species->specie->specie_name }}</td>
+                                        <td align="center">{{ $species->specie->family->family }}</td>
+                                        <td align="center">
+                                            <input type="hidden" name="specie_id[]" id="specie_id" value="{{ $species->specie->id }}" />
+                                            <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" max="{{ $species->permitteeSpecies->first()->quantity }}" value="{{ $species->quantity }}" required />
+                                        </td>
+                                        <td align="center">
+                                            <a href="#" class="btn btn-sm mx-1" onclick="removeAdded({{ $species->specie->id }}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -107,10 +109,9 @@ active
                     </div>
                 </div>
                 <div class="float-end mt-4">
-                    <button type="button" id="btn_preview" class="btn btn-primary btn-block mr-1"><i class="fas fa-eye"></i> Preview</button>
                     <button type="submit" id="btn_save" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Save</button>
                 </div>
-        	</form>
+            </form>
         </div>
     </div>
 </div>
@@ -119,6 +120,12 @@ active
 @section('script-extra')
 <script type="text/javascript">
     // Function to calculate and update the sum
+    $(document).ready(function() {
+        updateDynamicSum('quantity', 'txt_total');
+        addOneMonth('transport_date', 'validity_result');
+
+    });
+
     function updateDynamicSum(fld_class, result_element) {
         let sum = 0;
         const inputs = document.querySelectorAll('.'+fld_class); // Select all inputs with the class "dynamic-input"
@@ -247,5 +254,3 @@ active
     });
 </script>
 @endsection
-
-@include('components.toast')

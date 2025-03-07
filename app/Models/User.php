@@ -36,6 +36,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    const TYPE_ADMIN  = "admin";
+    const TYPE_INTERNAL  = "internal";
+    const TYPE_PERMITTEE = "permittee";
     /**
      * Get the attributes that should be cast.
      *
@@ -52,5 +55,13 @@ class User extends Authenticatable
     public function wildlifePermits()
     {
         return $this->hasMany(Permittee::class, 'user_id');
+    }
+
+    public function wcp(){
+        return $this->wildlifePermits()->where('permit_type', Permittee::PERMIT_TYPE_WCP)->first();
+    }
+
+    public function wfp(){
+        return $this->wildlifePermits()->where('permit_type', Permittee::PERMIT_TYPE_WFP)->first();
     }
 }
