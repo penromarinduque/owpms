@@ -40,7 +40,7 @@ active
                 <strong>{{ session('success') }}</strong>
             </div>
             @endif
-        	<form method="POST" action="{{ route('permittees.store') }}" onsubmit="disableSubmitButton('btn_save');">
+        	<form method="POST" action="{{ route('permittees.store') }}" onsubmit="disableSubmitButton('btn_save');" enctype="multipart/form-data">
         	@csrf
                 <h5>Personal Infomation</h5>
         		<div class="row mb-3">
@@ -183,6 +183,14 @@ active
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
+
+                    <div class="col-sm-2">
+                        <label for="wfp_document">Document</label>
+                        <input type="file" accept="application/pdf" class="form-control" name="wfp_document" id="wfp_document" placeholder="WFP Document" value="{{ old('wfp_document') }}">
+                        @error('wfp_document')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
                 </div>
                 <hr>
                 <h5>Wildlife Collection Permit Details</h5>
@@ -213,6 +221,13 @@ active
                         <label for="date_of_issue_wcp">Date of Issue<b class="text-danger">*</b></label>
                         <input type="date" class="form-control" name="date_of_issue_wcp" id="date_of_issue_wcp" placeholder="Date of Issue" value="{{ old('date_of_issue_wcp') }}">
                         @error('date_of_issue_wcp')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="wcp_document">Document</label>
+                        <input type="file" accept="application/pdf" class="form-control" name="wcp_document" id="wcp_document" placeholder="WCP Document" value="{{ old('wcp_document') }}">
+                        @error('wcp_document')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>

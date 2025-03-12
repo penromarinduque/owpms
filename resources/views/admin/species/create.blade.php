@@ -88,6 +88,8 @@ active
                         <label for="threatened">Threatened</label> &nbsp;
                         <input type="radio" value="vulnerable" id="vulnerable" name="conservation_status">
                         <label for="vulnerable">Vulnerable</label> &nbsp;
+                        <input type="radio" value="endangered" id="endangered" name="conservation_status">
+                        <label for="endangered">Endangered</label> &nbsp;
                         @error('conservation_status')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                 	<div class="col-sm-4"></div>

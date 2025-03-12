@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class LtpApplication extends Model
 {
@@ -36,5 +38,21 @@ class LtpApplication extends Model
 
     public function permittee(){
         return $this->belongsTo(Permittee::class);
+    }
+
+    public static function validateSpecies($id) {
+        $statuses = LtpApplicationSpecie::where("ltp_application_id", $id)
+            ->leftJoin('species', 'species.id', '=', 'ltp_application_species.specie_id')
+            ->pluck('species.conservation_status')
+            ->toArray();
+
+        $has_endangered = collect($statuses)->intersect(['threatened', 'vulnerable', 'endangered'])->isNotEmpty();
+        $has_no_endangered = in_array('rare', $statuses);
+
+        if($has_endangered && $has_no_endangered) {
+            return false;
+        }
+
+        return true;
     }
 }

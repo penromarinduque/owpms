@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LtpApplicationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SpecieClassController;
 use App\Http\Controllers\SpecieFamilyController;
@@ -60,6 +61,7 @@ Route::middleware('auth')->group(function (){
         Route::get('create', [PermitteeController::class, 'create'])->name('permittees.create');
         Route::post('/store', [PermitteeController::class, 'store'])->name('permittees.store');
         Route::get('/show/{id}', [PermitteeController::class, 'show'])->name('permittees.show');
+        Route::post('/upload-permit/{id}', [PermitteeController::class, 'uploadPermit'])->name('permittees.uploadpermit');
         Route::get('/{id}', [PermitteeController::class, 'edit'])->name('permittees.edit');
         Route::post('/update/{id}', [PermitteeController::class, 'update'])->name('permittees.update');
         Route::post('/ajaxupdatestatus', [PermitteeController::class, 'ajaxUpdateStatus'])->name('permittees.ajaxupdatestatus');
@@ -90,6 +92,7 @@ Route::middleware('auth')->group(function (){
     // Client Application
     Route::prefix('myapplication')->group(function () {
         Route::get('/', [MyApplicationController::class, 'index'])->name('myapplication.index');
+        
         Route::get('create', [MyApplicationController::class, 'create'])->name('myapplication.create');
         Route::get('edit/{id}', [MyApplicationController::class, 'edit'])->name('myapplication.edit');
         Route::patch('update/{id}', [MyApplicationController::class, 'update'])->name('myapplication.update');
@@ -98,6 +101,12 @@ Route::middleware('auth')->group(function (){
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
         Route::post('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
+    });
+
+
+    // LTP Applications
+    Route::prefix('ltpapplication')->group(function () {
+        Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index');
     });
 
     // Maintenance

@@ -242,16 +242,26 @@ class MyApplicationController extends Controller
 
     public function submit(string $id) {
         return DB::transaction(function () use ($id) {
-            $ltp_application = LtpApplication::find($id);
+            $ltp_application = LtpApplication::find(Crypt::decryptString($id));
 
             if(!$ltp_application) {
                 return redirect()->back()->with('error', 'Application not found!');
             }
+
+            if(!LtpApplication::validateSpecies($ltp_application->id)) {
+                return redirect()->back()->with('error', 'Application cannot have both endangered and non-endangered species! Endagered species must be submitted separately.');
+            }
+
+            if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , Auth::user()->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , Auth::user()->id)) {
+                return redirect()->back()->with('error', 'Your WCP and/or WFP permit has expired or is not valid. Please renew your permit before submitting your application.');
+            }
+
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();
             
             LtpApplicationProgress::create([
                 "ltp_application_id" => $ltp_application->id,
+                "user_id" => Auth::user()->id,
                 "status" => LtpApplicationProgress::STATUS_SUBMITTED
             ]);
 

@@ -1,24 +1,25 @@
 @extends('layouts.master')
 
 @section('title')
-Permittees
+Add New LTP Requirement
 @endsection
 
-@section('active-myapplications')
+@section('active-applications')
 active
 @endsection
 
 @php
-    $status = request('status') ?? 'draft';
+    $status = request('status') ?? 'submitted';
 @endphp
 
-@section('content')
+@section('content') 
 <div class="container-fluid px-4">
     <h1 class="mt-4">{{$title}}</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
-        <li class="breadcrumb-item active">{{$title}}</li>
+        <li class="breadcrumb-item"><a href="{{ url('') }}">Dashboard</a></li>
+        <li class="breadcrumb-item">Applications</li>
     </ol>
+
     <div class="card mb-4">
     	<div class="card-header">
             <div class="float-end">
@@ -42,9 +43,6 @@ active
             </div>
             @endif
             <ul class="nav nav-tabs">
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'draft' ? 'active' : '' }}" aria-current="page" href="?status=draft">Draft</a>
-              </li>
               <li class="nav-item">
                 <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">Submitted</a>
               </li>
@@ -103,57 +101,4 @@ active
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="submitApplicationModal">
-    <div class="modal-dialog">
-        <form action="" method="POST" class="modal-content">
-            @csrf
-            <div class="modal-header">
-                <h4 class="modal-title">Submit Application</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to submit this application? This action cannot be undone</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </form >
-    </div>
-</div>
-
-@include('components.toast')
-@include('components.confirmDelete')
 @endsection
-
-@section('script-extra')
-<script type="text/javascript">
-    function ajaxUpdateStatus(chkbox_id, permittee_id) {
-        var chkd = $('#'+chkbox_id).is(':checked');
-        var stat = 0;
-        if (chkd) {
-            stat = 1;
-        }
-        // console.log(stat);
-        $.ajax({
-            type: 'POST',
-            url: "{{ route('permittees.ajaxupdatestatus') }}",
-            data: {permittee_id:permittee_id, is_active_permittee:stat},
-            success: function (result){
-                // console.log(result);
-            },
-            error: function (result){
-                // console.log(result);
-                alert('Oops! Something went wrong. Please reload the page and try again.');
-            }
-        });
-    }
-
-    function showSubmitApplicationModal(action){
-        $('#submitApplicationModal form').attr('action', action);
-        $('#submitApplicationModal').modal('show');
-    }
-</script>
-@endsection
-

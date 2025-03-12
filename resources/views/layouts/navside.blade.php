@@ -32,6 +32,18 @@
                     <a class="nav-link" href="">Issued OR</a>
                 </nav>
             </div>
+
+            {{-- APPLICATIONS --}}
+            <a class="nav-link collapsed @yield('active-applications')" href="#" data-bs-toggle="collapse" data-bs-target="#adminApplicationsCollapse" >
+                <div class="sb-nav-link-icon"><i class="fas fa-file-import"></i></div>
+                LTP Applications
+                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="adminApplicationsCollapse" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" href="{{ route('ltpapplication.index') }}">Submitted</a>
+                </nav>
+            </div>
             @endif
 
             @if(Auth::user()->usertype=='permittee')
@@ -90,10 +102,10 @@
             </a>
             <div class="collapse @yield('species-show')" id="collapseSpecies" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link @yield('active-species')" href="{{ route('species.index') }}">List of Species</a>
                     <a class="nav-link @yield('active-types')" href="{{ route('specietypes.index') }}">Wildlife Types</a>
                     <a class="nav-link @yield('active-classes')" href="{{ route('specieclasses.index') }}">Class</a>
                     <a class="nav-link @yield('active-families')" href="{{ route('speciefamilies.index') }}">Family</a>
+                    <a class="nav-link @yield('active-species')" href="{{ route('species.index') }}">List of Species</a>
                 </nav>
             </div>
             <a class="nav-link @yield('active-ltprequirements')" href="{{ route('ltprequirements.index') }}">
