@@ -42,16 +42,29 @@ Application Requirements
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($requirements as $req)
+                        @forelse ($requirements as $req)
                             <tr>
                                 <td>{{ $req->requirement_name }}</td>
                                 <td>{{ $req->is_mandatory ? 'YES' : 'NO' }}</td>
-                                <td></td>
+                                <td>
+                                    @php
+                                        $attachment = $attachments->firstWhere('ltp_requirement_id', $req->id);
+                                    @endphp
+                                    @if ($attachment)
+                                        <a href="{{ asset('storage/'.$attachment->file_path) }}" target="_blank"><i class="fas fa-eye"></i> View Attachment</a>
+                                    @else
+                                        <span class="text-secondary">No Uploaded Attachment</span> 
+                                    @endif
+                                </td>
                                 <td>
                                     <button class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-title="Upload Requirement" onclick="showUploadModal('{{ $req->id }}')"><i class="fas fa-upload"></i></button>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No record found.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -61,7 +74,7 @@ Application Requirements
 
 <div class="modal fade" id="uploadModal">
     <div class="modal-dialog">
-        <form action="{{ route('myapplication.upload-requirement') }}" method="POST" class="modal-content" enctype="multipart/form-data">
+        <form action="{{ route('myapplication.upload-requirement', Crypt::encryptString($id)) }}" method="POST" class="modal-content" enctype="multipart/form-data">
             @csrf
             <div class="modal-header">
                 <h4 class="modal-title">Upload Document</h4>

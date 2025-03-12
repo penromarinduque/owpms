@@ -18,12 +18,20 @@ class LtpApplicationRequirementController extends Controller
         if($request->hasFile('document_file')) {
             $file = $request->file('document_file');
             $path = $file->store('requirements');
-            LtpApplicationAttachment::create([
-                "ltp_application_id" => $request->application_id,
-                "ltp_requirement_id" => $request->requirement_id,
-                "file_path" => $path
-            ]);
+            $attachment = LtpApplicationAttachment::where('ltp_application_id', $request->application_id)->where('ltp_requirement_id', $request->requirement_id)->first();
+            if($attachment) {
+                $attachment->file_path = $path;
+                $attachment->save();
+                return redirect()->back()->with('success', 'Successfully saved!');
+            }
+            else {
+                LtpApplicationAttachment::create([
+                    "ltp_application_id" => $request->application_id,
+                    "ltp_requirement_id" => $request->requirement_id,
+                    "file_path" => $path
+                ]);
+            }
         }
-        return $request;
+        return redirect()->back()->with('success', 'Successfully saved!');
     }
 }

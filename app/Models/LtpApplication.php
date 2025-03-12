@@ -55,4 +55,16 @@ class LtpApplication extends Model
 
         return true;
     }
+
+    public static function validateRequirements($id) {
+        $attachments = LtpApplicationAttachment::where("ltp_application_id", $id)
+            ->pluck("ltp_requirement_id")
+            ->toArray();
+    
+        $requirementsExist = LtpRequirement::where("is_active_requirement", 1)
+            ->whereNotIn('id', $attachments)
+            ->exists(); 
+    
+        return !$requirementsExist;
+    }
 }
