@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LtpApplicationController;
+use App\Http\Controllers\LtpApplicationRequirementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SpecieClassController;
 use App\Http\Controllers\SpecieFamilyController;
@@ -98,6 +99,10 @@ Route::middleware('auth')->group(function (){
         Route::patch('update/{id}', [MyApplicationController::class, 'update'])->name('myapplication.update');
         Route::post('submit/{id}', [MyApplicationController::class, 'submit'])->name('myapplication.submit');
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
+        Route::prefix('{id}/requirements')->group(function () {
+            Route::get('', [MyApplicationController::class, 'requirements'])->name('myapplication.requirements');
+            Route::post('upload', [LtpApplicationRequirementController::class, 'store'])->name('myapplication.upload-requirement');
+        });
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
         Route::post('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');

@@ -10,6 +10,7 @@ use App\Models\Permittee;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Models\LtpApplicationSpecie;
+use App\Models\LtpRequirement;
 use App\Models\PermitteeSpecie;
 use App\Models\Specie;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -267,5 +268,21 @@ class MyApplicationController extends Controller
 
             return Redirect::route('myapplication.index')->with('success', 'Application successfully submitted!');
         });
+    }
+
+    public function requirements(string $id) {
+        $id = Crypt::decryptString($id);
+
+        $requirements = LtpRequirement::where([
+            "is_active_requirement" => 1
+        ])
+        ->get();
+
+
+        return view('permittee.myapplication.requirements', [
+            "title" => "Application Requirements",
+            "id" => $id,
+            "requirements" => $requirements
+        ]);
     }
 }

@@ -90,6 +90,7 @@ active
                                     @if ($status == 'draft')                                        
                                         <a href="#" class="btn btn-sm btn-danger mb-2" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete"><i class="fa-solid fa-trash"></i></a>
                                     @endif
+                                    <a href="{{ route('myapplication.requirements', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Requirements"><i class="fa-solid fa-file"></i></a>
                                 </td>
                             </tr>
                         @empty
