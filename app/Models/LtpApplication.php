@@ -13,6 +13,11 @@ class LtpApplication extends Model
 
     protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature'];
 
+    protected $casts = [
+        'application_date' => 'date',
+        'transport_date' => 'date',
+    ];
+
     // 'draft','submitted','under-review','returned','resubmitted','accepted','payment-in-process','paid','for-inspection','approved'
     const STATUS_DRAFT = 'draft';
     const STATUS_SUBMITTED = 'submitted';

@@ -115,6 +115,7 @@ Route::middleware('auth')->group(function (){
     // LTP Applications
     Route::prefix('ltpapplication')->group(function () {
         Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index');
+        Route::get('review/{id}', [LtpApplicationController::class, 'review'])->name('ltpapplication.review');
     });
 
     // Maintenance

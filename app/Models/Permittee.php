@@ -99,6 +99,13 @@ class Permittee extends Model implements Auditable
         return $this->hasOne(WildlifeFarm::class, 'permittee_id', 'id');
     }
 
+    public function getValidity(){
+        if($this->valid_to < Carbon::now()) {
+            return 'Expired';
+        }
+        return 'Valid';
+    }
+
     public static function validatePermit($type, $user_id){ 
         $permit = Permittee::where('user_id', $user_id)->where('permit_type', $type);
         if($permit->first()->valid_to < Carbon::now()) {
@@ -108,5 +115,7 @@ class Permittee extends Model implements Auditable
         return true;
 
     }
+
+
 
 }
