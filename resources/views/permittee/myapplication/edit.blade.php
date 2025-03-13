@@ -207,50 +207,7 @@ active
         });
 
         // Preview
-        document.getElementById('btn_preview').addEventListener('click', function () {
-            event.preventDefault(); // Prevent form submission
-            
-            // Collect all quantity fields
-            const quantities = document.querySelectorAll('input[name="quantity[]"]');
-            let valid = true;
 
-            // Check each quantity field
-            quantities.forEach((input) => {
-                if (!input.value || input.value <= 0) {
-                    valid = false;
-                    input.classList.add('border-red-500'); // Highlight invalid field
-                } else {
-                    input.classList.remove('border-red-500');
-                }
-            });
-
-            if (!valid) {
-                alert('Please ensure all Quantity fields are valid (greater than 0).');
-                return;
-            }
-
-            // If valid, proceed with AJAX
-            const formData = new FormData(document.getElementById('form_create'));
-
-            fetch('{{ route('myapplication.preview') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: formData,
-            })
-            .then(response => response.text())
-            .then(html => {
-                const previewWindow = window.open('', '_blank');
-                previewWindow.document.open();
-                previewWindow.document.write(html);
-                previewWindow.document.close();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Preview failed.');
-            });
-        });
     });
 </script>
 @endsection
