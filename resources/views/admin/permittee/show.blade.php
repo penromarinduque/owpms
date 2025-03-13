@@ -55,9 +55,40 @@ active
                             @endphp
                             <td><span class="badge bg-{{ $status_color[$permittee->status] }}">{{ ucfirst($permittee->status) }}</span></td>
                         </tr>
+                        <tr>
+                            <th >Permit File</th>
+                            <td>
+                                <a href="{{ Storage::url($permittee->document) }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                <a href="#" data-bs-target="#uploadPermitModal" data-bs-toggle="modal" class="btn btn-sm btn-success" >Upload</a>
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadPermitModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('permittees.uploadpermit', Crypt::encryptString($permittee->id)) }}" method="POST" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h4 class="modal-title">Upload Permit</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Permit File</label>
+                        <input type="file" accept="application/pdf" class="form-control" name="permit_file" placeholder="Permit File" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>  
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

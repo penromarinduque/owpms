@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class Permittee extends Model implements Auditable
     const PERMIT_TYPE_WCP = 'wcp';
     const PERMIT_TYPE_WFP = 'wfp';
 
-    protected $fillable = ['user_id', 'permit_number', 'permit_type', 'valid_from', 'valid_to', 'date_of_issue', 'status'];
+    protected $fillable = ['user_id', 'permit_number', 'permit_type', 'valid_from', 'valid_to', 'date_of_issue', 'status', 'document'];
     
     protected $dates = ['valid_from', 'valid_to'];
     
@@ -96,6 +97,16 @@ class Permittee extends Model implements Auditable
 
     public function wildlifeFarm(){
         return $this->hasOne(WildlifeFarm::class, 'permittee_id', 'id');
+    }
+
+    public static function validatePermit($type, $user_id){ 
+        $permit = Permittee::where('user_id', $user_id)->where('permit_type', $type);
+        if($permit->first()->valid_to < Carbon::now()) {
+            $permit->update(['status' => 'expired']);
+            return false;
+        }
+        return true;
+
     }
 
 }

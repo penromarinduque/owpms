@@ -13,7 +13,11 @@ class Specie extends Model implements Auditable
 
     protected $fillable = ['specie_type_id', 'specie_class_id', 'specie_family_id', 'specie_name', 'is_present', 'local_name', 'wing_span', 'conservation_status', 'color_description', 'food_plant', 'is_active_specie'];
 
-        
+    const C_STATUS_RARE = "rare";
+    const C_STATUS_THREATENED = "threatened";
+    const C_STATUS_VULNERABLE = "vulnerable";
+    const C_STATUS_ENDANGERED = "endangered";
+
     public function family(){
         return $this->belongsTo(SpecieFamily::class, 'specie_family_id', 'id');
     }

@@ -61,42 +61,36 @@ class PermitteeController extends Controller
         $_user = new User;
         $_personalinfo = new PersonalInfo;
 
+        $request->validate([
+            'last_name' => 'required|max:150',
+            'first_name' => 'required|max:150',
+            // 'middle_name' => 'required|max:150',
+            'gender' => 'required',
+            'contact_no' => 'required',
+            'barangay_id' => 'required',
+            'email' => 'required|max:150|unique:personal_infos',
+            'username' => 'required|max:150|unique:users',
+            'password' => 'required',
+            'farm_name' => 'required',
+            'location' => 'required',
+            'size' => 'required',
+            'height' => 'required',
+            // 'permit_type_wfp' => 'required',
+            'permit_number_wfp' => 'required',
+            'valid_from_wfp' => 'required',
+            'valid_to_wfp' => 'required',
+            'date_of_issue_wfp' => 'required',
+            // 'permit_type_wcp' => 'required',
+            'permit_number_wcp' => 'required',
+            'valid_from_wcp' => 'required',
+            'valid_to_wcp' => 'required',
+            'date_of_issue_wcp' => 'required',
+        ], [
+            'barangay_id.required' => 'The barangay/municipality field is required.'
+        ]);
+
         DB::beginTransaction();
         try {
-            $validator = Validator::make($request->all(), [
-                'last_name' => 'required|max:150',
-                'first_name' => 'required|max:150',
-                // 'middle_name' => 'required|max:150',
-                'gender' => 'required',
-                'contact_no' => 'required',
-                'barangay_id' => 'required',
-                'email' => 'required|max:150|unique:personal_infos',
-                'username' => 'required|max:150|unique:users',
-                'password' => 'required',
-                'farm_name' => 'required',
-                'location' => 'required',
-                'size' => 'required',
-                'height' => 'required',
-                // 'permit_type_wfp' => 'required',
-                'permit_number_wfp' => 'required',
-                'valid_from_wfp' => 'required',
-                'valid_to_wfp' => 'required',
-                'date_of_issue_wfp' => 'required',
-                // 'permit_type_wcp' => 'required',
-                'permit_number_wcp' => 'required',
-                'valid_from_wcp' => 'required',
-                'valid_to_wcp' => 'required',
-                'date_of_issue_wcp' => 'required',
-            ], [
-                'barangay_id.required' => 'The barangay/municipality field is required.'
-            ]);
-
-            if ($validator->fails()) {
-                return redirect('/permittees/create')
-                            ->withErrors($validator)
-                            ->withInput();
-            }
-
             $user = $_user->create([
                 'email' => $request->input('email'),
                 'username' => $request->input('username'),
@@ -105,6 +99,7 @@ class PermitteeController extends Controller
                 'is_active_user' => 1,
             ]);
 
+            
             if ($user) {
                 $_personalinfo->user_id = $user->id;
                 $_personalinfo->last_name = $request->input('last_name');
@@ -126,14 +121,21 @@ class PermitteeController extends Controller
                     'status' => 'valid'
                 ]);
 
+                if($request->hasFile('wfp_document')) {
+                    $path = $request->file('wfp_document')->store('public/wfp');
+                    $permittee_wfp->document = $path;
+                    $permittee_wfp->save();
+                }
+
                 if ($permittee_wfp) {
                     $farm = WildlifeFarm::create([
                         'permittee_id' => $permittee_wfp->id, 
                         'farm_name' => $request->farm_name, 
                         'location' => $request->location, 
-                        'size' => $request->size, 
+                        'size' => $request->size,
                         'height' => $request->height
                     ]);
+
                 }
 
                 $permittee_wcp = Permittee::create([
@@ -145,6 +147,12 @@ class PermitteeController extends Controller
                     'date_of_issue' => $request->date_of_issue_wcp, 
                     'status' => 'valid'
                 ]);
+
+                if($request->hasFile('wcp_document')) {
+                    $path = $request->file('wcp_document')->store('wcp');
+                    $permittee_wcp->document = $path;
+                    $permittee_wcp->save();
+                }
 
                 // Generate a signed URL for activation
                 $activationLink = URL::temporarySignedRoute(
@@ -248,6 +256,20 @@ class PermitteeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function uploadPermit(string $id, Request $request){
+        $permittee_id = Crypt::decryptString($id);
+
+        $permittee = Permittee::find($permittee_id);
+
+        if ($request->hasFile('permit_file')) {
+            $path = $request->file('permit_file')->store($permittee->permit_type);
+            $permittee->document = $path;
+            $permittee->save();
+        }
+
+        return redirect()->back()->with('success', 'Permit Successfully saved!');
     }
 
     public function ajaxUpdateStatus(Request $request)

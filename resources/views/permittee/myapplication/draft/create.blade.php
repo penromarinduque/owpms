@@ -107,7 +107,6 @@ active
                     </div>
                 </div>
                 <div class="float-end mt-4">
-                    <button type="button" id="btn_preview" class="btn btn-primary btn-block mr-1"><i class="fas fa-eye"></i> Preview</button>
                     <button type="submit" id="btn_save" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Save</button>
                 </div>
         	</form>
@@ -199,8 +198,11 @@ active
             }
         });
 
+<<<<<<< HEAD
         // Preview
      
+=======
+>>>>>>> e59567a50d4395b41e4612f6b9a716d9abff052d
     });
 </script>
 @endsection
