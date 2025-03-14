@@ -16,7 +16,6 @@ active
 <div class="container-fluid px-4">
     <h1 class="mt-4">{{$title}}</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ url('') }}">Dashboard</a></li>
         <li class="breadcrumb-item">Applications</li>
     </ol>
 
@@ -26,7 +25,7 @@ active
                 <a href="{{ route('myapplication.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus-square"></i> Create New</a>
             </div>
             <i class="fas fa-list me-1"></i>
-            List of My Applications
+            LTP Applications
         </div>
         <div class="card-body">
             @if(session('failed'))
@@ -47,7 +46,7 @@ active
                 <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">Submitted</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'under_review' ? 'active' : '' }}" href="?status=under_review">Under Review</a>
+                <a class="nav-link {{ $status == 'under-review' ? 'active' : '' }}" href="?status=under-review">Under Review</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">Approved</a>
@@ -79,14 +78,10 @@ active
                                 <td class="align-middle">{{ format_application_status($ltp_application->application_status) }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
-                                    @if ($status == 'draft')                                        
-                                        <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit"><i class="fas fa-pen"></i></a>
-                                    @endif
-                                    @if ($status == 'draft')
-                                        <a href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Submit"><i class="fa-solid fa-cloud-arrow-up"></i></a>
-                                    @endif
-                                    @if ($status == 'draft')                                        
-                                        <a href="#" class="btn btn-sm btn-danger mb-2" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete"><i class="fa-solid fa-trash"></i></a>
+                                    @if ($status == 'submitted')
+                                        <a href="#" onclick="showConfirmModal('{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}', 'Viewing this application will mark it as Under Review. Are you sure you want to continue?', 'Confirm Review')" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                    @else
+                                        <a href="{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
                                 </td>
                             </tr>
@@ -101,4 +96,6 @@ active
         </div>
     </div>
 </div>
+
+@include('components.confirm')
 @endsection

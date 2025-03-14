@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\User;
 use App\Models\Permittee;
 use App\Models\LtpApplication;
+use App\Models\LtpApplicationAttachment;
 use App\Models\LtpApplicationProgress;
 use App\Models\LtpApplicationSpecie;
 use App\Models\LtpRequirement;
@@ -28,7 +29,9 @@ class MyApplicationController extends Controller
         $ltp_applications = LtpApplication::where([
             'permittee_id' => Auth::user()->wcp()->id,
             'application_status' => $status
-        ])->paginate(50);
+        ])
+        ->orderBy('created_at', 'DESC')
+        ->paginate(50);
         return view('permittee.myapplication.index', [
             'title' => 'My Applications',
             "ltp_applications" => $ltp_applications
@@ -249,12 +252,17 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application not found!');
             }
 
+            // Compliance Checks
             if(!LtpApplication::validateSpecies($ltp_application->id)) {
                 return redirect()->back()->with('error', 'Application cannot have both endangered and non-endangered species! Endagered species must be submitted separately.');
             }
 
             if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , Auth::user()->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , Auth::user()->id)) {
                 return redirect()->back()->with('error', 'Your WCP and/or WFP permit has expired or is not valid. Please renew your permit before submitting your application.');
+            }
+
+            if(!LtpApplication::validateRequirements($ltp_application->id)) {
+                return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
@@ -278,11 +286,16 @@ class MyApplicationController extends Controller
         ])
         ->get();
 
+        $attachments = LtpApplicationAttachment::where([
+            "ltp_application_id" => $id
+        ])
+        ->get();
 
         return view('permittee.myapplication.requirements', [
             "title" => "Application Requirements",
             "id" => $id,
-            "requirements" => $requirements
+            "requirements" => $requirements,
+            "attachments" => $attachments
         ]);
     }
 }

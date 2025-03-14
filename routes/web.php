@@ -99,19 +99,23 @@ Route::middleware('auth')->group(function (){
         Route::patch('update/{id}', [MyApplicationController::class, 'update'])->name('myapplication.update');
         Route::post('submit/{id}', [MyApplicationController::class, 'submit'])->name('myapplication.submit');
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
-        Route::prefix('{id}/requirements')->group(function () {
-            Route::get('', [MyApplicationController::class, 'requirements'])->name('myapplication.requirements');
-            Route::post('upload', [LtpApplicationRequirementController::class, 'store'])->name('myapplication.upload-requirement');
-        });
+        
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
         Route::post('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
+    });
+
+    // Application Requirements
+    Route::prefix('app-requirements/{id}')->group(function () {
+        Route::get('', [MyApplicationController::class, 'requirements'])->name('myapplication.requirements');
+        Route::post('upload', [LtpApplicationRequirementController::class, 'store'])->name('myapplication.upload-requirement');
     });
 
 
     // LTP Applications
     Route::prefix('ltpapplication')->group(function () {
         Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index');
+        Route::get('review/{id}', [LtpApplicationController::class, 'review'])->name('ltpapplication.review');
     });
 
     // Maintenance

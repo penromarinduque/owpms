@@ -64,4 +64,8 @@ class User extends Authenticatable
     public function wfp(){
         return $this->wildlifePermits()->where('permit_type', Permittee::PERMIT_TYPE_WFP)->first();
     }
+
+    public function personalInfo(){
+        return $this->hasOne(PersonalInfo::class);
+    }
 }
