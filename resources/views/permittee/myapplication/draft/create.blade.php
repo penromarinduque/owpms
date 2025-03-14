@@ -198,11 +198,6 @@ active
             }
         });
 
-<<<<<<< HEAD
-        // Preview
-     
-=======
->>>>>>> e59567a50d4395b41e4612f6b9a716d9abff052d
     });
 </script>
 @endsection
