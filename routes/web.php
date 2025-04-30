@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 Route::get('/', function () {
-    return view('auth.login');
+    return view('welcome');
 });
 
 // Auth
@@ -192,7 +192,15 @@ Route::get('/test-email', function () {
 
 Route::get("/generate-password", function (Request $request) {
     $password = $request->password;
-    return Hash::make($password);
+
+    if (!$password) {
+        return response()->json(['error' => 'Please provide a password.'], 400);
+    }
+
+    return response()->json([
+        'password' => $password,
+        'hash' => Hash::make($password),
+    ]);
 });
 
 
