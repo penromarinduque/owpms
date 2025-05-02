@@ -64,28 +64,10 @@
                         <div class="collapse navbar-collapse" id="navbarsExample04">
                            <ul class="navbar-nav mr-auto">
                               <li class="nav-item active">
-                                 <a class="nav-link" href="index.html">Home</a>
-                              </li>
-                              {{-- <li class="nav-item">
-                                 <a class="nav-link" href="about.html">About</a>
-                              </li>
-                              <li class="nav-item">
-                                 <a class="nav-link" href="computer.html">Computer</a>
-                              </li>
-                              <li class="nav-item">
-                                 <a class="nav-link" href="laptop.html">Laptop</a>
-                              </li>
-                              <li class="nav-item">
-                                 <a class="nav-link" href="product.html">Products</a>
-                              </li>
-                              <li class="nav-item">
-                                 <a class="nav-link" href="contact.html">Contact Us</a>
+                                 <a class="nav-link" href="index.html">Dashboard</a>
                               </li>
                               <li class="nav-item d_none">
-                                 <a class="nav-link" href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
-                              </li> --}}
-                              <li class="nav-item d_none">
-                                 <a class="nav-link" href="#">Login</a>
+                                 <a class="nav-link" href="{{ route('login') }}">Login</a>
                               </li>
                            </ul>
                         </div>
@@ -124,10 +106,10 @@
                </div>
             </div>
             <a class="carousel-control-prev" href="#banner1" role="button" data-slide="prev">
-            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
             </a>
             <a class="carousel-control-next" href="#banner1" role="button" data-slide="next">
-            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </a>
          </div>
       </section>
