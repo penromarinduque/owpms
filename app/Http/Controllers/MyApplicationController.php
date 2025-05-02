@@ -17,6 +17,7 @@ use App\Models\Specie;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\ApplicationHelper;
 
 class MyApplicationController extends Controller
 {
@@ -201,7 +202,9 @@ class MyApplicationController extends Controller
                 "user_id" => Auth::user()->id,
                 "permit_type" => "wcp"
             ])->first();
+
             $permittee_species = PermitteeSpecie::where("permittee_id", $permittee->id)->pluck("specie_id");
+            
             $species = $_specie->searchSpecies($searchkey)->whereIn("species.id", $permittee_species)->get();
             $str = "";
             if (!empty($species)) {
@@ -220,6 +223,7 @@ class MyApplicationController extends Controller
     public function preview(Request $request, string $id)
     {
         $_permittee = new Permittee;
+        $_helper = new ApplicationHelper;
 
         $id = Crypt::decryptString($id);
 
@@ -238,6 +242,7 @@ class MyApplicationController extends Controller
         // return $wfp;
 
         return view('permittee.myapplication.preview', [
+            "_helper" => $_helper,
             "application" => $application,
             "wfp" => $wfp,
             "wcp" => $wcp

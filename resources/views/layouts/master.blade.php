@@ -11,6 +11,10 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('images/logo-icon.ico') }}" sizes="16x16 32x32">
         <link href="{{ asset('assets/fontawesome-free-6.5.1-web/css/fontawesome.min.css') }}" rel="stylesheet" />
         <link href="{{ asset('assets/simple-datatables/style.min.css') }}" rel="stylesheet" />
+        {{-- QUILL --}}
+        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+
         <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
         <!-- Select2 -->
         <link rel="stylesheet" href="{{ asset('assets/select2/dist/css/select2.min.css') }}">

@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function (){
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
-        Route::post('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
+        Route::get('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
     });
 
     // Application Requirements
@@ -190,6 +190,16 @@ Route::get('/test-email', function () {
     }
 });
 
+
+
+
+
+Route::view('/oop', 'doc_templates.oop');
+Route::view('/oop-dashboard', 'doc_templates.oop-dashboard');
+Route::view('/oop-form', 'doc_templates.oop-form');
+
+
+//  test routes
 Route::get("/generate-password", function (Request $request) {
     $password = $request->password;
 
@@ -203,7 +213,10 @@ Route::get("/generate-password", function (Request $request) {
     ]);
 });
 
+Route::get("token", function () {
+    return csrf_token();
+});
 
-Route::view('/oop', 'doc_templates.oop');
-Route::view('/oop-dashboard', 'doc_templates.oop-dashboard');
-Route::view('/oop-form', 'doc_templates.oop-form');
+Route::post("test", function (Request $request) {
+    return $request->all();
+});

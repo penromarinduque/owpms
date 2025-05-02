@@ -1,3 +1,4 @@
+
 @extends('layouts.master')
 
 @section('title')
@@ -49,7 +50,7 @@ active
                 <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">Submitted</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'under_review' ? 'active' : '' }}" href="?status=under_review">Under Review</a>
+                <a class="nav-link {{ $status == 'under-review' ? 'active' : '' }}" href="?status=under-review">Under Review</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">Approved</a>
@@ -78,7 +79,7 @@ active
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
                                 <td class="align-middle">{{ $ltp_application->created_at->format('F d, Y') }}</td>
                                 <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
-                                {{-- <td class="align-middle">{{ format_application_status($ltp_application->application_status) }}</td> --}}
+                                {{-- <td class="align-middle">{{ ApplicationHelper::formatApplicationStatus($ltp_application->application_status) }}</td> --}}
                                 <td class="text-center align-middle">
                                     <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
                                     @if ($status == 'draft')                                        

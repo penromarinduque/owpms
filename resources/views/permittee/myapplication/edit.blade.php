@@ -156,7 +156,7 @@ active
             if (searchkey.length > 0) {
                 $.ajax({
                     url: "/myapplication/ajaxgetspecies",
-                    method: "POST",
+                    method: "GET",
                     data: { searchkey: searchkey },
                     success: function (data) {
                          console.log(data);

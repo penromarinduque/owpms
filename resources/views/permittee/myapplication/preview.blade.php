@@ -92,7 +92,7 @@
             <h5 class="mb-0">Republic of the Philippines</h5>
             <h4 class="fw-bold mt-0 mb-0">{{ $wfp->wildlifeFarm->farm_name }}</h4>
             <p class="mt-0 mb-0">Cawit, Boac, Marinduque 4900</p>
-            <p class="mt-1 mb-0">Contact No. 099971036106 | Email: anthonydelapena@gmail.com</p>
+            <p class="mt-1 mb-0">Contact No. {{ $wfp->wildlifeFarm->contact_no }} | Email: {{ $wfp->user->email }}</p>
         </div>
 
         <div class="main-content">
@@ -171,7 +171,10 @@
             <!-- Signature Block -->
             <div class="signature-block">
                 <p>Sincerely,</p>
-                <p class="mt-2"><strong>ANTHONY M. DELA PENA</strong><br>Owner<br>La Anton Insects and Butterfly Farm
+                <p class="mt-2 ">
+                    <strong >{{ strtoupper($wcp->user->personalInfo->first_name) }} {{ strtoupper(substr($wcp->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($wcp->user->personalInfo->last_name) }}</strong><br>
+                    Owner<br>
+                    {{ $wfp->wildlifeFarm->farm_name }}
                 </p>
             </div>
         </div>
