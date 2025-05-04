@@ -85,7 +85,11 @@
                                  <a class="nav-link" href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
                               </li> --}}
                               <li class="nav-item d_none">
-                                 <a class="nav-link" href="#">Login</a>
+                                 @if (auth()->check())
+                                    <a class="nav-link" href="{{ route('dashboard.index') }}">Dashboard</a>
+                                 @else
+                                    <a class="nav-link" href="{{ route('login') }}">Login</a>
+                                 @endif
                               </li>
                            </ul>
                         </div>

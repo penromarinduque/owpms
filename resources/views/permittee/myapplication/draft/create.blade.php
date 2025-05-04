@@ -46,7 +46,7 @@ active
                     <div class="col-md-7">
                         <div class="form-group">
                             <label>Date of Transport [on or before] <span class="text-danger">*</span>:</label>
-                            <input type="date" name="transport_date" id="transport_date" class="form-control" onchange="addOneMonth('transport_date', 'validity_result');" required>
+                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('transport_date', 'validity_result');" required>
                             <h5 class="mt-2">Validity: <span id="validity_result"></span></h5>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ active
             if (searchkey.length > 0) {
                 $.ajax({
                     url: "/myapplication/ajaxgetspecies",
-                    method: "POST",
+                    method: "GET",
                     data: { searchkey: searchkey },
                     success: function (data) {
                          console.log(data);

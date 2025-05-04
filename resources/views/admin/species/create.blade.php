@@ -81,15 +81,14 @@ active
                         <input type="text" class="form-control" name="wing_span" id="wing_span" placeholder="Wing Span (ave.)" value="{{ old('wing_span') }}" >
                     </div>
                 	<div class="col-sm-4">
-                        <label for="wing_span" class="form-label">Convservation Status:</label> <br>
-                        <input type="radio" value="rare" id="rare" name="conservation_status" checked="checked">
-                        <label for="rare">Rare</label> &nbsp;
-                        <input type="radio" value="threatened" id="threatened" name="conservation_status">
-                        <label for="threatened">Threatened</label> &nbsp;
-                        <input type="radio" value="vulnerable" id="vulnerable" name="conservation_status">
-                        <label for="vulnerable">Vulnerable</label> &nbsp;
-                        <input type="radio" value="endangered" id="endangered" name="conservation_status">
-                        <label for="endangered">Endangered</label> &nbsp;
+                        <label for="conservation_status" class="form-label">Convservation Status:</label>
+                        <select class="form-select" name="conservation_status" id="conservation_status" required>
+                            <option value="rare">Rare</option>
+                            <option value="threatened">Threatened</option>
+                            <option value="vulnerable">Vulnerable</option>
+                            <option value="endangered">Endangered</option>
+                            <option value="least concerned">Least Concerned</option>
+                        </select>
                         @error('conservation_status')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                 	<div class="col-sm-4"></div>

@@ -34,30 +34,34 @@
             </div>
 
             {{-- APPLICATIONS --}}
-            <a class="nav-link collapsed @yield('active-applications')" href="#" data-bs-toggle="collapse" data-bs-target="#adminApplicationsCollapse" >
+            <a class="nav-link {{ request()->routeIs('ltpapplication.index') ? '' : 'collapsed'}}" href="#" data-bs-toggle="collapse" data-bs-target="#adminApplicationsCollapse" >
                 <div class="sb-nav-link-icon"><i class="fas fa-file-import"></i></div>
                 LTP Applications
                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse" id="adminApplicationsCollapse" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+            <div class="collapse {{ request()->routeIs('ltpapplication.index') ? 'show' : ''}}" id="adminApplicationsCollapse" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link" href="{{ route('ltpapplication.index') }}">Submitted</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && (request()->query('status') == 'submitted' || request()->query('status') == null) ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'submitted']) }}">Submitted</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'under-review' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'under-review']) }}">Under Review</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'approved']) }}">Approved</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'rejected']) }}">Rejected</a>
                 </nav>
             </div>
             @endif
 
             @if(Auth::user()->usertype=='permittee')
-            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+            <a class="nav-link {{ request()->routeIs('myapplication.index') ? '' : 'collapsed'}}" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="true" aria-controls="collapseLayouts">
                 <div class="sb-nav-link-icon"><i class="fas fa-file"></i></div>
                 My Applications
                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse @yiled('show')" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+            <div class="collapse {{ request()->routeIs('myapplication.index') ? 'show' : ''}}" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link" href="{{route('myapplication.index')}}">Drafts</a>
-                    <a class="nav-link" href="">Submitted</a>
-                    <a class="nav-link" href="">Approved</a>
-                    <a class="nav-link" href="">Rejected</a>
+                    <a class="nav-link {{ request()->routeIs('myapplication.index') && (request()->query('status') == 'draft' || request()->query('status') == null) ? 'active' : '' }}" href="{{route('myapplication.index')}}">Drafts</a>
+                    <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'submitted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'submitted']) }}">Submitted</a>
+                    <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'under-review' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'under-review']) }}">Under Review</a>
+                    <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'approved']) }}">Approved</a>
+                    <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'rejected']) }}">Rejected</a>
                 </nav>
             </div>
             @endif
@@ -94,34 +98,34 @@
             </div> -->
             
             @if(Auth::user()->usertype=='admin' || Auth::user()->usertype=='internal')
-            <div class="sb-sidenav-menu-heading">MAINTENANCE</div>
-            <a class="nav-link collapsed" href="{{ route('species.index') }}" data-bs-toggle="collapse" data-bs-target="#collapseSpecies" aria-expanded="false" aria-controls="collapseLayouts">
-                <div class="sb-nav-link-icon"><i class="fas fa-feather-alt"></i></div>
-                Species
-                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-            </a>
-            <div class="collapse @yield('species-show')" id="collapseSpecies" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link @yield('active-types')" href="{{ route('specietypes.index') }}">Wildlife Types</a>
-                    <a class="nav-link @yield('active-classes')" href="{{ route('specieclasses.index') }}">Class</a>
-                    <a class="nav-link @yield('active-families')" href="{{ route('speciefamilies.index') }}">Family</a>
-                    <a class="nav-link @yield('active-species')" href="{{ route('species.index') }}">List of Species</a>
-                </nav>
-            </div>
-            <a class="nav-link @yield('active-ltprequirements')" href="{{ route('ltprequirements.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
-                LTP Requirements
-            </a>
+                <div class="sb-sidenav-menu-heading">MAINTENANCE</div>
+                <a class="nav-link collapsed" href="{{ route('species.index') }}" data-bs-toggle="collapse" data-bs-target="#collapseSpecies" aria-expanded="false" aria-controls="collapseLayouts">
+                    <div class="sb-nav-link-icon"><i class="fas fa-feather-alt"></i></div>
+                    Species
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse @yield('species-show')" id="collapseSpecies" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link @yield('active-types')" href="{{ route('specietypes.index') }}">Wildlife Types</a>
+                        <a class="nav-link @yield('active-classes')" href="{{ route('specieclasses.index') }}">Class</a>
+                        <a class="nav-link @yield('active-families')" href="{{ route('speciefamilies.index') }}">Family</a>
+                        <a class="nav-link @yield('active-species')" href="{{ route('species.index') }}">List of Species</a>
+                    </nav>
+                </div>
+                <a class="nav-link @yield('active-ltprequirements')" href="{{ route('ltprequirements.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                    LTP Requirements
+                </a>
             @endif
             @if(Auth::user()->usertype=='admin')
-            <a class="nav-link @yield('active-users')" href="{{ route('users.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                Users
-            </a>
-            <a class="nav-link @yield('active-positions')" href="{{ route('positions.index') }}">
-                <div class="sb-nav-link-icon"><i class="fas fa-list-ol"></i></div>
-                Positions
-            </a>
+                <a class="nav-link @yield('active-users')" href="{{ route('users.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                    Users
+                </a>
+                <a class="nav-link @yield('active-positions')" href="{{ route('positions.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-list-ol"></i></div>
+                    Positions
+                </a>
             @endif
         </div>
     </div>

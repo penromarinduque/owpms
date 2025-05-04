@@ -45,6 +45,10 @@ class LtpApplication extends Model
         return $this->belongsTo(Permittee::class);
     }
 
+    public function attachments(){
+        return $this->hasMany(LtpApplicationAttachment::class, 'ltp_application_id', 'id');
+    }
+
     public static function validateSpecies($id) {
         $statuses = LtpApplicationSpecie::where("ltp_application_id", $id)
             ->leftJoin('species', 'species.id', '=', 'ltp_application_species.specie_id')
@@ -66,7 +70,10 @@ class LtpApplication extends Model
             ->pluck("ltp_requirement_id")
             ->toArray();
     
-        $requirementsExist = LtpRequirement::where("is_active_requirement", 1)
+        $requirementsExist = LtpRequirement::where([
+                "is_active_requirement" => 1,
+                "is_mandatory" => 1
+            ])
             ->whereNotIn('id', $attachments)
             ->exists(); 
     

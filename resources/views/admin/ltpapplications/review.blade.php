@@ -16,6 +16,11 @@ active
         <li class="breadcrumb-item">Review</li>
     </ol>
 
+    <div class="d-flex justify-content-end gap-2 mb-2">
+        <button class="btn btn-success" ><i class="fas fa-check me-1"></i>Approve Application</button>
+        <button class="btn btn-warning" onclick="showReturnApplicationModal({{ $ltp_application }})"><i class="fas fa-arrow-left me-1"></i>Return Application</button>
+    </div>
+
     <div class="card mb-4">
     	<div class="card-header">
             <i class="fas fa-list me-1"></i>
@@ -57,7 +62,7 @@ active
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <label>Application Status.</label>
-                    <h6>{{format_application_status($ltp_application->application_status)}}</h6>
+                    <h6>{{$_helper->formatApplicationStatus($ltp_application->application_status)}}</h6>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <label>Date Applied</label>
@@ -81,12 +86,19 @@ active
             <hr>
             <h5>Attachments</h5>
             <div class="row mb-3">
-                <div class="col-lg-3 col-sm-6">
-                    <label>Application No.</label>
-                    <h6>{{$ltp_application->application_no}}</h6>
-                </div>
+                @forelse($ltp_application->attachments as $attachment)
+                    <div class="col-lg-3 col-sm-6">
+                        <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
+                        <h6><a href="{{ asset('storage/'.$attachment->file_path) }}" target="_blank">View Attachment</a></h6>
+                    </div>
+                @empty
+                    <div class="col-lg-3 col-sm-6">
+                        <label>No Attachments Submitted</label>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
 </div>
+@include('components.returnApplication')
 @endsection
