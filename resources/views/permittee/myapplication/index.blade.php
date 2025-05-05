@@ -50,7 +50,16 @@ active
                 <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">Submitted</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link {{ $status == 'resubmitted' ? 'active' : '' }}" href="?status=resubmitted">Resubmitted</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link {{ $status == 'under-review' ? 'active' : '' }}" href="?status=under-review">Under Review</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ $status == 'returned' ? 'active' : '' }}" href="?status=returned">Returned</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ $status == 'accepted' ? 'active' : '' }}" href="?status=accepted">Accepted</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">Approved</a>
@@ -81,17 +90,37 @@ active
                                 <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
                                 {{-- <td class="align-middle">{{ ApplicationHelper::formatApplicationStatus($ltp_application->application_status) }}</td> --}}
                                 <td class="text-center align-middle">
-                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     @if ($status == 'draft')                                        
-                                        <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit"><i class="fas fa-pen"></i></a>
+                                        <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
                                     @endif
                                     @if ($status == 'draft')
-                                        <a href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Submit"><i class="fa-solid fa-cloud-arrow-up"></i></a>
+                                        <a href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Submit">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        </a>
                                     @endif
                                     @if ($status == 'draft')                                        
-                                        <a href="#" class="btn btn-sm btn-danger mb-2" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="#" class="btn btn-sm btn-danger mb-2" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
                                     @endif
-                                    <a href="{{ route('myapplication.requirements', ['id'=>Crypt::encryptString($ltp_application->id)]) }}" class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Requirements"><i class="fa-solid fa-file"></i></a>
+                                    <a href="{{ route('myapplication.requirements', ['id'=>Crypt::encryptString($ltp_application->id)]) }}" class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Requirements">
+                                        <i class="fa-solid fa-file"></i>
+                                    </a>
+                                    @if ($status == 'returned')
+                                        <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        </a>
+                                    @endif
+                                    @if ($status != 'draft')
+                                        <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs">
+                                            <i class="fas fa-history"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -125,8 +154,28 @@ active
     </div>
 </div>
 
+<div class="modal fade" id="resubmitApplicationModal">
+    <div class="modal-dialog">
+        <form action="" method="POST" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h4 class="modal-title">Resubmit Application</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to resubmit this application? This action cannot be undone</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Resubmit</button>
+            </div>
+        </form >
+    </div>
+</div>
+
 @include('components.toast')
 @include('components.confirmDelete')
+@include('components.viewApplicationLogs')
 @endsection
 
 @section('script-extra')
@@ -155,6 +204,10 @@ active
     function showSubmitApplicationModal(action){
         $('#submitApplicationModal form').attr('action', action);
         $('#submitApplicationModal').modal('show');
+    }
+    function showResubmitApplicationModal(action){
+        $('#resubmitApplicationModal form').attr('action', action);
+        $('#resubmitApplicationModal').modal('show');
     }
 </script>
 @endsection

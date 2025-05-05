@@ -20,4 +20,9 @@ class LtpApplicationProgress extends Model
     const STATUS_PAYMENT_IN_PROCESS = "payment-in-process";
     const STATUS_PAID = "paid";
     const STATUS_FOR_INSPECTION = "for-inspection";
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

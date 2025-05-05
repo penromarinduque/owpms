@@ -46,7 +46,16 @@ active
                 <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">Submitted</a>
               </li>
               <li class="nav-item">
+                <a class="nav-link {{ $status == 'resubmitted' ? 'active' : '' }}" href="?status=resubmitted">Resubmitted</a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link {{ $status == 'under-review' ? 'active' : '' }}" href="?status=under-review">Under Review</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ $status == 'returned' ? 'active' : '' }}" href="?status=returned">Returned</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ $status == 'accepted' ? 'active' : '' }}" href="?status=accepted">Accepted</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">Approved</a>
@@ -78,11 +87,13 @@ active
                                 <td class="align-middle">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
-                                    @if ($status == 'submitted')
+                                    @if (in_array($status, ['submitted', 'resubmitted']))
                                         <a href="#" onclick="showConfirmModal('{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}', 'Viewing this application will mark it as Under Review. Are you sure you want to continue?', 'Confirm Review')" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @else
                                         <a href="{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
+
+                                    <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs"><i class="fas fa-history"></i></a>
                                 </td>
                             </tr>
                         @empty
@@ -98,4 +109,5 @@ active
 </div>
 
 @include('components.confirm')
+@include('components.viewApplicationLogs')
 @endsection

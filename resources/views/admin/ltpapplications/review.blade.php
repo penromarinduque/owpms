@@ -17,7 +17,7 @@ active
     </ol>
 
     <div class="d-flex justify-content-end gap-2 mb-2">
-        <button class="btn btn-success" ><i class="fas fa-check me-1"></i>Approve Application</button>
+        <button class="btn btn-success" onclick="showConfirmModal('{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}', 'Are you sure you want to accept this application?', 'Confirm Accept')"><i class="fas fa-check me-1"></i>Accept Application</button>
         <button class="btn btn-warning" onclick="showReturnApplicationModal({{ $ltp_application }})"><i class="fas fa-arrow-left me-1"></i>Return Application</button>
     </div>
 
@@ -101,4 +101,5 @@ active
     </div>
 </div>
 @include('components.returnApplication')
+@include('components.confirm')
 @endsection

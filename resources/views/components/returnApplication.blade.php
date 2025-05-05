@@ -1,12 +1,13 @@
 <div class="modal  fade" id="returnApplicationModal" tabindex="-1" aria-labelledby="returnApplicationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form action="/test" method="POST" class="modal-content">
+        <form action="{{ route('ltpapplication.return') }}" method="POST" class="modal-content">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title" id="returnApplicationModalLabel">Return Application</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <input type="hidden" name="id" id="id">
                 <p>Please provide your remarks if you are returning this application. This will help clients identify areas for improvement.</p>
                 <input type="hidden" name="remarks" id="remarks">
                 <div id="remarks-quill"></div>
@@ -21,7 +22,7 @@
 
 <script>
     function showReturnApplicationModal(ltp_application) {
-        // $('#returnApplicationModal form').attr('action', url);
+        $('#returnApplicationModal #id').val(ltp_application.id);
         $('#returnApplicationModal').modal('show');
     }
 </script>

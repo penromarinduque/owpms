@@ -1,6 +1,7 @@
 
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form action="" method="GET" class="modal-dialog">
+    <form action="" method="POST" class="modal-dialog">
+        @csrf
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="title">Modal title</h5>

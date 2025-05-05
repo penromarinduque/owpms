@@ -49,6 +49,10 @@ class LtpApplication extends Model
         return $this->hasMany(LtpApplicationAttachment::class, 'ltp_application_id', 'id');
     }
 
+    public function logs(){
+        return $this->hasMany(LtpApplicationProgress::class, 'ltp_application_id', 'id');
+    }
+
     public static function validateSpecies($id) {
         $statuses = LtpApplicationSpecie::where("ltp_application_id", $id)
             ->leftJoin('species', 'species.id', '=', 'ltp_application_species.specie_id')

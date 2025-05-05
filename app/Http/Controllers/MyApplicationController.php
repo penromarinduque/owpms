@@ -303,4 +303,38 @@ class MyApplicationController extends Controller
             "attachments" => $attachments
         ]);
     }
+
+    public function resubmit(string $id) {
+        return DB::transaction(function () use ($id) {
+            $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+
+            if(!$ltp_application) {
+                return redirect()->back()->with('error', 'Application not found!');
+            }
+
+            // Compliance Checks
+            if(!LtpApplication::validateSpecies($ltp_application->id)) {
+                return redirect()->back()->with('error', 'Application cannot have both endangered and non-endangered species! Endagered species must be submitted separately.');
+            }
+
+            if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , Auth::user()->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , Auth::user()->id)) {
+                return redirect()->back()->with('error', 'Your WCP and/or WFP permit has expired or is not valid. Please renew your permit before submitting your application.');
+            }
+
+            if(!LtpApplication::validateRequirements($ltp_application->id)) {
+                return redirect()->back()->with('error', 'Application does not have all required attachments!');
+            }
+
+            $ltp_application->application_status = LtpApplication::STATUS_RESUBMITTED;
+            $ltp_application->save();
+            
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $ltp_application->id,
+                "user_id" => Auth::user()->id,
+                "status" => LtpApplicationProgress::STATUS_RESUBMITTED
+            ]);
+
+            return Redirect::route('myapplication.index')->with('success', 'Application successfully resubmitted!');
+        });
+    }
 }

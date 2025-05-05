@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LtpApplicationController;
 use App\Http\Controllers\LtpApplicationRequirementController;
@@ -98,6 +99,7 @@ Route::middleware('auth')->group(function (){
         Route::get('edit/{id}', [MyApplicationController::class, 'edit'])->name('myapplication.edit');
         Route::patch('update/{id}', [MyApplicationController::class, 'update'])->name('myapplication.update');
         Route::post('submit/{id}', [MyApplicationController::class, 'submit'])->name('myapplication.submit');
+        Route::post('resubmit/{id}', [MyApplicationController::class, 'resubmit'])->name('myapplication.resubmit');
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
@@ -116,6 +118,9 @@ Route::middleware('auth')->group(function (){
     Route::prefix('ltpapplication')->group(function () {
         Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index');
         Route::get('review/{id}', [LtpApplicationController::class, 'review'])->name('ltpapplication.review');
+        Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return');
+        Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
+        Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept');
     });
 
     // Maintenance

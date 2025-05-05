@@ -42,9 +42,12 @@
             <div class="collapse {{ request()->routeIs('ltpapplication.index') ? 'show' : ''}}" id="adminApplicationsCollapse" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
                     <a class="nav-link {{ request()->routeIs('ltpapplication.index') && (request()->query('status') == 'submitted' || request()->query('status') == null) ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'submitted']) }}">Submitted</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'resubmitted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'resubmitted']) }}">Resubmitted</a>
                     <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'under-review' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'under-review']) }}">Under Review</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'returned' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'returned']) }}">Returned</a>
                     <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'approved']) }}">Approved</a>
                     <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'rejected']) }}">Rejected</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'accepted']) }}">Accepted</a>
                 </nav>
             </div>
             @endif
@@ -59,9 +62,12 @@
                 <nav class="sb-sidenav-menu-nested nav">
                     <a class="nav-link {{ request()->routeIs('myapplication.index') && (request()->query('status') == 'draft' || request()->query('status') == null) ? 'active' : '' }}" href="{{route('myapplication.index')}}">Drafts</a>
                     <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'submitted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'submitted']) }}">Submitted</a>
+                    <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'resubmitted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'resubmitted']) }}">Resubmitted</a>
                     <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'under-review' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'under-review']) }}">Under Review</a>
+                    <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'returned' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'returned']) }}">Returned</a>
                     <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'approved']) }}">Approved</a>
                     <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'rejected']) }}">Rejected</a>
+                    <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'accepted']) }}">Accepted</a>
                 </nav>
             </div>
             @endif

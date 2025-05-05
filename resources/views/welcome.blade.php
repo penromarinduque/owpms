@@ -64,12 +64,10 @@
                         <div class="collapse navbar-collapse" id="navbarsExample04">
                            <ul class="navbar-nav mr-auto">
                               <li class="nav-item active">
-                                 <a class="nav-link" href="index.html">Dashboard</a>
+                                 <a class="nav-link" href="{{ route('dashboard.index') }}">Dashboard</a>
                               </li>
                               <li class="nav-item d_none">
-                                 @if (auth()->check())
-                                    <a class="nav-link" href="{{ route('dashboard.index') }}">Dashboard</a>
-                                 @else
+                                 @if (!auth()->check())
                                     <a class="nav-link" href="{{ route('login') }}">Login</a>
                                  @endif
                               </li>
