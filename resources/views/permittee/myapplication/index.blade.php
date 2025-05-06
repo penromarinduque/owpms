@@ -64,9 +64,6 @@ active
               <li class="nav-item">
                 <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">Approved</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'rejected' ? 'active' : '' }}" href="?status=rejected">Rejected</a>
-              </li>
             </ul>
             <br>
             <div class="table-responsive">

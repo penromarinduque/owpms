@@ -14,8 +14,16 @@ My Applications
     </ol>
 
     <div class="d-flex justify-content-end gap-2 mb-2">
-        <a class="btn btn-sm btn-success" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print</a>
-        {{-- <button class="btn btn-warning" onclick="showReturnApplicationModal({{ $ltp_application }})"><i class="fas fa-arrow-left me-1"></i>Return Application</button> --}}
+        <a class="btn btn-sm btn-primary" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print</a>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-file-alt me-1"></i> Permits
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="{{ asset('storage/'.$wcp->document) }}" target="_blank"><i class="fas fa-file-pdf me-1"></i> Wildlife Collectors Permit</a></li>
+                <li><a class="dropdown-item" href="{{ asset('storage/'.$wfp->document) }}" target="_blank"><i class="fas fa-file-pdf me-1"></i> Wildlife Farm Permit</a></li>
+            </ul>
+        </div>
     </div>
 
     <div class="card mb-4">
@@ -24,7 +32,25 @@ My Applications
             My Application
         </div>
         <div class="card-body">
+
+            @if (auth()->user()->usertype == "permittee")
+                <div class="alert alert-info" role="alert">
+                    <h6 class="d-flex align-items-center"><i class="fas fa-sticky-note me-2"></i> <strong>Important Notes:</strong> <span class="fw-normal ms-1">Applications can be fulfilled in two ways: a Hybrid Application and a Full Online Application.</span></h6>
+                    <h6>For Full Online</h6>
+                    <ul>
+                        <li>You can submit your application online with the required attachments and we will notify you when your application is accepted.</li>
+                    </ul>
+                    <h6>For Hybrid Application</h6>
+                    <ul>
+                        <li>You can submit your application at our office with the required attachments. Ensure you check the requirements on our checklist and have all necessary documents before submission.</li>
+                        <li>Please submit two original copies of the application letter, WCP, WFP, and scanned requirements attached to your application for official acceptance.</li>
+                    </ul>
+                </div>
+            @endif
+
+            
             <h5>Permittee Details</h5>
+
             <div class="row mb-3">
                 <div class="col-lg-3 col-sm-6">
                     <label>Permittee Name</label>

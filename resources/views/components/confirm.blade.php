@@ -19,10 +19,11 @@
 </div>
 
 <script>
-    function showConfirmModal (url, message, title) {
+    function showConfirmModal (url, message, title, method="POST") {
         $('#confirmModal #message').html(message);
         $('#confirmModal #title').html(title);
         $('#confirmModal form').attr("action", url);
+        $('#confirmModal form').attr("method", method);
         $('#confirmModal').modal("show");
     }
 </script>

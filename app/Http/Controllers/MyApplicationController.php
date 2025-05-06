@@ -125,8 +125,7 @@ class MyApplicationController extends Controller
             "specie.family", 
             "specie",
             "permitteeSpecies" => function (Builder $query) use ($ltp_application) {
-                $query->where("permittee_id", Auth::user()->wcp()->id)
-                ->first();
+                $query->where("permittee_id", $ltp_application->permittee_id);
             }
         ])->get();
 
@@ -227,22 +226,13 @@ class MyApplicationController extends Controller
 
         $ltp_application = LtpApplication::query()->with(['attachments'])->find($application_id);
 
-        if(in_array($ltp_application->application_status, [LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_RESUBMITTED])) {
-            $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
-            $ltp_application->save();
-
-            LtpApplicationProgress::create([
-                "ltp_application_id" => $ltp_application->id,
-                "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_UNDER_REVIEW
-            ]);
-        }
-
         $permittee = Permittee::find($ltp_application->permittee_id);
 
         return view('permittee.myapplication.preview', [
             '_helper' => $_helper,
             'title' => 'LTP Application',
+            'wcp' => $ltp_application->permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp"),
+            'wfp' => $ltp_application->permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wfp"),
             "ltp_application" => $ltp_application,
             "permittee" => $permittee
         ]);
@@ -290,13 +280,13 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application cannot have both endangered and non-endangered species! Endagered species must be submitted separately.');
             }
 
-            if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , Auth::user()->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , Auth::user()->id)) {
-                return redirect()->back()->with('error', 'Your WCP and/or WFP permit has expired or is not valid. Please renew your permit before submitting your application.');
-            }
+            // if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , Auth::user()->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , Auth::user()->id)) {
+            //     return redirect()->back()->with('error', 'Your WCP and/or WFP permit has expired or is not valid. Please renew your permit before submitting your application.');
+            // }
 
-            if(!LtpApplication::validateRequirements($ltp_application->id)) {
-                return redirect()->back()->with('error', 'Application does not have all required attachments!');
-            }
+            // if(!LtpApplication::validateRequirements($ltp_application->id)) {
+            //     return redirect()->back()->with('error', 'Application does not have all required attachments!');
+            // }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();
