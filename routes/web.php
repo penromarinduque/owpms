@@ -101,6 +101,7 @@ Route::middleware('auth')->group(function (){
         Route::post('submit/{id}', [MyApplicationController::class, 'submit'])->name('myapplication.submit');
         Route::post('resubmit/{id}', [MyApplicationController::class, 'resubmit'])->name('myapplication.resubmit');
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
+        Route::get('/print-request-letter/{id}', [MyApplicationController::class, 'printRequestLetter'])->name('myapplication.printRequestLetter');
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');

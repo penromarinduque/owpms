@@ -222,6 +222,34 @@ class MyApplicationController extends Controller
 
     public function preview(Request $request, string $id)
     {
+        $_helper = new ApplicationHelper;
+        $application_id = Crypt::decryptString($id);
+
+        $ltp_application = LtpApplication::query()->with(['attachments'])->find($application_id);
+
+        if(in_array($ltp_application->application_status, [LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_RESUBMITTED])) {
+            $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
+            $ltp_application->save();
+
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $ltp_application->id,
+                "user_id" => Auth::user()->id,
+                "status" => LtpApplicationProgress::STATUS_UNDER_REVIEW
+            ]);
+        }
+
+        $permittee = Permittee::find($ltp_application->permittee_id);
+
+        return view('permittee.myapplication.preview', [
+            '_helper' => $_helper,
+            'title' => 'LTP Application',
+            "ltp_application" => $ltp_application,
+            "permittee" => $permittee
+        ]);
+    }
+
+    public function printRequestLetter(Request $request, string $id)
+    {
         $_permittee = new Permittee;
         $_helper = new ApplicationHelper;
 
@@ -241,7 +269,7 @@ class MyApplicationController extends Controller
 
         // return $wfp;
 
-        return view('permittee.myapplication.preview', [
+        return view('permittee.myapplication.printRequestLetter', [
             "_helper" => $_helper,
             "application" => $application,
             "wfp" => $wfp,

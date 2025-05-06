@@ -1,193 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.master')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application for Local Transport Permit</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            line-height: 1.6;
-            color: #000;
-        }
+@section('title')
+My Applications
+@endsection
 
-        .letterhead {
-            padding-bottom: 7px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #000;
-            font-size: 1rem;
-        }
+@section('content') 
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{$title}}</h1>
 
-        .letterhead h4 {
-            font-size: 1.1rem;
-        }
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="#">Applications</a></li>
+        <li class="breadcrumb-item">View</li>
+    </ol>
 
-        .letter-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
+    <div class="d-flex justify-content-end gap-2 mb-2">
+        <a class="btn btn-sm btn-success" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print</a>
+        {{-- <button class="btn btn-warning" onclick="showReturnApplicationModal({{ $ltp_application }})"><i class="fas fa-arrow-left me-1"></i>Return Application</button> --}}
+    </div>
 
-        .recipient-block {
-            margin-bottom: 15px;
-        }
-
-        .subject-line {
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .signature-block {
-            margin-top: 20px;
-        }
-
-        .table {
-            margin: 0;
-            padding: 0;
-            border-collapse: collapse;
-        }
-
-        .table th,
-        .table td {
-            padding: 0 10px;
-            /* Remove padding from table cells */
-        }
-
-        @media print {
-            body {
-                padding: 20px;
-            }
-
-            .container {
-                width: 100%;
-                max-width: 100%;
-            }
-
-            .letterhead {
-                position: fixed;
-                top: 0;
-                width: 100%;
-                line-height: 1;
-                font-size: 1rem;
-            }
-
-            .letterhead h4 {
-                font-size: 1.2rem;
-            }
-
-            .main-content {
-                margin-top: 60px;
-            }
-
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container letter-content">
-        <!-- Letterhead -->
-        <div class="letterhead text-center">
-            <h5 class="mb-0">Republic of the Philippines</h5>
-            <h4 class="fw-bold mt-0 mb-0">{{ $wfp->wildlifeFarm->farm_name }}</h4>
-            <p class="mt-0 mb-0">Cawit, Boac, Marinduque 4900</p>
-            <p class="mt-1 mb-0">Contact No. {{ $wfp->wildlifeFarm->contact_no }} | Email: {{ $wfp->user->email }}</p>
+    <div class="card mb-4">
+    	<div class="card-header">
+            <i class="fas fa-list me-1"></i>
+            My Application
         </div>
-
-        <div class="main-content">
-
-            <!-- Date and Recipient -->
-            <div class="recipient-block">
-                <p>{{date('F j, Y')}}</p>
-                <p>
-                    <strong>MS. IMELDA M. DIAZ</strong><br>
-                    PENR Officer<br>
-                    Boac, Marinduque
-                </p>
+        <div class="card-body">
+            <h5>Permittee Details</h5>
+            <div class="row mb-3">
+                <div class="col-lg-3 col-sm-6">
+                    <label>Permittee Name</label>
+                    <h6>{{$permittee->user->personalInfo->first_name}} {{$permittee->user->personalInfo->middle_name}} {{$permittee->user->personalInfo->last_name}}</h6>
+                </div>
+                <div class="col-12"></div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>Wildlife Collectors Permit</label>
+                    <h6>{{$permittee->user->wcp()->permit_number}} </h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>WCP Status</label>
+                    <h6>{{$permittee->user->wcp()->getValidity()}} </h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>Wildlife Farm Permit</label>
+                    <h6>{{$permittee->user->wfp()->permit_number}} </h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>WFP Status</label>
+                    <h6>{{$permittee->user->wfp()->getValidity()}} </h6>
+                </div>
+                <div class="col-12"></div>
             </div>
 
-            <!-- Subject and Greeting -->
-            <div class="mb-4">
-                <p class="subject-line">Subject: Application for Local Transport Permit of Butterfly Species</p>
-                <p><strong>Madam:</strong></p>
-                <p>Greetings!!</p>
-                <p>
-                    Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,
-                    the
-                    undersigned would like to apply for the <strong>Local Transport Permit</strong> of the following
-                    Butterfly Pupae
-                    species specified in the table below.
-                </p>
+            <hr>
+            <h5>Application Details</h5>
+            <div class="row mb-3">
+                <div class="col-lg-3 col-sm-6">
+                    <label>Application No.</label>
+                    <h6>{{$ltp_application->application_no}}</h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>Application Status.</label>
+                    <h6>{{$_helper->formatApplicationStatus($ltp_application->application_status)}}</h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>Date Applied</label>
+                    <h6>{{$ltp_application->application_date->format('F d, Y')}}</h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>Transport Date</label>
+                    <h6>{{$ltp_application->transport_date->format('F d, Y')}}</h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>Purpose</label>
+                    <h6>{{$ltp_application->purpose}}</h6>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label>Destination</label>
+                    <h6>{{$ltp_application->destination}}</h6>
+                </div>
+
             </div>
 
-            <!-- Table -->
-            <table class="table table-bordered table-sm">
-                <thead class="table-light">
-                    <tr>
-                        <th>No.</th>
-                        <th>Common Name</th>
-                        <th>Scientific Name</th>
-                        <th>Family Name</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if(!empty($application->ltpApplicationSpecies))
-                        @php
-                            $c = 1;
-                            $total = 0;
-                        @endphp
-                        @foreach($application->ltpApplicationSpecies as $ltp_specie)
-                            @php
-                                $total += $ltp_specie->quantity;
-                            @endphp
-                            <tr>
-                                <td>{{$c++}}</td>
-                                <td>{{$ltp_specie->specie->local_name}}</td>
-                                <td>{{$ltp_specie->specie->specie_name}}</td>
-                                <td>{{$ltp_specie->specie->family->family}}</td>
-                                <td>{{$ltp_specie->quantity}}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                    <tr class="fw-bold">
-                        <td colspan="4" class="text-end">TOTAL</td>
-                        <td>{{$total}}</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <!-- Purpose Statement -->
-            <div class="mb-4">
-                <p>
-                    The listed pupae/live species will be transported on or before
-                    <strong>{{date('F j, Y', strtotime($application->transport_date))}}</strong> for the purpose of
-                    <u>&nbsp;{{$application->purpose}}&nbsp;</u> at <strong>{{ $application->destination }}</strong>.
-                </p>
-                <p>Thank you.</p>
-            </div>
-
-            <!-- Signature Block -->
-            <div class="signature-block">
-                <p>Sincerely,</p>
-                <p class="mt-2 ">
-                    <strong >{{ strtoupper($wcp->user->personalInfo->first_name) }} {{ strtoupper(substr($wcp->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($wcp->user->personalInfo->last_name) }}</strong><br>
-                    Owner<br>
-                    {{ $wfp->wildlifeFarm->farm_name }}
-                </p>
+            <hr>
+            <h5>Attachments</h5>
+            <div class="row mb-3">
+                @forelse($ltp_application->attachments as $attachment)
+                    <div class="col-lg-3 col-sm-6">
+                        <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
+                        <h6><a href="{{ asset('storage/'.$attachment->file_path) }}" target="_blank">View Attachment</a></h6>
+                    </div>
+                @empty
+                    <div class="col-lg-3 col-sm-6">
+                        <label>No Attachments Submitted</label>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script type="text/javascript">
-        // Trigger print preview on page load
-        window.addEventListener('load', function () {
-            window.print();
-        });
-    </script>
-</body>
-
-</html>
+</div>
+@include('components.returnApplication')
+@include('components.confirm')
+@endsection

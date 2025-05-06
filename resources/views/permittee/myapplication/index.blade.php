@@ -78,7 +78,7 @@ active
                             <th>Date Created</th>
                             <th>Last Modified</th>
                             {{-- <th>Application Status</th> --}}
-                            <th width="200px" class="text-center">Action</th>
+                            <th width="200px" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,7 +90,7 @@ active
                                 <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
                                 {{-- <td class="align-middle">{{ ApplicationHelper::formatApplicationStatus($ltp_application->application_status) }}</td> --}}
                                 <td class="text-center align-middle">
-                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview">
+                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     @if ($status == 'draft')                                        

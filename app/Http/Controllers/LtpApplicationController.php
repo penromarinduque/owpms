@@ -117,6 +117,8 @@ class LtpApplicationController extends Controller
                 "status" => LtpApplicationProgress::STATUS_ACCEPTED
             ]);
 
+            // send notification
+
             return redirect()
                     ->route('ltpapplication.index')
                     ->with([
