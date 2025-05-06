@@ -31,7 +31,7 @@ My Applications
             <i class="fas fa-list me-1"></i>
             My Application
         </div>
-        <div class="card-body">
+    <div class="card-body">
 
             @if (auth()->user()->usertype == "permittee")
                 <div class="alert alert-info" role="alert">
