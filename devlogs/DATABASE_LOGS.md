@@ -5,6 +5,7 @@
 # March 13, 2025
 - Added document column to permittees table.
 
-# May 4, 2025
+# May 7, 2025
+- Added legal_basis column to ltp_fees table
 
  

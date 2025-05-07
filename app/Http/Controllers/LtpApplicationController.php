@@ -110,7 +110,7 @@ class LtpApplicationController extends Controller
 
             if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , $ltp_application->permittee->user->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , $ltp_application->permittee->user->id)) {
                 return redirect()->back()->with('error', 'The clients WCP and/or WFP permit has expired or is not valid. Please renew the permit before submitting the application.');
-            }
+            }   
 
             if(!LtpApplication::validateRequirements($ltp_application->id)) {
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');

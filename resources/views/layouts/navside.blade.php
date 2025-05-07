@@ -132,6 +132,10 @@
                     <div class="sb-nav-link-icon"><i class="fas fa-list-ol"></i></div>
                     Positions
                 </a>
+                <a class="nav-link @yield('active-ltpfees')" href="{{ route('ltpfees.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    LTP Fees
+                </a>
             @endif
         </div>
     </div>

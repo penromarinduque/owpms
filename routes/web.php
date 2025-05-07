@@ -18,6 +18,7 @@ use App\Http\Controllers\PersonalInfoController;
 use App\Http\Controllers\LtpRequirementController;
 use App\Http\Controllers\MyApplicationController;
 use App\Http\Controllers\PermitteeSpecieController;
+use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -177,6 +178,14 @@ Route::middleware('auth')->group(function (){
             Route::post('/', [PositionController::class, 'store'])->name('positions.store');
             Route::get('/{id}', [PositionController::class, 'edit'])->name('positions.edit');
             Route::post('/update/{id}', [PositionController::class, 'update'])->name('positions.update');
+        });
+
+        Route::prefix('ltpfees')->group(function () {
+            Route::get('/', [LtpFeeController::class, 'index'])->name('ltpfees.index');
+            Route::get('/create', [LtpFeeController::class, 'create'])->name('ltpfees.create');
+            Route::post('/store', [LtpFeeController::class, 'store'])->name('ltpfees.store');
+            Route::get('/edit/{id}', [LtpFeeController::class, 'edit'])->name('ltpfees.edit');
+            Route::post('/update/{id}', [LtpFeeController::class, 'update'])->name('ltpfees.update');
         });
     });
 });

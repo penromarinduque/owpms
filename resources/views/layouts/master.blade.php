@@ -100,6 +100,15 @@
                 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
             });
         </script>
+        <script>
+            $(document).ready(function() {
+                $(".btn-submit").click(function() {
+                    $(this).prop('disabled', true);
+                    $(this).prepend('<i class="fas fa-spinner fa-spin me-2"></i>');
+                    $(this).closest("form").submit();
+                });
+            })
+        </script>
         <!-- on page scripts -->
         @yield('script-extra')
     </body>
