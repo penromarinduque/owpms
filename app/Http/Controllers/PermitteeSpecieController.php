@@ -34,7 +34,7 @@ class PermitteeSpecieController extends Controller
     public function create()
     {
         //
-        return view("admin.permittee.permitteespecies.create" ,[]);
+        return view("admin.permittee.permitteespecies.create", []);
     }
 
     /**

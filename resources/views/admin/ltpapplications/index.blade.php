@@ -21,9 +21,9 @@ active
 
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
+            {{-- <div class="float-end">
                 <a href="{{ route('myapplication.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus-square"></i> Create New</a>
-            </div>
+            </div> --}}
             <i class="fas fa-list me-1"></i>
             LTP Applications
         </div>

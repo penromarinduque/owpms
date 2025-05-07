@@ -116,23 +116,29 @@ class LtpApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
-            LtpApplication::find($ltp_application_id)->update([
-                "application_status" => LtpApplication::STATUS_ACCEPTED,
-            ]);
+            // LtpApplication::find($ltp_application_id)->update([
+            //     "application_status" => LtpApplication::STATUS_ACCEPTED,
+            // ]);
 
-            LtpApplicationProgress::create([
-                "ltp_application_id" => $ltp_application_id,
-                "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_ACCEPTED
-            ]);
+            // LtpApplicationProgress::create([
+            //     "ltp_application_id" => $ltp_application_id,
+            //     "user_id" => Auth::user()->id,
+            //     "status" => LtpApplicationProgress::STATUS_ACCEPTED
+            // ]);
 
             // send notification
 
-            return redirect()
-                    ->route('ltpapplication.index')
-                    ->with([
-                        'success' => 'Successfully accepted application.'
-                    ]);
+            // return redirect()
+            //         ->route('ltpapplication.index')
+            //         ->with([
+            //             'success' => 'Successfully accepted application.'
+            //         ]);
+
+            // redirect to payment order generation
+            return view('admin.ltpapplications.generatePaymentOrder', [
+                'ltp_application' => $ltp_application,
+                
+            ]);
         });
     }
 }
