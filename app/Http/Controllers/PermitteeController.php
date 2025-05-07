@@ -17,6 +17,7 @@ use App\Models\Municipality;
 use App\Models\Barangay;
 use App\Models\User;
 use App\Models\WildlifeFarm;
+use App\Helpers\ApplicationHelper;
 
 class PermitteeController extends Controller
 {
@@ -283,5 +284,27 @@ class PermitteeController extends Controller
         } else {
            return Response()->json(['failed'=>'Failed'], 500); 
         }
+    }
+
+    public function renderPermitteeInfoCard(Request $request, string $id){
+        $_permittee = new Permittee;
+        $_helper = new ApplicationHelper;
+    
+        $permittee_id = Crypt::decryptString($id);
+
+        $permittee = Permittee::find($permittee_id);
+
+        $user = User::query()->with(['personalInfo'])->find($permittee->user_id);
+
+        $wcp = $_permittee->getPermitteeWCP($user->id, 'wcp');
+        $wfp = $_permittee->getPermitteeWFP($user->id, 'wfp');
+
+
+        return view('components.permitteeInfoCard', [
+            '_helper' => $_helper,
+            'wcp' => $wcp,
+            'wfp' => $wfp,
+            'user' => $user
+        ]);
     }
 }

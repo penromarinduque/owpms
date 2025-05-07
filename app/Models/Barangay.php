@@ -11,6 +11,10 @@ class Barangay extends Model
 
     protected $fillable = ['municipality_id', 'barangay'];
 
+    public function municipality(){
+        return $this->belongsTo(Municipality::class);
+    }
+
     public function getBarangays($province_id = 23)
     {
         $barangays = Barangay::select('barangays.id', 'barangays.barangay_name', 'municipalities.municipality_name', 'provinces.province_name')

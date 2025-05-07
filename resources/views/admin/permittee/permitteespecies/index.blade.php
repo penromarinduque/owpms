@@ -9,12 +9,15 @@ active
 @endsection
 
 @section('content')
+
 <div class="container-fluid px-4">
     <h1 class="mt-4">Permittee Species</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('permittees.index') }}">Permittees</a></li>
         <li class="breadcrumb-item active">Species</li>
     </ol>
+
+    <div id="permitteeInfo" class="mb-2"></div>
 
     <div class="card">
         <div class="card-header">
@@ -87,7 +90,7 @@ active
 @section('script-extra')
 <script>
     $(function(){
-
+        getPermitteeInfo();
     });
 
     function showUpdateQtyModal(id, qty){
@@ -96,6 +99,16 @@ active
         $modal.find("input[name=id]").val(id);
         $modal.find("input[name=quantity]").val(qty);
         $modal.modal("show");
+    }
+
+    function getPermitteeInfo(){
+        $.ajax({
+            method: "GET",
+            url: '{{ route("permittee.cardInfo", ["id" => Crypt::encryptString($permittee->id)]) }}',
+            success: function(res){
+                $('#permitteeInfo').html(res);
+            }
+        });
     }
 </script>
 

@@ -48,6 +48,8 @@ Route::middleware('auth')->group(function (){
     // Permittee
     Route::prefix('permittees')->group(function () {
 
+        Route::get('render-permittee-info-card/{id}', [PermitteeController::class, 'renderPermitteeInfoCard'])->name("permittee.cardInfo");
+
         // Permittee Species
         Route::prefix('permitteespecies')->group(function () {
             Route::get('/create', [PermitteeSpecieController::class, 'create'])->name('permitteespecies.create');

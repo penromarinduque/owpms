@@ -17,10 +17,13 @@ class PermitteeSpecieController extends Controller
     {
         //
         $permittee_id = Crypt::decryptString($id);
+        $permittee = Permittee::find($permittee_id);
         $permittee_species = PermitteeSpecie::where("permittee_id", $permittee_id)->with([
             "specie"
         ])->paginate(20);
+
         return view("admin.permittee.permitteespecies.index", [
+            'permittee' => $permittee,
             "permittee_species" => $permittee_species
         ]);
     }

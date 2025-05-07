@@ -14,4 +14,6 @@ class PersonalInfo extends Model implements Auditable
     protected $primaryKey = "id"; // default it look for id
 
     protected $fillable = ['user_id', 'lastname', 'firstname', 'middlename', 'gender', 'email', 'contact_no', 'barangay_id'];
+
+    
 }
