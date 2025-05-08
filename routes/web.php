@@ -21,6 +21,7 @@ use App\Http\Controllers\PermitteeSpecieController;
 use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\AccountController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -188,6 +189,10 @@ Route::middleware('auth')->group(function (){
             Route::post('/update/{id}', [LtpFeeController::class, 'update'])->name('ltpfees.update');
             Route::delete('/destroy', [LtpFeeController::class, 'destroy'])->name('ltpfees.destroy');
         });
+    });
+
+    Route::prefix('account')->group(function(){
+        Route::get('/', [AccountController::class, 'index'])->name('account.index');
     });
 });
 

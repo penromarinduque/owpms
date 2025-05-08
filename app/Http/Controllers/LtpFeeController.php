@@ -104,7 +104,9 @@ class LtpFeeController extends Controller
         ]);
 
         $id = $request->id;
+
         LtpFee::find($id)->delete();
+        
         return redirect()->back()->with([
             'success' => "LTP Fee deleted successfully"
         ]);

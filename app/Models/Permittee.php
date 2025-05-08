@@ -19,7 +19,11 @@ class Permittee extends Model implements Auditable
 
     protected $fillable = ['user_id', 'permit_number', 'permit_type', 'valid_from', 'valid_to', 'date_of_issue', 'status', 'document'];
     
-    protected $dates = ['valid_from', 'valid_to'];
+    protected $casts = [
+        'valid_from' => 'datetime',
+        'valid_to' => 'datetime',
+        'date_of_issue' => 'datetime',
+    ];
     
     public function user(){
         return $this->hasOne(User::class, 'id', 'user_id');

@@ -15,5 +15,13 @@ class PersonalInfo extends Model implements Auditable
 
     protected $fillable = ['user_id', 'lastname', 'firstname', 'middlename', 'gender', 'email', 'contact_no', 'barangay_id'];
 
-    
+    public function user() {
+        return $this->hasOne(User::class);
+    }
+
+    protected function barangay(){
+        return $this->hasOne(Barangay::class, 'id', 'barangay_id');
+    }
+
+
 }
