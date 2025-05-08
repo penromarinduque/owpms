@@ -28,7 +28,7 @@ Account
                 </div>
             </div>
             <div id="list-example" class="list-group">
-                <a class="list-group-item list-group-item-action" href="#list-item-1"><i class="fas fa-key me-2"></i>Change Password</a>
+                <a class="list-group-item list-group-item-action" href="{{ route('password.request') }}"><i class="fas fa-key me-2"></i>Reset Password</a>
                 <a class="list-group-item list-group-item-action" href="#list-item-2"><i class="fas fa-user-edit me-2"></i>Change Username</a>
                 <a class="list-group-item list-group-item-action" href="#list-item-3"><i class="fas fa-envelope me-2"></i>Change Email</a>
             </div>
@@ -58,7 +58,7 @@ Account
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <label><small class="text-secondary">Email</small></label>
-                    <h6>{{ ucfirst($user->personalInfo->email) }}</h6>
+                    <h6>{{ $user->personalInfo->email }}</h6>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <label><small class="text-secondary">Contact Number</small></label>
