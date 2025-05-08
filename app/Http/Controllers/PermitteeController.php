@@ -76,7 +76,7 @@ class PermitteeController extends Controller
             'location' => 'required',
             'size' => 'required',
             'height' => 'required',
-            // 'permit_type_wfp' => 'required',
+            // 'permit_type_wfp' => 'required', 
             'permit_number_wfp' => 'required',
             'valid_from_wfp' => 'required',
             'valid_to_wfp' => 'required',

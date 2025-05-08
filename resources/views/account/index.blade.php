@@ -70,7 +70,7 @@ Account
                 </div>
             </div>
             <div id="list-example" class="list-group">
-                <a class="list-group-item list-group-item-action" href="#list-item-1"><i class="fas fa-user-edit me-2"></i>Update Personal Info</a>
+                <a class="list-group-item list-group-item-action" href="{{ route('account.personalInfo.edit', [Crypt::encryptString($user->personalInfo->id)]) }}"><i class="fas fa-user-edit me-2"></i>Update Personal Info</a>
             </div>
         </div>
     </div>

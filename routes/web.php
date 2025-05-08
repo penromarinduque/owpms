@@ -118,7 +118,6 @@ Route::middleware('auth')->group(function (){
         Route::post('upload', [LtpApplicationRequirementController::class, 'store'])->name('myapplication.upload-requirement');
     });
 
-
     // LTP Applications
     Route::prefix('ltpapplication')->group(function () {
         Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index');
@@ -193,6 +192,11 @@ Route::middleware('auth')->group(function (){
 
     Route::prefix('account')->group(function(){
         Route::get('/', [AccountController::class, 'index'])->name('account.index');
+        Route::prefix("personal-info")->group(function () {
+            Route::get("edit/{id}", [AccountController::class, 'editPersonalInfo'])->name("account.personalInfo.edit");
+            Route::post("update/{id}", [AccountController::class, 'updatePersonalInfo'])->name("account.personalInfo.update");
+        });
+
     });
 });
 
