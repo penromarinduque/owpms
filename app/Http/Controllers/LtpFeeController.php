@@ -65,8 +65,7 @@ class LtpFeeController extends Controller
         $request->validate([
             'fee_name' => 'required|string|max:150',
             'amount' => 'required|numeric|min:0',
-            'legal_basis' => 'required',
-            'status' => 'required',
+            'legal_basis' => 'required'
         ]);
 
         $fee_id = Crypt::decryptString($id);
@@ -83,7 +82,7 @@ class LtpFeeController extends Controller
             return redirect()->back()->with('error', 'Fee already exists');
         }
 
-        if($request->status == 1){
+        if($request->boolean('status')){
             LtpFee::where('id', '!=', $fee_id)->update([
                 'is_active' => 0
             ]);
@@ -93,9 +92,21 @@ class LtpFeeController extends Controller
             'fee_name' => $request->fee_name,
             'amount' => $request->amount,
             'legal_basis' => $request->legal_basis,
-            'is_active' => $request->status
+            'is_active' => $request->boolean('status')
         ]);
 
         return redirect()->route('ltpfees.index')->with('success', 'Fee updated successfully');
+    }
+
+    public function destroy(Request $request) {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
+        $id = $request->id;
+        LtpFee::find($id)->delete();
+        return redirect()->back()->with([
+            'success' => "LTP Fee deleted successfully"
+        ]);
     }
 }

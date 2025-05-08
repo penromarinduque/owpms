@@ -186,6 +186,7 @@ Route::middleware('auth')->group(function (){
             Route::post('/store', [LtpFeeController::class, 'store'])->name('ltpfees.store');
             Route::get('/edit/{id}', [LtpFeeController::class, 'edit'])->name('ltpfees.edit');
             Route::post('/update/{id}', [LtpFeeController::class, 'update'])->name('ltpfees.update');
+            Route::delete('/destroy', [LtpFeeController::class, 'destroy'])->name('ltpfees.destroy');
         });
     });
 });

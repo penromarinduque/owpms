@@ -8,4 +8,6 @@
 # May 7, 2025
 - Added legal_basis column to ltp_fees table
 
- 
+ # May 8, 2025
+ - Added deleted_at column to ltp_fees table using Laravel's softDeletes()
+ - 

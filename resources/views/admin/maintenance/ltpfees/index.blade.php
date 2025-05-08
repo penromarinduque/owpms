@@ -41,10 +41,12 @@ active
                             <td>{{ $fee->fee_name }}</td>
                             <td>{{ number_format($fee->amount, 2, '.', ',') }}</td>
                             <td>{{ $fee->legal_basis }}</td>
-                            <td class="text-center">{{ $fee->is_active ? 'Active' : 'Inactive' }}</td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill {{ $fee->is_active ? 'bg-primary' : 'bg-secondary' }} text-white">{{ $fee->is_active ? 'Active' : 'Inactive' }}</span>
+                            </td>
                             <td class="text-center">
                                 <a class="btn btn-sm btn-primary" href="{{ route('ltpfees.edit', Crypt::encryptString($fee->id)) }}"><i class="fas fa-edit me-1"></i>Edit</a>
-                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash me-1"></i>Delete</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="showConfirDeleteModal('{{ route('ltpfees.destroy', $fee->id) }}', '{{ $fee->id }}', 'Are you sure you want to delete <strong>{{ htmlentities(addslashes($fee->fee_name)) }}</strong>? This action is irreversible and will affect all related records.', 'Delete LTP Fee')"<i class="fas fa-trash me-1"></i>Delete</button>
                             </td>
                         </tr>
                     @empty
@@ -58,4 +60,6 @@ active
         </div>
     </div>
 </div>
+
+@include('components.confirmDelete')
 @endsection

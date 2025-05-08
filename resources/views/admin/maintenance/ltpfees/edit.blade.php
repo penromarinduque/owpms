@@ -24,7 +24,7 @@ active
             <div class="card-title"><i class="fas fa-money-check-alt me-2"></i>Edit Fee</div>
         </div>
         <div class="card-body">
-            <form action="{{ route('ltpfees.update') }}" method="POST">
+            <form action="{{ route('ltpfees.update', [Crypt::encryptString($fee->id)]) }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-sm-4">
@@ -50,6 +50,18 @@ active
                             <label for="legal_basis" class="form-label">Legal Basis <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="legal_basis" name="legal_basis" placeholder="Legal Basis" value="{{ old('legal_basis') ?? $fee->legal_basis }}">
                             @error('legal_basis')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="mb-3">
+                            <label for="legal_basis" class="form-label">Status</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="status" name="status" {{ old('is_active', $fee->is_active) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="status">Active</label>
+                            </div>
+                            @error('status')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
