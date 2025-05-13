@@ -10,4 +10,7 @@
 
  # May 8, 2025
  - Added deleted_at column to ltp_fees table using Laravel's softDeletes()
- - 
+ 
+# May 13, 2025
+- Created new tables user_roles, roles, permissions and role_permissions
+- restructure notifications table

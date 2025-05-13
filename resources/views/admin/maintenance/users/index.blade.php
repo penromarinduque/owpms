@@ -15,11 +15,11 @@ active
         <li class="breadcrumb-item"><a href="{{ url('') }}">Dashboard</a></li>
         <li class="breadcrumb-item active">Users</li>
     </ol>
+    <div class="d-flex justify-content-end mb-2">
+        <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
+    </div>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
-            </div>
             <i class="fas fa-users me-1"></i>
             List of Users
         </div>
@@ -38,7 +38,7 @@ active
             </div>
             @endif
 
-            <table class="table table-sm" id="datatablesSimple">
+            <table class="table table-sm table-striped table-bordered" >
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -68,6 +68,7 @@ active
                 @endforelse
                 </tbody>
             </table>
+            {{ $users->links() }}
         </div>
     </div>
 </div>

@@ -136,6 +136,12 @@
                     <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
                     LTP Fees
                 </a>
+
+                <div class="sb-sidenav-menu-heading">User Access</div>
+                <a class="nav-link @yield('active-ltprequirements')" href="{{ route('ltprequirements.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                    LTP Requirements
+                </a>
             @endif
         </div>
     </div>

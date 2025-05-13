@@ -11,13 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Schema::create('notifications', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->integer('ltp_permit_id');
+        //     $table->integer('permittee_id');
+        //     $table->enum('notification_type', ['ltp-approved', 'ltp-rejected', 'ltp-ready-for-printing']);
+        //     $table->text('notification_message')->nullable();
+        //     $table->boolean('is_read')->default(false);
+        //     $table->timestamp('sent_at')->useCurrent();
+        //     $table->timestamps();
+        // });
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->integer('ltp_permit_id');
-            $table->integer('permittee_id');
-            $table->enum('notification_type', ['ltp-approved', 'ltp-rejected', 'ltp-ready-for-printing']);
+            $table->integer('user_id');
             $table->text('notification_message')->nullable();
             $table->boolean('is_read')->default(false);
+            $table->string('action', 1000);
             $table->timestamp('sent_at')->useCurrent();
             $table->timestamps();
         });
