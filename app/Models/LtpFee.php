@@ -11,4 +11,9 @@ class LtpFee extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
+
+    public function getActiveFee()
+    {
+        return $this->where('is_active', 1)->first(); 
+    }
 }

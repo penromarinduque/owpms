@@ -40,5 +40,24 @@ class ApplicationHelper
         };
     }
 
+    public function setApplicationStatusBgColor($status): string
+    {
+        return match ($status) {
+            LtpApplication::STATUS_DRAFT => 'secondary',
+            LtpApplication::STATUS_SUBMITTED => 'primary',
+            LtpApplication::STATUS_UNDER_REVIEW => 'warning',
+            LtpApplication::STATUS_RETURNED => 'warning',
+            LtpApplication::STATUS_RESUBMITTED => 'primary',
+            LtpApplication::STATUS_ACCEPTED => 'success',
+            LtpApplication::STATUS_PAYMENT_IN_PROCESS => 'gray-600',
+            LtpApplication::STATUS_PAID => 'gray-600',
+            LtpApplication::STATUS_FOR_INSPECTION => 'gray-600',
+            LtpApplication::STATUS_APPROVED => 'success',
+            default => 'secondary',
+        };
+    }
+
+    
+
     
 }

@@ -10,6 +10,8 @@ use App\Helpers\ApplicationHelper;
 use App\Models\LtpApplicationProgress;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\LtpRequirement;
+use App\Models\LtpFee;
 
 class LtpApplicationController extends Controller
 {
@@ -32,9 +34,11 @@ class LtpApplicationController extends Controller
 
     public function review(string $id){
         $_helper = new ApplicationHelper;
-        $application_id = Crypt::decryptString($id);
+        $_ltp_requirement = new LtpRequirement;
 
+        $application_id = Crypt::decryptString($id);
         $ltp_application = LtpApplication::query()->with(['attachments'])->find($application_id);
+        $ltp_requirements = $_ltp_requirement->getActiveRequirements();
 
         if(in_array($ltp_application->application_status, [LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_RESUBMITTED])) {
             $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
@@ -53,7 +57,8 @@ class LtpApplicationController extends Controller
             '_helper' => $_helper,
             'title' => 'LTP Application',
             "ltp_application" => $ltp_application,
-            "permittee" => $permittee
+            "permittee" => $permittee,
+            "ltp_requirements" => $ltp_requirements
         ]);
     }
 
@@ -103,10 +108,17 @@ class LtpApplicationController extends Controller
         ]);
     }
 
-    public function accept(string $id) {
-        return DB::transaction(function () use ($id) {
+    public function accept(Request $request,string $id) {
+        return DB::transaction(function () use ($id, $request) {
+            $_ltp_requirement = new LtpRequirement;
+
             $ltp_application_id = Crypt::decryptString($id);
+
             $ltp_application = LtpApplication::query()->with(["permittee.user"])->find($ltp_application_id);
+
+            if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
+                return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
+            }
 
             if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , $ltp_application->permittee->user->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , $ltp_application->permittee->user->id)) {
                 return redirect()->back()->with('error', 'The clients WCP and/or WFP permit has expired or is not valid. Please renew the permit before submitting the application.');
@@ -116,29 +128,37 @@ class LtpApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
-            // LtpApplication::find($ltp_application_id)->update([
-            //     "application_status" => LtpApplication::STATUS_ACCEPTED,
-            // ]);
+            LtpApplication::find($ltp_application_id)->update([
+                "application_status" => LtpApplication::STATUS_ACCEPTED,
+            ]);
 
-            // LtpApplicationProgress::create([
-            //     "ltp_application_id" => $ltp_application_id,
-            //     "user_id" => Auth::user()->id,
-            //     "status" => LtpApplicationProgress::STATUS_ACCEPTED
-            // ]);
-
-            // send notification
-
-            // return redirect()
-            //         ->route('ltpapplication.index')
-            //         ->with([
-            //             'success' => 'Successfully accepted application.'
-            //         ]);
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $ltp_application_id,
+                "user_id" => Auth::user()->id,
+                "status" => LtpApplicationProgress::STATUS_ACCEPTED
+            ]);
 
             // redirect to payment order generation
-            return view('admin.ltpapplications.generatePaymentOrder', [
-                'ltp_application' => $ltp_application,
-                
-            ]);
+            return redirect()->route('ltpapplication.generatePaymentOrder', Crypt::encryptString($ltp_application_id))->with('success', 'Successfully accepted application.');
         });
+    }
+
+    public function generatePaymentOrder(Request $request, string $id) {
+        $_ltp_application = new LtpApplication;
+        $_ltp_fee = new LtpFee;
+
+        $ltp_application_id = Crypt::decryptString($id);
+        $ltp_application = LtpApplication::query()->with(["permittee.user"])->find($ltp_application_id);
+        $ltp_fee = $_ltp_fee->getActiveFee();
+
+        if(!$ltp_fee) {
+            return redirect()->back()->with('error', 'No active fee found!');
+        }
+
+        return view('admin.ltpapplications.generatePaymentOrder', [
+            '_ltp_application' => $_ltp_application,
+            'ltp_application' => $ltp_application,
+            'ltp_fee' => $ltp_fee
+        ]);
     }
 }

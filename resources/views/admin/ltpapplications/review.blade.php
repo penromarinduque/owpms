@@ -17,7 +17,7 @@ active
     </ol>
 
     <div class="d-flex justify-content-end gap-2 mb-2">
-        <button class="btn btn-sm btn-success" onclick="showConfirmModal('{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}', 'Are you sure you want to accept this application?', 'Confirm Accept')"><i class="fas fa-check me-1"></i>Accept & Generate Payment Order</button>
+        <button class="btn btn-sm btn-success"data-bs-toggle="modal" data-bs-target="#acceptApplicationModal"><i class="fas fa-check me-1"></i>Accept & Generate Payment Order</button>
         <button class="btn btn-sm btn-warning" onclick="showReturnApplicationModal({{ $ltp_application }})"><i class="fas fa-arrow-left me-1"></i>Return Application</button>
     </div>
 
@@ -100,6 +100,38 @@ active
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="acceptApplicationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" action="{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}" method="POST">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">Accept Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Please double check if all the required attachments are physically submitted and complete before accepting the application. This cannot be undone.</p>
+                @foreach ($ltp_requirements as $req)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="req_{{ $req->id }}" name="req[]" value="{{ $req->id }}" >
+                        <label class="form-check-label" for="req_{{ $req->id }}">
+                            {{ $req->requirement_name }} 
+                            @if ($req->is_mandatory)
+                                <span class="text-danger">*</span>
+                            @endif  
+                        </label>
+                    </div>
+                @endforeach
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success btn-submit">Accept</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @include('components.returnApplication')
 @include('components.confirm')
 @endsection

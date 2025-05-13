@@ -12,15 +12,12 @@ active
 <div class="container-fluid px-4">
     <h1 class="mt-4">Create Order of Payment Form</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('ltpapplication.index') }}">Applications</a></li>
         <li class="breadcrumb-item active">Create Order of Payment</li>
     </ol>
 
     <div class="card mb-4">
         <div class="card-header">
-            <div class="float-end">
-                <a href="#" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back to Dashboard</a>
-            </div>
             <i class="fas fa-file-invoice-dollar me-1"></i>
             Order of Payment Form
         </div>
@@ -28,15 +25,25 @@ active
             <form>
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label class="form-label">Address</label>
-                        <input type="text" class="form-control" value="Pangi, Gasan, Marinduque" readonly>
+                        <label class="form-label">Bill No. <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="" name="bill_no" id="bill_no">
+                            <button class="btn btn-sm btn-primary" type="button" onclick="generateBillNo();"><i class="fas fa-redo me-1"></i>Generate</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label">Address <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" value="{{ $_ltp_application->getWildlifeFarmLocation($ltp_application->permittee->user->id) }}">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label class="form-label">Nature of Application</label>
-                        <input type="text" class="form-control" value="Chainsaw Registration" readonly>
+                        <label class="form-label">Nature of Application <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" value="LTP Application">
                     </div>
                 </div>
 
@@ -57,15 +64,13 @@ active
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <select class="form-select">
-                                                <option value="">Select DAO</option>
-                                            </select>
+                                            {{ $ltp_fee->legal_basis }}
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control" placeholder="Description of fee">
+                                            {{ $ltp_fee->fee_name }}
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control" value="0.00" step="0.01">
+                                            <input type="number" class="form-control" value="{{ $ltp_fee->amount }}" step="0.01">
                                         </td>
                                     </tr>
                                 </tbody>
@@ -77,9 +82,6 @@ active
                                 </tfoot>
                             </table>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm mt-2">
-                            <i class="fas fa-plus"></i> Add Fee
-                        </button>
                     </div>
                 </div>
 
@@ -130,6 +132,20 @@ active
     $(document).ready(function() {
         $('.select2').select2();
     });
+
+    function generateBillNo() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hour = String(now.getHours()).padStart(2, '0');
+        const minute = String(now.getMinutes()).padStart(2, '0');
+        const second = String(now.getSeconds()).padStart(2, '0');
+        const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+        const randomNumber = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
+
+        $('#bill_no').val(`${year}-${month}-${day}${hour}${minute}${second}${milliseconds}${randomNumber}`);
+    }
 </script>
 @endsection
 

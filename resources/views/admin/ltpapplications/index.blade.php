@@ -66,14 +66,15 @@ active
             </ul>
             <br>
             <div class="table-responsive">
-                <table class="table table-sm table-hover" >
+                <table class="table table-sm table-hover table-striped" >
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>Permittee</th>
                             <th>Application No.</th>
                             <th>Date Created</th>
                             <th>Last Modified</th>
-                            <th>Application Status</th>
+                            <th>Status</th>
                             <th width="200px" class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -81,16 +82,23 @@ active
                         @forelse ($ltp_applications as $key => $ltp_application)
                             <tr>
                                 <td class="align-middle">{{ $key + 1 }}</td>
+                                <td class="align-middle">{{ $ltp_application->permittee->user->personalInfo->first_name . ' ' . $ltp_application->permittee->user->personalInfo->last_name }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
                                 <td class="align-middle">{{ $ltp_application->created_at->format('F d, Y') }}</td>
                                 <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
-                                <td class="align-middle">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</td>
+                                <td class="align-middle text-center">
+                                    <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
+                                </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
                                     @if (in_array($status, ['submitted', 'resubmitted']))
                                         <a href="#" onclick="showConfirmModal('{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}', 'Viewing this application will mark it as Under Review. Are you sure you want to continue?', 'Confirm Review', 'GET')" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
-                                    @else
+                                    @endif
+                                    @if (in_array($status, ['under-review']))
                                         <a href="{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                    @endif
+                                    @if (in_array($status, ['accepted']))   
+                                        <a href="{{ route('ltpapplication.generatePaymentOrder', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Generate Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
 
                                     <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs"><i class="fas fa-history"></i></a>
@@ -98,7 +106,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">No record found.</td>
+                                <td colspan="7" class="text-center">No record found.</td>
                             </tr>
                         @endforelse
                     </tbody>

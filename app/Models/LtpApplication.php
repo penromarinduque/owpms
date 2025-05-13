@@ -83,4 +83,12 @@ class LtpApplication extends Model
     
         return !$requirementsExist;
     }
+
+    public function getWildlifeFarmLocation($user_id) : string {
+        $user = User::find($user_id);
+        $wfp = $user->wfp();
+        $farm = $wfp->wildlifeFarm;
+        $location = $farm->barangay->barangay_name . ', ' . $farm->barangay->municipality->municipality_name . ', ' . $farm->barangay->municipality->province->province_name;
+        return $location;
+    }
 }

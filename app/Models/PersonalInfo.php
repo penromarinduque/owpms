@@ -13,7 +13,7 @@ class PersonalInfo extends Model implements Auditable
 
     protected $primaryKey = "id"; // default it look for id
 
-    protected $fillable = ['user_id', 'last_name', 'first_name', 'middle_name', 'gender', 'email', 'contact_no', 'barangay_id'];
+protected $fillable = ['user_id', 'last_name', 'first_name', 'middle_name', 'gender', 'email', 'contact_no', 'barangay_id'];
 
     public function user() {
         return $this->hasOne(User::class);

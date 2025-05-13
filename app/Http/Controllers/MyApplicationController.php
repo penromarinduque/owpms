@@ -280,13 +280,13 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application cannot have both endangered and non-endangered species! Endagered species must be submitted separately.');
             }
 
-            // if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , Auth::user()->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , Auth::user()->id)) {
-            //     return redirect()->back()->with('error', 'Your WCP and/or WFP permit has expired or is not valid. Please renew your permit before submitting your application.');
-            // }
+            if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , Auth::user()->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , Auth::user()->id)) {
+                return redirect()->back()->with('error', 'Your WCP and/or WFP permit has expired or is not valid. Please renew your permit before submitting your application.');
+            }
 
-            // if(!LtpApplication::validateRequirements($ltp_application->id)) {
-            //     return redirect()->back()->with('error', 'Application does not have all required attachments!');
-            // }
+            if(!LtpApplication::validateRequirements($ltp_application->id)) {
+                return redirect()->back()->with('error', 'Application does not have all required attachments!');
+            }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();

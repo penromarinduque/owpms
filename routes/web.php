@@ -125,6 +125,7 @@ Route::middleware('auth')->group(function (){
         Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return');
         Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
         Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept');
+        Route::get('generate-payment-order/{id}', [LtpApplicationController::class, 'generatePaymentOrder'])->name('ltpapplication.generatePaymentOrder');
     });
 
     // Maintenance
