@@ -44,8 +44,9 @@ active
                         <th>Name</th>
                         <th>Email</th>
                         <th>Username</th>
-                        <th>Active</th>
-                        <th>Action</th>
+                        <th class="text-center">Assigned Roles</th>
+                        <th class="text-center" style="width: 50px;">Active</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,14 +55,22 @@ active
                         <td>{{ strtoupper($user->first_name.' '.$user->last_name) }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->username }}</td>
-                        <td>
+                        <td class="text-center">
+                            @forelse ($user->userRoles as $userRole)
+                                <span class="badge  bg-primary">{{ $userRole->role->role_name }}</span>
+                            @empty
+                                <span class="text-secondary">No Assigned Roles</span>
+                            @endforelse
+                        </td>
+                        <td class="text-center" >
                             <div class="form-check form-switch">
                               <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$user->id}}" onclick="ajaxUpdateStatus('chkActiveStat{{$user->id}}', '{{Crypt::encrypt($user->id)}}');" {{ ($user->is_active_user==1) ? 'checked' : '' }}>
                               <!-- <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label> -->
                             </div>
                         </td>
-                        <td>
-                            <a href="{{ route('users.edit', ['id'=>Crypt::encrypt($user->id)]) }}" title="Edit" alt="Edit"><i class="fas fa-edit fa-lg"></i></a>
+                        <td class="text-center">
+                            <a href="{{ route('users.edit', ['id'=>Crypt::encrypt($user->id)]) }}" title="Edit" alt="Edit" class="btn btn-sm btn-primary"><i class="fas fa-edit fa-lg"></i></a>
+                            <a href="{{ route('iam.user_roles.edit', ['id'=>Crypt::encryptString($user->id)]) }}" title="Edit Role" alt="Edit Role" class="btn btn-sm btn-warning"><i class="fas fa-key fa-lg"></i></a>
                         </td>
                     </tr>
                 @empty

@@ -18,151 +18,179 @@ class PermissionSeeder extends Seeder
             // PERMITTEE
             [
                 'permission_tag' => 'PERMITTEE_CREATE',
-                'description' => 'Creation of Permittees'
+                'description' => 'Creation of Permittees',
+                'permission_group' => 'PERMITTEE'
             ],
             [
                 'permission_tag' => 'PERMITTEE_UPDATE',
-                'description' => 'Update of Permittees'
+                'description' => 'Update of Permittees',
+                'permission_group' => 'PERMITTEE'
             ],
 
             // PERMITTEE SPECIES
             [
                 'permission_tag' => 'PERMITTEE_SPECIE_CREATE',
-                'description' => 'Creation of Permittee Species'
+                'description' => 'Creation of Permittee Species',
+                'permission_group' => 'PERMITTEE_SPECIES'
             ],
             [
                 'permission_tag' => 'PERMITTEE_SPECIE_UPDATE',
-                'description' => 'Update of Permittee Species'
+                'description' => 'Update of Permittee Species',
+                'permission_group' => 'PERMITTEE_SPECIES'
             ],
             [
                 'permission_tag' => 'PERMITTEE_SPECIE_DELETE',
-                'description' => 'Delete of Permittee Species'
+                'description' => 'Delete of Permittee Species',
+                'permission_group' => 'PERMITTEE_SPECIES'
             ],
 
             // LTP APPLICATION
             [
                 'permission_tag' => 'LTP_APPLICATION_CREATE',
-                'description' => 'Creation of LTP Application'
+                'description' => 'Creation of LTP Application',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_UPDATE',
-                'description' => 'Update of LTP Application'
+                'description' => 'Update of LTP Application',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_DELETE',
-                'description' => 'Delete of LTP Application'
+                'description' => 'Delete of LTP Application',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_PREVIEW',
-                'description' => 'LTP Application Preview'
+                'description' => 'LTP Application Preview',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_REVIEW',
-                'description' => 'LTP Application Review'
+                'description' => 'LTP Application Review',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_PRINT',
-                'description' => 'LTP Application Print'
+                'description' => 'LTP Application Print',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_ACCEPT',
-                'description' => 'LTP Application Accept'
+                'description' => 'LTP Application Accept',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_RETURN',
-                'description' => 'LTP Application Return'
+                'description' => 'LTP Application Return',
+                'permission_group' => 'LTP_APPLICATION'
             ],
             [
                 'permission_tag' => 'LTP_APPLICATION_APPROVE',
-                'description' => 'LTP Application Approve'
+                'description' => 'LTP Application Approve',
+                'permission_group' => 'LTP_APPLICATION'
             ],
 
             // WILDLIFE TYPES
             [
                 'permission_tag' => 'WILDLIFE_TYPE_CREATE',
-                'description' => 'Creation of Wildlife Types'
+                'description' => 'Creation of Wildlife Types',
+                'permission_group' => 'WILDLIFE_TYPE'
             ],
             [
                 'permission_tag' => 'WILDLIFE_TYPE_UPDATE',
-                'description' => 'Update of Wildlife Types'
+                'description' => 'Update of Wildlife Types',
+                'permission_group' => 'WILDLIFE_TYPE'
             ],
 
             // CLASS
             [
                 'permission_tag' => 'CLASS_CREATE',
-                'description' => 'Creation of Class'
+                'description' => 'Creation of Class',
+                'permission_group' => 'CLASS'
             ],
             [
                 'permission_tag' => 'CLASS_UPDATE',
-                'description' => 'Update of Class'
+                'description' => 'Update of Class',
+                'permission_group' => 'CLASS'
             ],
 
             // FAMILY
             [
                 'permission_tag' => 'FAMILY_CREATE',
-                'description' => 'Creation of Family'
+                'description' => 'Creation of Family',
+                'permission_group' => 'FAMILY'
             ],
             [
                 'permission_tag' => 'FAMILY_UPDATE',
-                'description' => 'Update of Family'
+                'description' => 'Update of Family',
+                'permission_group' => 'FAMILY'
             ],
 
             // SPECIES
             [
                 'permission_tag' => 'SPECIES_CREATE',
-                'description' => 'Creation of Species'
+                'description' => 'Creation of Species',
+                'permission_group' => 'SPECIES'
             ],
             [
                 'permission_tag' => 'SPECIES_UPDATE',
-                'description' => 'Update of Species'
+                'description' => 'Update of Species',
+                'permission_group' => 'SPECIES'
             ],
 
             // LTP REQUIREMENTS
             [
                 'permission_tag' => 'LTP_REQUIREMENTS_CREATE',
-                'description' => 'Creation of LTP Requirements'
+                'description' => 'Creation of LTP Requirements',
+                'permission_group' => 'LTP_REQUIREMENTS'
             ],
             [
                 'permission_tag' => 'LTP_REQUIREMENTS_UPDATE',
-                'description' => 'Update of LTP Requirements'
+                'description' => 'Update of LTP Requirements',
+                'permission_group' => 'LTP_REQUIREMENTS'
             ],
 
             // USERS
             [
                 'permission_tag' => 'USER_CREATE',
-                'description' => 'Creation of Users'
+                'description' => 'Creation of Users',
+                'permission_group' => 'USERS'
             ],
             [
                 'permission_tag' => 'USER_UPDATE',
-                'description' => 'Update of Users'
+                'description' => 'Update of Users',
+                'permission_group' => 'USERS'
             ],
 
             // POSITIONS
             [
                 'permission_tag' => 'POSITION_CREATE',
-                'description' => 'Creation of Positions'
+                'description' => 'Creation of Positions',
+                'permission_group' => 'POSITIONS'
             ],
             [
                 'permission_tag' => 'POSITION_UPDATE',
-                'description' => 'Update of Positions'
+                'description' => 'Update of Positions',
+                'permission_group' => 'POSITIONS'
             ],
 
             // LTP FEES
             [
                 'permission_tag' => 'LTP_FEES_CREATE',
-                'description' => 'Creation of LTP Fees'
+                'description' => 'Creation of LTP Fees',
+                'permission_group' => 'LTP_FEES'
             ],
             [
                 'permission_tag' => 'LTP_FEES_UPDATE',
-                'description' => 'Update of LTP Fees'
+                'description' => 'Update of LTP Fees',
+                'permission_group' => 'LTP_FEES'
             ],
             [
                 'permission_tag' => 'LTP_FEES_DELETE',
-                'description' => 'Delete of LTP Fees'
+                'description' => 'Delete of LTP Fees',
+                'permission_group' => 'LTP_FEES'
             ]
-
-
-
         ];
 
         Permission::insert($permissions);

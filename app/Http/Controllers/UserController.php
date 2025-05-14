@@ -15,7 +15,9 @@ class UserController extends Controller
         $users = User::select('users.*', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name')
             ->join('personal_infos', 'personal_infos.user_id', 'users.id')
             ->where('usertype', '<>', 1)
+            ->with(['userRoles.role'])
             ->paginate(20);
+
         return view('admin.maintenance.users.index', [
             'users' => $users
         ]);

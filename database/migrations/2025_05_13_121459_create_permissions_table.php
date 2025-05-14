@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('permission_tag', 100)->unique();
             $table->string('description', 500);
+            $table->string('permission_group', 100);
             $table->timestamps();
         });
     }

@@ -124,10 +124,6 @@
                 </a>
             @endif
             @if(Auth::user()->usertype=='admin')
-                <a class="nav-link @yield('active-users')" href="{{ route('users.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                    Users
-                </a>
                 <a class="nav-link @yield('active-positions')" href="{{ route('positions.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-list-ol"></i></div>
                     Positions
@@ -138,9 +134,13 @@
                 </a>
 
                 <div class="sb-sidenav-menu-heading">User Access</div>
-                <a class="nav-link @yield('active-ltprequirements')" href="{{ route('ltprequirements.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
-                    LTP Requirements
+                <a class="nav-link @yield('active-users')" href="{{ route('users.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                    Users
+                </a>
+                <a class="nav-link @yield('active-roles')" href="{{ route('iam.roles.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-lock"></i></div>
+                    Roles
                 </a>
             @endif
         </div>

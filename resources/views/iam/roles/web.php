@@ -23,7 +23,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserRoleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -209,13 +208,6 @@ Route::middleware('auth')->group(function (){
             Route::post('/', [RoleController::class, 'store'])->name('iam.roles.store');
             Route::get('/{id}', [RoleController::class, 'edit'])->name('iam.roles.edit');
             Route::post('/update/{id}', [RoleController::class, 'update'])->name('iam.roles.update');
-        });
-        Route::prefix('user_roles')->group(function () {
-            Route::get('/', [UserRoleController::class, 'index'])->name('iam.user_roles.index');
-            Route::get('/create', [UserRoleController::class, 'create'])->name('iam.user_roles.create');
-            Route::post('/', [UserRoleController::class, 'store'])->name('iam.user_roles.store');
-            Route::get('/{id}', [UserRoleController::class, 'edit'])->name('iam.user_roles.edit');
-            Route::post('/update/{id}', [UserRoleController::class, 'update'])->name('iam.user_roles.update');
         });
     });
 });
