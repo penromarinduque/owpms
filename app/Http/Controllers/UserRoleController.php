@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserRole;
+use App\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use App\Models\User;
 
 class UserRoleController extends Controller
 {
@@ -31,6 +34,9 @@ class UserRoleController extends Controller
     public function store(Request $request)
     {
         //
+        if(!isset($request->role)){
+            return redirect()->back()->with('error', 'Please select a role');
+        }
     }
 
     /**
@@ -44,10 +50,18 @@ class UserRoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(UserRole $userRole)
+    public function edit(string $id)
     {
         //
-        return view('iam.userroles.edit');
+        $user_id = Crypt::decryptString($id);
+
+        $user = User::query()->with(['userRoles.role'])->find($user_id);
+        $userRoles = $user->userRoles;
+
+        return view('iam.userroles.edit',[
+            'userRoles' => $userRoles,
+            'user' => $user
+        ]);
     }
 
     /**
@@ -61,8 +75,24 @@ class UserRoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UserRole $userRole)
+    public function destroy(string $id)
     {
         //
+        $userRoleId = Crypt::decryptString($id);
+
+        UserRole::find($userRoleId)->delete();
+
+        return redirect()->back()->with("success", "User Role removed successfully.");
+    }
+
+    public function apiSearch(Request $request){
+        $search = $request->search;
+
+        $userRoles = Role::query()->select('user_roles.*', 'roles.id as role_id', 'roles.role_name as text');
+        $userRoles = Role::query()
+            ->where('role_name', 'like', '%' . $search . '%')
+            ->where("is_active", 1);
+
+        return response()->json($userRoles->get());
     }
 }

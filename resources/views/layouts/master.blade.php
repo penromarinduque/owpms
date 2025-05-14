@@ -54,11 +54,17 @@
         <script src="{{ asset('assets/select2/dist/js/select2.min.js') }}"></script>
         <script src="{{ asset('js/jquery.ajaxrequestlaravel.js') }}" defer></script>
         <script type="text/javascript">
+            // Fetch token from session
+            var sanctumToken = '{{ session('sanctumToken') }}';
+
+            // Setup AJAX headers
             $.ajaxSetup({
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'Authorization': sanctumToken ? "Bearer " + sanctumToken : ""
                 }
             });
+
         </script>
         <script src="{{ asset('js/scripts.js') }}"></script>
         <script src="{{ asset('js/extra.js') }}"></script>

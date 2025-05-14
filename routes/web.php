@@ -212,10 +212,10 @@ Route::middleware('auth')->group(function (){
         });
         Route::prefix('user_roles')->group(function () {
             Route::get('/', [UserRoleController::class, 'index'])->name('iam.user_roles.index');
-            Route::get('/create', [UserRoleController::class, 'create'])->name('iam.user_roles.create');
             Route::post('/', [UserRoleController::class, 'store'])->name('iam.user_roles.store');
             Route::get('/{id}', [UserRoleController::class, 'edit'])->name('iam.user_roles.edit');
             Route::post('/update/{id}', [UserRoleController::class, 'update'])->name('iam.user_roles.update');
+            Route::delete('/{id}', [UserRoleController::class, 'destroy'])->name('iam.user_roles.destroy');
         });
     });
 });
