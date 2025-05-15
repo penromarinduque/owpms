@@ -37,6 +37,17 @@ class UserRoleController extends Controller
         if(!isset($request->role)){
             return redirect()->back()->with('error', 'Please select a role');
         }
+
+        if(!isset($request->user_id)){
+            return redirect()->back()->with('error', 'User not defined.');
+        }
+
+        UserRole::create([
+            'user_id' => $request->user_id,
+            'role_id' => $request->role
+        ]);
+
+        return redirect()->back()->with('success', 'User Role added successfully.');
     }
 
     /**

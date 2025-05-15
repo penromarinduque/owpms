@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Barangay;
+use App\Models\PersonalInfo;
 
 class UserController extends Controller
 {
@@ -25,28 +28,51 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('admin.maintenance.users.create');
+        $_barangay = new Barangay;
+        $barangays = $_barangay->getBarangays();
+        return view('admin.maintenance.users.create', [
+            'barangays' => $barangays
+        ]);
     }
 
     public function store(Request $request)
     {
-        // return $request;
-        $validated = $request->validate([
-            'name' => 'required',
-            'username' => 'required|min:6|max:16|unique:users',
-            'email' => 'required|max:150|unique:users',
-            'password' => 'required',
-        ]);
-
-        User::create([
-            'name' => $request->input('firstname').' '.$request->input('lastname'),
-            'email' => $request->input('email'),
-            'username' => $request->input('username'),
-            'password' => bcrypt($request->input('password')),
-            'usertype' => 'admin',
-            'is_active_user' => 1,
-        ]);
-        return Redirect::route('users.index')->with('success', 'Successfully saved!');
+        return DB::transaction(function () use ($request) {
+            // return $request;
+            $validated = $request->validate([
+                'username' => 'required|min:6|max:16|unique:users',
+                'email' => 'required|max:150|unique:users',
+                'user_type' => 'required|in:admin,internal',
+                'password' => 'required',
+                'middlename' => 'required',
+                'lastname' => 'required',
+                'firstname' => 'required',
+                'address' => 'required',
+                'gender' => 'required',
+                'contact_no' => 'required',
+            ]);
+    
+            $user = User::create([
+                'email' => $request->input('email'),
+                'username' => $request->input('username'),
+                'usertype' => $request->input('user_type'),
+                'password' => bcrypt($request->input('password')),
+                'is_active_user' => 1,
+            ]);
+    
+            PersonalInfo::create([
+                'user_id' => $user->id,
+                'first_name' => $request->input('firstname'),
+                'middle_name' => $request->input('middlename'),
+                'last_name' => $request->input('lastname'),
+                'barangay_id' => $request->input('address'),
+                'gender' => $request->input('gender'),
+                'contact_no' => $request->input('contact_no'),
+                'email' => $request->input('email'),
+            ]);
+    
+            return Redirect::route('users.index')->with('success', 'Successfully added user.');
+        });
     }
 
     public function show(string $id)

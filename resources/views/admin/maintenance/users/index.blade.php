@@ -15,15 +15,17 @@ active
         <li class="breadcrumb-item"><a href="{{ url('') }}">Dashboard</a></li>
         <li class="breadcrumb-item active">Users</li>
     </ol>
-    <div class="d-flex justify-content-end mb-2">
-        <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
-    </div>
+
     <div class="card mb-4">
     	<div class="card-header">
             <i class="fas fa-users me-1"></i>
             List of Users
         </div>
         <div class="card-body">
+             <div class="d-flex justify-content-end mb-2">
+                <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
+            </div>
+
             @if(session('failed'))
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -44,6 +46,7 @@ active
                         <th>Name</th>
                         <th>Email</th>
                         <th>Username</th>
+                        <th class="text-center">User Type</th>
                         <th class="text-center">Assigned Roles</th>
                         <th class="text-center" style="width: 50px;">Active</th>
                         <th class="text-center">Action</th>
@@ -55,6 +58,16 @@ active
                         <td>{{ strtoupper($user->first_name.' '.$user->last_name) }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->username }}</td>
+                        <td class="text-center">
+                            @php
+                                $userTypeColor = [
+                                    'admin' => 'warning',
+                                    'internal' => 'primary',
+                                    'permittee' => 'secondary',
+                                ];
+                            @endphp
+                            <span class="badge bg-{{ $userTypeColor[$user->usertype] ?? 'info' }}">{{ $user->usertype }}</span>
+                        </td>
                         <td class="text-center">
                             @forelse ($user->userRoles as $userRole)
                                 <span class="badge  bg-primary">{{ $userRole->role->role_name }}</span>
@@ -70,7 +83,9 @@ active
                         </td>
                         <td class="text-center">
                             <a href="{{ route('users.edit', ['id'=>Crypt::encrypt($user->id)]) }}" title="Edit" alt="Edit" class="btn btn-sm btn-primary"><i class="fas fa-edit fa-lg"></i></a>
-                            <a href="{{ route('iam.user_roles.edit', ['id'=>Crypt::encryptString($user->id)]) }}" title="Edit Role" alt="Edit Role" class="btn btn-sm btn-warning"><i class="fas fa-key fa-lg"></i></a>
+                            @if (in_array($user->usertype, ['internal', 'admin']))
+                                <a href="{{ route('iam.user_roles.edit', ['id'=>Crypt::encryptString($user->id)]) }}" title="Edit Role" alt="Edit Role" class="btn btn-sm btn-warning"><i class="fas fa-key fa-lg"></i></a>
+                            @endif
                         </td>
                     </tr>
                 @empty
