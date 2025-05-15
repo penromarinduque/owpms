@@ -73,4 +73,15 @@ class User extends Authenticatable
     public function userRoles(){
         return $this->hasMany(UserRole::class, 'user_id', 'id');
     }   
+
+    public function getUserPermissions() : array {
+        $role_ids = UserRole::query()
+        ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
+        ->where('user_id', $this->id)
+        ->where('roles.is_active', 1)
+        ->pluck('role_id')
+        ->toArray();
+        $permissions = RolePermission::whereIn('role_id', $role_ids)->pluck('permission')->toArray();
+        return $permissions;
+    }
 }

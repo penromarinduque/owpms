@@ -13,40 +13,35 @@ Edit User Role
         <li class="breadcrumb-item"><a href="{{ route('users.index') }}">User Roles</a></li>
         <li class="breadcrumb-item active">Edit</li>
     </ol>
-    <table class="table table-bordered table-hover table-sm">
-        <thead>
-            <tr>
-                <th colspan="2">User Info</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ $user->personalInfo->first_name . ' ' . $user->personalInfo->last_name }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ $user->email }}</td>
-            </tr>
-            <tr>
-                <th>Username</th>
-                <td>{{ $user->username }}</td>
-            </tr>
-            <tr>
-                <th>User Type</th>
-                <td><span class="badge bg-secondary">{{ $user->usertype }}</span></td>
-            </tr>
-        </tbody>
-    </table>
-    {{-- <div class="card mb-4">
+    
+    <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-user me-1"></i>
             User Info
         </div>
         <div class="card-body">
-
+            <table class="table table-bordered table-hover table-sm small">
+                <tbody>
+                    <tr>
+                        <th>Name</th>
+                        <td>{{ $user->personalInfo->first_name . ' ' . $user->personalInfo->last_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ $user->email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Username</th>
+                        <td>{{ $user->username }}</td>
+                    </tr>
+                    <tr>
+                        <th>User Type</th>
+                        <td><span class="badge bg-secondary">{{ $user->usertype }}</span></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    </div> --}}
+    </div>
     <div class="card mb-4">
     	<div class="card-header">
             <i class="fas fa-edit me-1"></i>
@@ -54,17 +49,19 @@ Edit User Role
         </div>
         <div class="card-body">
             <div class="d-flex justify-content-end mb-2">
-                <button class="btn btn-primary" data-bs-target="#addRoleModal" data-bs-toggle="modal"><i class="fas fa-plus me-1"></i>Add Role</button>
+                <button class="btn btn-sm btn-primary" data-bs-target="#addRoleModal" data-bs-toggle="modal"><i class="fas fa-plus me-1"></i>Add Role</button>
             </div>
             <table class="table table-bordered table-hover table-striped">
                 <thead>
                     <th>Role</th>
+                    <th>Role Description</th>
                     <th>Actions</th>
                 </thead>
                 <tbody>
                     @forelse ($userRoles as $userRole)
                         <tr>
                             <td>{{ $userRole->role->role_name }}</td>
+                            <td>{{ $userRole->role->role_description }}</td>
                             <td>
                                 <a href="#" onclick="showConfirDeleteModal('{{ route('iam.user_roles.destroy', ['id'=>Crypt::encryptString($userRole->id)]) }}', {{$userRole->id}}, 'This action is irreversible are you sure you want to remove this role from this user?', 'Remove Role')" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-title="Remove Role"><i class="fas fa-trash"></i></a>
                             </td>

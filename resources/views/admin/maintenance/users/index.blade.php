@@ -40,7 +40,7 @@ active
             </div>
             @endif
 
-            <table class="table table-sm table-striped table-bordered" >
+            <table class="table table-striped table-bordered" >
                 <thead>
                     <tr>
                         <th>Name</th>

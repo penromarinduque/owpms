@@ -17,6 +17,11 @@ class PermissionSeeder extends Seeder
         $permissions = [
             // PERMITTEE
             [
+                'permission_tag' => 'PERMITTEE_INDEX',
+                'description' => 'Viewing of Permittees',
+                'permission_group' => 'PERMITTEE'
+            ],
+            [
                 'permission_tag' => 'PERMITTEE_CREATE',
                 'description' => 'Creation of Permittees',
                 'permission_group' => 'PERMITTEE'
@@ -28,6 +33,11 @@ class PermissionSeeder extends Seeder
             ],
 
             // PERMITTEE SPECIES
+            [
+                'permission_tag' => 'PERMITTEE_SPECIE_INDEX',
+                'description' => 'Viewing of Permittee Species',
+                'permission_group' => 'PERMITTEE_SPECIES'
+            ],
             [
                 'permission_tag' => 'PERMITTEE_SPECIE_CREATE',
                 'description' => 'Creation of Permittee Species',
@@ -93,6 +103,11 @@ class PermissionSeeder extends Seeder
 
             // WILDLIFE TYPES
             [
+                'permission_tag' => 'WILDLIFE_TYPE_INDEX',
+                'description' => 'View List of Wildlife Types',
+                'permission_group' => 'WILDLIFE_TYPE'
+            ],
+            [
                 'permission_tag' => 'WILDLIFE_TYPE_CREATE',
                 'description' => 'Creation of Wildlife Types',
                 'permission_group' => 'WILDLIFE_TYPE'
@@ -104,6 +119,11 @@ class PermissionSeeder extends Seeder
             ],
 
             // CLASS
+            [
+                'permission_tag' => 'CLASS_INDEX',
+                'description' => 'Viewing of Class',
+                'permission_group' => 'CLASS'
+            ],
             [
                 'permission_tag' => 'CLASS_CREATE',
                 'description' => 'Creation of Class',
@@ -117,6 +137,11 @@ class PermissionSeeder extends Seeder
 
             // FAMILY
             [
+                'permission_tag' => 'FAMILY_INDEX',
+                'description' => 'Viewing of Family',
+                'permission_group' => 'FAMILY'
+            ],
+            [
                 'permission_tag' => 'FAMILY_CREATE',
                 'description' => 'Creation of Family',
                 'permission_group' => 'FAMILY'
@@ -129,6 +154,11 @@ class PermissionSeeder extends Seeder
 
             // SPECIES
             [
+                'permission_tag' => 'SPECIES_INDEX',
+                'description' => 'Viewing of Species',
+                'permission_group' => 'SPECIES'
+            ],
+            [
                 'permission_tag' => 'SPECIES_CREATE',
                 'description' => 'Creation of Species',
                 'permission_group' => 'SPECIES'
@@ -140,6 +170,11 @@ class PermissionSeeder extends Seeder
             ],
 
             // LTP REQUIREMENTS
+            [
+                'permission_tag' => 'LTP_REQUIREMENTS_INDEX',
+                'description' => 'Viewing of LTP Requirements',
+                'permission_group' => 'LTP_REQUIREMENTS'
+            ],
             [
                 'permission_tag' => 'LTP_REQUIREMENTS_CREATE',
                 'description' => 'Creation of LTP Requirements',
@@ -165,6 +200,11 @@ class PermissionSeeder extends Seeder
 
             // POSITIONS
             [
+                'permission_tag' => 'POSITION_INDEX',
+                'description' => 'Viewing of Positions',
+                'permission_group' => 'POSITIONS'
+            ],
+            [
                 'permission_tag' => 'POSITION_CREATE',
                 'description' => 'Creation of Positions',
                 'permission_group' => 'POSITIONS'
@@ -176,6 +216,11 @@ class PermissionSeeder extends Seeder
             ],
 
             // LTP FEES
+            [
+                'permission_tag' => 'LTP_FEES_INDEX',
+                'description' => 'Creation of LTP Fees',
+                'permission_group' => 'LTP_FEES'
+            ],
             [
                 'permission_tag' => 'LTP_FEES_CREATE',
                 'description' => 'Creation of LTP Fees',
@@ -190,7 +235,25 @@ class PermissionSeeder extends Seeder
                 'permission_tag' => 'LTP_FEES_DELETE',
                 'description' => 'Delete of LTP Fees',
                 'permission_group' => 'LTP_FEES'
-            ]
+            ],
+
+            // ROLES
+            [
+                'permission_tag' => 'ROLES_CREATE',
+                'description' => 'Creation of Roles',
+                'permission_group' => 'ROLES'
+            ],
+            [
+                'permission_tag' => 'ROLES_UPDATE',
+                'description' => 'Update of Roles',
+                'permission_group' => 'ROLES'
+            ],
+            [
+                'permission_tag' => 'ROLES_INDEX',
+                'description' => 'View the list of Roles',
+                'permission_group' => 'ROLES'
+            ],
+
         ];
 
         Permission::insert($permissions);

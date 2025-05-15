@@ -16,15 +16,15 @@ active
         <li class="breadcrumb-item active">LTP Fees</li>
     </ol>
 
-    <div class="d-flex justify-content-end mb-2">
-        <a class="btn btn-sm btn-primary" href="{{ route('ltpfees.create') }}"><i class="fas fa-plus"></i> Add Fee</a>
-    </div>
-
+    
     <div class="card mb-4">
         <div class="card-header">
             <div class="card-title"><i class="fas fa-money-check-alt me-2"></i>List of LTP Fees</div>
         </div>
         <div class="card-body">
+            <div class="d-flex justify-content-end mb-2">
+                <a class="btn btn-sm btn-primary" href="{{ route('ltpfees.create') }}"><i class="fas fa-plus"></i> Add Fee</a>
+            </div>
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>

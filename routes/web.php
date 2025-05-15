@@ -56,23 +56,28 @@ Route::middleware('auth')->group(function (){
 
         // Permittee Species
         Route::prefix('permitteespecies')->group(function () {
-            Route::get('/create', [PermitteeSpecieController::class, 'create'])->name('permitteespecies.create');
-            Route::post('/store', [PermitteeSpecieController::class, 'store'])->name('permitteespecies.store');
-            Route::put('/update', [PermitteeSpecieController::class, 'update'])->name('permitteespecies.update');
-            Route::delete('/delete/{id}', [PermitteeSpecieController::class, 'destroy'])->name('permitteespecies.delete');
             Route::get('/ajaxgetspecies', [PermitteeSpecieController::class, 'ajaxGetSpecies'])->name('permitteespecies.ajaxgetspecies');
             Route::get('/ajaxGetPermittees', [PermitteeSpecieController::class, 'ajaxGetPermittees'])->name('permitteespecies.ajaxGetPermittees');
-            Route::get('/{id}', [PermitteeSpecieController::class, 'index'])->name('permitteespecies.index');
+
+            Route::middleware(['userType:admin,internal'])->group(function () {
+                Route::get('/create', [PermitteeSpecieController::class, 'create'])->name('permitteespecies.create')->middleware('permission:PERMITTEE_SPECIE_CREATE');
+                Route::post('/store', [PermitteeSpecieController::class, 'store'])->name('permitteespecies.store')->middleware('permission:PERMITTEE_SPECIE_CREATE');
+                Route::put('/update', [PermitteeSpecieController::class, 'update'])->name('permitteespecies.update')->middleware('permission:PERMITTEE_SPECIE_UPDATE');
+                Route::delete('/delete/{id}', [PermitteeSpecieController::class, 'destroy'])->name('permitteespecies.delete')->middleware('permission:PERMITTEE_SPECIE_DELETE');
+                Route::get('/{id}', [PermitteeSpecieController::class, 'index'])->name('permitteespecies.index')->middleware('permission:PERMITTEE_SPECIE_INDEX');
+            });
         });
 
-        Route::get('/', [PermitteeController::class, 'index'])->name('permittees.index');
-        Route::get('create', [PermitteeController::class, 'create'])->name('permittees.create');
-        Route::post('/store', [PermitteeController::class, 'store'])->name('permittees.store');
-        Route::get('/show/{id}', [PermitteeController::class, 'show'])->name('permittees.show');
-        Route::post('/upload-permit/{id}', [PermitteeController::class, 'uploadPermit'])->name('permittees.uploadpermit');
-        Route::get('/{id}', [PermitteeController::class, 'edit'])->name('permittees.edit');
-        Route::post('/update/{id}', [PermitteeController::class, 'update'])->name('permittees.update');
         Route::post('/ajaxupdatestatus', [PermitteeController::class, 'ajaxUpdateStatus'])->name('permittees.ajaxupdatestatus');
+        Route::middleware(['userType:admin,internal'])->group(function () {
+            Route::get('/', [PermitteeController::class, 'index'])->name('permittees.index')->middleware('permission:PERMITTEE_INDEX');
+            Route::get('create', [PermitteeController::class, 'create'])->name('permittees.create')->middleware('permission:PERMITTEE_CREATE');
+            Route::post('/store', [PermitteeController::class, 'store'])->name('permittees.store')->middleware('permission:PERMITTEE_STORE');
+            Route::get('/show/{id}', [PermitteeController::class, 'show'])->name('permittees.show')->middleware('permission:PERMITTEE_INDEX');
+            Route::post('/upload-permit/{id}', [PermitteeController::class, 'uploadPermit'])->name('permittees.uploadpermit')->middleware('permission:PERMITTEE_UPDATE');
+            Route::get('/{id}', [PermitteeController::class, 'edit'])->name('permittees.edit')->middleware('permission:PERMITTEE_UPDATE');
+            Route::post('/update/{id}', [PermitteeController::class, 'update'])->name('permittees.update')->middleware('permission:PERMITTEE_UPDATE');
+        });
     });
 
     // Users
@@ -88,13 +93,15 @@ Route::middleware('auth')->group(function (){
 
     // Species
     Route::prefix('species')->group(function () {
-        Route::get('/', [SpecieController::class, 'index'])->name('species.index');
-        Route::get('create', [SpecieController::class, 'create'])->name('species.create');
-        Route::post('/', [SpecieController::class, 'store'])->name('species.store');
-        Route::get('/{id}', [SpecieController::class, 'edit'])->name('species.edit');
-        Route::post('/update/{id}', [SpecieController::class, 'update'])->name('species.update');
-        Route::get('/show/{id}', [SpecieController::class, 'show'])->name('species.show');
         Route::post('/ajaxupdatestatus', [SpecieController::class, 'ajaxUpdateStatus'])->name('species.ajaxupdatestatus');
+        Route::middleware(["userType:admin,internal"])->group(function () {
+            Route::get('/', [SpecieController::class, 'index'])->name('species.index')->middleware('permission:SPECIES_INDEX');
+            Route::get('create', [SpecieController::class, 'create'])->name('species.create')->middleware('permission:SPECIES_CREATE');
+            Route::post('/', [SpecieController::class, 'store'])->name('species.store')->middleware('permission:SPECIES_CREATE');
+            Route::get('/{id}', [SpecieController::class, 'edit'])->name('species.edit')->middleware('permission:SPECIES_UPDATE');
+            Route::post('/update/{id}', [SpecieController::class, 'update'])->name('species.update')->middleware('permission:SPECIES_UPDATE');
+            Route::get('/show/{id}', [SpecieController::class, 'show'])->name('species.show')->middleware('permission:SPECIES_INDEX');
+        });
     });
 
     // Client Application
@@ -135,61 +142,73 @@ Route::middleware('auth')->group(function (){
         Route::prefix('species')->group(function () {
             // Types
             Route::prefix('types')->group(function () {
-                Route::get('/', [SpecieTypeController::class, 'index'])->name('specietypes.index');
-                Route::get('create', [SpecieTypeController::class, 'create'])->name('specietypes.create');
-                Route::post('/', [SpecieTypeController::class, 'store'])->name('specietypes.store');
                 Route::get('/apiSearch', [SpecieTypeController::class, 'apiSearch'])->name('specietypes.apiSearch');
-                Route::get('/{id}', [SpecieTypeController::class, 'edit'])->name('specietypes.edit');
-                Route::post('/update/{id}', [SpecieTypeController::class, 'update'])->name('specietypes.update');
+                Route::middleware("userType:admin,internal")->group(function () {
+                    Route::get('/', [SpecieTypeController::class, 'index'])->name('specietypes.index')->middleware('permission:WILDLIFE_TYPE_INDEX');
+                    Route::get('create', [SpecieTypeController::class, 'create'])->name('specietypes.create')->middleware('permission:WILDLIFE_TYPE_CREATE');
+                    Route::post('/', [SpecieTypeController::class, 'store'])->name('specietypes.store')->middleware('permission:WILDLIFE_TYPE_CREATE');
+                    Route::get('/{id}', [SpecieTypeController::class, 'edit'])->name('specietypes.edit')->middleware('permission:WILDLIFE_TYPE_UPDATE');
+                    Route::post('/update/{id}', [SpecieTypeController::class, 'update'])->name('specietypes.update')->middleware('permission:WILDLIFE_TYPE_UPDATE');
+                });
             });
 
             // Classes
             Route::prefix('classes')->group(function () {
-                Route::get('/', [SpecieClassController::class, 'index'])->name('specieclasses.index');
-                Route::get('create', [SpecieClassController::class, 'create'])->name('specieclasses.create');
-                Route::post('/', [SpecieClassController::class, 'store'])->name('specieclasses.store');
                 Route::get('/apiSearch', [SpecieClassController::class, 'apiSearch'])->name('specieclasses.apiSearch');
                 Route::get('/apiGetByType', [SpecieClassController::class, 'apiGetByType'])->name('specieclasses.apiGetByType');
-                Route::get('/{id}', [SpecieClassController::class, 'edit'])->name('specieclasses.edit');
-                Route::post('/update/{id}', [SpecieClassController::class, 'update'])->name('specieclasses.update');
+
+                Route::middleware(["userType:admin,internal"])->group(function () {
+                    Route::get('/', [SpecieClassController::class, 'index'])->name('specieclasses.index')->middleware('permission:CLASS_INDEX');
+                    Route::get('create', [SpecieClassController::class, 'create'])->name('specieclasses.create')->middleware('permission:CLASS_CREATE');
+                    Route::post('/', [SpecieClassController::class, 'store'])->name('specieclasses.store')->middleware('permission:CLASS_CREATE');
+                    Route::get('/{id}', [SpecieClassController::class, 'edit'])->name('specieclasses.edit')->middleware('permission:CLASS_UPDATE');
+                    Route::post('/update/{id}', [SpecieClassController::class, 'update'])->name('specieclasses.update')->middleware('permission:CLASS_UPDATE');
+                });
+
+                
             });
 
             // Families
             Route::prefix('families')->group(function () {
-                Route::get('/', [SpecieFamilyController::class, 'index'])->name('speciefamilies.index');
-                Route::get('create', [SpecieFamilyController::class, 'create'])->name('speciefamilies.create');
-                Route::post('/', [SpecieFamilyController::class, 'store'])->name('speciefamilies.store');
                 Route::get('/apiGetByClass', [SpecieFamilyController::class, 'apiGetByClass'])->name('speciefamilies.apiGetByClass');
-                Route::get('/{id}', [SpecieFamilyController::class, 'edit'])->name('speciefamilies.edit');
-                Route::post('/update/{id}', [SpecieFamilyController::class, 'update'])->name('speciefamilies.update');
+
+                Route::middleware(["userType:admin,internal"])->group(function () {
+                    Route::get('/', [SpecieFamilyController::class, 'index'])->name('speciefamilies.index')->middleware('permission:FAMILY_INDEX');
+                    Route::get('create', [SpecieFamilyController::class, 'create'])->name('speciefamilies.create')->middleware('permission:FAMILY_CREATE');
+                    Route::post('/', [SpecieFamilyController::class, 'store'])->name('speciefamilies.store')->middleware('permission:FAMILY_CREATE');
+                    Route::get('/{id}', [SpecieFamilyController::class, 'edit'])->name('speciefamilies.edit')->middleware('permission:FAMILY_UPDATE');
+                    Route::post('/update/{id}', [SpecieFamilyController::class, 'update'])->name('speciefamilies.update')->middleware('permission:FAMILY_UPDATE');
+                });
             });
         });
 
         // LTP Requirements
         Route::prefix('ltprequirements')->group(function () {
-            Route::get('/', [LtpRequirementController::class, 'index'])->name('ltprequirements.index');
-            Route::get('create', [LtpRequirementController::class, 'create'])->name('ltprequirements.create');
-            Route::post('/', [LtpRequirementController::class, 'store'])->name('ltprequirements.store');
-            Route::get('/{id}', [LtpRequirementController::class, 'edit'])->name('ltprequirements.edit');
-            Route::post('/update/{id}', [LtpRequirementController::class, 'update'])->name('ltprequirements.update');
+            Route::middleware(["userType:admin,internal"])->group(function () {
+                Route::get('/', [LtpRequirementController::class, 'index'])->name('ltprequirements.index')->middleware('permission:LTP_REQUIREMENTS_INDEX');
+                Route::get('create', [LtpRequirementController::class, 'create'])->name('ltprequirements.create')->middleware('permission:LTP_REQUIREMENTS_CREATE');
+                Route::post('/', [LtpRequirementController::class, 'store'])->name('ltprequirements.store')->middleware('permission:LTP_REQUIREMENTS_CREATE');
+                Route::get('/{id}', [LtpRequirementController::class, 'edit'])->name('ltprequirements.edit')->middleware('permission:LTP_REQUIREMENTS_UPDATE');
+                Route::post('/update/{id}', [LtpRequirementController::class, 'update'])->name('ltprequirements.update')->middleware('permission:LTP_REQUIREMENTS_UPDATE');
+            });
         });
 
         // Positions
-        Route::prefix('positions')->group(function () {
-            Route::get('/', [PositionController::class, 'index'])->name('positions.index');
-            Route::get('create', [PositionController::class, 'create'])->name('positions.create');
-            Route::post('/', [PositionController::class, 'store'])->name('positions.store');
-            Route::get('/{id}', [PositionController::class, 'edit'])->name('positions.edit');
-            Route::post('/update/{id}', [PositionController::class, 'update'])->name('positions.update');
+        Route::middleware(["userType:admin,internal"])->prefix('positions')->group(function () {
+            Route::get('/', [PositionController::class, 'index'])->name('positions.index')->middleware('permission:POSITION_INDEX');
+            Route::get('create', [PositionController::class, 'create'])->name('positions.create')->middleware('permission:POSITION_CREATE');
+            Route::post('/', [PositionController::class, 'store'])->name('positions.store')->middleware('permission:POSITION_CREATE');
+            Route::get('/{id}', [PositionController::class, 'edit'])->name('positions.edit')->middleware('permission:POSITION_UPDATE');
+            Route::post('/update/{id}', [PositionController::class, 'update'])->name('positions.update')->middleware('permission:POSITION_UPDATE');
         });
 
-        Route::prefix('ltpfees')->group(function () {
-            Route::get('/', [LtpFeeController::class, 'index'])->name('ltpfees.index');
-            Route::get('/create', [LtpFeeController::class, 'create'])->name('ltpfees.create');
-            Route::post('/store', [LtpFeeController::class, 'store'])->name('ltpfees.store');
-            Route::get('/edit/{id}', [LtpFeeController::class, 'edit'])->name('ltpfees.edit');
-            Route::post('/update/{id}', [LtpFeeController::class, 'update'])->name('ltpfees.update');
-            Route::delete('/destroy', [LtpFeeController::class, 'destroy'])->name('ltpfees.destroy');
+        Route::middleware(["userType:admin,internal"])->prefix('ltpfees')->group(function () {
+            Route::get('/', [LtpFeeController::class, 'index'])->name('ltpfees.index')->middleware('permission:LTP_FEES_INDEX');
+            Route::get('/create', [LtpFeeController::class, 'create'])->name('ltpfees.create')->middleware('permission:LTP_FEES_CREATE');
+            Route::post('/store', [LtpFeeController::class, 'store'])->name('ltpfees.store')->middleware('permission:LTP_FEES_CREATE');
+            Route::get('/edit/{id}', [LtpFeeController::class, 'edit'])->name('ltpfees.edit')->middleware('permission:LTP_FEES_UPDATE');
+            Route::post('/update/{id}', [LtpFeeController::class, 'update'])->name('ltpfees.update')->middleware('permission:LTP_FEES_UPDATE');
+            Route::delete('/destroy', [LtpFeeController::class, 'destroy'])->name('ltpfees.destroy')->middleware('permission:LTP_FEES_DELETE');
         });
     });
 
@@ -203,14 +222,16 @@ Route::middleware('auth')->group(function (){
     });
 
     Route::prefix('iam')->group(function () {
-        Route::prefix('roles')->group(function () {
-            Route::get('/', [RoleController::class, 'index'])->name('iam.roles.index');
+        
+        Route::middleware(['userType:admin'])->prefix('roles')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('iam.roles.index')->middleware('permission:ROLES_INDEX');
             Route::get('/create', [RoleController::class, 'create'])->name('iam.roles.create');
             Route::post('/', [RoleController::class, 'store'])->name('iam.roles.store');
             Route::get('/{id}', [RoleController::class, 'edit'])->name('iam.roles.edit');
             Route::post('/update/{id}', [RoleController::class, 'update'])->name('iam.roles.update');
         });
-        Route::prefix('user_roles')->group(function () {
+
+        Route::middleware(['userType:admin'])->prefix('user_roles')->group(function () {
             Route::get('/', [UserRoleController::class, 'index'])->name('iam.user_roles.index');
             Route::post('/', [UserRoleController::class, 'store'])->name('iam.user_roles.store');
             Route::get('/{id}', [UserRoleController::class, 'edit'])->name('iam.user_roles.edit');

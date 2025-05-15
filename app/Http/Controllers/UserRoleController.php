@@ -42,6 +42,10 @@ class UserRoleController extends Controller
             return redirect()->back()->with('error', 'User not defined.');
         }
 
+        if(UserRole::where('user_id', $request->user_id)->where('role_id', $request->role)->exists()){
+            return redirect()->back()->with('error', 'User Role already exists.');
+        }
+
         UserRole::create([
             'user_id' => $request->user_id,
             'role_id' => $request->role
