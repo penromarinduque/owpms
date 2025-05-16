@@ -139,7 +139,8 @@ class LtpApplicationController extends Controller
             ]);
 
             // redirect to payment order generation
-            return redirect()->route('ltpapplication.generatePaymentOrder', Crypt::encryptString($ltp_application_id))->with('success', 'Successfully accepted application.');
+            return redirect()->route('ltpapplication.index', ['status' => LtpApplication::STATUS_ACCEPTED])->with('success', 'Successfully accepted application. You can visit the accepted tab to generate payment orders.');
+            // return redirect()->route('ltpapplication.generatePaymentOrder', Crypt::encryptString($ltp_application_id))->with('success', 'Successfully accepted application.');
         });
     }
 

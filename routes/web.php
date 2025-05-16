@@ -82,12 +82,14 @@ Route::middleware('auth')->group(function (){
 
     // Users
     Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('users.index');
-        Route::get('create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/', [UserController::class, 'store'])->name('users.store');
-        Route::get('/{id}', [UserController::class, 'edit'])->name('users.edit');
-        Route::post('/update/{id}', [UserController::class, 'update'])->name('users.update');
-        Route::get('/show/{id}', [UserController::class, 'show'])->name('users.show');
+        Route::middleware(["userType:admin,internal"])->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('users.index')->middleware('permission:USER_INDEX');
+            Route::get('create', [UserController::class, 'create'])->name('users.create')->middleware('permission:USER_CREATE');
+            Route::post('/', [UserController::class, 'store'])->name('users.store')->middleware('permission:USER_CREATE');
+            Route::get('/{id}', [UserController::class, 'edit'])->name('users.edit')->middleware('permission:USER_UPDATE');
+            Route::post('/update/{id}', [UserController::class, 'update'])->name('users.update')->middleware('permission:USER_UPDATE');
+            Route::get('/show/{id}', [UserController::class, 'show'])->name('users.show')->middleware('permission:USER_INDEX');
+        });
         Route::post('/ajaxupdatestatus', [UserController::class, 'ajaxUpdateStatus'])->name('users.ajaxupdatestatus');
     });
 
@@ -129,12 +131,15 @@ Route::middleware('auth')->group(function (){
 
     // LTP Applications
     Route::prefix('ltpapplication')->group(function () {
-        Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index');
-        Route::get('review/{id}', [LtpApplicationController::class, 'review'])->name('ltpapplication.review');
-        Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return');
-        Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
-        Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept');
-        Route::get('generate-payment-order/{id}', [LtpApplicationController::class, 'generatePaymentOrder'])->name('ltpapplication.generatePaymentOrder');
+        Route::middleware(["userType:admin,internal"])->group(function () {
+            Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index')->middleware('permission:LTP_APPLICATION_INDEX');
+            Route::get('review/{id}', [LtpApplicationController::class, 'review'])->name('ltpapplication.review')->middleware('permission:LTP_APPLICATION_REVIEW');
+            Route::get('preview/{id}', [MyApplicationController::class, 'preview'])->name('ltpapplication.preview')->middleware('permission:LTP_APPLICATION_INDEX');
+            Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return')->middleware('permission:LTP_APPLICATION_RETURN');
+            Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs')->middleware('permission:LTP_APPLICATION_INDEX');
+            Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept')->middleware('permission:LTP_APPLICATION_ACCEPT');
+            Route::get('generate-payment-order/{id}', [LtpApplicationController::class, 'generatePaymentOrder'])->name('ltpapplication.generatePaymentOrder')->middleware('permission:PAYMENT_ORDERS_CREATE');
+        });
     });
 
     // Maintenance
@@ -202,6 +207,7 @@ Route::middleware('auth')->group(function (){
             Route::post('/update/{id}', [PositionController::class, 'update'])->name('positions.update')->middleware('permission:POSITION_UPDATE');
         });
 
+        //  LTP Fees
         Route::middleware(["userType:admin,internal"])->prefix('ltpfees')->group(function () {
             Route::get('/', [LtpFeeController::class, 'index'])->name('ltpfees.index')->middleware('permission:LTP_FEES_INDEX');
             Route::get('/create', [LtpFeeController::class, 'create'])->name('ltpfees.create')->middleware('permission:LTP_FEES_CREATE');
@@ -225,18 +231,18 @@ Route::middleware('auth')->group(function (){
         
         Route::middleware(['userType:admin'])->prefix('roles')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('iam.roles.index')->middleware('permission:ROLES_INDEX');
-            Route::get('/create', [RoleController::class, 'create'])->name('iam.roles.create');
-            Route::post('/', [RoleController::class, 'store'])->name('iam.roles.store');
-            Route::get('/{id}', [RoleController::class, 'edit'])->name('iam.roles.edit');
-            Route::post('/update/{id}', [RoleController::class, 'update'])->name('iam.roles.update');
+            Route::get('/create', [RoleController::class, 'create'])->name('iam.roles.create')->middleware('permission:ROLES_CREATE');
+            Route::post('/', [RoleController::class, 'store'])->name('iam.roles.store')->middleware('permission:ROLES_CREATE');
+            Route::get('/{id}', [RoleController::class, 'edit'])->name('iam.roles.edit')->middleware('permission:ROLES_UPDATE');
+            Route::post('/update/{id}', [RoleController::class, 'update'])->name('iam.roles.update')->middleware('permission:ROLES_UPDATE');
         });
 
         Route::middleware(['userType:admin'])->prefix('user_roles')->group(function () {
-            Route::get('/', [UserRoleController::class, 'index'])->name('iam.user_roles.index');
-            Route::post('/', [UserRoleController::class, 'store'])->name('iam.user_roles.store');
-            Route::get('/{id}', [UserRoleController::class, 'edit'])->name('iam.user_roles.edit');
-            Route::post('/update/{id}', [UserRoleController::class, 'update'])->name('iam.user_roles.update');
-            Route::delete('/{id}', [UserRoleController::class, 'destroy'])->name('iam.user_roles.destroy');
+            Route::get('/', [UserRoleController::class, 'index'])->name('iam.user_roles.index')->middleware('permission:USER_ROLES_INDEX');
+            Route::post('/', [UserRoleController::class, 'store'])->name('iam.user_roles.store')->middleware('permission:USER_ROLES_CREATE');
+            Route::get('/{id}', [UserRoleController::class, 'edit'])->name('iam.user_roles.edit')->middleware('permission:USER_ROLES_UPDATE');
+            Route::post('/update/{id}', [UserRoleController::class, 'update'])->name('iam.user_roles.update')->middleware('permission:USER_ROLES_UPDATE');
+            Route::delete('/{id}', [UserRoleController::class, 'destroy'])->name('iam.user_roles.destroy')->middleware('permission:USER_ROLES_DELETE');
         });
     });
 });

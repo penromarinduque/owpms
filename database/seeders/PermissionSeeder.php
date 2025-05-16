@@ -56,6 +56,11 @@ class PermissionSeeder extends Seeder
 
             // LTP APPLICATION
             [
+                'permission_tag' => 'LTP_APPLICATION_INDEX',
+                'description' => 'Viewing of LTP Application',
+                'permission_group' => 'LTP_APPLICATION'
+            ],
+            [
                 'permission_tag' => 'LTP_APPLICATION_CREATE',
                 'description' => 'Creation of LTP Application',
                 'permission_group' => 'LTP_APPLICATION'
@@ -188,6 +193,11 @@ class PermissionSeeder extends Seeder
 
             // USERS
             [
+                'permission_tag' => 'USER_INDEX',
+                'description' => 'Viewing of Users',
+                'permission_group' => 'USERS'
+            ],
+            [
                 'permission_tag' => 'USER_CREATE',
                 'description' => 'Creation of Users',
                 'permission_group' => 'USERS'
@@ -252,6 +262,50 @@ class PermissionSeeder extends Seeder
                 'permission_tag' => 'ROLES_INDEX',
                 'description' => 'View the list of Roles',
                 'permission_group' => 'ROLES'
+            ],
+
+            // USER_ROLES
+            [
+                'permission_tag' => 'USER_ROLES_INDEX',
+                'description' => 'Viewing of User Roles',
+                'permission_group' => 'USER_ROLES'
+            ],
+            [
+                'permission_tag' => 'USER_ROLES_CREATE',
+                'description' => 'Creation of User Roles',
+                'permission_group' => 'USER_ROLES'
+            ],
+            [
+                'permission_tag' => 'USER_ROLES_UPDATE',
+                'description' => 'Update of User Roles',
+                'permission_group' => 'USER_ROLES'
+            ],
+            [
+                'permission_tag' => 'USER_ROLES_DELETE',
+                'description' => 'Delete of User Roles',
+                'permission_group' => 'USER_ROLES'
+            ],
+
+            // PAYMENT ORDERS
+            [
+                'permission_tag' => 'PAYMENT_ORDERS_INDEX',
+                'description' => 'Viewing of Payment Orders',
+                'permission_group' => 'PAYMENT_ORDERS'
+            ],
+            [
+                'permission_tag' => 'PAYMENT_ORDERS_CREATE',
+                'description' => 'Creation of Payment Orders',
+                'permission_group' => 'PAYMENT_ORDERS'
+            ],
+            [
+                'permission_tag' => 'PAYMENT_ORDERS_UPDATE',
+                'description' => 'Update of Payment Orders',
+                'permission_group' => 'PAYMENT_ORDERS'
+            ],
+            [
+                'permission_tag' => 'PAYMENT_ORDERS_DELETE',
+                'description' => 'Delete of Payment Orders',
+                'permission_group' => 'PAYMENT_ORDERS'
             ],
 
         ];
