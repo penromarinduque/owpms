@@ -14,3 +14,9 @@
 # May 13, 2025
 - Created new tables user_roles, roles, permissions and role_permissions
 - restructure notifications table
+
+# May 16, 2025
+- Created new table generated_document_types with columns id, name, description
+- Created new table signatory_roles with columns id, role, description
+- Created new table signatories with column generated_document_type_id, user_id, order, signatory_role_id
+

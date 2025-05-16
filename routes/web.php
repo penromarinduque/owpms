@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\PaymentOrderController;
+use App\Http\Controllers\SignatoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -138,8 +140,13 @@ Route::middleware('auth')->group(function (){
             Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return')->middleware('permission:LTP_APPLICATION_RETURN');
             Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs')->middleware('permission:LTP_APPLICATION_INDEX');
             Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept')->middleware('permission:LTP_APPLICATION_ACCEPT');
-            Route::get('generate-payment-order/{id}', [LtpApplicationController::class, 'generatePaymentOrder'])->name('ltpapplication.generatePaymentOrder')->middleware('permission:PAYMENT_ORDERS_CREATE');
+
         });
+    });
+
+    // Payment Order
+    Route::prefix('payment-order')->group(function () {
+        Route::get('create/{ltp_application_id}', [PaymentOrderController::class, 'create'])->name('paymentorder.create')->middleware('permission:PAYMENT_ORDERS_CREATE');
     });
 
     // Maintenance
@@ -216,8 +223,16 @@ Route::middleware('auth')->group(function (){
             Route::post('/update/{id}', [LtpFeeController::class, 'update'])->name('ltpfees.update')->middleware('permission:LTP_FEES_UPDATE');
             Route::delete('/destroy', [LtpFeeController::class, 'destroy'])->name('ltpfees.destroy')->middleware('permission:LTP_FEES_DELETE');
         });
+
+        // Signatories
+        Route::middleware(["userType:admin,internal"])->prefix('signatories')->group(function () {
+            Route::get('/', [SignatoryController::class, 'index'])->name('signatories.index')->middleware('permission:SIGNATORIES_INDEX');
+            Route::get('/create', [SignatoryController::class, 'create'])->name('signatories.create')->middleware('permission:SIGNATORIES_CREATE');
+        });
+
     });
 
+    // Account
     Route::prefix('account')->group(function(){
         Route::get('/', [AccountController::class, 'index'])->name('account.index');
         Route::prefix("personal-info")->group(function () {
@@ -227,6 +242,7 @@ Route::middleware('auth')->group(function (){
 
     });
 
+    // User Access Management
     Route::prefix('iam')->group(function () {
         
         Route::middleware(['userType:admin'])->prefix('roles')->group(function () {
@@ -245,6 +261,8 @@ Route::middleware('auth')->group(function (){
             Route::delete('/{id}', [UserRoleController::class, 'destroy'])->name('iam.user_roles.destroy')->middleware('permission:USER_ROLES_DELETE');
         });
     });
+
+
 });
 
 Route::get('/test-email', function () {

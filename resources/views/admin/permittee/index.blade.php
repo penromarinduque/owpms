@@ -17,13 +17,13 @@ active
     </ol>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                <a href="{{ route('permittees.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
-            </div>
             <i class="fas fa-users me-1"></i>
             List of Permittees
         </div>
         <div class="card-body">
+             <div class="float-end mb-2">
+                <a href="{{ route('permittees.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
+            </div>
             @if(session('failed'))
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -37,7 +37,7 @@ active
                 <strong>{{ session('success') }}</strong>
             </div>
             @endif
-            <table class="table table-sm" id="datatablesSimple">
+            <table class="table table-bordered table-hover" >
                 <thead>
                     <tr>
                         <th>Permittee</th>
@@ -45,47 +45,44 @@ active
                         <th>Address</th>
                         <th>Contact No</th>
                         <th>Email</th>
-                        <th>WFP/WCP Permit Numbers</th>
+                        <th class="text-center">WFP/WCP Permit Numbers</th>
                         <th>Active</th>
-                        <th>Action</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                @forelse($permittees as $permittee)
-                    <tr>
-                        <td>{{ strtoupper($permittee->last_name.', '.$permittee->first_name.' '.$permittee->middle_name) }}</td>
-                        <td>{{ strtoupper($permittee->gender) }}</td>
-                        <td>{{ $permittee->barangay_name.', '.$permittee->municipality_name.', '.$permittee->province_name }}</td>
-                        <td>{{ $permittee->contact_no }}</td>
-                        <td>{{ $permittee->email }}</td>
-                        <td>
-                        @if(!empty($permittee->wildlifePermits))
-                            @foreach($permittee->wildlifePermits as $wildlifepermit)
-                            <a href="{{route('permittees.show', [$wildlifepermit->id])}}" title="View Deatils">{{ strtoupper($wildlifepermit->permit_number) }}</a><br>
-                            @endforeach
-                        @endif
-                        </td>
-                        <td>
-                            <div class="form-check form-switch">
-                              <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus(event,'chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_user==1) ? 'checked' : '' }}>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="dropdown dropstart">
-                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                  Actions
-                                </button>
-                                <ul class="dropdown-menu">
-                                  <li><a class="dropdown-item" href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}"><i class="fas fa-edit fa-lg me-2"></i>Edit Permittee</a></li>
-                                  <li><a class="dropdown-item" href="{{ route('permitteespecies.index', Crypt::encryptString($permittee->wildlifePermits()->firstWhere('permit_type', 'wcp')->id)) }}"><i class="fa-solid fa-bars-staggered me-2"></i>Species</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                @endforelse
+                    @forelse($permittees as $permittee)
+                        <tr>
+                            <td>{{ strtoupper($permittee->last_name.', '.$permittee->first_name.' '.$permittee->middle_name) }}</td>
+                            <td>{{ ucwords(strtolower($permittee->gender)) }}</td>
+                            <td>{{ $permittee->barangay_name.', '.$permittee->municipality_name.', '.$permittee->province_name }}</td>
+                            <td>{{ $permittee->contact_no }}</td>
+                            <td>{{ $permittee->email }}</td>
+                            <td class="text-center">
+                                @if(!empty($permittee->wildlifePermits))
+                                    @foreach($permittee->wildlifePermits as $wildlifepermit)
+                                    <a href="{{route('permittees.show', [$wildlifepermit->id])}}" title="View Deatils">{{ strtoupper($wildlifepermit->permit_number) }}</a><br>
+                                    @endforeach
+                                @endif
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus(event,'chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_user==1) ? 'checked' : '' }}>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}"><i class="fas fa-edit fa-lg me-2"></i>Edit Permittee</a>
+                                <a class="btn btn-sm btn-outline-primary" href="{{ route('permitteespecies.index', Crypt::encryptString($permittee->wildlifePermits()->firstWhere('permit_type', 'wcp')->id)) }}"><i class="fa-solid fa-bars-staggered me-2"></i>Species</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center">No record found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
+            {{ $permittees->links() }}
         </div>
     </div>
 </div>
@@ -117,6 +114,5 @@ active
         });
     }
 </script>
-@endsection
-
 @include('components.confirmActivate');
+@endsection

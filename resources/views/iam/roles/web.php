@@ -182,6 +182,7 @@ Route::middleware('auth')->group(function (){
             Route::post('/update/{id}', [PositionController::class, 'update'])->name('positions.update');
         });
 
+        // LTP Fees
         Route::prefix('ltpfees')->group(function () {
             Route::get('/', [LtpFeeController::class, 'index'])->name('ltpfees.index');
             Route::get('/create', [LtpFeeController::class, 'create'])->name('ltpfees.create');

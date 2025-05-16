@@ -308,6 +308,28 @@ class PermissionSeeder extends Seeder
                 'permission_group' => 'PAYMENT_ORDERS'
             ],
 
+            // SIGNATORIES
+            [
+                'permission_tag' => 'SIGNATORIES_INDEX',
+                'description' => 'Viewing of Signatories',
+                'permission_group' => 'SIGNATORIES'
+            ],
+            [
+                'permission_tag' => 'SIGNATORIES_CREATE',
+                'description' => 'Creation of Signatories',
+                'permission_group' => 'SIGNATORIES'
+            ],
+            [
+                'permission_tag' => 'SIGNATORIES_UPDATE',
+                'description' => 'Update of Signatories',
+                'permission_group' => 'SIGNATORIES'
+            ],
+            [
+                'permission_tag' => 'SIGNATORIES_DELETE',
+                'description' => 'Delete of Signatories',
+                'permission_group' => 'SIGNATORIES'
+            ],
+
         ];
 
         Permission::insert($permissions);

@@ -30,28 +30,28 @@ active
         	    @csrf
         		 <div class="row mb-3">
                     <div class="col-sm-4 mb-2">
-                        <label for="firstname" class="form-label">First Name</label>
+                        <label for="firstname" class="form-label">First Name <b class="text-danger">*</b></label>
                         <input type="text" class="form-control" name="firstname" id="firstname" placeholder="First name" value="{{ old('firstname') }}">
                         @error('firstname')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                     <div class="col-sm-4 mb-2">
-                        <label for="middlename" class="form-label">Middle Name</label>
+                        <label for="middlename" class="form-label">Middle Name <b class="text-danger">*</b></label>
                         <input type="text" class="form-control" name="middlename" id="middlename" placeholder="Middle name" value="{{ old('middlename') }}">
                         @error('middlename')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                     <div class="col-sm-4 mb-2">
-                		<label for="lastname" class="form-label">Last Name</label>
+                		<label for="lastname" class="form-label">Last Name <b class="text-danger">*</b></label>
                 		<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Last name" value="{{ old('lastname') }}">
                         @error('lastname')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                     <div class="col-sm-4 mb-2">
-                            <label for="gender" class="form-label">Gender</label>
+                            <label for="gender" class="form-label">Gender <b class="text-danger">*</b></label>
                 		<select name="gender" id="gender" class="form-select" placeholder="Select Gender">
                             <option value="">-Select Gender-</option>
                             <option value="male" {{ (old('gender') == 'male') ? 'selected' : '' }}>Male</option>
@@ -62,21 +62,21 @@ active
                         @enderror
                 	</div>
                 	<div class="col-sm-4 mb-2">
-                		<label for="email" class="form-label">Email</label>
+                		<label for="email" class="form-label">Email <b class="text-danger">*</b></label>
                 		<input type="email" class="form-control" name="email" id="email" placeholder="Email" value="{{ old('email') }}">
                         @error('email')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                 	<div class="col-sm-4 mb-2">
-                		<label for="contact_no" class="form-label">Contact Number</label>
+                		<label for="contact_no" class="form-label">Contact Number <b class="text-danger">*</b></label>
                 		<input type="text" class="form-control" name="contact_no" id="contact_no" placeholder="Contact Number" value="{{ old('contact_no') }}">
                         @error('contact_no')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                     <div class="col-sm-4 mb-2">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label">Address <b class="text-danger">*</b></label>
                 		<select name="address" id="address" class="form-select select2" placeholder="Select Address">
                             <option value="">-Select Address-</option>
                             @foreach ($barangays as $barangay)
@@ -88,7 +88,7 @@ active
                         @enderror
                 	</div>
                 	<div class="col-sm-4 mb-2">
-                		<label for="user_type" class="form-label">User Type</label>
+                		<label for="user_type" class="form-label">User Type <b class="text-danger">*</b></label>
                 		<select name="user_type" id="user_type" class="form-select" placeholder="Select User Type">
                             <option value="">-Select User Type-</option>
                             <option value="admin" {{ (old('user_type') == 'admin') ? 'selected' : '' }}>Admin</option>
@@ -101,16 +101,16 @@ active
                 </div>
                 <div class="row mb-3">
                 	<div class="col-sm-4 mb-2">
-                		<label for="username" class="form-label">Username <!-- <small><i>(6-16 characters)</i></small> --></label>
-                        <button type="button" class="btn btn-sm" onclick="generateUsername('firstname', 'lastname', 'username');">Generate</button>
+                		<label for="username" class="form-label">Username <b class="text-danger">*</b> <!-- <small><i>(6-16 characters)</i></small> --></label>
+                        <button type="button" class="btn btn-sm btn-secondary p-1 py-0" onclick="generateUsername('firstname', 'lastname', 'username');">Generate</button>
                 		<input type="text" class="form-control" name="username" id="username" placeholder="Username" value="{{ old('username') }}">
                         @error('username')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                     <div class="col-sm-4 mb-2">
-                        <span class="float-end"><input type="checkbox" name="gen_pass" id="gen_pass" onclick="genaratePassword('gen_pass', 'password');"> <label for="gen_pass">Generate Password</label></span>
-                        <label for="password" class="form-label">Password</label>
+                        <span class="float-end"><input type="checkbox" name="gen_pass" id="gen_pass" onclick="genaratePassword('gen_pass', 'password'); "> <label for="gen_pass">Generate Password</label></span>
+                        <label for="password" class="form-label">Password <b class="text-danger">*</b></label>
                         <div class="input-group">
                             <input type="password" class="form-control" name="password" id="password" placeholder="Password" aria-label="Text input with checkbox">
                             <div class="input-group-text">

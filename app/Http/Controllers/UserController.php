@@ -121,6 +121,23 @@ class UserController extends Controller
         }
     }
 
+    public function apiSearch(Request $request) {
+
+        $search = $request->keyword;
+        $users_query = User::query()->select('users.*', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name', DB::raw("CONCAT(personal_infos.last_name, ' ', personal_infos.middle_name, ' ', personal_infos.first_name) AS text"))
+            ->join('personal_infos', 'personal_infos.user_id', 'users.id')
+            ->where('users.username', 'like', "%{$search}%")
+            ->orWhere('personal_infos.last_name', 'like', "%{$search}%")
+            ->orWhere('personal_infos.first_name', 'like', "%{$search}%")
+            ->orWhere('personal_infos.middle_name', 'like', "%{$search}%");
+
+        if($request->has('usertype')) {
+            $users_query->whereIn('users.usertype', $request->usertype);
+        } 
+
+        return $users_query->get();
+    }
+
     // DB: u522295882_owpms
     // User: u522295882_owpms
     // DB pw: 7kF+FAoDd

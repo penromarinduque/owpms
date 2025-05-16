@@ -35,7 +35,7 @@ class PermitteeController extends Controller
             ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
             ->join('provinces', 'provinces.id', 'municipalities.province_id')
             ->where('users.usertype', 'permittee')
-            ->get();
+            ->paginate(20);
         return view('admin.permittee.index', [
             'permittees' => $permittees
         ]);

@@ -98,7 +98,7 @@ active
                                         <a href="{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
                                     @if (in_array($status, ['accepted']))   
-                                        <a href="{{ route('ltpapplication.generatePaymentOrder', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Generate Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
+                                        <a href="{{ route('paymentorder.create', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Generate Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
 
                                     <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs"><i class="fas fa-history"></i></a>

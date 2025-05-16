@@ -28,7 +28,7 @@ active
                         <label class="form-label">Bill No. <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="text" class="form-control" value="" name="bill_no" id="bill_no">
-                            <button class="btn btn-sm btn-primary" type="button" onclick="generateBillNo();"><i class="fas fa-redo me-1"></i>Generate</button>
+                            <button class="btn btn-sm btn-outline-primary" type="button" onclick="generateBillNo();"><i class="fas fa-redo me-1"></i>Generate</button>
                         </div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ active
                                 <tfoot>
                                     <tr>
                                         <td colspan="2" class="text-end fw-bold">Total:</td>
-                                        <td>₱ 0.00</td>
+                                        <td>₱ {{ number_format($ltp_fee->amount, 2) }}</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -89,7 +89,7 @@ active
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body text-center">
-                                <h6 class="mb-3">Chief RPS Signature</h6>
+                                <h6 class="mb-3">Prepared By</h6>
                                 <div class="border-bottom mb-2">SIMEON R. DIAZ</div>
                                 <small class="text-muted">Revenue Collection Officer</small>
                                 <button type="button" class="btn btn-outline-secondary btn-sm d-block mx-auto mt-3">
@@ -101,7 +101,7 @@ active
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body text-center">
-                                <h6 class="mb-3">Chief TSD Signature</h6>
+                                <h6 class="mb-3">Approved By</h6>
                                 <div class="border-bottom mb-2">Engr. CYNTHIA U. LOZANO</div>
                                 <small class="text-muted">Chief Technical Services Division</small>
                                 <button type="button" class="btn btn-outline-secondary btn-sm d-block mx-auto mt-3">
@@ -112,12 +112,10 @@ active
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary">
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <button type="submit" class="btn btn-success">
-                        Create Order of Payment <i class="fas fa-check"></i>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-submit">
+                        <i class="fas fa-check"></i>
+                        Create Order of Payment 
                     </button>
                 </div>
             </form>

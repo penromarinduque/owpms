@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call([
             UserSeeder::class,
-            PermissionSeeder::class
+            PermissionSeeder::class,
+            GeneratedDocumentTypeSeeder::class,
+            SignatoryRoleSeeder::class
         ]);
     }
 }
