@@ -20,3 +20,6 @@
 - Created new table signatory_roles with columns id, role, description
 - Created new table signatories with column generated_document_type_id, user_id, order, signatory_role_id
 
+# May 19, 2025 
+- added document column do payment_orders table
+- 

@@ -16,7 +16,7 @@ active
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item "><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
         <li class="breadcrumb-item "><a href="{{ route('signatories.index') }}">Signatory</a></li>
-        <li class="breadcrumb-item active">Add Signatory</li>
+        <li class="breadcrumb-item active">Add Signatory</li>   
     </ol>
 
     <div class="card mb-4">
@@ -24,15 +24,21 @@ active
             <div class="card-title"><i class="fas fa-plus me-2"></i>Add Signatory Form</div>
         </div>
         <div class="card-body">
-            <form action="{{ route('signatories.store') }}" method="POST">
+            <form action="{{ route('signatories.update') }}" method="POST">
                 @csrf
+                <input type="hidden" name="id" value="{{ $signatory->id }}">
+                @error('id')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
                 <div class="row">
                     <div class="col-sm-6 col-md-4 mb-2">
                         <label for="document_type" class="form-label">Document Type <b class="text-danger">*</b></label>
                         <select name="document_type" id="document_type" class="form-select @error('document_type') is-invalid @enderror">
                             <option value="">-Select Document Type-</option>
                             @foreach ($documentTypes as $documentType)
-                                <option value="{{ $documentType->id }}" {{ old('document_type') == $documentType->id ? 'selected' : ''}}>{{ $documentType->name }}</option>
+                                <option value="{{ $documentType->id }}" {{ old('document_type') == $documentType->id ? 'selected' : ($signatory->documentType->id == $documentType->id ? 'selected' : '')}}>{{ $documentType->name }}</option>
                             @endforeach
                         </select>
                         @error('document_type')
@@ -45,6 +51,7 @@ active
                         <label for="signee" class="form-label">Signee <b class="text-danger">*</b></label>
                         <select name="signee" id="signee" class="form-select select2 @error('signee') is-invalid @enderror">
                             <option value="">-Select Signee-</option>
+                            <option value="{{ $signatory->user_id }}" selected>{{ $signatory->user->personalInfo->first_name }} {{ $signatory->user->personalInfo->last_name }}</option>
                         </select>
                         @error('signee')
                             <div class="invalid-feedback">
@@ -57,7 +64,7 @@ active
                         <select name="signatory_role" id="signatory_role" class="form-select @error('signatory_role') is-invalid @enderror">
                             <option value="">-Select Signatory Role-</option>
                             @foreach ($signatoryRoles as $signatoryRole)
-                                <option value="{{ $signatoryRole->id }}" {{ old('signatory_role') == $signatoryRole->id ? 'selected' : ''}}>{{ $signatoryRole->role }}</option>
+                                <option value="{{ $signatoryRole->id }}" {{ old('signatory_role') == $signatoryRole->id ? 'selected' : ($signatory->signatoryRole->id == $signatoryRole->id ? 'selected' : '')}}>{{ $signatoryRole->role }}</option>
                             @endforeach
                         </select>
                         @error('signatory_role')

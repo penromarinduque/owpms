@@ -13,7 +13,7 @@
                     Data Entry
                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse @yiled('show')" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <div class="collapse @yield('show')" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="">Local Transport Permit</a>
                         <a class="nav-link" href="{{route('permittees.index')}}">Permittee</a>
@@ -26,9 +26,9 @@
                     Payment
                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse" id="collapseLayouts1" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <div class="{{ request()->routeIs('paymentorder.index') ? '' : 'collapse'}}" id="collapseLayouts1" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
-                        <a class="nav-link" href="">Order of Payment</a>
+                        <a class="nav-link @yield('active-paymentorder')"  href="{{ route('paymentorder.index') }}">Order of Payment</a>
                         <a class="nav-link" href="">Issued OR</a>
                     </nav>
                 </div>
@@ -45,6 +45,7 @@
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'under-review' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'under-review']) }}">Under Review</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'returned' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'returned']) }}">Returned</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'accepted']) }}">Accepted</a>
+                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'payment-in-process' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'payment-in-process']) }}">Payment In Process</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'approved']) }}">Approved</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'rejected']) }}">Rejected</a>
                     </nav>
@@ -66,6 +67,7 @@
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'under-review' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'under-review']) }}">Under Review</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'returned' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'returned']) }}">Returned</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'accepted']) }}">Accepted</a>
+                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'payment-in-process' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'payment-in-process']) }}">Payment In Process</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'approved']) }}">Approved</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'rejected']) }}">Rejected</a>
                     </nav>
@@ -120,6 +122,6 @@
     </div>
     <div class="sb-sidenav-footer">
         <div class="small">Logged in as:</div>
-        {{ Auth::user()->username }}
+        <span>@</span>{{ Auth::user()->username }}
     </div>
 </nav>

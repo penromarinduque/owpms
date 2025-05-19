@@ -13,11 +13,16 @@ class Signatory extends Model
 
     public function documentType()
     {
-        return $this->belongsTo(DocumentType::class, 'generated_document_type_id', 'id');
+        return $this->belongsTo(GeneratedDocumentType::class, 'generated_document_type_id', 'id');
     }
 
     public function signatoryRole()
     {
         return $this->belongsTo(SignatoryRole::class, 'signatory_role_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

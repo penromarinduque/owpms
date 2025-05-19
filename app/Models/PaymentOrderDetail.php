@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentOrderDetail extends Model
 {
     use HasFactory;
+
+    protected $table = 'payment_order_details';
+    protected $guarded = [];
+    
+    public function paymentOrder() {
+        return $this->belongsTo(PaymentOrder::class);
+    }
 }

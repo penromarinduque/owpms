@@ -146,7 +146,13 @@ Route::middleware('auth')->group(function (){
 
     // Payment Order
     Route::prefix('payment-order')->group(function () {
+        Route::get('/', [PaymentOrderController::class, 'index'])->name('paymentorder.index')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('create/{ltp_application_id}', [PaymentOrderController::class, 'create'])->name('paymentorder.create')->middleware('permission:PAYMENT_ORDERS_CREATE');
+        Route::post('store', [PaymentOrderController::class, 'store'])->name('paymentorder.store')->middleware('permission:PAYMENT_ORDERS_CREATE');
+        Route::get('print/{id}', [PaymentOrderController::class, 'print'])->name('paymentorder.print')->middleware('permission:PAYMENT_ORDERS_INDEX');
+        Route::post('upload/{id}', [PaymentOrderController::class, 'upload'])->name('paymentorder.upload')->middleware('permission:PAYMENT_ORDERS_INDEX');
+        Route::get('download/{id}', [PaymentOrderController::class, 'download'])->name('paymentorder.download')->middleware('permission:PAYMENT_ORDERS_INDEX');
+        Route::get('show/{id}', [PaymentOrderController::class, 'show'])->name('paymentorder.show')->middleware('permission:PAYMENT_ORDERS_INDEX');
     });
 
     // Maintenance
@@ -228,8 +234,10 @@ Route::middleware('auth')->group(function (){
         Route::middleware(["userType:admin,internal"])->prefix('signatories')->group(function () {
             Route::get('/', [SignatoryController::class, 'index'])->name('signatories.index')->middleware('permission:SIGNATORIES_INDEX');
             Route::get('/create', [SignatoryController::class, 'create'])->name('signatories.create')->middleware('permission:SIGNATORIES_CREATE');
+            Route::post('/store', [SignatoryController::class, 'store'])->name('signatories.store')->middleware('permission:SIGNATORIES_CREATE');
+            Route::get('/edit/{id}', [SignatoryController::class, 'edit'])->name('signatories.edit')->middleware('permission:SIGNATORIES_UPDATE');
+            Route::post('/update', [SignatoryController::class, 'update'])->name('signatories.update')->middleware('permission:SIGNATORIES_UPDATE');
         });
-
     });
 
     // Account

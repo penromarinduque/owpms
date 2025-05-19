@@ -22,7 +22,17 @@ active
             Order of Payment Form
         </div>
         <div class="card-body">
-            <form>
+            <form method="POST" action="{{ route('paymentorder.store') }}">
+                @csrf
+                <input type="hidden" name="ltp_application_id" value="{{ $ltp_application->id }}">
+                <input type="hidden" name="ltp_fee_id" value="{{ $ltp_fee->id }}">
+                <input type="hidden" name="prepared_by" value="{{ $signatories['prepare']->user_id }}">
+                <input type="hidden" name="approved_by" value="{{ $signatories['approve']->user_id }}">
+                @error('ltp_fee_id')<p class="text-danger">{{ $message }}</p>@enderror
+                @error('ltp_application_id')<p class="text-danger">{{ $message }}</p>@enderror
+                @error('prepared_by')<p class="text-danger">{{ $message }}</p>@enderror
+                @error('approved')<p class="text-danger">{{ $message }}</p>@enderror
+
                 <div class="row mb-3">
                     <div class="col-12">
                         <label class="form-label">Bill No. <span class="text-danger">*</span></label>
@@ -36,7 +46,7 @@ active
                 <div class="row mb-3">
                     <div class="col-12">
                         <label class="form-label">Address <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" value="{{ $_ltp_application->getWildlifeFarmLocation($ltp_application->permittee->user->id) }}">
+                        <input type="text" class="form-control"  value="{{ $_ltp_application->getWildlifeFarmLocation($ltp_application->permittee->user->id) }}">
                     </div>
                 </div>
 
@@ -85,28 +95,22 @@ active
                     </div>
                 </div>
 
-                <div class="row mb-4">
-                    <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
                         <div class="card">
                             <div class="card-body text-center">
                                 <h6 class="mb-3">Prepared By</h6>
-                                <div class="border-bottom mb-2">SIMEON R. DIAZ</div>
+                                <div class="border-bottom mb-2">{{ strtoupper($signatories['prepare']->user->personalInfo->first_name) }} {{ strtoupper(substr($signatories['prepare']->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($signatories['prepare']->user->personalInfo->last_name) }}  </div>
                                 <small class="text-muted">Revenue Collection Officer</small>
-                                <button type="button" class="btn btn-outline-secondary btn-sm d-block mx-auto mt-3">
-                                    <i class="fas fa-upload"></i> Upload Signature
-                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-2">
                         <div class="card">
                             <div class="card-body text-center">
                                 <h6 class="mb-3">Approved By</h6>
-                                <div class="border-bottom mb-2">Engr. CYNTHIA U. LOZANO</div>
+                                <div class="border-bottom mb-2">{{ strtoupper($signatories['approve']->user->personalInfo->first_name) }} {{ strtoupper(substr($signatories['approve']->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($signatories['approve']->user->personalInfo->last_name) }}</div>
                                 <small class="text-muted">Chief Technical Services Division</small>
-                                <button type="button" class="btn btn-outline-secondary btn-sm d-block mx-auto mt-3">
-                                    <i class="fas fa-upload"></i> Upload Signature
-                                </button>
                             </div>
                         </div>
                     </div>

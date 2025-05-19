@@ -32,19 +32,17 @@ active
                         <th>Document Type</th>
                         <th>Signatory Role</th>
                         <th>Signee</th>
-                        <th class="text-center">Order</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($signatories as $signatory)
                         <tr>
-                            <td>{{ $signatory->documentType->document_type }}</td>
-                            <td>{{ $signatory->signatoryRole->signatory_role }}</td>
-                            <td>{{ $signatory->user_id }}</td>
-                            <td>{{ $signatory->order }}</td>
-                            <td>
-                                <a href="{{ route('signatories.edit', ['id'=>$signatory->id]) }}" title="Edit" alt="Edit"><i class="fas fa-edit fa-lg"></i></a>
+                            <td>{{ $signatory->documentType->name }}</td>
+                            <td>{{ $signatory->signatoryRole->role }}</td>
+                            <td>{{ $signatory->user->personalInfo->first_name . ' ' . $signatory->user->personalInfo->last_name }}</td>
+                            <td class="text-center">
+                                <a href="{{ route('signatories.edit', ['id'=>Crypt::encryptString($signatory->id)]) }}" title="Edit" alt="Edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit "></i></a>
                             </td>
                         </tr>
                     @empty

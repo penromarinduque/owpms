@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('prepared_by');
             $table->integer('approved_by');
             $table->text('remarks')->nullable();
+            $table->string('document', 100)->nullable();
             $table->timestamps();
         });
     }
