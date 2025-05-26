@@ -365,14 +365,16 @@ class MyApplicationController extends Controller
         });
     }
 
-    public function viewPaymentOrder(string $id) {
-        $application_id = Crypt::decryptString($id);
-        $application = LtpApplication::find($application_id);
+    // public function viewPaymentOrder(string $id) {
+    //     $application_id = Crypt::decryptString($id);
+    //     $application = LtpApplication::find($application_id);
 
-        $payment_order = PaymentOrder::where([
-            "ltp_application_id" => $application_id
-        ])->first();
+    //     $payment_order = PaymentOrder::where([
+    //         "ltp_application_id" => $application_id
+    //     ])->first();
+
+    //     $path = storage_path('app/private/' . $payment_order->document);
         
-        return redirect()->to(asset("storage/" . $payment_order->document));
-    }
+    //     return response()->file($path);
+    // }
 }

@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function (){
         Route::middleware(['userType:admin,internal'])->group(function () {
             Route::get('/', [PermitteeController::class, 'index'])->name('permittees.index')->middleware('permission:PERMITTEE_INDEX');
             Route::get('create', [PermitteeController::class, 'create'])->name('permittees.create')->middleware('permission:PERMITTEE_CREATE');
-            Route::post('/store', [PermitteeController::class, 'store'])->name('permittees.store')->middleware('permission:PERMITTEE_STORE');
+            Route::post('/store', [PermitteeController::class, 'store'])->name('permittees.store')->middleware('permission:PERMITTEE_CREATE');
             Route::get('/show/{id}', [PermitteeController::class, 'show'])->name('permittees.show')->middleware('permission:PERMITTEE_INDEX');
             Route::post('/upload-permit/{id}', [PermitteeController::class, 'uploadPermit'])->name('permittees.uploadpermit')->middleware('permission:PERMITTEE_UPDATE');
             Route::get('/{id}', [PermitteeController::class, 'edit'])->name('permittees.edit')->middleware('permission:PERMITTEE_UPDATE');
@@ -122,7 +122,6 @@ Route::middleware('auth')->group(function (){
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
-        Route::get('/view-payment-order/{id}', [MyApplicationController::class, 'viewPaymentOrder'])->name('myapplication.viewPaymentOrder');
         Route::get('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
     });
 
@@ -148,11 +147,13 @@ Route::middleware('auth')->group(function (){
     Route::prefix('payment-order')->group(function () {
         Route::get('/', [PaymentOrderController::class, 'index'])->name('paymentorder.index')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('create/{ltp_application_id}', [PaymentOrderController::class, 'create'])->name('paymentorder.create')->middleware('permission:PAYMENT_ORDERS_CREATE');
+        Route::post('update/{payment_order_id}', [PaymentOrderController::class, 'update'])->name('paymentorder.update')->middleware('permission:PAYMENT_ORDERS_UPDATE');
         Route::post('store', [PaymentOrderController::class, 'store'])->name('paymentorder.store')->middleware('permission:PAYMENT_ORDERS_CREATE');
         Route::get('print/{id}', [PaymentOrderController::class, 'print'])->name('paymentorder.print')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::post('upload/{id}', [PaymentOrderController::class, 'upload'])->name('paymentorder.upload')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('download/{id}', [PaymentOrderController::class, 'download'])->name('paymentorder.download')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('show/{id}', [PaymentOrderController::class, 'show'])->name('paymentorder.show')->middleware('permission:PAYMENT_ORDERS_INDEX');
+        Route::get('view/{id}', [PaymentOrderController::class, 'view'])->name('paymentorder.view');
     });
 
     // Maintenance

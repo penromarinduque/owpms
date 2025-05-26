@@ -12,6 +12,7 @@ use App\Models\Signatory;
 use App\Models\LtpApplicationProgress;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
@@ -139,7 +140,7 @@ class PaymentOrderController extends Controller
                 $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
 
                 $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
-                $path = $request->file('document_file')->storeAs('payment_order', $filename);
+                $path = $request->file('document_file')->storeAs('payment_order', $filename, 'private');
 
                 $paymentOrder->update(['document' => $path]);
 
@@ -179,6 +180,38 @@ class PaymentOrderController extends Controller
         return view('admin.payment_order.show', [
             'paymentOrder' => $paymentOrder
         ]);
+    }
+
+    public function view(string $id) {
+        $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+
+        if(!Gate::allows('view-payment-order', $paymentOrder)) {
+            return redirect()->back()->with('error', 'You are not authorized to view this document');
+        }
+
+        $path = storage_path('app/private/' . $paymentOrder->document);
+        return response()->file($path);
+    }
+
+    public function update(Request $request, string $payment_order_id) {
+        //
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:cancelled,paid',
+            'or_no' => 'required_if:status,paid'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'updatePayment')->withInput();
+        }
+
+        $paymentOrder = PaymentOrder::find(Crypt::decryptString($payment_order_id));
+
+        $paymentOrder->update([
+            'status' => $request->status,
+            'payment_reference' => $request->or_no
+        ]);
+
+        return redirect()->back()->with('success', 'Payment updated successfully');
     }
 
 }

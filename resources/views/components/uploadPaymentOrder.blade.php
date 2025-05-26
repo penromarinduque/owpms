@@ -1,5 +1,7 @@
+
+
 <div class="modal fade" id="uploadDocumentModal">
-    <form method="POST" action="{{ route('paymentorder.upload', Crypt::encryptString($paymentOrder->id)) }}" class="modal-dialog" enctype="multipart/form-data">
+    <form method="POST" action="" class="modal-dialog" enctype="multipart/form-data">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Upload Document</h4>
@@ -26,6 +28,9 @@
 </div>
 
 <script>
+    // function showUploadDocumentModal(encryptedId) {
+        
+    // }
     function showUploadDocumentModal(encryptedId) {
         $('#uploadDocumentModal form').attr('action', "{{ route('paymentorder.upload', ':id') }}".replace(':id', encryptedId));
         $('#uploadDocumentModal').modal('show');

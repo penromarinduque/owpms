@@ -151,7 +151,7 @@ active
                                         </a>
                                     @endif
                                     @if (in_array($status, ['payment-in-process']))
-                                        <a href="{{ route('myapplication.viewPaymentOrder', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Order of Payment">
+                                        <a href="{{ route('paymentorder.view', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Order of Payment">
                                             <i class="fa-solid fa-file-invoice"></i>
                                         </a>
                                     @endif

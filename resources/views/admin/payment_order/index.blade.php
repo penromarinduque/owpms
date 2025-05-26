@@ -49,7 +49,7 @@ active
                                     <span class="badge rounded-pill bg-{{ $paymentOrder->status === 'pending' ? 'warning' : ($paymentOrder->status === 'paid' ? 'success' : 'danger') }}">{{ ucfirst($paymentOrder->status) }}</span>
                                 </td>
                                 <td class="text-center">
-                                    <a href="" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a>
+                                    <a href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a>
                                     <a href="{{ route('paymentorder.print', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template"><i class="fas fa-print me-1"></i>Print Template</a>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <a href="{{ route('paymentorder.download', Crypt::encryptString($paymentOrder->id)) }}" class="btn btn-sm btn-outline-primary {{ $paymentOrder->document ? '' : 'disabled' }}" data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download me-1"></i>Download</a>
@@ -70,7 +70,8 @@ active
     </div>
 </div>
 
-{{-- @include('components.upload-oop') --}}
+@include('components.uploadPaymentOrder')
+@include('components.updatePayment')
 
 @endsection
 
@@ -82,6 +83,13 @@ active
 
 
     });
+
+    $(function(){
+        @if ($errors->updatePayment->any())
+            $("#updatePaymentModal").modal("show");
+        @endif
+    });
+
 
     function generateBillNo() {
         const now = new Date();

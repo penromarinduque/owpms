@@ -21,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        // Gate::can('')
+        Gate::define('view-payment-order', function ($user, $paymentOrder) {
+            $isOwner = $paymentOrder->ltpApplication->permittee->user_id == $user->id;
+            $permissions = $user->getUserPermissions(); // use injected $user instead of auth()->user()
+
+            return $isOwner || in_array('PAYMENT_ORDERS_INDEX', $permissions);
+        });
     }
 }
