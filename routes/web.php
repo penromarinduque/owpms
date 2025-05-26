@@ -122,6 +122,7 @@ Route::middleware('auth')->group(function (){
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
+        Route::get('/view-payment-order/{id}', [MyApplicationController::class, 'viewPaymentOrder'])->name('myapplication.viewPaymentOrder');
         Route::get('ajaxgetspecies', [MyApplicationController::class, 'ajaxGetSpecies'])->name('myapplication.ajaxgetspecies');
     });
 
@@ -138,10 +139,9 @@ Route::middleware('auth')->group(function (){
             Route::get('review/{id}', [LtpApplicationController::class, 'review'])->name('ltpapplication.review')->middleware('permission:LTP_APPLICATION_REVIEW');
             Route::get('preview/{id}', [MyApplicationController::class, 'preview'])->name('ltpapplication.preview')->middleware('permission:LTP_APPLICATION_INDEX');
             Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return')->middleware('permission:LTP_APPLICATION_RETURN');
-            Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs')->middleware('permission:LTP_APPLICATION_INDEX');
             Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept')->middleware('permission:LTP_APPLICATION_ACCEPT');
-
         });
+        Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
     });
 
     // Payment Order

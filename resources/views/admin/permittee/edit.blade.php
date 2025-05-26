@@ -27,27 +27,27 @@ active
             Edit Permittee here
         </div>
         <div class="card-body">
-            @if(!empty($permittee))
-        	<form method="POST" action="{{ route('permittees.update', [Crypt::encrypt($permittee_id)]) }}" onsubmit="disableSubmitButton('btn_update');">
+            @if(!empty($user))
+        	<form method="POST" action="{{ route('permittees.update', [Crypt::encryptString($user_id)]) }}" onsubmit="disableSubmitButton('btn_update');">
         	@csrf
         		<div class="row mb-3">
                 	<div class="col-sm-4">
                 		<label for="lastname" class="form-label mb-0">Lastname</label>
-                		<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Lastname" value="{{ $permittee->lastname }}">
+                		<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Lastname" value="{{ $user->personalInfo->last_name }}">
                         @error('lastname')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                 	<div class="col-sm-4">
                 		<label for="firstname" class="form-label mb-0">Firstname</label>
-                		<input type="text" class="form-control" name="firstname" id="firstname" placeholder="Firstname" value="{{ $permittee->firstname }}">
+                		<input type="text" class="form-control" name="firstname" id="firstname" placeholder="Firstname" value="{{ $user->personalInfo->first_name }}">
                         @error('firstname')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                 	<div class="col-sm-4">
                 		<label for="middlename" class="form-label mb-0">Middle Name</label>
-                		<input type="text" class="form-control" name="middlename" id="middlename" placeholder="Middle Name" value="{{ $permittee->middlename }}">
+                		<input type="text" class="form-control" name="middlename" id="middlename" placeholder="Middle Name" value="{{ $user->personalInfo->middle_name }}">
                         @error('middlename')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -58,8 +58,8 @@ active
                 		<label for="gender" class="form-label mb-0">Gender</label>
                 		<select class="form-select" name="gender" id="gender">
                 			<option value="">-Gender-</option>
-                			<option value="male" {{ $permittee->gender=='male' ? 'selected' : '' }} >Male</option>
-                			<option value="female" {{ $permittee->gender=='female' ? 'selected' : '' }} >Female</option>
+                			<option value="male" {{ $user->personalInfo->gender=='male' ? 'selected' : '' }} >Male</option>
+                			<option value="female" {{ $user->personalInfo->gender=='female' ? 'selected' : '' }} >Female</option>
                 		</select>
                         @error('gender')
                         <small class="text-danger">{{ $message }}</small>
@@ -67,7 +67,7 @@ active
                 	</div>
                 	<div class="col-sm-3">
                 		<label for="contact_info" class="form-label mb-0">Contact Number</label>
-                		<input type="text" class="form-control" name="contact_info" id="contact_info" placeholder="Contact Number" value="{{ $permittee->contact_info }}">
+                		<input type="text" class="form-control" name="contact_info" id="contact_info" placeholder="Contact Number" value="{{ $user->personalInfo->contact_no }}">
                         @error('contact_info')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -77,20 +77,20 @@ active
                 		<select class="form-control select2" name="barangay_id" id="barangay_id" style="width: 100%;">
                 			<option value="">- Barangay / Municipality -</option>
                 			@forelse($barangays as $barangay)
-                            @php $selected = ($permittee->barangay_id==$barangay->id) ? 'selected' : ''; @endphp
-                			<option value="{{$barangay->id}}" {{$selected}}>{{$barangay->barangay.' / '.$barangay->town}}</option>
+                            @php $selected = ($user->personalInfo->barangay_id==$barangay->id) ? 'selected' : ''; @endphp
+                                <option value="{{$barangay->id}}" {{$selected}}>{{$barangay->barangay_name.' / '.$barangay->municipality_name.' / '.$barangay->province_name}}</option>
                 			@empty
                 			@endforelse
                 		</select>
                         @error('barangay_id')
-                        <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                 	<div class="col-sm-4">
                 		<label for="business_name" class="form-label mb-0">Business Name</label>
-                		<input type="text" class="form-control" name="business_name" id="business_name" placeholder="Business Name" value="{{ $permittee->business_name }}">
+                		<input type="text" class="form-control" name="business_name" id="business_name" placeholder="Business Name" value="{{ $user->wfp()->wildlifeFarm->farm_name  }}">
                         @error('business_name')
-                        <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
                 </div>

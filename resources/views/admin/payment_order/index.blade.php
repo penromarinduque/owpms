@@ -70,7 +70,7 @@ active
     </div>
 </div>
 
-@include('components.upload-oop')
+{{-- @include('components.upload-oop') --}}
 
 @endsection
 

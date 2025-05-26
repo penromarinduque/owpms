@@ -14,6 +14,7 @@ use App\Models\LtpApplicationSpecie;
 use App\Models\LtpRequirement;
 use App\Models\PermitteeSpecie;
 use App\Models\Specie;
+use App\Models\PaymentOrder;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -26,16 +27,24 @@ class MyApplicationController extends Controller
      */
     public function index(Request $request)
     {
+        $_helper = new ApplicationHelper;
+        $_ltp_application = new LtpApplication;
+
         $status = $request->status ?? 'draft';
-        $ltp_applications = LtpApplication::where([
+        $ltp_application_query = LtpApplication::where([
             'permittee_id' => Auth::user()->wcp()->id,
             'application_status' => $status
         ])
-        ->orderBy('created_at', 'DESC')
-        ->paginate(50);
+        ->orderBy('created_at', 'DESC');
+
+        $ltp_applications = $ltp_application_query->paginate(50);
+
         return view('permittee.myapplication.index', [
             'title' => 'My Applications',
-            "ltp_applications" => $ltp_applications
+            "ltp_applications" => $ltp_applications,
+            "_helper" => $_helper,
+            "_ltp_application" => $_ltp_application,
+            "permittee" => auth()->user()->wcp()
         ]);
     }
 
@@ -354,5 +363,16 @@ class MyApplicationController extends Controller
 
             return Redirect::route('myapplication.index')->with('success', 'Application successfully resubmitted!');
         });
+    }
+
+    public function viewPaymentOrder(string $id) {
+        $application_id = Crypt::decryptString($id);
+        $application = LtpApplication::find($application_id);
+
+        $payment_order = PaymentOrder::where([
+            "ltp_application_id" => $application_id
+        ])->first();
+        
+        return redirect()->to(asset("storage/" . $payment_order->document));
     }
 }

@@ -139,7 +139,7 @@ class PaymentOrderController extends Controller
                 $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
 
                 $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
-                $path = $request->file('document_file')->storeAs('payment_order', $filename, 'public');
+                $path = $request->file('document_file')->storeAs('payment_order', $filename);
 
                 $paymentOrder->update(['document' => $path]);
 

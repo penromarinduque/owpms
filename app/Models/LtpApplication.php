@@ -95,4 +95,11 @@ class LtpApplication extends Model
         $location = $farm->barangay->barangay_name . ', ' . $farm->barangay->municipality->municipality_name . ', ' . $farm->barangay->municipality->province->province_name;
         return $location;
     }
+
+    public function getApplicationCountsByStatus($status, $permittee_id = null) : int {
+        if($permittee_id) {
+            return $this->where('application_status', $status)->where('permittee_id', $permittee_id)->count();
+        }
+        return $this->where('application_status', $status)->count();
+    }
 }

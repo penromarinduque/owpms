@@ -206,17 +206,18 @@ class PermitteeController extends Controller
      */
     public function edit(string $id)
     {
-        $permittee_id = Crypt::decrypt($id);
+        $user_id = Crypt::decrypt($id);
 
         $_barangay = new Barangay;
         $barangays = $_barangay->getBarangays();
 
-        $permittee = Permittee::find($permittee_id);
+        // $permittee = Permittee::find($permittee_id);
+        $user = User::query()->with(['personalInfo'])->find($user_id);
 
         return view('admin.permittee.edit', [
-            'permittee_id' => $permittee_id,
+            'user_id' => $user_id,
             'barangays' => $barangays,
-            'permittee' => $permittee,
+            'user' => $user,
         ]);
     }
 
@@ -225,7 +226,8 @@ class PermitteeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $permittee_id = Crypt::decrypt($id);
+
+        $user_id = Crypt::decryptString($id);
 
         $validated = $request->validate([
             'lastname' => 'required|max:150',
@@ -238,17 +240,26 @@ class PermitteeController extends Controller
         ], [
             'barangay_id.required' => 'The barangay/municipality field is required.'
         ]);
-        Permittee::find($permittee_id)->update([
-            'lastname' => $request->input('lastname'),
-            'firstname' => $request->input('firstname'),
-            'middlename' => $request->input('middlename'),
-            'gender' => $request->input('gender'),
-            'contact_info' => $request->input('contact_info'),
-            'barangay_id' => $request->input('barangay_id'),
-            'business_name' => $request->input('business_name'),
-        ]);
 
-        return Redirect::route('permittees.index')->with('success', 'Successfully saved!');
+        return DB::transaction(function () use ($request, $user_id) {
+            $user = User::find($user_id);
+            
+            $personalInfo = PersonalInfo::where('user_id',$user->id)->update([
+                'last_name' => $request->input('lastname'),
+                'first_name' => $request->input('firstname'),
+                'middle_name' => $request->input('middlename'),
+                'gender' => $request->input('gender'),
+                'contact_no' => $request->input('contact_info'),
+                'barangay_id' => $request->input('barangay_id'),
+            ]);
+
+            $farm = $user->wfp()->wildlifeFarm;
+            $farm->update([
+                'farm_name' => $request->input('business_name'),
+            ]);
+
+            return Redirect::route('permittees.index')->with('success', 'Successfully saved!');
+        });
     }
 
     /**
