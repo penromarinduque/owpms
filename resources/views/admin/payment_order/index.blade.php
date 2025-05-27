@@ -39,7 +39,7 @@ active
                     <tbody>
                         @forelse ($paymentOrders as $paymentOrder)
                             <tr>
-                                <td><a href="{{ route('paymentorder.show', Crypt::encryptString($paymentOrder->id)) }}">{{ $paymentOrder->order_number }}</a></td>
+                                <td><a href="{{ route('paymentorder.show', Crypt::encryptString($paymentOrder->id)) }}" target="_blank">{{ $paymentOrder->order_number }}</a></td>
                                 <td class="text-center">{{ $paymentOrder->issued_date->format("F d, Y") }}</td>
                                 <td>{{ $paymentOrder->ltpApplication->permittee->user->personalInfo->first_name . ' ' . $paymentOrder->ltpApplication->permittee->user->personalInfo->last_name }}</td>
                                 <td class="text-center">{{ strtoupper($paymentOrder->payment_method) }}</td>
@@ -49,11 +49,12 @@ active
                                     <span class="badge rounded-pill bg-{{ $paymentOrder->status === 'pending' ? 'warning' : ($paymentOrder->status === 'paid' ? 'success' : 'danger') }}">{{ ucfirst($paymentOrder->status) }}</span>
                                 </td>
                                 <td class="text-center">
-                                    <a href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a>
-                                    <a href="{{ route('paymentorder.print', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template"><i class="fas fa-print me-1"></i>Print Template</a>
+                                    <a href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" class="btn btn-sm btn-outline-primary @if($paymentOrder->status !== 'pending') disabled @endif" data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a>
+                                    <a href="{{ route('paymentorder.print', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template"><i class="fas fa-print "></i></a>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <a href="{{ route('paymentorder.download', Crypt::encryptString($paymentOrder->id)) }}" class="btn btn-sm btn-outline-primary {{ $paymentOrder->document ? '' : 'disabled' }}" data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download me-1"></i>Download</a>
-                                        <a href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment"><i class="fas fa-upload me-1"></i>Upload</a>
+                                        <a href="{{ route('paymentorder.download', Crypt::encryptString($paymentOrder->id)) }}" class="btn btn-sm btn-outline-primary {{ $paymentOrder->document ? '' : 'disabled' }}" data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download"></i></a>
+                                        <a href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment"><i class="fas fa-upload "></i></a>
+                                        <a href="{{ route('paymentorder.view', Crypt::encryptString($paymentOrder->id)) }}" target="_blank"  class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="View Signed Order of Payment"><i class="fas fa-eye "></i></a>
                                     </div>
                                 </td>
                             </tr>

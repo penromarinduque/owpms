@@ -68,6 +68,7 @@
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'returned' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'returned']) }}">Returned</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'accepted']) }}">Accepted</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'payment-in-process' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'payment-in-process']) }}">Payment In Process</a>
+                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'paid' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'paid']) }}">For Inspection</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'approved']) }}">Approved</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'rejected']) }}">Rejected</a>
                     </nav>

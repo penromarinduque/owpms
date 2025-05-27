@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\LtpApplication;
+use App\Models\User;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -26,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
             $permissions = $user->getUserPermissions(); // use injected $user instead of auth()->user()
 
             return $isOwner || in_array('PAYMENT_ORDERS_INDEX', $permissions);
+        });
+
+        // permittee gates
+        Gate::define('is-owned', function (User $user, LtpApplication $ltpApplication) {
+            return $ltpApplication->permittee->user_id == $user->id;
         });
     }
 }

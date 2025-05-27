@@ -93,6 +93,13 @@ active
                 </a>
               </li>
               <li class="nav-item">
+                <a class="nav-link {{ $status == 'paid' ? 'active' : '' }}" href="?status=paid">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('paid', $permittee->id); @endphp
+                    For Inspection 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? $count : '' }}</span>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">
                     @php $count = $_ltp_application->getApplicationCountsByStatus('approved', $permittee->id); @endphp
                     Approved 
@@ -155,6 +162,19 @@ active
                                             <i class="fa-solid fa-file-invoice"></i>
                                         </a>
                                     @endif
+                                    @if (in_array($status, ['paid', 'approved']))
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <a href="#" onclick="showUploadReceiptModal('{{ route('myapplication.uploadreceipt', Crypt::encryptString($ltp_application->id)) }}')"class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Upload Receipt">
+                                                <i class="fa-solid fa-receipt"></i>
+                                            </a>
+                                            @php
+                                                $paymentOrder = $ltp_application->paymentOrder;
+                                            @endphp
+                                            <a href="{{ route('paymentorder.viewreceipt', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary mb-2 @if(!$paymentOrder->receipt_url) disabled @endif"  data-bs-toggle="tooltip" data-bs-title="View Receipt">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    @endif
                                     @if ($status != 'draft')
                                         <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs">
                                             <i class="fas fa-history"></i>
@@ -212,9 +232,6 @@ active
     </div>
 </div>
 
-@include('components.toast')
-@include('components.confirmDelete')
-@include('components.viewApplicationLogs')
 @endsection
 
 @section('script-extra')
@@ -250,4 +267,12 @@ active
     }
 </script>
 @endsection
+
+@section('includes')
+    @include('components.confirmDelete')
+    @include('components.viewApplicationLogs')
+    @include('components.permitteeUploadReceipt')
+    {{-- @include('components.toast') --}}
+@endsection
+
 

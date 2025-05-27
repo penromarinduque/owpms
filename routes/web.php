@@ -119,6 +119,7 @@ Route::middleware('auth')->group(function (){
         Route::post('resubmit/{id}', [MyApplicationController::class, 'resubmit'])->name('myapplication.resubmit');
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::get('/print-request-letter/{id}', [MyApplicationController::class, 'printRequestLetter'])->name('myapplication.printRequestLetter');
+        Route::post('/upload-receipt/{id}', [MyApplicationController::class, 'uploadReceipt'])->name('myapplication.uploadreceipt');
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
@@ -154,6 +155,7 @@ Route::middleware('auth')->group(function (){
         Route::get('download/{id}', [PaymentOrderController::class, 'download'])->name('paymentorder.download')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('show/{id}', [PaymentOrderController::class, 'show'])->name('paymentorder.show')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('view/{id}', [PaymentOrderController::class, 'view'])->name('paymentorder.view');
+        Route::get('view-receipt/{id}', [PaymentOrderController::class, 'viewReceipt'])->name('paymentorder.viewreceipt');
     });
 
     // Maintenance

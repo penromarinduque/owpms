@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ApplicationHelper;
 
 class PaymentOrderController extends Controller
 {
@@ -144,7 +145,8 @@ class PaymentOrderController extends Controller
 
                 $paymentOrder->update(['document' => $path]);
 
-                $ltpApplicatipn = LtpApplication::find($paymentOrder->ltp_application_id);
+                $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
+
                 LtpApplicationProgress::create([
                     "ltp_application_id" => $paymentOrder->ltp_application_id,
                     "user_id" => auth()->user()->id,
@@ -166,11 +168,12 @@ class PaymentOrderController extends Controller
             'ltpFee'
         ])->find(Crypt::decryptString($id));
 
-        return Storage::disk('public')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
+        return Storage::disk('private')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
     }
 
     public function show(string $id) {
-        //
+        $_helper = new ApplicationHelper;
+
         $paymentOrder = PaymentOrder::query()->with([
             'details',
             'ltpApplication.permittee.user',
@@ -178,7 +181,8 @@ class PaymentOrderController extends Controller
         ])->find(Crypt::decryptString($id));
 
         return view('admin.payment_order.show', [
-            'paymentOrder' => $paymentOrder
+            'paymentOrder' => $paymentOrder,
+            '_helper' => $_helper
         ]);
     }
 
@@ -204,14 +208,47 @@ class PaymentOrderController extends Controller
             return redirect()->back()->withErrors($validator, 'updatePayment')->withInput();
         }
 
-        $paymentOrder = PaymentOrder::find(Crypt::decryptString($payment_order_id));
+        try {
+            return DB::transaction(function () use ($request, $payment_order_id) {
+                $paymentOrder = PaymentOrder::find(Crypt::decryptString($payment_order_id));
+                $paymentOrder->update([
+                    'status' => $request->status,
+                    'payment_reference' => $request->or_no
+                ]);
 
-        $paymentOrder->update([
-            'status' => $request->status,
-            'payment_reference' => $request->or_no
-        ]);
+                // update application progress
+                if($request->status == PaymentOrder::STATUS_PAID) {
+                    $ltpApplication = $paymentOrder->ltpApplication;
+                    $ltpApplication->update([
+                        'application_status' => LtpApplication::STATUS_PAID
+                    ]);
+                }
 
-        return redirect()->back()->with('success', 'Payment updated successfully');
+                LtpApplicationProgress::create([
+                    "ltp_application_id" => $paymentOrder->ltp_application_id,
+                    "user_id" => auth()->user()->id,
+                    'remarks' => '<br>' . auth()->user()->personalInfo->first_name . ' ' . auth()->user()->personalInfo->last_name . ' updated the payment.',
+                    "status" => LtpApplicationProgress::STATUS_PAID
+                ]);
+
+                return redirect()->back()->with('success', 'Payment updated successfully');
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }        
     }
 
+    public function viewReceipt(string $id) {
+        try {
+            $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+            $ltp_application = $paymentOrder->ltpApplication;
+
+            Gate::authorize('view', $ltp_application);
+
+            return Storage::disk('private')->response($paymentOrder->receipt_url);
+            
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }   
 }

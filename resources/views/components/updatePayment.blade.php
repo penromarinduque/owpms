@@ -9,11 +9,11 @@
                 @csrf
                 <div class="mb-3">
                     <label class="form-label">Status</label>
-                    <select name="status" id="status" class="form-select @error('status', 'paymentUpdate') is-invalid @enderror">
+                    <select name="status" id="status" class="form-select @error('status', 'updatePayment') is-invalid @enderror">
                         <option value="paid" {{ old('status') == 'paid' ? 'selected' : '' }}>Paid</option>
                         <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>
-                    @error('status', 'upload')
+                    @error('status', 'updatePayment')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -21,8 +21,8 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">OR No.</label>
-                    <input type="text" class="form-control @error('or_no',  'paymentUpdate') is-invalid @enderror" name="or_no" placeholder="OR No." value="{{ old('or_no')  }}">
-                    @error('or_no')
+                    <input type="text" class="form-control @error('or_no',  'updatePayment') is-invalid @enderror" name="or_no" placeholder="OR No." value="{{ old('or_no')  }}">
+                    @error('or_no', 'updatePayment')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>

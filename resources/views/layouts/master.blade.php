@@ -46,6 +46,7 @@
                 </footer>
             </div>
         </div>
+
         <!-- jQuery -->
         <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
@@ -117,6 +118,7 @@
         </script>
         <!-- on page scripts -->
         @yield('script-extra')
+        @yield('includes')
     </body>
 </html>
 

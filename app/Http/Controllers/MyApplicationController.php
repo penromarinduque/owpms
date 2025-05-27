@@ -19,6 +19,8 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ApplicationHelper;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 
 class MyApplicationController extends Controller
 {
@@ -364,6 +366,51 @@ class MyApplicationController extends Controller
             return Redirect::route('myapplication.index')->with('success', 'Application successfully resubmitted!');
         });
     }
+
+    public function uploadReceipt(Request $request, string $id) {
+        try {
+            $validator = Validator::make($request->all(), [
+                'receipt_file' => 'required|mimes:jpg,jpeg,png,pdf|max:1024'
+            ], [
+                
+            ]);
+
+            if($validator->fails()) {
+                session(['forward_url' => url()->current()]);
+                return redirect()->back()->withErrors($validator, 'uploadReceipt')->withInput()->with('error', 'Failed to upload receipt');
+            }
+
+            $ltp_application_id = Crypt::decryptString($id);
+
+            if(!$request->hasFile('receipt_file')) {
+                return redirect()->back()->with('error', 'Please select a receipt!');
+            }
+
+            $ltp_application = LtpApplication::find($ltp_application_id);
+
+            Gate::authorize('uploadReceipt', $ltp_application);
+
+            $file = $request->file('receipt_file');
+
+            $filename = 'receipt_' . $ltp_application_id . '.' . $file->getClientOriginalExtension();
+
+            $path = $file->storeAs('receipts', $filename, 'private');
+
+            PaymentOrder::where([
+                "ltp_application_id" => $ltp_application_id,
+                "status" => PaymentOrder::STATUS_PAID
+            ])->first()->update([
+                "receipt_url" => $path
+            ]);
+
+            return redirect()->back()->with('success', 'Receipt uploaded successfully!');
+
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+
+    
 
     // public function viewPaymentOrder(string $id) {
     //     $application_id = Crypt::decryptString($id);

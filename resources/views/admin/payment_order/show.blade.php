@@ -44,7 +44,7 @@ active
                 <dt class="col-sm-3">Actions</dt>
                 <dd class="col-sm-9">
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Payment">
+                        <a href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" class="btn btn-sm btn-outline-primary @if($paymentOrder->status !== 'pending') disabled @endif" data-bs-toggle="tooltip" data-bs-title="Update Payment">
                             <i class="fas fa-edit me-1"></i>Update Payment
                         </a>
                         <a href="{{ route('paymentorder.print', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template">
@@ -63,9 +63,41 @@ active
             </dl>
         </div>
     </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="float-end">
+                {{-- <a href="{{ route('ltpapplication.show', Crypt::encryptString($paymentOrder->ltpApplication->id)) }}" class="btn btn-sm btn-outline-primary">View Application</a> --}}
+            </div>
+            <i class="fas fa-folder me-1"></i>
+            Application Details
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Application No.</dt>
+                <dd class="col-sm-9">
+                    {{-- <a href="" target="_blank">{{ $paymentOrder->ltpApplication->application_no }}</a> --}}
+                    {{ $paymentOrder->ltpApplication->application_no }}
+                </dd>
+                <dt class="col-sm-3">Wildlife Farm</dt>
+                <dd class="col-sm-9">
+                    {{ $paymentOrder->ltpApplication->permittee->user->wfp()->wildlifeFarm->farm_name }}
+                </dd>
+                <dt class="col-sm-3">Permittee</dt>
+                <dd class="col-sm-9">
+                    {{ $paymentOrder->ltpApplication->permittee->user->personalInfo->first_name . ' ' . $paymentOrder->ltpApplication->permittee->user->personalInfo->last_name }}
+                </dd>
+                <dt class="col-sm-3">Application Status</dt>
+                <dd class="col-sm-9">
+                    <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBsColor($paymentOrder->ltpApplication->application_status) }}">{{ ucfirst($paymentOrder->ltpApplication->application_status) }}</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
 </div>
 
 @include('components.uploadPaymentOrder')
+@include('components.updatePayment')
 
 @endsection
 
@@ -74,6 +106,12 @@ active
 <script type="text/javascript">
     $(document).ready(function() {
         $('.select2').select2();
+    });
+
+    $(function(){
+        @if ($errors->updatePayment->any())
+            $("#updatePaymentModal").modal("show");
+        @endif
     });
 
     function generateBillNo() {
@@ -90,7 +128,6 @@ active
         $('#bill_no').val(`${year}-${month}-${day}${hour}${minute}${second}${milliseconds}${randomNumber}`);
     }
 
-    
 </script>
 @endsection
 
