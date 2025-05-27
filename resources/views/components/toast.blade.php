@@ -32,7 +32,10 @@
         toastBody.innerHTML = message;
 
         // Show the toast
-        var toast = new bootstrap.Toast($toast);
+        var toast = new bootstrap.Toast($toast, {
+            autohide: false
+        });
+        
         toast.show();
     }
 </script>

@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\ApplicationHelper;
+use App\Notifications\LtpApplicationPaid;
+use App\Notifications\PaymentOrderCreated;
+use Illuminate\Support\Facades\Notification;
 
 class PaymentOrderController extends Controller
 {
@@ -103,6 +106,8 @@ class PaymentOrderController extends Controller
                 "user_id" => auth()->user()->id,
                 "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
             ]);
+
+            Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
 
             return redirect()->route('paymentorder.index')->with('success', 'Payment Order created successfully');
         });
@@ -230,6 +235,8 @@ class PaymentOrderController extends Controller
                     'remarks' => '<br>' . auth()->user()->personalInfo->first_name . ' ' . auth()->user()->personalInfo->last_name . ' updated the payment.',
                     "status" => LtpApplicationProgress::STATUS_PAID
                 ]);
+
+                Notification::send($paymentOrder->ltpApplication->permittee->user, new LtpApplicationPaid($paymentOrder->ltpApplication));
 
                 return redirect()->back()->with('success', 'Payment updated successfully');
             });

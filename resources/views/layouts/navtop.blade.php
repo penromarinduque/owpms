@@ -14,6 +14,24 @@
 </form>
 <!-- Navbar-->
 <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+
+    @php
+        $unreadNotifications = auth()->user()->unreadNotifications()->count();
+    @endphp
+    <a class="nav-link position-relative" data-bs-toggle="offcanvas" data-bs-target="#notificationOffCanvas" href="#" role="button">
+        <i class="fas fa-bell fa-fw"></i>
+        @if ($unreadNotifications <= 0)
+        @else
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                @if ($unreadNotifications >= 99)
+                    99+
+                @else
+                    {{ $unreadNotifications }}
+                @endif
+                <span class="visually-hidden">unread messages</span>
+            </span>
+        @endif
+    </a>
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -30,3 +48,4 @@
         </ul>
     </li>
 </ul>
+

@@ -47,6 +47,8 @@
             </div>
         </div>
 
+        @include('components.notificationOffCanvas')
+
         <!-- jQuery -->
         <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>

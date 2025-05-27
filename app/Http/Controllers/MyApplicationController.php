@@ -113,7 +113,20 @@ class MyApplicationController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $id = Crypt::decryptString($id);
+
+            $ltp_application = LtpApplication::find($id);
+
+            return view('permittee.myapplication.show', [
+                "title" => "Application Details",
+                "ltp_application" => $ltp_application,
+                "_helper" => new ApplicationHelper
+            ]);
+
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 
     /**
@@ -409,8 +422,6 @@ class MyApplicationController extends Controller
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
-
-    
 
     // public function viewPaymentOrder(string $id) {
     //     $application_id = Crypt::decryptString($id);

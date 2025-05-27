@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\LtpRequirement;
 use App\Models\LtpFee;
+use App\Notifications\LtpApplicationAccepted;
+use App\Notifications\LtpApplicationReturned;
+use App\Notifications\LtpApplicationReviewed;
+use Illuminate\Support\Facades\Notification;
 
 class LtpApplicationController extends Controller
 {
@@ -33,33 +37,40 @@ class LtpApplicationController extends Controller
     }
 
     public function review(string $id){
-        $_helper = new ApplicationHelper;
-        $_ltp_requirement = new LtpRequirement;
+        try {
+            $_helper = new ApplicationHelper;
+            $_ltp_requirement = new LtpRequirement;
 
-        $application_id = Crypt::decryptString($id);
-        $ltp_application = LtpApplication::query()->with(['attachments'])->find($application_id);
-        $ltp_requirements = $_ltp_requirement->getActiveRequirements();
+            $application_id = Crypt::decryptString($id);
+            $ltp_application = LtpApplication::query()->with(['attachments'])->find($application_id);
+            $ltp_requirements = $_ltp_requirement->getActiveRequirements();
 
-        if(in_array($ltp_application->application_status, [LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_RESUBMITTED])) {
-            $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
-            $ltp_application->save();
+            if(in_array($ltp_application->application_status, [LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_RESUBMITTED])) {
+                $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
+                $ltp_application->save();
 
-            LtpApplicationProgress::create([
-                "ltp_application_id" => $ltp_application->id,
-                "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_UNDER_REVIEW
+                LtpApplicationProgress::create([
+                    "ltp_application_id" => $ltp_application->id,
+                    "user_id" => Auth::user()->id,
+                    "status" => LtpApplicationProgress::STATUS_UNDER_REVIEW
+                ]);
+
+                Notification::send($ltp_application->permittee, new LtpApplicationReviewed($ltp_application));
+            }
+
+            $permittee = Permittee::find($ltp_application->permittee_id);
+
+            return view('admin.ltpapplications.review', [
+                '_helper' => $_helper,
+                'title' => 'LTP Application',
+                "ltp_application" => $ltp_application,
+                "permittee" => $permittee,
+                "ltp_requirements" => $ltp_requirements
             ]);
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
         }
-
-        $permittee = Permittee::find($ltp_application->permittee_id);
-
-        return view('admin.ltpapplications.review', [
-            '_helper' => $_helper,
-            'title' => 'LTP Application',
-            "ltp_application" => $ltp_application,
-            "permittee" => $permittee,
-            "ltp_requirements" => $ltp_requirements
-        ]);
+        
     }
 
     public function return(Request $request) {
@@ -73,7 +84,7 @@ class LtpApplicationController extends Controller
             $id = $request->id;
             $remarks = $request->remarks;
     
-            LtpApplication::find($id)->update([
+            $ltp_application = LtpApplication::find($id)->update([
                 "application_status" => LtpApplication::STATUS_RETURNED,
             ]);
     
@@ -83,6 +94,8 @@ class LtpApplicationController extends Controller
                 "status" => LtpApplicationProgress::STATUS_RETURNED,
                 "remarks" => $remarks
             ]);
+
+            Notification::send(LtpApplication::find($id)->permittee, new LtpApplicationReturned($ltp_application));
     
             return redirect()
                     ->back()
@@ -138,9 +151,9 @@ class LtpApplicationController extends Controller
                 "status" => LtpApplicationProgress::STATUS_ACCEPTED
             ]);
 
-            // redirect to payment order generation
+            Notification::send($ltp_application->permittee->user, new LtpApplicationAccepted($ltp_application));
+
             return redirect()->route('ltpapplication.index', ['status' => LtpApplication::STATUS_ACCEPTED])->with('success', 'Successfully accepted application. You can visit the accepted tab to generate payment orders.');
-            // return redirect()->route('ltpapplication.generatePaymentOrder', Crypt::encryptString($ltp_application_id))->with('success', 'Successfully accepted application.');
         });
     }
 

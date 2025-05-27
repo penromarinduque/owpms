@@ -22,6 +22,7 @@ use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\PaymentOrderController;
@@ -120,6 +121,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::get('/print-request-letter/{id}', [MyApplicationController::class, 'printRequestLetter'])->name('myapplication.printRequestLetter');
         Route::post('/upload-receipt/{id}', [MyApplicationController::class, 'uploadReceipt'])->name('myapplication.uploadreceipt');
+        Route::get('/show/{id}', [MyApplicationController::class, 'show'])->name('myapplication.show');
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
@@ -273,6 +275,11 @@ Route::middleware('auth')->group(function (){
         });
     });
 
+    // Notifications
+    Route::prefix('notifications')->group(function () {
+        Route::get('show/{id}', [NotificationController::class, 'show'])->name('notifications.show');
+    });
+
 
 });
 
@@ -295,12 +302,9 @@ Route::get('/test-email', function () {
 
 
 
-
-
-Route::view('/oop', 'doc_templates.oop');
-Route::view('/oop-dashboard', 'doc_templates.oop-dashboard');
-Route::view('/oop-form', 'doc_templates.oop-form');
-
+// Route::view('/oop', 'doc_templates.oop');
+// Route::view('/oop-dashboard', 'doc_templates.oop-dashboard');
+// Route::view('/oop-form', 'doc_templates.oop-form');
 
 //  test routes
 Route::get("/generate-password", function (Request $request) {

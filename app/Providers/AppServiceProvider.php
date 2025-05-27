@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\LtpApplication;
 use App\Models\User;
+use App\Policies\NotificationPolicy;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Gate::policy(DatabaseNotification::class, NotificationPolicy::class);
+
         Gate::define('view-payment-order', function ($user, $paymentOrder) {
             $isOwner = $paymentOrder->ltpApplication->permittee->user_id == $user->id;
             $permissions = $user->getUserPermissions(); // use injected $user instead of auth()->user()
