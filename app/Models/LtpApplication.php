@@ -29,6 +29,7 @@ class LtpApplication extends Model
     const STATUS_PAID = 'paid';
     const STATUS_FOR_INSPECTION = 'for-inspection';
     const STATUS_APPROVED = 'approved';
+    const STATUS_EXPIRED = 'expired';
 
     // public function getLTPApplications($user_id)
     // {
