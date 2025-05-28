@@ -194,6 +194,8 @@ class PaymentOrderController extends Controller
     public function view(string $id) {
         $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
 
+        Gate::authorize('view', $paymentOrder);
+        
         if(!Gate::allows('view-payment-order', $paymentOrder)) {
             return redirect()->back()->with('error', 'You are not authorized to view this document');
         }

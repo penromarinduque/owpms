@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\LtpApplication;
+use App\Models\PaymentOrder;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class LtpApplicationPolicy
+class PaymentOrderPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,9 +19,9 @@ class LtpApplicationPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, LtpApplication $ltpApplication): bool
+    public function view(User $user, PaymentOrder $paymentOrder): bool
     {
-        return ($user->id == $ltpApplication->permittee->user_id || in_array('LTP_APPLICATION_INDEX', $user->getUserPermissions()));
+        return $user->id == $paymentOrder->ltpApplication->permittee->user_id || in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
     }
 
     /**
@@ -35,23 +35,23 @@ class LtpApplicationPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, LtpApplication $ltpApplication): bool
+    public function update(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $user->id == $ltpApplication->permittee->user_id;
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, LtpApplication $ltpApplication): bool
+    public function delete(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $user->id == $ltpApplication->permittee->user_id;
+        return false;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, LtpApplication $ltpApplication): bool
+    public function restore(User $user, PaymentOrder $paymentOrder): bool
     {
         return false;
     }
@@ -59,12 +59,8 @@ class LtpApplicationPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, LtpApplication $ltpApplication): bool
+    public function forceDelete(User $user, PaymentOrder $paymentOrder): bool
     {
         return false;
-    }
-
-    public function uploadReceipt(User $user, LtpApplication $ltpApplication) {
-        return $user->id == $ltpApplication->permittee->user_id;
     }
 }

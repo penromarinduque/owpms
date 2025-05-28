@@ -252,7 +252,6 @@ Route::middleware('auth')->group(function (){
             Route::get("edit/{id}", [AccountController::class, 'editPersonalInfo'])->name("account.personalInfo.edit");
             Route::post("update/{id}", [AccountController::class, 'updatePersonalInfo'])->name("account.personalInfo.update");
         });
-
     });
 
     // User Access Management
@@ -279,8 +278,6 @@ Route::middleware('auth')->group(function (){
     Route::prefix('notifications')->group(function () {
         Route::get('show/{id}', [NotificationController::class, 'show'])->name('notifications.show');
     });
-
-
 });
 
 Route::get('/test-email', function () {
@@ -324,6 +321,4 @@ Route::get("token", function () {
     return csrf_token();
 });
 
-Route::post("test", function (Request $request) {
-    return $request->all();
-});
+Route::view("test", 'test-geo-tag');

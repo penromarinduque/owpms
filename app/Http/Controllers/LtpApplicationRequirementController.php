@@ -17,7 +17,8 @@ class LtpApplicationRequirementController extends Controller
 
         if($request->hasFile('document_file')) {
             $file = $request->file('document_file');
-            $path = $file->store('requirements');
+            $fileName = 'requirement_' . time() . $file->getClientOriginalExtension();
+            $path = $file->storeAs('requirements', $fileName, 'private'); // store('requirements');
             $attachment = LtpApplicationAttachment::where('ltp_application_id', $request->application_id)->where('ltp_requirement_id', $request->requirement_id)->first();
             if($attachment) {
                 $attachment->file_path = $path;

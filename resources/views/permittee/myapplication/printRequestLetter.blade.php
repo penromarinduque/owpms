@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Application for Local Transport Permit</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/customize.css') }}" rel="stylesheet" />
     <style>
-        body {
+        /* body {
             font-family: 'Times New Roman', Times, serif;
             line-height: 1.6;
             color: #000;
-        }
+        } */
 
         .letterhead {
             padding-bottom: 7px;
@@ -27,7 +28,7 @@
         .letter-content {
             max-width: 800px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 10px 10px;
         }
 
         .recipient-block {
@@ -88,12 +89,14 @@
 <body>
     <div class="container letter-content">
         <!-- Letterhead -->
-        <div class="letterhead text-center">
-            <h5 class="mb-0">Republic of the Philippines</h5>
-            <h4 class="fw-bold mt-0 mb-0">{{ $wfp->wildlifeFarm->farm_name }}</h4>
-            <p class="mt-0 mb-0">Cawit, Boac, Marinduque 4900</p>
-            <p class="mt-1 mb-0">Contact No. {{ $wfp->wildlifeFarm->contact_no }} | Email: {{ $wfp->user->email }}</p>
+        <div class=" text-center">
+            <h5 class="mb-0">REPUBLIC OF THE PHILIPPINES</h5>
+            <h5 class="mt-0 mb-0">{{ strtoupper($wfp->wildlifeFarm->farm_name) }}</h5>
+            <p class="mt-0 mb-0">{{ $wfp->wildlifeFarm->barangay->barangay_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->municipality_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->province->province_name }}</p>
+            <p class="mt-0 mb-0">Contact No. {{ $wfp->user->personalInfo->contact_no }} | Email: {{ $wfp->user->email }}</p>
         </div>
+
+        <br>
 
         <div class="main-content">
 
@@ -158,6 +161,8 @@
                 </tbody>
             </table>
 
+            <br>
+            
             <!-- Purpose Statement -->
             <div class="mb-4">
                 <p>

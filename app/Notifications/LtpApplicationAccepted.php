@@ -41,6 +41,7 @@ class LtpApplicationAccepted extends Notification
         return (new MailMessage)
                     ->line('Good news! Your LTP application has been accepted.')
                     ->line('Your application requirements have been reviewed and complied with. Please wait for the Order of Payment to be created. You will be notified once the Order of Payment is created and you can proceed to the next step which is payment.')
+                    ->line('Please submit the two original copies of the application letter, WCP, WFP, and scanned requirements attached to your application for official acceptance. (Applicable if hard copies are required at PENRO.)')
                     ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
@@ -56,7 +57,7 @@ class LtpApplicationAccepted extends Notification
             //
             'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'LTP Application Accepted',
-            'message' => 'Your LTP application has been accepted.',
+            'message' => 'Your LTP application has been accepted. Please submit the two original copies of the application letter, WCP, WFP, and scanned requirements attached to your application for official acceptance. (Applicable if hard copies are required at PENRO.)',
         ];
     }
 }

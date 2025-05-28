@@ -65,8 +65,6 @@ class MyApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
-        // try {
         return DB::transaction(function () use ($request) {
             $request->validate([
                 "transport_date" => "required|date",
@@ -103,9 +101,6 @@ class MyApplicationController extends Controller
             }
             return Redirect::route('myapplication.index')->with('success', 'Successfully saved!');
         });
-        // } catch (\Exception $e) {
-        //     return redirect()->back()->with('error', $e);
-        // }
     }
 
     /**
@@ -117,6 +112,8 @@ class MyApplicationController extends Controller
             $id = Crypt::decryptString($id);
 
             $ltp_application = LtpApplication::find($id);
+
+            Gate::authorize('view', $ltp_application);
 
             return view('permittee.myapplication.show', [
                 "title" => "Application Details",
@@ -140,6 +137,8 @@ class MyApplicationController extends Controller
             "id" => $id,
             "permittee_id" => Auth::user()->wcp()->id
         ])->first();
+
+        Gate::authorize('update', $ltp_application);
 
         if(!$ltp_application) {
             return redirect()->back()->with('error', 'Application not found!');
@@ -176,6 +175,8 @@ class MyApplicationController extends Controller
 
             $ltp_application = LtpApplication::find($id);
 
+            Gate::authorize('update', $ltp_application);
+
             if(!$ltp_application) {
                 return redirect()->back()->with('error', 'Application not found!');
             }
@@ -208,7 +209,10 @@ class MyApplicationController extends Controller
     {
         //
         return DB::transaction(function () use ($id) {
-            LtpApplication::where("id", $id)->delete();
+            $ltp_application = LtpApplication::where("id", $id)->delete();
+
+            Gate::authorize('delete', $ltp_application);
+
             LtpApplicationSpecie::where("ltp_application_id", $id)->delete();
             return Redirect::route('myapplication.index')->with('success', 'Application successfully deleted!');
         });
@@ -250,6 +254,8 @@ class MyApplicationController extends Controller
 
         $ltp_application = LtpApplication::query()->with(['attachments'])->find($application_id);
 
+        Gate::authorize('view', $ltp_application);
+
         $permittee = Permittee::find($ltp_application->permittee_id);
 
         return view('permittee.myapplication.preview', [
@@ -277,6 +283,8 @@ class MyApplicationController extends Controller
             "ltpApplicationSpecies",
         ])
         ->first();
+
+        Gate::authorize('view', $application);
         
         $wfp = $_permittee->getPermitteeWFP($application->permittee->user_id, "wfp");
         $wcp = $_permittee->getPermitteeWCP($application->permittee->user_id, "wcp");
@@ -294,6 +302,8 @@ class MyApplicationController extends Controller
     public function submit(string $id) {
         return DB::transaction(function () use ($id) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+
+            Gate::authorize('update', $ltp_application);
 
             if(!$ltp_application) {
                 return redirect()->back()->with('error', 'Application not found!');
@@ -328,6 +338,10 @@ class MyApplicationController extends Controller
     public function requirements(string $id) {
         $id = Crypt::decryptString($id);
 
+        $ltp_application = LtpApplication::find($id);
+
+        Gate::authorize('update', $ltp_application);
+
         $requirements = LtpRequirement::where([
             "is_active_requirement" => 1
         ])
@@ -349,6 +363,8 @@ class MyApplicationController extends Controller
     public function resubmit(string $id) {
         return DB::transaction(function () use ($id) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+
+            Gate::authorize('update', $ltp_application);
 
             if(!$ltp_application) {
                 return redirect()->back()->with('error', 'Application not found!');
