@@ -46,8 +46,10 @@
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'returned' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'returned']) }}">Returned</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'accepted']) }}">Accepted</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'payment-in-process' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'payment-in-process']) }}">Payment In Process</a>
+                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'paid' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'paid']) }}">Paid</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'approved']) }}">Approved</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'rejected']) }}">Rejected</a>
+                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'expired' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'expired']) }}">Expired</a>
                     </nav>
                 </div>
                 {{-- FOR SIGNATURE --}}
@@ -66,11 +68,12 @@
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'resubmitted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'resubmitted']) }}">Resubmitted</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'under-review' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'under-review']) }}">Under Review</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'returned' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'returned']) }}">Returned</a>
-                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'accepted']) }}">Accepted</a>
-                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'payment-in-process' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'payment-in-process']) }}">Payment In Process</a>
-                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'paid' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'paid']) }}">For Inspection</a>
+                        <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'accepted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'accepted']) }}">Accepted</a>
+                        <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'payment-in-process' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'payment-in-process']) }}">Payment In Process</a>
+                        <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'paid' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'paid']) }}">For Inspection</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'approved']) }}">Approved</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'rejected']) }}">Rejected</a>
+                        <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'expired' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'expired']) }}">Expired</a>
                     </nav>
                 </div>
             @endif

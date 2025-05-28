@@ -36,6 +36,7 @@ class ApplicationHelper
             LtpApplication::STATUS_PAID => 'success',
             LtpApplication::STATUS_FOR_INSPECTION => 'secondary',
             LtpApplication::STATUS_APPROVED => 'success',
+            LtpApplication::STATUS_EXPIRED => 'secondary',
             default => 'secondary',
         };
     }
@@ -53,11 +54,9 @@ class ApplicationHelper
             LtpApplication::STATUS_PAID => 'success',
             LtpApplication::STATUS_FOR_INSPECTION => 'secondary',
             LtpApplication::STATUS_APPROVED => 'success',
+            LtpApplication::STATUS_EXPIRED => 'secondary',
             default => 'secondary',
         };
     }
-
-    
-
     
 }

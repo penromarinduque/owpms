@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Notification;
 class LtpApplicationController extends Controller
 {
     //
-    public function index(Request $request){ 
+    public function index(Request $request) { 
         $status = $request->status ?? 'submitted';
         $_helper = new ApplicationHelper;
 
@@ -31,6 +31,7 @@ class LtpApplicationController extends Controller
 
         return view('admin.ltpapplications.index', [
             '_helper' => $_helper,
+            '_ltp_application' => new LtpApplication,
             'title' => 'LTP Applications',
             "ltp_applications" => $ltp_applications->paginate(50)
         ]);

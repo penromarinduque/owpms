@@ -43,28 +43,74 @@ active
             @endif
             <ul class="nav nav-tabs">
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">Submitted</a>
+                <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('submitted', null); @endphp
+                    Submitted 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'resubmitted' ? 'active' : '' }}" href="?status=resubmitted">Resubmitted</a>
+                <a class="nav-link {{ $status == 'resubmitted' ? 'active' : '' }}" href="?status=resubmitted">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('resubmitted', null); @endphp
+                    Resubmitted 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'under-review' ? 'active' : '' }}" href="?status=under-review">Under Review</a>
+                <a class="nav-link {{ $status == 'under-review' ? 'active' : '' }}" href="?status=under-review">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('under-review', null); @endphp
+                    Under Review 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'returned' ? 'active' : '' }}" href="?status=returned">Returned</a>
+                <a class="nav-link {{ $status == 'returned' ? 'active' : '' }}" href="?status=returned">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('returned', null); @endphp
+                    Returned 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'accepted' ? 'active' : '' }}" href="?status=accepted">Accepted</a>
+                <a class="nav-link {{ $status == 'accepted' ? 'active' : '' }}" href="?status=accepted">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('accepted', null); @endphp
+                    Accepted 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'payment-in-process' ? 'active' : '' }}" href="?status=payment-in-process">Payment In Process</a>
+                <a class="nav-link {{ $status == 'payment-in-process' ? 'active' : '' }}" href="?status=payment-in-process">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('payment-in-process', null); @endphp
+                    Payment In Process 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">Approved</a>
+                <a class="nav-link {{ $status == 'paid' ? 'active' : '' }}" href="?status=paid">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('paid', null); @endphp
+                    For Inspection 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ $status == 'rejected' ? 'active' : '' }}" href="?status=rejected">Rejected</a>
+                <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('approved', null); @endphp
+                    Approved 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ $status == 'rejected' ? 'active' : '' }}" href="?status=rejected">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('rejected', null); @endphp
+                    Rejected
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ $status == 'expired' ? 'active' : '' }}" href="?status=expired">
+                    @php $count = $_ltp_application->getApplicationCountsByStatus('expired', null); @endphp
+                    Expired 
+                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
+                </a>
               </li>
             </ul>
             <br>
