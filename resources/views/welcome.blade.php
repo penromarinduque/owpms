@@ -25,8 +25,9 @@
       <!-- Scrollbar Custom CSS -->
       <link rel="stylesheet" href="{{ asset('home_temp/css/jquery.mCustomScrollbar.min.css') }}">
       <!-- Tweaks for older IEs-->
-      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+      {{-- <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"> --}}
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+      <link href="{{ asset('assets/fontawesome-free-6.5.1-web/css/fontawesome.min.css') }}" rel="stylesheet" />
       <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
@@ -94,7 +95,7 @@
                                  <span>Online Wildlife Permitting Management System</span>
                                  <h1>OWPMS</h1>
                                  <!-- <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or </p> -->
-                                 <a href="#">Buy Now </a> <a href="contact.html">Contact </a>
+                                 <a href="{{ route('dashboard.index') }}"><i class="fas fa-arrow-right"></i> Dashboard </a>
                               </div>
                            </div>
                            <div class="col-md-6">
@@ -117,36 +118,37 @@
       </section>
       <!-- end banner -->
       <!-- three_box -->
-      <div class="three_box">
+      <div class="three_box ">
          <div class="container">
-            <div class="row">
-               <div class="col-md-4">
-                  <div class="box_text">
-                     <i><img src="{{ asset('home_temp/images/thr.png') }}" alt="#"/></i>
-                     <h3>Computer</h3>
-                     <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. </p>
+            <div class="row align-items-stretch justify-content-center">
+               <div class="col-lg-4 col-md-6 mb-3">
+                  <div class="box_text h-100">
+                     <i><img height="200px" src="{{ asset('/images/undraw_accept-task_vzpn.png') }}" alt="#"/></i>
+                     <h3>Streamlined Permit Application</h3>
+                     <p>Apply for wildlife-related permits online — anytime, anywhere. Save time with a simplified, guided process for submitting requirements and tracking approval status.</p>
                   </div>
                </div>
-               <div class="col-md-4">
-                  <div class="box_text">
-                     <i><img src="{{ asset('home_temp/images/thr1.png') }}" alt="#"/></i>
-                     <h3>Laptop</h3>
-                     <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. </p>
+               <div class="col-lg-4 col-md-6 mb-3">
+                  <div class="box_text h-100">
+                     <i><img height="200px" src="{{ asset('/images/undraw_location-tracking_q3yd.png') }}" alt="#"/></i>
+                     <h3>Real-Time Application Tracking</h3>
+                     <p>Monitor the progress of your application in real time. Get notified on approvals, pending steps, or required actions without needing to visit the office.</p>
                   </div>
                </div>
-               <div class="col-md-4">
-                  <div class="box_text">
-                     <i><img src="{{ asset('home_temp/images/thr2.png') }}" alt="#"/></i>
-                     <h3>Tablet</h3>
-                     <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. </p>
+               <div class="col-lg-4 col-md-6 mb-3">
+                  <div class="box_text h-100">
+                     <i><img src="{{ asset('/images/undraw_add-document_oqbr.png') }}" alt="#"/></i>
+                     <h3>Digital Document Management</h3>
+                     <p>Securely upload and manage your application attachments, such as IDs, reports, and compliance documents. Access approved permits and transaction history in one central portal.</p>
                   </div>
                </div>
             </div>
          </div>
+         <br><br><br>
       </div>
       <!-- three_box -->
       <!-- products -->
-      <div  class="products">
+      {{-- <div  class="products">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -221,10 +223,10 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- end products -->
       <!-- laptop  section -->
-      <div class="laptop">
+      {{-- <div class="laptop">
          <div class="container">
             <div class="row">
                <div class="col-md-6">
@@ -242,10 +244,10 @@
             </div>
          </div>
       </div>
-      </div>
+      </div> --}}
       <!-- end laptop  section -->
       <!-- customer -->
-      <div class="customer">
+      {{-- <div class="customer">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -321,11 +323,11 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- end customer -->
 
       <!--  contact -->
-      <div class="contact">
+      {{-- <div class="contact">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -358,7 +360,7 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- end contact -->
       <!--  footer -->
       <footer>
@@ -366,32 +368,26 @@
             <div class="container">
                <div class="row">
                   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                     <img class="logo1" src="{{ asset('home_temp/images/logo1.png') }}" alt="#"/>
-                     <ul class="social_icon">
-                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
-                     </ul>
+                     <img class="mb-2 d-block mx-auto"  width="80px" src="{{ asset('/images/logo-small.png') }}" alt="#"/>
+                     <h3 class="text-white font-weight-bold text-center">DENR - PENRO Marinduque</h3>
                   </div>
                   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
                      <h3>About Us</h3>
                      <ul class="about_us">
-                        <li>dolor sit amet, consectetur<br> magna aliqua. Ut enim ad <br>minim veniam, <br> quisdotempor incididunt r</li>
+                        <li>DENR – PENRO Marinduque is the provincial office of the Department of Environment and Natural Resources, dedicated to protecting and managing Marinduque’s natural resources through sustainable practices and community engagement.</li>
                      </ul>
                   </div>
                   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                     <h3>Contact Us</h3>
+                     <h3>Mission</h3>
+                     <ul class="about_us">
+                        <li>A nation enjoying and sustaining its natural resources and clean and healthy environment.</li>
+                     </ul>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                     <h3>Vision</h3>
                      <ul class="conta">
-                        <li>dolor sit amet,<br> consectetur <br>magna aliqua.<br> quisdotempor <br>incididunt ut e </li>
+                        <li>To mobilize our citizenry in protecting, conserving, and managing the environment and natural resources for the present and future generations. </li>
                      </ul>
-                  </div>
-                  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-                     <form class="bottom_form">
-                        <h3>Newsletter</h3>
-                        <input class="enter" placeholder="Enter your email" type="text" name="Enter your email">
-                        <button class="sub_btn">subscribe</button>
-                     </form>
                   </div>
                </div>
             </div>
@@ -399,7 +395,7 @@
                <div class="container">
                   <div class="row">
                      <div class="col-md-12">
-                        <p>© 2019 All Rights Reserved. Design by<a href="https://html.design/"> Free Html Templates</a></p>
+                        <p>© 2024 All Rights Reserved. <a href="https://penromarinduque.gov.ph">DENR - PENRO Marinduque</a></p>
                      </div>
                   </div>
                </div>
