@@ -6,6 +6,7 @@ use App\Notifications\LtpApplicationExpired;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Schedule;
 
@@ -43,3 +44,8 @@ Schedule::call(function () {
         LtpApplication::whereIn('id', $applicationIds)->update(['application_status' => 'expired']);
     }
 })->dailyAt('00:00');
+
+// FOR TESTING CRON JOBS
+// Schedule::call(function () {
+//     Log::debug('Running Cron Job');
+// })->everyMinute();

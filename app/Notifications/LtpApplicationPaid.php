@@ -41,7 +41,7 @@ class LtpApplicationPaid extends Notification
     {
         return (new MailMessage)
                     ->line('Good day!')
-                    ->line('Your application has been paid. Please stand by for the next step: Inspection. For the meantime you can upload the receipt which will be used as attachment to your application. You will be notified once the inspection is completed and you can proceed to the next step. We appreciate your patience and understanding.')
+                    ->line('Your application has been paid it is now ready for inspection. For the meantime you can upload the receipt which will be used as attachment to your application. You will be notified once the inspection is completed and you can proceed to the next step. We appreciate your patience and understanding.')
                     ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }

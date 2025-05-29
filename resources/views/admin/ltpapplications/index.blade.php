@@ -115,26 +115,26 @@ active
             </ul>
             <br>
             <div class="table-responsive">
-                <table class="table table-sm table-hover table-striped" >
+                <table class="table table-hover table-bordered table-striped" >
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Permittee</th>
                             <th>Application No.</th>
-                            <th>Date Created</th>
-                            <th>Last Modified</th>
-                            <th>Status</th>
-                            <th width="200px" class="text-center">Action</th>
+                            <th class="text-center">Date Created</th>
+                            <th class="text-center">Last Modified</th>
+                            <th width="300px" class="text-center">Transport Date</th>
+                            <th class="text-center">Status</th>
+                            <th width="200px" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($ltp_applications as $key => $ltp_application)
                             <tr>
-                                <td class="align-middle">{{ $key + 1 }}</td>
                                 <td class="align-middle">{{ $ltp_application->permittee->user->personalInfo->first_name . ' ' . $ltp_application->permittee->user->personalInfo->last_name }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
-                                <td class="align-middle">{{ $ltp_application->created_at->format('F d, Y') }}</td>
-                                <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
+                                <td class="align-middle text-center text-secondary">{{ $ltp_application->application_date->diffForHumans() }}</td>
+                                <td class="align-middle text-center text-secondary">{{ $ltp_application->updated_at->diffForHumans() }}</td>
+                                <td class="align-middle text-center">{{ $ltp_application->transport_date->format("F d, Y") }} <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span></td>
                                 <td class="align-middle text-center">
                                     <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
                                 </td>
@@ -152,6 +152,9 @@ active
                                     @if (in_array($status, ['payment-in-process']))   
                                         <a href="{{ route('paymentorder.show', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
+                                    @if (in_array($status, ['paid']))   
+                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
+                                    @endif
 
                                     <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs"><i class="fas fa-history"></i></a>
                                 </td>
@@ -163,6 +166,7 @@ active
                         @endforelse
                     </tbody>
                 </table>
+                {{ $ltp_applications->links() }}
             </div>
         </div>
     </div>

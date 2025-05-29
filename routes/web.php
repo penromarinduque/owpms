@@ -22,6 +22,7 @@ use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
@@ -282,6 +283,11 @@ Route::middleware('auth')->group(function (){
     // Notifications
     Route::prefix('notifications')->group(function () {
         Route::get('show/{id}', [NotificationController::class, 'show'])->name('notifications.show');
+    });
+
+    // Inspection
+    Route::prefix('inspection/{ltp_application_id}')->group(function () {
+        Route::get('/', [InspectionController::class, 'index'])->name('inspection.index');
     });
 });
 

@@ -182,6 +182,9 @@ active
                                             </a>
                                         </div>
                                     @endif
+                                    @if (in_array($status, ['paid']))   
+                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
+                                    @endif
                                     @if ($status != 'draft')
                                         <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs">
                                             <i class="fas fa-history"></i>

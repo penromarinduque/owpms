@@ -25,6 +25,23 @@ class LtpApplicationPolicy
     }
 
     /**
+     * Determine whether the user can inspect the ltp application.
+     */
+    public function inspect(User $user, LtpApplication $ltpApplication): bool
+    {
+        return ($user->id == $ltpApplication->permittee->user_id || in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()));
+    }
+
+    /**
+     * Determine whether the user can upload proof of inspection of the ltp application.
+     */
+    public function uploadInspectionProof(User $user, LtpApplication $ltpApplication): bool
+    {
+        // for the meantime only owner of the application can upload
+        return ($user->id == $ltpApplication->permittee->user_id);
+    }
+
+    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
