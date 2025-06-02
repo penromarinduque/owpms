@@ -1,1 +1,1 @@
-show ltp application?
+show ltp application? {{ Helper::test() }}

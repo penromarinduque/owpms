@@ -58,5 +58,9 @@ class ApplicationHelper
             default => 'secondary',
         };
     }
+
+    public function test(){
+        return "Helper Facade working";
+    }
     
 }

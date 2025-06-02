@@ -287,7 +287,10 @@ Route::middleware('auth')->group(function (){
 
     // Inspection
     Route::prefix('inspection/{ltp_application_id}')->group(function () {
+        Route::get('/view-photo/{id}', [InspectionController::class, 'viewPhoto'])->name('inspection.viewPhoto');
+        Route::delete('/delete-photo/{id}', [InspectionController::class, 'deletePhoto'])->name('inspection.deletePhoto');
         Route::get('/', [InspectionController::class, 'index'])->name('inspection.index');
+        Route::post('/', [InspectionController::class, 'uploadPhotos'])->name('inspection.uploadPhotos');
     });
 });
 

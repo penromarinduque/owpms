@@ -38,7 +38,7 @@ class LtpApplicationPolicy
     public function uploadInspectionProof(User $user, LtpApplication $ltpApplication): bool
     {
         // for the meantime only owner of the application can upload
-        return ($user->id == $ltpApplication->permittee->user_id);
+        return ($user->id == $ltpApplication->permittee->user_id || in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()));
     }
 
     /**
@@ -82,6 +82,6 @@ class LtpApplicationPolicy
     }
 
     public function uploadReceipt(User $user, LtpApplication $ltpApplication) {
-        return $user->id == $ltpApplication->permittee->user_id;
+        return ($user->id == $ltpApplication->permittee->user_id);
     }
 }

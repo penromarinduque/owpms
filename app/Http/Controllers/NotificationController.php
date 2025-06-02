@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 
+
 class NotificationController extends Controller
 {
     public function show(string $id)

@@ -8,6 +8,7 @@ use App\Policies\NotificationPolicy;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use App\Helpers\ApplicationHelper;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+
     }
 
     /**
