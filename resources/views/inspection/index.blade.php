@@ -133,9 +133,9 @@ Inspections
                                         alt="Photo"
                                         style="object-fit: cover; height: 150px;">
                                     <div class="btn-group mt-2" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                                        <a href="{{ route('inspection.downloadPhoto', ['ltp_application_id' => Crypt::encryptString($ltp_application->id), 'id' => Crypt::encryptString($image->id)]) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-download me-1"></i>Download
-                                        </button>
+                                        </a>
                                         <button type="button" class="btn btn-outline-danger btn-sm" onclick="showConfirDeleteModal ('{{ route('inspection.deletePhoto',['id' => Crypt::encryptString($image->id), 'ltp_application_id' => Crypt::encryptString($ltp_application->id)]) }}' ,{{$image->id}}, 'Are you sure you want to delete this photo?','Delete Photo')">
                                             <i class="fas fa-trash me-1"></i>Delete
                                         </button>
@@ -153,12 +153,23 @@ Inspections
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="mb-0"><i class="fas fa-video me-1"></i>Inspection Video</h6>
                     @can('uploadInspectionProof', $ltp_application)
-                        <button type="button" class="btn btn-outline-primary btn-sm">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="showUploadInspectionVideoModal('{{ route('inspection.uploadVideo', Crypt::encryptString($ltp_application->id)) }}')">
                             <i class="fas fa-upload me-1"></i>Upload Video
                         </button>
                     @endcan
                 </div>
-                <img class="d-block mx-auto" src="{{ asset('images/undraw_video-files_cxl9.png') }}" alt="" width="150px">
+                @if ($videos->count() > 0)
+                    <div class="col-12">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Note:</strong> Please ensure all videos are clear and relevant to the inspection.
+                        </div>
+                    </div>
+                    <video width="100%" controls>
+                        <source src={{ route('inspection.viewVideo', ['ltp_application_id' => Crypt::encryptString($ltp_application->id), 'id' => Crypt::encryptString($videos->first()->id)]) }}>
+                    </video>
+                @else
+                    <img class="d-block mx-auto" src="{{ asset('images/undraw_video-files_cxl9.png') }}" alt="" width="150px">
+                @endif
             </div>
             <div class="d-flex justify-content-end">
                 <button class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i>Submit Inspection Proofs</button>
@@ -170,5 +181,6 @@ Inspections
 
 @section('includes')
     @include('components.uploadInspectionPhotos')
+    @include('components.uploadInspectionVideo')
     @include('components.confirmDelete')
 @endsection

@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 use App\Models\LtpApplication;
+use App\Models\Permittee;
+use Illuminate\Support\Carbon;
 
 class ApplicationHelper
 {
@@ -57,6 +59,26 @@ class ApplicationHelper
             LtpApplication::STATUS_EXPIRED => 'secondary',
             default => 'secondary',
         };
+    }
+
+    public function setPermitStatusColor(Permittee $permit)
+    {
+        $now = Carbon::now();
+        $validTo = $permit->valid_to;
+
+        if ($now->gte($validTo)) {
+            return 'permit-lv5'; // Already expired
+        } elseif ($now->gte($validTo->copy()->subMonths(2))) {
+            return 'permit-lv4'; // Within 2 months of expiry
+        } elseif ($now->gte($validTo->copy()->subMonths(3))) {
+            return 'permit-lv3'; // Within 3 months of expiry
+        } elseif ($now->gte($validTo->copy()->subMonths(6))) {
+            return 'permit-lv2'; // Within 6 months of expiry
+        } elseif ($now->gte($validTo->copy()->subYear())) {
+            return 'permit-lv1'; // Within 1 year of expiry
+        }
+
+        return null; // Or a default class
     }
 
     public function test(){

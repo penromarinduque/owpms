@@ -1,0 +1,32 @@
+
+.permit-lv1 {
+    color: white;
+    background-color: #3FC231;
+    border-color: adjust-hue(#3FC231, 200deg);
+}
+
+.permit-lv2 {
+    color : white;
+    background-color: rgb(223, 255, 107);
+    border-color: adjust-hue(rgb(226, 255, 107), 200deg);
+
+}
+
+.permit-lv3 {
+    color : white;
+    background-color: rgb(255, 203, 107);
+    border-color: adjust-hue(rgb(255, 203, 107), 200deg);
+}
+
+.permit-lv4 {
+    color : white;
+    background-color: #ea670a;
+    border-color: adjust-hue(#ea670a, 200deg);
+}
+
+.permit-lv5 {
+    color : white;
+    background-color: #ea0a0a;
+    border-color: adjust-hue(#ea0a0a, 200deg);
+}
+

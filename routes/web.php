@@ -288,9 +288,12 @@ Route::middleware('auth')->group(function (){
     // Inspection
     Route::prefix('inspection/{ltp_application_id}')->group(function () {
         Route::get('/view-photo/{id}', [InspectionController::class, 'viewPhoto'])->name('inspection.viewPhoto');
+        Route::get('/view-video/{id}', [InspectionController::class, 'viewVideo'])->name('inspection.viewVideo');
+        Route::get('/download-photo/{id}', [InspectionController::class, 'downloadPhoto'])->name('inspection.downloadPhoto');
         Route::delete('/delete-photo/{id}', [InspectionController::class, 'deletePhoto'])->name('inspection.deletePhoto');
         Route::get('/', [InspectionController::class, 'index'])->name('inspection.index');
-        Route::post('/', [InspectionController::class, 'uploadPhotos'])->name('inspection.uploadPhotos');
+        Route::post('/upload-photos', [InspectionController::class, 'uploadPhotos'])->name('inspection.uploadPhotos');
+        Route::post('/upload-video', [InspectionController::class, 'uploadVideo'])->name('inspection.uploadVideo');
     });
 });
 

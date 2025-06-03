@@ -15,10 +15,14 @@
         <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
+        {{-- <link href="{{ asset('css/theme.css') }}" rel="stylesheet" /> --}}
         <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
         <!-- Select2 -->
         <link rel="stylesheet" href="{{ asset('assets/select2/dist/css/select2.min.css') }}">
         <link href="{{ asset('css/customize.css') }}" rel="stylesheet" />
+
+        {{-- Custom stypes --}}
+        <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
