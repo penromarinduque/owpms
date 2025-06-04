@@ -150,7 +150,7 @@ Inspections
                 @endif
             </div>
             <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center mb-2">
                     <h6 class="mb-0"><i class="fas fa-video me-1"></i>Inspection Video</h6>
                     @can('uploadInspectionProof', $ltp_application)
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="showUploadInspectionVideoModal('{{ route('inspection.uploadVideo', Crypt::encryptString($ltp_application->id)) }}')">
@@ -164,14 +164,20 @@ Inspections
                             <strong>Note:</strong> Please ensure all videos are clear and relevant to the inspection.
                         </div>
                     </div>
-                    <video width="100%" controls>
-                        <source src={{ route('inspection.viewVideo', ['ltp_application_id' => Crypt::encryptString($ltp_application->id), 'id' => Crypt::encryptString($videos->first()->id)]) }}>
-                    </video>
+                    <div class="row justify-content-center">
+                        <div class="col col-md-8 col-lg-6">
+                            <video width="100%" controls>
+                                <source src={{ route('inspection.viewVideo', ['ltp_application_id' => Crypt::encryptString($ltp_application->id), 'id' => Crypt::encryptString($videos->first()->id)]) }} type="video/mp4">
+                            </video>
+
+                        </div>
+                    </div>
                 @else
                     <img class="d-block mx-auto" src="{{ asset('images/undraw_video-files_cxl9.png') }}" alt="" width="150px">
                 @endif
             </div>
-            <div class="d-flex justify-content-end">
+            <div class="d-flex justify-content-end gap-1">
+                <button class="btn btn-primary btn-sm"><i class="fas fa-check me-1"></i>Approve Inspection</button>
                 <button class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i>Submit Inspection Proofs</button>
             </div>
         </div>

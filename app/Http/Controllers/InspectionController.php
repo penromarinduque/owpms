@@ -89,11 +89,19 @@ class InspectionController extends Controller
 
         return DB::transaction(function () use ($request, $ltp_application, $ltp_application_id) {
             $path = $request->video->storeAs('inspection-videos', "_" . $ltp_application_id . '.' . $request->video->getClientOriginalExtension(), 'private');
-            InspectionVideo::create([
-                'ltp_application_id' => $ltp_application->id,
-                'video_url' => $path,
-                'file_size' => $request->video->getSize()
-            ]);
+            $inspection = InspectionVideo::where('ltp_application_id', $ltp_application->id)->first();
+            if ($inspection) {
+                $inspection->update([
+                    'file_size' => $request->video->getSize()
+                ]);
+            }
+            else {
+                InspectionVideo::create([
+                    'ltp_application_id' => $ltp_application->id,
+                    'video_url' => $path,
+                    'file_size' => $request->video->getSize()
+                ]);
+            }
             
             return redirect()->back()->with('success', 'Video uploaded successfully!');
         });

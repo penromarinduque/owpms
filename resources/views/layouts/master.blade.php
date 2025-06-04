@@ -25,6 +25,8 @@
         <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     </head>
     <body class="sb-nav-fixed">
+        @include('components.fullLoader')
+
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             @include('layouts.navtop')
         </nav>

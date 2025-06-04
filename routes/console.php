@@ -17,7 +17,7 @@ Artisan::command('inspire', function () {
 
 Schedule::call(function () {
     $applications = LtpApplication::with(['permittee.user']) 
-        ->whereNotIn('application_status', ['draft','paid','for-inspection','approved', 'expired'])
+        ->whereNotIn('application_status', ['draft', 'expired'])
         ->whereDate('transport_date', '<=', Carbon::now())
         ->get();
 

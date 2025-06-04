@@ -35,9 +35,10 @@
    <!-- body -->
    <body class="main-layout">
       <!-- loader  -->
-      <div class="loader_bg">
+      {{-- <div class="loader_bg">
          <div class="loader"><img src="{{ asset('/home_temp/images/loading.gif') }}" alt="#" /></div>
-      </div>
+      </div> --}}
+      @include('components.fullLoader')
       <!-- end loader -->
       <!-- header -->
       <header>
