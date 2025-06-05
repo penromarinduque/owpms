@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('ltp_application_id');
             $table->string('video_url');
             $table->integer('file_size');
+            $table->enum('uploaded_by', ['permittee', 'internal']);
             $table->timestamps();
         });
     }

@@ -151,7 +151,7 @@ Inspections
             </div>
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="mb-0"><i class="fas fa-video me-1"></i>Inspection Video</h6>
+                    <h6 class="mb-0"><i class="fas fa-video me-1"></i>Inspection Video <spant class="text-muted">(Optional)</spant></h6>
                     @can('uploadInspectionProof', $ltp_application)
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="showUploadInspectionVideoModal('{{ route('inspection.uploadVideo', Crypt::encryptString($ltp_application->id)) }}')">
                             <i class="fas fa-upload me-1"></i>Upload Video
@@ -174,19 +174,27 @@ Inspections
                     </div>
                 @else
                     <img class="d-block mx-auto" src="{{ asset('images/undraw_video-files_cxl9.png') }}" alt="" width="150px">
+                    <p class="text-center text-muted">Upload Inspection video not exceeding to 50 mb</p>
                 @endif
             </div>
             <div class="d-flex justify-content-end gap-1">
-                <button class="btn btn-primary btn-sm"><i class="fas fa-check me-1"></i>Approve Inspection</button>
-                <button class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i>Submit Inspection Proofs</button>
+                @if (auth()->user()->usertype == "permittee" && $ltp_application->application_status == "paid")
+                    <button class="btn btn-primary btn-sm" onclick="showSubmitInspectionModal()"><i class="fas fa-paper-plane me-1"></i>Submit Inspection Proofs</button>
+                @endif
+                @if (auth()->user()->usertype == "internal" && in_array($ltp_application->application_status, ["for_inspection", "inspection_rejected", "paid"]))
+                    <button class="btn btn-primary btn-sm"><i class="fas fa-check me-1"></i>Approve Inspection</button>
+                @endif
             </div>
         </div>
     </div>
 </div>
+
+
 @endsection
 
 @section('includes')
     @include('components.uploadInspectionPhotos')
     @include('components.uploadInspectionVideo')
     @include('components.confirmDelete')
+    @include('components.submitInspectionProofs')
 @endsection

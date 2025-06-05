@@ -21,19 +21,28 @@ class LtpApplicationController extends Controller
 {
     //
     public function index(Request $request) { 
-        $status = $request->status ?? 'submitted';
+        $status = $request->status ?? 'all';
+        $category = $request->category ?? "submitted";
+
         $_helper = new ApplicationHelper;
+        $ltp_application_query = LtpApplication::query();
 
-        $ltp_applications = LtpApplication::where([
-            'application_status' => $status
-        ])
-        ->orderBy('created_at', 'DESC');
+        if($status == 'all') {
+            $ltp_applications = $ltp_application_query->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category));
+        }
+        else {
+            $ltp_applications = $ltp_application_query->where([
+                'application_status' => $status
+            ]);
+        }
 
+        $ltp_applications = $ltp_application_query;
+        
         return view('admin.ltpapplications.index', [
             '_helper' => $_helper,
             '_ltp_application' => new LtpApplication,
             'title' => 'LTP Applications',
-            "ltp_applications" => $ltp_applications->paginate(50)
+            "ltp_applications" => $ltp_applications->orderBy('created_at', 'DESC')->paginate(50)
         ]);
     }
 

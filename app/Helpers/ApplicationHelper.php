@@ -20,7 +20,11 @@ class ApplicationHelper
             LtpApplication::STATUS_PAYMENT_IN_PROCESS => 'Payment in Process',
             LtpApplication::STATUS_PAID => 'Paid',
             LtpApplication::STATUS_FOR_INSPECTION => 'For Inspection',
+            LtpApplication::STATUS_INSPECTED => 'Inspected',
             LtpApplication::STATUS_APPROVED => 'Approved',
+            LtpApplication::STATUS_EXPIRED => 'Expired',
+            LtpApplication::STATUS_REJECTED => 'Rejected',
+            LtpApplication::STATUS_INSPECTION_REJECTED => 'Inspection Rejected',    
             default => 'Unknown',
         };
     }
@@ -80,6 +84,62 @@ class ApplicationHelper
 
         return null; // Or a default class
     }
+
+    public function identifyApplicationStatusesByCategory($category)
+    {
+        if($category == "submitted") {
+            return [
+                LtpApplication::STATUS_SUBMITTED,
+                LtpApplication::STATUS_RESUBMITTED,
+                LtpApplication::STATUS_UNDER_REVIEW
+            ];
+        }
+
+        if($category == "reviewed") {
+            return [
+                
+            ];
+        }
+
+        if($category == "returned") {
+            return [
+                LtpApplication::STATUS_RETURNED
+            ];
+        }
+
+        if($category == "accepted") {
+            return [
+                LtpApplication::STATUS_ACCEPTED,
+                LtpApplication::STATUS_PAYMENT_IN_PROCESS,
+                LtpApplication::STATUS_PAID,
+                LtpApplication::STATUS_FOR_INSPECTION,
+                LtpApplication::STATUS_INSPECTED
+            ];
+        }
+
+        if($category == "rejected") {
+            return [
+                LtpApplication::STATUS_REJECTED,
+                LtpApplication::STATUS_INSPECTION_REJECTED,
+                // LtpApplication::STATUS_CANCELLED
+            ];
+        }
+
+        if($category == "approved") {
+            return [
+                LtpApplication::STATUS_APPROVED
+            ];
+        }
+
+        if($category == "expired") {
+            return [
+                LtpApplication::STATUS_EXPIRED
+            ];
+        }
+
+        return [];
+    }
+
 
     public function test(){
         return "Helper Facade working";

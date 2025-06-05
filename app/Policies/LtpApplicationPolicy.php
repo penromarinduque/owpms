@@ -37,8 +37,21 @@ class LtpApplicationPolicy
      */
     public function uploadInspectionProof(User $user, LtpApplication $ltpApplication): bool
     {
-        // for the meantime only owner of the application can upload
-        return ($user->id == $ltpApplication->permittee->user_id || in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()));
+        $isPermittee = $user->id == $ltpApplication->permittee->user_id;
+        $hasInspectPermission = in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions());
+        $isPaid = $ltpApplication->application_status == LtpApplication::STATUS_PAID;
+        $isForInspection = $ltpApplication->application_status == LtpApplication::STATUS_FOR_INSPECTION;
+        $isInspectionRejected = $ltpApplication->application_status == LtpApplication::STATUS_INSPECTION_REJECTED;
+
+        if($isPaid && ($hasInspectPermission || $isPermittee)) {
+            return true;
+        }
+
+        if($isInspectionRejected && $isPermittee) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -82,6 +95,10 @@ class LtpApplicationPolicy
     }
 
     public function uploadReceipt(User $user, LtpApplication $ltpApplication) {
+        return ($user->id == $ltpApplication->permittee->user_id);
+    }
+
+    public function owned(User $user, LtpApplication $ltpApplication) {
         return ($user->id == $ltpApplication->permittee->user_id);
     }
 }

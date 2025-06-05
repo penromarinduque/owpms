@@ -24,11 +24,15 @@ class LtpApplication extends Model
     const STATUS_UNDER_REVIEW = 'under-review';
     const STATUS_RETURNED = 'returned';
     const STATUS_RESUBMITTED = 'resubmitted';
+    // const STATUS_REVIEWED = 'reviewed';
     const STATUS_ACCEPTED = 'accepted';
     const STATUS_PAYMENT_IN_PROCESS = 'payment-in-process';
     const STATUS_PAID = 'paid';
     const STATUS_FOR_INSPECTION = 'for-inspection';
+    const STATUS_INSPECTION_REJECTED = 'inspection-rejected';
+    const STATUS_INSPECTED = 'inspected';
     const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
     const STATUS_EXPIRED = 'expired';
 
     // public function getLTPApplications($user_id)

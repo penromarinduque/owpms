@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LtpApplication;
+use App\Models\LtpApplicationProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
@@ -11,6 +12,10 @@ use App\Models\GeottaggedImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\InspectionVideo;
+use App\Notifications\InspectionProofSubmitted;
+use Illuminate\Support\Facades\Notification;
+use App\Models\User;
+
 
 class InspectionController extends Controller
 {
@@ -19,8 +24,15 @@ class InspectionController extends Controller
 
         Gate::authorize('view', $ltp_application);
 
-        $images = GeottaggedImage::where('ltp_application_id', $ltp_application->id)->get();
-        $videos = InspectionVideo::where('ltp_application_id', $ltp_application->id)->get();
+        $images = $ltp_application->application_status == LtpApplication::STATUS_PAID ? GeottaggedImage::where([
+            'ltp_application_id'=> $ltp_application->id,
+            'uploaded_by' => auth()->user()->usertype == "permittee" ? "permittee" : "internal"
+            ])->get() : GeottaggedImage::where('ltp_application_id', $ltp_application->id)->get();
+
+        $videos = $ltp_application->application_status == LtpApplication::STATUS_PAID ? InspectionVideo::where([
+            'ltp_application_id' => $ltp_application->id,
+            'uploaded_by' => auth()->user()->usertype == "permittee" ? "permittee" : "internal"
+            ])->get() : InspectionVideo::where('ltp_application_id', $ltp_application->id)->get();
 
         return view('inspection.index', [
             'ltp_application' => $ltp_application,
@@ -57,7 +69,8 @@ class InspectionController extends Controller
                 $path = $value->storeAs('inspection-photos', time() . "_" . $ltp_application_id . '.' . $value->getClientOriginalExtension(), 'private');
                 $imagesToInsert[] = [
                     'ltp_application_id' => $ltp_application->id,
-                    'image_url' => $path
+                    'image_url' => $path,
+                    'uploaded_by' => auth()->user()->usertype == "permittee" ? "permittee" : "internal"
                 ];
             }
             GeottaggedImage::insert($imagesToInsert);
@@ -89,17 +102,18 @@ class InspectionController extends Controller
 
         return DB::transaction(function () use ($request, $ltp_application, $ltp_application_id) {
             $path = $request->video->storeAs('inspection-videos', "_" . $ltp_application_id . '.' . $request->video->getClientOriginalExtension(), 'private');
-            $inspection = InspectionVideo::where('ltp_application_id', $ltp_application->id)->first();
+            $inspection = InspectionVideo::where('ltp_application_id', $ltp_application->id)->where('uploaded_by', auth()->user()->usertype == "permittee" ? "permittee" : "internal")->first();
             if ($inspection) {
                 $inspection->update([
-                    'file_size' => $request->video->getSize()
+                    'file_size' => $request->video->getSize(),
                 ]);
             }
             else {
                 InspectionVideo::create([
                     'ltp_application_id' => $ltp_application->id,
                     'video_url' => $path,
-                    'file_size' => $request->video->getSize()
+                    'file_size' => $request->video->getSize(),
+                    'uploaded_by' => auth()->user()->usertype == "permittee" ? "permittee" : "internal"
                 ]);
             }
             
@@ -112,7 +126,6 @@ class InspectionController extends Controller
     {
         $imageId = Crypt::decryptString($id);
         $image = GeottaggedImage::find($imageId);
-        
 
         if (!$image) {
             abort(404, 'Image not found');
@@ -209,5 +222,40 @@ class InspectionController extends Controller
 
         GeottaggedImage::where('id', $image->id)->delete();
         return redirect()->back()->with('success', 'Image deleted successfully!');
+    }
+
+    public function submitProofs(Request $request, string $ltp_application_id) {
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+        if (!$ltp_application) {
+            abort(404, 'Application not found');
+        }
+
+        Gate::authorize('owned', $ltp_application);
+
+        $imageCount = GeottaggedImage::where(['ltp_application_id' => $ltp_application_id, 'uploaded_by' => 'permittee'])->count();
+
+        if ($imageCount <= 0) {
+            return redirect()->back()->with('error', 'Please upload at least one image.');
+        }
+
+        return DB::transaction(function () use ($request, $ltp_application, $ltp_application_id) {
+            $ltp_application->update([
+                'application_status' => LtpApplication::STATUS_FOR_INSPECTION
+            ]);
+
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_FOR_INSPECTION,
+                'remarks' => "Inspection has been submitted by the permittee.",
+            ]);
+
+            Notification::send(User::whereIn('usertype', ['admin', 'internal'])->get(), new InspectionProofSubmitted($ltp_application));
+
+            return redirect()->back()->with('success', 'Proofs submitted successfully!');
+            
+        });
+
     }
 }

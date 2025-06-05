@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('ltp_application_id');
             $table->string('image_url', 150);
             $table->string('geotag', 200)->nullable();
+            $table->enum('uploaded_by', ['permittee', 'internal']);
             $table->timestamps();
         });
     }

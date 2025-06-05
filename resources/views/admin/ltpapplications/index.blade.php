@@ -41,7 +41,8 @@ active
                 <strong>{{ session('success') }}</strong>
             </div>
             @endif
-            <ul class="nav nav-tabs">
+
+            {{-- <ul class="nav nav-tabs">
               <li class="nav-item">
                 <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">
                     @php $count = $_ltp_application->getApplicationCountsByStatus('submitted', null); @endphp
@@ -112,8 +113,51 @@ active
                     <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
                 </a>
               </li>
+            </ul> --}}
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=all&category=received" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-file-export me-1"></i>Reviewed</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=all&category=rejected" class="nav-link {{ request('category') == 'rejected' ? 'active' : ''}}"><i class="fas fa-times-circle me-1"></i>Rejected</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=expired&category=expired" class="nav-link {{ request('category') == 'expired' ? 'active' : ''}}"><i class="fas fa-calendar-times me-1"></i>Expired</a>
+                </li>
             </ul>
+
             <br>
+
+            <div class="d-flex justify-content-end mb-3">
+                <form class="row gap-0" action="" method="get">
+                    <input type="hidden" name="category" value="{{ request('category') }}">
+                    <div class="col-auto pe-0">
+                        <select class="form-select" name="status" id="">
+                            <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
+                            @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
+                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary ">Filter</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-hover table-bordered table-striped" >
                     <thead>
@@ -166,7 +210,7 @@ active
                         @endforelse
                     </tbody>
                 </table>
-                {{ $ltp_applications->links() }}
+                {{ $ltp_applications->appends(request()->query())->links() }}
             </div>
         </div>
     </div>
