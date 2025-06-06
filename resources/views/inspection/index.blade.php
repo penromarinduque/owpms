@@ -47,7 +47,7 @@ Inspections
                                 <th>Transport Date.:</th><td>{{ $ltp_application->transport_date->format("F d, Y") }} <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span></td>
                             </tr>
                             <tr>
-                                <th>Status:</th><td>{{ $ltp_application->application_status }}</td>
+                                <th>Status:</th><td><span class="badge  bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -94,7 +94,7 @@ Inspections
         </div>
     </div>
 
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-header">
             <i class="fas fa-list me-1"></i>
             Inspection Proofs
@@ -123,7 +123,7 @@ Inspections
                     <div class="row justify-content-start align-items-stretch p-2 gap-1">
                         @foreach ($images as $image)
                             <div class="col-5 col-sm-4 col-md-3 col-lg-2">
-                                <div class="card border-0 shadow-sm h-100 image-proof-con">
+                                <div class="card border-1 shadow-sm h-100 image-proof-con p-2">
                                     <img 
                                         src="{{ route('inspection.viewPhoto', [
                                             'ltp_application_id' => Crypt::encryptString($ltp_application->id),
@@ -136,9 +136,17 @@ Inspections
                                         <a href="{{ route('inspection.downloadPhoto', ['ltp_application_id' => Crypt::encryptString($ltp_application->id), 'id' => Crypt::encryptString($image->id)]) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-download me-1"></i>Download
                                         </a>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="showConfirDeleteModal ('{{ route('inspection.deletePhoto',['id' => Crypt::encryptString($image->id), 'ltp_application_id' => Crypt::encryptString($ltp_application->id)]) }}' ,{{$image->id}}, 'Are you sure you want to delete this photo?','Delete Photo')">
+                                        <button 
+                                        type="button" 
+                                        class="btn btn-outline-danger btn-sm" 
+                                        onclick="showConfirDeleteModal ('{{ route('inspection.deletePhoto',['id' => Crypt::encryptString($image->id), 'ltp_application_id' => Crypt::encryptString($ltp_application->id)]) }}' ,{{$image->id}}, 'Are you sure you want to delete this photo?','Delete Photo')"
+                                        @cannot("delete", $image) disabled @endcannot
+                                        >
                                             <i class="fas fa-trash me-1"></i>Delete
                                         </button>
+                                    </div>
+                                    <div class="">
+                                        <small class="text-muted">Uploaded by {{ $image->uploaded_by == "internal" ? "Internal" : "Permittee" }}</small>
                                     </div>
                                 </div>
 
@@ -169,7 +177,6 @@ Inspections
                             <video width="100%" controls>
                                 <source src={{ route('inspection.viewVideo', ['ltp_application_id' => Crypt::encryptString($ltp_application->id), 'id' => Crypt::encryptString($videos->first()->id)]) }} type="video/mp4">
                             </video>
-
                         </div>
                     </div>
                 @else
@@ -178,13 +185,34 @@ Inspections
                 @endif
             </div>
             <div class="d-flex justify-content-end gap-1">
-                @if (auth()->user()->usertype == "permittee" && $ltp_application->application_status == "paid")
+                @if (auth()->user()->usertype == "permittee" && in_array($ltp_application->application_status, [ "paid", "inspection-rejected"]))
                     <button class="btn btn-primary btn-sm" onclick="showSubmitInspectionModal()"><i class="fas fa-paper-plane me-1"></i>Submit Inspection Proofs</button>
                 @endif
-                @if (auth()->user()->usertype == "internal" && in_array($ltp_application->application_status, ["for_inspection", "inspection_rejected", "paid"]))
-                    <button class="btn btn-primary btn-sm"><i class="fas fa-check me-1"></i>Approve Inspection</button>
+                @if (in_array(auth()->user()->usertype, ["internal", "admin"]) && in_array($ltp_application->application_status, ["for-inspection"]))
+                    <button class="btn btn-danger btn-sm" onclick="showRejectInspectionModal('{{ route('inspection.rejectInspection', Crypt::encryptString($ltp_application->id)) }}')"><i class="fas fa-times me-1"></i>Reject Inspection</button>
+                @endif
+                @if (in_array(auth()->user()->usertype, ["internal", "admin"]) && in_array($ltp_application->application_status, ["for-inspection", "paid"]))
+                    <button class="btn btn-primary btn-sm" ><i class="fas fa-check me-1"></i>Approve Inspection</button>
                 @endif
             </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-sticky-note me-1"></i>
+            <span class="card-title">Remarks</span>
+        </div>
+        <div class="card-body">
+            @forelse ($remarks as $remark)
+                <div class="mb-4 rounded bg-light p-2">
+                    <p class="text-muted">{{ $remark->created_at->diffForHumans()    }}</p>
+                    {!! $remark->remarks !!}
+                </div>
+            @empty
+                <img width="200px" class="d-block mx-auto" src="{{ asset('images/undraw_no-data_ig65.png') }}" alt="">
+                <p class="text-center text-muted">No Remarks</p>
+            @endforelse
         </div>
     </div>
 </div>
@@ -195,6 +223,8 @@ Inspections
 @section('includes')
     @include('components.uploadInspectionPhotos')
     @include('components.uploadInspectionVideo')
+    @include('components.rejectInspection')
+    @include('components.approveInspection')
     @include('components.confirmDelete')
     @include('components.submitInspectionProofs')
 @endsection

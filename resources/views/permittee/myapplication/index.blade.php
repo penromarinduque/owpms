@@ -182,7 +182,7 @@ active
                                             </a>
                                         </div>
                                     @endif
-                                    @if (in_array($status, ['paid']))   
+                                    @if (in_array($status, ['paid', 'inspection-rejected']))   
                                         <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
                                     @endif
                                     @if ($status != 'draft')

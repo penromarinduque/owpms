@@ -184,19 +184,19 @@ active
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('ltpapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
-                                    @if (in_array($status, ['submitted', 'resubmitted']))
+                                    @if (in_array(request('status'), ['submitted', 'resubmitted']))
                                         <a href="#" onclick="showConfirmModal('{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}', 'Viewing this application will mark it as Under Review. Are you sure you want to continue?', 'Confirm Review', 'GET')" class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
-                                    @if (in_array($status, ['under-review']))
+                                    @if (in_array(request('status'), ['under-review']))
                                         <a href="{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
-                                    @if (in_array($status, ['accepted']))   
+                                    @if (in_array(request('status'), ['accepted']))   
                                         <a href="{{ route('paymentorder.create', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Generate Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
-                                    @if (in_array($status, ['payment-in-process']))   
+                                    @if (in_array(request('status'), ['payment-in-process']))   
                                         <a href="{{ route('paymentorder.show', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
-                                    @if (in_array($status, ['paid']))   
+                                    @if (in_array(request('status'), ['paid', 'for-inspection', 'inspection-rejected']))   
                                         <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
                                     @endif
 

@@ -295,6 +295,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/upload-photos', [InspectionController::class, 'uploadPhotos'])->name('inspection.uploadPhotos');
         Route::post('/upload-video', [InspectionController::class, 'uploadVideo'])->name('inspection.uploadVideo');
         Route::post('/submit-proofs', [InspectionController::class, 'submitProofs'])->name('inspection.submitProofs');
+        Route::post('/reject-inspection', [InspectionController::class, 'rejectInspection'])->name('inspection.rejectInspection');
     });
 });
 

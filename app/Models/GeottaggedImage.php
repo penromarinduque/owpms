@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class GeottaggedImage extends Model
 {
     use HasFactory;
+
+    public function ltpApplication() {
+        return $this->belongsTo(LtpApplication::class);
+    }
 }

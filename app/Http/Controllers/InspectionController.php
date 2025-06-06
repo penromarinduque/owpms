@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApplicationHelper;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ use App\Models\User;
 class InspectionController extends Controller
 {
     public function index(string $ltp_application_id) {
+        $_helper = new ApplicationHelper();
         $ltp_application = LtpApplication::find(Crypt::decryptString($ltp_application_id));
 
         Gate::authorize('view', $ltp_application);
@@ -33,11 +35,15 @@ class InspectionController extends Controller
             'ltp_application_id' => $ltp_application->id,
             'uploaded_by' => auth()->user()->usertype == "permittee" ? "permittee" : "internal"
             ])->get() : InspectionVideo::where('ltp_application_id', $ltp_application->id)->get();
+        $remarks = $ltp_application->logs()->where('status', LtpApplication::STATUS_INSPECTION_REJECTED)->orderBy('created_at', 'desc')->get();
 
+       
         return view('inspection.index', [
             'ltp_application' => $ltp_application,
             'images' => $images,
-            'videos' => $videos
+            'videos' => $videos,
+            'remarks' => $remarks,
+            '_helper' => $_helper
         ]);
     }
 
@@ -257,5 +263,34 @@ class InspectionController extends Controller
             
         });
 
+    }
+
+    public function rejectInspection(Request $request, string $ltp_application_id){
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+
+        if (!$ltp_application) {
+            abort(404, 'Application not found');
+        }
+
+        $request->validate([
+            'remarks' => 'required'
+        ]);
+
+        Gate::authorize('inspect', $ltp_application);
+
+        $ltp_application->update([
+            'application_status' => LtpApplication::STATUS_INSPECTION_REJECTED
+        ]); 
+
+        LtpApplicationProgress::create([
+            'ltp_application_id' => $ltp_application_id,
+            'user_id' => auth()->user()->id,
+            'status' => LtpApplication::STATUS_INSPECTION_REJECTED,
+            'remarks' => $request->remarks,
+        ]);
+        
+        return redirect()->back()->with('success', 'Inspection rejected successfully!');
+        // response
     }
 }
