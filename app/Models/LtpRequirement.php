@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class LtpRequirement extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['requirement_name', 'is_mandatory', 'is_active_requirement'];
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RolePermission extends Model
 {
+    use \OwenIt\Auditing\Auditable;
     //
     protected $table = 'role_permissions';
     protected $guarded = [];

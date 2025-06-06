@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class LtpApplicationAttachment extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $guarded = [];
 

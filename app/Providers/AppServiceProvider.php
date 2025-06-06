@@ -9,6 +9,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Helpers\ApplicationHelper;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Paginator
+        Paginator::useBootstrapFive();
         //
         Gate::policy(DatabaseNotification::class, NotificationPolicy::class);
 

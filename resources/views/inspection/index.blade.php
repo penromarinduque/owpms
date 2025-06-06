@@ -192,7 +192,7 @@ Inspections
                     <button class="btn btn-danger btn-sm" onclick="showRejectInspectionModal('{{ route('inspection.rejectInspection', Crypt::encryptString($ltp_application->id)) }}')"><i class="fas fa-times me-1"></i>Reject Inspection</button>
                 @endif
                 @if (in_array(auth()->user()->usertype, ["internal", "admin"]) && in_array($ltp_application->application_status, ["for-inspection", "paid"]))
-                    <button class="btn btn-primary btn-sm" ><i class="fas fa-check me-1"></i>Approve Inspection</button>
+                    <button class="btn btn-primary btn-sm" onclick="showApproveInspectionModal('{{ route('inspection.approveInspection', Crypt::encryptString($ltp_application->id)) }}')" ><i class="fas fa-check me-1" ></i>Approve Inspection</button>
                 @endif
             </div>
         </div>

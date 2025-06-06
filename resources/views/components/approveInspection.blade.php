@@ -7,7 +7,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to approve this inspection? This action is irreversible</p>
+                <p>
+                    By approving this inspection the system will automatically generate the following unsigned documents:
+                    <ul>
+                        <li>Wildlife Inspection Report</li>
+                        {{-- <li>Local Transport Permit (LTP) and other relevant permits</li> --}}
+                    </ul>
+                    <p>Note that you can always change the signatories of the Wildlife Inspection Report based on the availability of the in-charges.</p>
+                    <p class="text-danger">Please ensure that all the submitted documents are correct and complete before approving the inspection.</p>
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

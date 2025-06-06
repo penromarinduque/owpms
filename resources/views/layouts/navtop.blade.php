@@ -37,7 +37,7 @@
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="{{ route('account.index') }}">Account</a></li>
             <li><a class="dropdown-item" href="#!">Settings</a></li>
-            <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+            <li><a class="dropdown-item" href="{{ route('activity-logs') }}">Activity Log</a></li>
             <li><hr class="dropdown-divider" /></li>
             <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                          document.getElementById('logout-form').submit();">Logout</a>

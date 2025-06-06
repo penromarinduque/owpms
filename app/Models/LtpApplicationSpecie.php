@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class LtpApplicationSpecie extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['ltp_application_id', 'specie_id',  'quantity', 'is_endangered'];
 

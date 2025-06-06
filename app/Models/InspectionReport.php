@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class InspectionReport extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class LtpFee extends Model
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $guarded = [];
 

@@ -55,6 +55,9 @@ Route::get('/reset-password/{token}', [PasswordController::class, 'showResetForm
 Route::post('/reset-password', [PasswordController::class, 'resetPassword'])->name('password.update');
 
 Route::middleware('auth')->group(function (){
+    // Audit Trails
+    Route::get('/activity-logs', [AccountController::class, 'activityLogs'])->name('activity-logs');
+
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
@@ -296,7 +299,10 @@ Route::middleware('auth')->group(function (){
         Route::post('/upload-video', [InspectionController::class, 'uploadVideo'])->name('inspection.uploadVideo');
         Route::post('/submit-proofs', [InspectionController::class, 'submitProofs'])->name('inspection.submitProofs');
         Route::post('/reject-inspection', [InspectionController::class, 'rejectInspection'])->name('inspection.rejectInspection');
+        Route::post('/approve-inspection', [InspectionController::class, 'approveInspection'])->name('inspection.approveInspection');
     });
+
+    
 });
 
 Route::get('/test-email', function () {

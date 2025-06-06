@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class WildlifeFarm extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['permittee_id', 'farm_name', 'location', 'size', 'height'];
 

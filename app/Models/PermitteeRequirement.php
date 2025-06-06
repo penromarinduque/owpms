@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class PermitteeRequirement extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Audit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -72,5 +73,12 @@ class AccountController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
         }
+    }
+
+    public function activityLogs() {
+        $logs = Audit::where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC')->paginate(20);
+        return view("account.audit-trail", [
+            "logs" => $logs
+        ]);
     }
 }

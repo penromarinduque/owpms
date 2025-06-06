@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Signatory extends Model
 {
+    use \OwenIt\Auditing\Auditable;
     //
     protected $table = 'signatories';
     

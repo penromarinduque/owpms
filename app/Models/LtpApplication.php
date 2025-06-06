@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class LtpApplication extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature'];
 

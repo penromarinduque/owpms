@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PermitteeSpecie extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $guarded = [];
 

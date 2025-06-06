@@ -23,5 +23,10 @@ protected $fillable = ['user_id', 'last_name', 'first_name', 'middle_name', 'gen
         return $this->hasOne(Barangay::class, 'id', 'barangay_id');
     }
 
+    
+    public function getFullNameAttribute(){
+        return $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name;
+    }
+
 
 }

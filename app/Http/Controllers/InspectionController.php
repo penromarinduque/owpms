@@ -293,4 +293,38 @@ class InspectionController extends Controller
         return redirect()->back()->with('success', 'Inspection rejected successfully!');
         // response
     }
+
+    public function approveInspection(Request $request, string $ltp_application_id){
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+
+        $ltp_application = LtpApplication::find($ltp_application_id);
+
+        if (!$ltp_application) {
+            abort(404, 'Application not found');
+        }
+
+        Gate::authorize('inspect', $ltp_application);
+
+        $hasImage = GeottaggedImage::where(['ltp_application_id' => $ltp_application_id])->exists();
+
+        if (!$hasImage) {
+            return redirect()->back()->with('error', 'Please upload at least one image.');
+        }
+
+        return DB::transaction(function () use ($ltp_application, $ltp_application_id) {
+            
+            $ltp_application->update([
+                'application_status' => LtpApplication::STATUS_INSPECTED
+            ]); 
+    
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_INSPECTED,
+                'remarks' => "Inspection has been approved by the permittee.",
+            ]);
+    
+            return redirect()->back()->with('success', 'Inspection approved successfully!');
+        });
+    }
 }

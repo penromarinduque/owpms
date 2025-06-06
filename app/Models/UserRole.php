@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserRole extends Model
 {
+    use \OwenIt\Auditing\Auditable;
     //
     protected $table = 'user_roles';
 

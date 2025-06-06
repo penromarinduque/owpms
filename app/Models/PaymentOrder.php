@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentOrder extends Model
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'payment_orders';
     protected $primaryKey = 'id';
