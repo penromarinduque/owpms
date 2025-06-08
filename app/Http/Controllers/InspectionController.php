@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use App\Models\GeottaggedImage;
+use App\Models\InspectionReport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\InspectionVideo;
@@ -324,7 +325,37 @@ class InspectionController extends Controller
                 'remarks' => "Inspection has been approved by the permittee.",
             ]);
     
-            return redirect()->back()->with('success', 'Inspection approved successfully!');
+            return redirect(route('inspection.createReport', Crypt::encryptString($ltp_application_id)))->with('success', 'Inspection approved successfully!');
         });
+    }
+
+    public function createReport(Request $request, string $ltp_application_id) {
+        $_helper = new ApplicationHelper();
+        $_user = new User;
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+
+        if (!$ltp_application) {
+            abort(404, 'Application not found');
+        }
+
+        Gate::authorize('inspect', $ltp_application);
+
+        $inspection_report = InspectionReport::where(['ltp_application_id' => $ltp_application_id])->first();
+
+        if ($inspection_report) {
+            return view('inspection.edit-report', [
+                'ltp_application' => $ltp_application,
+                'inspection_report' => $inspection_report,
+                '_helper' => $_helper
+            ]);
+        }
+
+        return view('inspection.create-report', [
+            'ltp_application' => $ltp_application,
+            'inspection_report' => $inspection_report,
+            '_helper' => $_helper,
+            "_user" => $_user
+        ]);
     }
 }

@@ -15,8 +15,13 @@ return new class extends Migration
             $table->id();
             $table->integer('ltp_application_id');
             $table->integer('user_id');
+            $table->integer('inspector_id');
+            $table->integer('approver_id');
             $table->date('inspection_date');
             $table->text('report_details');
+            $table->boolean('permittee_signed')->default(false);
+            $table->boolean('inspector_signed')->default(false);
+            $table->boolean('approver_signed')->default(false);
             $table->timestamps();
         });
     }

@@ -84,4 +84,8 @@ class User extends Authenticatable
         $permissions = RolePermission::whereIn('role_id', $role_ids)->pluck('permission')->toArray();
         return $permissions;
     }
+
+    public function getAllInternals() {
+        return User::where('usertype', User::TYPE_INTERNAL)->where('is_active_user', 1)->get();
+    }
 }

@@ -300,6 +300,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/submit-proofs', [InspectionController::class, 'submitProofs'])->name('inspection.submitProofs');
         Route::post('/reject-inspection', [InspectionController::class, 'rejectInspection'])->name('inspection.rejectInspection');
         Route::post('/approve-inspection', [InspectionController::class, 'approveInspection'])->name('inspection.approveInspection');
+        Route::get('/create-report', [InspectionController::class, 'createReport'])->name('inspection.createReport');
     });
 
     

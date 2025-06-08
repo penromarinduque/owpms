@@ -24,9 +24,14 @@ protected $fillable = ['user_id', 'last_name', 'first_name', 'middle_name', 'gen
     }
 
     
-    public function getFullNameAttribute(){
+    public function getFullNameAttribute($useMiddleInitial = true){
+        if($useMiddleInitial){
+            return $this->first_name . ' ' . substr($this->middle_name, 0, 1) . '. ' . $this->last_name;
+        }
         return $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name;
     }
+
+
 
 
 }

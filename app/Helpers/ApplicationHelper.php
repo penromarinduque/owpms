@@ -42,6 +42,7 @@ class ApplicationHelper
             LtpApplication::STATUS_PAID => 'success',
             LtpApplication::STATUS_FOR_INSPECTION => 'secondary',
             LtpApplication::STATUS_INSPECTION_REJECTED => 'danger',
+            LtpApplication::STATUS_INSPECTED => 'primary',
             LtpApplication::STATUS_APPROVED => 'success',
             LtpApplication::STATUS_EXPIRED => 'secondary',
             default => 'secondary',
@@ -61,6 +62,7 @@ class ApplicationHelper
             LtpApplication::STATUS_PAID => 'success',
             LtpApplication::STATUS_FOR_INSPECTION => 'secondary',
             LtpApplication::STATUS_INSPECTION_REJECTED => 'danger',
+            LtpApplication::STATUS_INSPECTED => 'primary',
             LtpApplication::STATUS_APPROVED => 'success',
             LtpApplication::STATUS_EXPIRED => 'secondary',
             default => 'secondary',
@@ -140,6 +142,14 @@ class ApplicationHelper
         }
 
         return [];
+    }
+
+    public function ordinal($number) {
+        $suffixes = ['th','st','nd','rd','th','th','th','th','th','th'];
+        if ((($number % 100) >= 11) && (($number % 100) <= 13))
+            return $number . 'th';
+        else
+            return $number . $suffixes[$number % 10];
     }
 
 

@@ -199,6 +199,9 @@ active
                                     @if (in_array(request('status'), ['paid', 'for-inspection', 'inspection-rejected']))   
                                         <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
                                     @endif
+                                    @if (in_array(request('status'), ['inspected']))   
+                                        <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report"><i class="fas fa-file-pdf"></i></a>
+                                    @endif
 
                                     <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs"><i class="fas fa-history"></i></a>
                                 </td>

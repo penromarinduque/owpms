@@ -8,13 +8,13 @@
             </div>
             <div class="modal-body">
                 <p>
-                    By approving this inspection the system will automatically generate the following unsigned documents:
-                    <ul>
-                        <li>Wildlife Inspection Report</li>
-                        {{-- <li>Local Transport Permit (LTP) and other relevant permits</li> --}}
-                    </ul>
-                    <p>Note that you can always change the signatories of the Wildlife Inspection Report based on the availability of the in-charges.</p>
-                    <p class="text-danger">Please ensure that all the submitted documents are correct and complete before approving the inspection.</p>
+                    You are about to proceed to the next step: generating the Wildlife Inspection Report.
+                </p>
+                <p>
+                    Please note that you can change the signatories of the report based on the availability of the designated personnel.
+                </p>
+                <p class="text-danger">
+                    Ensure that all submitted documents are correct and complete before approving the inspection.
                 </p>
             </div>
             <div class="modal-footer">
