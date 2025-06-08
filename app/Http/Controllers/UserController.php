@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Barangay;
 use App\Models\PersonalInfo;
+use App\Models\Position;
 
 class UserController extends Controller
 {
@@ -28,9 +29,11 @@ class UserController extends Controller
     public function create()
     {
         $_barangay = new Barangay;
+        $_position = new Position;
         $barangays = $_barangay->getBarangays();
         return view('admin.maintenance.users.create', [
-            'barangays' => $barangays
+            'barangays' => $barangays,
+            '_position' => $_position
         ]);
     }
 
@@ -49,6 +52,7 @@ class UserController extends Controller
                 'address' => 'required',
                 'gender' => 'required',
                 'contact_no' => 'required',
+                'position' => 'required'
             ]);
     
             $user = User::create([
@@ -56,6 +60,7 @@ class UserController extends Controller
                 'username' => $request->input('username'),
                 'usertype' => $request->input('user_type'),
                 'password' => bcrypt($request->input('password')),
+                'position_id' => $request->input('position'),
                 'is_active_user' => 1,
             ]);
     

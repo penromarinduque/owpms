@@ -110,7 +110,7 @@ Generate Inspection Report
 
                     <div class="d-flex align-content-end justify-content-end">
                         <div class="" style="min-width: 200px">
-                            <p class="text-center mb-0 fw-bold">
+                            <p class="text-center mb-0 fw-bold mb-1">
                                 <select class="form-select select2" name="approver" id="approver">
                                     <option value="">-Select Approver-</option>
                                     @foreach($_user->getAllInternals() as $internal)
@@ -118,8 +118,10 @@ Generate Inspection Report
                                     @endforeach
                                 </select>
                             </p>
-                            <hr class="my-0 border-dark">
-                            <p class="text-center">(Designation)</p>
+                            <hr class="my-0 border-dark mb-1">
+                            <p class="text-center">
+                                <input type="text" name="approver_position" class="form-control text-center" placeholder="Designation">
+                            </p>
                         </div>
                     </div>
 

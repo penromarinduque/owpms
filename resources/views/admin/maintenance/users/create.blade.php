@@ -61,7 +61,9 @@ active
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
-                	<div class="col-sm-4 mb-2">
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 mb-2">
                 		<label for="email" class="form-label">Email <b class="text-danger">*</b></label>
                 		<input type="email" class="form-control" name="email" id="email" placeholder="Email" value="{{ old('email') }}">
                         @error('email')
@@ -87,7 +89,21 @@ active
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
-                	<div class="col-sm-4 mb-2">
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 mb-2">
+                		<label for="position" class="form-label">Position/Designation <b class="text-danger">*</b> </label>
+                		<select name="position" id="position" class="form-select select2" placeholder="Select Position/Designation">
+                            <option value="">-Select Position/Designation-</option>
+                            @foreach ($_position->getAllPositions() as $position)
+                                <option value="{{ $position->id }}" {{ (old('position') == $position->id) ? 'selected' : '' }}>{{ $position->position }}</option>
+                            @endforeach
+                        </select>
+                        @error('position')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                	</div>
+                    <div class="col-sm-4 mb-2">
                 		<label for="user_type" class="form-label">User Type <b class="text-danger">*</b></label>
                 		<select name="user_type" id="user_type" class="form-select" placeholder="Select User Type">
                             <option value="">-Select User Type-</option>

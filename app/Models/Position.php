@@ -13,4 +13,9 @@ class Position extends Model implements Auditable
 
     protected $fillable = ['position', 'description'];
 
+    public function getAllPositions()
+    {
+        return Position::all();
+    }
+
 }
