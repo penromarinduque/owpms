@@ -14,6 +14,7 @@ use App\Models\InspectionReport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\InspectionVideo;
+use App\Models\Position;
 use App\Notifications\InspectionProofSubmitted;
 use Illuminate\Support\Facades\Notification;
 use App\Models\User;
@@ -330,8 +331,10 @@ class InspectionController extends Controller
     }
 
     public function createReport(Request $request, string $ltp_application_id) {
-        $_helper = new ApplicationHelper();
+        $_helper = new ApplicationHelper;
         $_user = new User;
+        $_position = new Position;
+        
         $ltp_application_id = Crypt::decryptString($ltp_application_id);
         $ltp_application = LtpApplication::find($ltp_application_id);
 
@@ -347,7 +350,9 @@ class InspectionController extends Controller
             return view('inspection.edit-report', [
                 'ltp_application' => $ltp_application,
                 'inspection_report' => $inspection_report,
-                '_helper' => $_helper
+                '_helper' => $_helper,
+                "_user" => $_user,
+                "_position" => $_position
             ]);
         }
 
@@ -355,7 +360,82 @@ class InspectionController extends Controller
             'ltp_application' => $ltp_application,
             'inspection_report' => $inspection_report,
             '_helper' => $_helper,
-            "_user" => $_user
+            "_user" => $_user,
+            "_position" => $_position
+        ]);
+    }
+
+    public function store (Request $request, string $ltp_application_id) {
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+
+        $request->validate([
+            'approver' => 'required',
+            'approver_position' => 'required'
+        ]);
+
+        Gate::authorize('inspect', $ltp_application);
+
+        if(!$request->has('inspection_date')) {
+            return redirect()->back()->with('error', 'Inspection date is required.');
+        }
+
+        InspectionReport::create([
+            'ltp_application_id' => $ltp_application_id,
+            'user_id' => $ltp_application->permittee->user_id,
+            'inspector_id' => auth()->user()->id,
+            'approver_id' => $request->input('approver'),
+            'inspection_date' => $request->input('inspection_date'),
+            'approver_position' => $request->input('approver_position')
+        ]);
+
+        return redirect(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']))->with('success', 'Inspection report created successfully!');
+    }
+
+    public function update (Request $request, string $ltp_application_id, string $id) {
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+
+        Gate::authorize('inspect', $ltp_application);
+
+        $inspection_report = InspectionReport::find(Crypt::decryptString($id));
+
+        $request->validate([
+            'approver' => 'required',
+            'approver_position' => 'required'
+        ]);
+
+        if(!$request->has('inspection_date')) {
+            return redirect()->back()->with('error', 'Inspection date is required.');
+        }
+
+        $inspection_report->update([
+            'approver_id' => $request->input('approver'),
+            'inspection_date' => $request->input('inspection_date'),
+            'approver_position' => $request->input('approver_position')
+        ]);
+
+        return redirect(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']))->with('success', 'Inspection report updated successfully!');
+    }
+
+    public function print (Request $request, string $ltp_application_id, string $id) {
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+
+        $_helper = new ApplicationHelper;
+        $_user = new User;
+        $_position = new Position;
+
+        Gate::authorize('inspect', $ltp_application);
+
+        $inspection_report = InspectionReport::find(Crypt::decryptString($id));
+
+        return view('inspection.print-report', [
+            'ltp_application' => $ltp_application,
+            'inspection_report' => $inspection_report,
+            '_helper' => $_helper,
+            "_user" => $_user,
+            "_position" => $_position
         ]);
     }
 }

@@ -86,11 +86,13 @@ class UserController extends Controller
 
     public function edit(string $id)
     {
+        $_position = new Position;
         $user_id = Crypt::decrypt($id);
         $user = User::find($user_id);
 
         return view('admin.maintenance.users.edit', [
-            'user' => $user
+            'user' => $user,
+            '_position' => $_position
         ]);
     }
 
@@ -98,19 +100,37 @@ class UserController extends Controller
     {
         $user_id = Crypt::decrypt($id);
 
-        $validated = $request->validate([
-            'name' => 'required',
+        $request->validate([
+            'firstname' => 'required',
+            'middlename' => 'required',
+            'lastname' => 'required',
+            'gender' => 'required',
             'username' => 'required|min:6|max:16',
-            'email' => 'required|max:150',
+            'email' => 'required|max:150'
         ]);
 
-        User::find($user_id)->update([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'username' => $request->input('username'),
-            'is_active_user' => 1,
-        ]);
-        return Redirect::route('users.index')->with('success', 'Successfully saved!');
+        return DB::transaction(function () use ($request, $user_id) {
+            User::find($user_id)->update([
+                'email' => $request->input('email'),
+                'username' => $request->input('username'),
+                'is_active_user' => 1,
+            ]);
+
+            if ($request->has('position')) {
+                User::find($user_id)->update([
+                    'position' => $request->input('position'),
+                ]);
+            }
+
+            PersonalInfo::where('user_id', $user_id)->update([
+                'first_name' => $request->input('firstname'),
+                'middle_name' => $request->input('middlename'),
+                'last_name' => $request->input('lastname'),
+                'gender' => $request->input('gender'),
+            ]);
+
+            return Redirect::route('users.index')->with('success', 'Successfully saved!');
+        });
     }
 
     public function ajaxUpdateStatus(Request $request)

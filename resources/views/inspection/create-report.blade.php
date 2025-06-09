@@ -16,8 +16,31 @@ Generate Inspection Report
             Inspection Report Template
         </div>
         <div class="card-body">
-            <div class="row bg-light py-4 align-content-center justify-content-center">
+            <form class="row bg-light py-4 align-content-center justify-content-center" method="POST" action="{{ route('inspection.store', Crypt::encryptString($ltp_application->id)) }}" enctype="multipart/form-data">
+                @csrf
                 <div class="col-8 bg-white p-5">
+
+                    {{-- SELECT INSPECTION DATE --}}
+                    <div class="modal fade" id="selectInspectionDateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Select Inspection Date</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <input name="inspection_date" onchange="inspectionDateChanged(event)" max="{{ date('Y-m-d') }}" type="date" name="inspection_date" id="inspection_date" value="{{ old('inspection_date') ?? date('Y-m-d') }}" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <h3 class="text-center">INSPECTION REPORT OF WILDLIFE</h3><br>
         
@@ -100,8 +123,10 @@ Generate Inspection Report
                         &nbsp;&nbsp;&nbsp;&nbsp;This is to certify that the inspection report of 
                          <span class="fw-bold"><u>&nbsp;&nbsp;{{ auth()->user()->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></span>
                          of PENRO Marinduque, Region <span class="fw-bold"><u>&nbsp;&nbsp;IV-MIMAROPA&nbsp;&nbsp;</u></span>
-                         is/are true and correct and has been done this <span class="fw-bold"><u>&nbsp;&nbsp;{{ $_helper->ordinal(now()->format('j')) }}&nbsp;&nbsp;</u></span>
-                         day of <span class="fw-bold"><u>&nbsp;&nbsp;{{ now()->format('F Y') }}&nbsp;&nbsp;</u></span>.
+                         is/are true and correct and has been done this 
+                         <span id="inspection_date_text"><span class="fw-bold"><u>&nbsp;&nbsp;{{ $_helper->ordinal(now()->format('j')) }}&nbsp;&nbsp;</u></span>
+                         day of <span class="fw-bold" ><u>&nbsp;&nbsp;{{ now()->format('F Y') }}&nbsp;&nbsp;</u></span></span>. 
+                        <button type="button" class="btn btn-sm btn-outline-secondary p-1 py-0" data-bs-target="#selectInspectionDateModal" data-bs-toggle="modal"><i class="fa fa-calendar-days "></i></button>
                     </p>
 
                     <p>&nbsp;&nbsp;&nbsp;&nbsp;This is to certify further that this statement was given to me voluntarily and with neither coercion nor promise of reward from the personnel of the Department of Environment and Natural Resources.</p>
@@ -110,32 +135,74 @@ Generate Inspection Report
 
                     <div class="d-flex align-content-end justify-content-end">
                         <div class="" style="min-width: 200px">
-                            <p class="text-center mb-0 fw-bold mb-1">
-                                <select class="form-select select2" name="approver" id="approver">
+                            <p class="text-center mb-0 mb-1">
+                                <select class="form-select select2 @error('approver') is-invalid @enderror" name="approver" id="approver" onchange="changeApprover(event)">
                                     <option value="">-Select Approver-</option>
                                     @foreach($_user->getAllInternals() as $internal)
-                                        <option value="{{ $internal->id }}">{{ $internal->personalInfo->getFullNameAttribute() }}</option>
+                                        <option value="{{ $internal->id }}" data-position-id="{{ $internal->position }}">{{ $internal->personalInfo->getFullNameAttribute() }}</option>
                                     @endforeach
                                 </select>
+                                @error('approver')
+                                    <small class="invalid-feedback">{{ $message }}</small>
+                                @enderror
                             </p>
                             <hr class="my-0 border-dark mb-1">
                             <p class="text-center">
-                                <input type="text" name="approver_position" class="form-control text-center" placeholder="Designation">
+                                <input type="text" id="approver_position" name="approver_position" class="form-control text-center @error('approver_position') is-invalid @enderror" placeholder="Designation">
+                                @error('approver_position')
+                                    <small class="invalid-feedback">{{ $message }}</small>
+                                @enderror
                             </p>
                         </div>
                     </div>
 
                 </div>
-            </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Save</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+
 @endsection
 
 @section('script-extra')
 <script>
+    const positions = JSON.parse('{!! json_encode($_position->getAllPositions()) !!}');
     $(function(){
+        console.log(positions);
         $('.select2').select2();
     })
+
+    function changeApprover(e) {
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const positionId = selectedOption.dataset.positionId;
+
+        console.log("Position ID from data attribute:", positionId);
+        const position = positions.find(x => x.id == positionId);
+        $("#approver_position").val(position ? position.position : ''); 
+    }
+
+    function inspectionDateChanged(ev) {
+        console.log(ev.target.value);
+        const date = new Date(ev.target.value);
+        const ordinal = getOrdinal(date.getDate());
+        const month = date.toLocaleString('default', { month: 'long' });
+        const year = date.getFullYear();
+        $("#inspection_date_text").html(` <span class="fw-bold"><u>&nbsp;&nbsp;${ordinal}&nbsp;&nbsp;</u></span> day of <span class="fw-bold" ><u>&nbsp;&nbsp;${month} ${year}&nbsp;&nbsp;</u></span>`);
+    }
+
+    function getOrdinal(number) {
+        const suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
+        
+        if (number % 100 >= 11 && number % 100 <= 13) {
+            return number + 'th';
+        } else {
+            return number + suffixes[number % 10];
+        }
+    }
+
 </script>   
 @endsection

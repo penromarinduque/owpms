@@ -301,6 +301,9 @@ Route::middleware('auth')->group(function (){
         Route::post('/reject-inspection', [InspectionController::class, 'rejectInspection'])->name('inspection.rejectInspection');
         Route::post('/approve-inspection', [InspectionController::class, 'approveInspection'])->name('inspection.approveInspection');
         Route::get('/create-report', [InspectionController::class, 'createReport'])->name('inspection.createReport');
+        Route::post('/store', [InspectionController::class, 'store'])->name('inspection.store');
+        Route::post('/update/{id}', [InspectionController::class, 'update'])->name('inspection.update');
+        Route::get('/print/{id}', [InspectionController::class, 'print'])->name('inspection.print');
     });
 
     

@@ -152,7 +152,6 @@ class ApplicationHelper
             return $number . $suffixes[$number % 10];
     }
 
-
     public function test(){
         return "Helper Facade working";
     }

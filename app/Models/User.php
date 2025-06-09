@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'usertype',
         'is_active_user',
+        'position'  
     ];
 
     /**
@@ -85,7 +86,12 @@ class User extends Authenticatable
         return $permissions;
     }
 
-    public function getAllInternals() {
+    public function getAllInternals($includeAdmins = true) {
+        if($includeAdmins) {
+            return User::where('usertype', User::TYPE_INTERNAL)->where('is_active_user', 1)->orWhere('usertype', User::TYPE_ADMIN)->get();
+        }
         return User::where('usertype', User::TYPE_INTERNAL)->where('is_active_user', 1)->get();
     }
+    
+
 }
