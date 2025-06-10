@@ -30,10 +30,26 @@ class InspectionReportPolicy
 
     public function update(User $user, InspectionReport $inspectionReport)
     {
-        if(in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()) && $inspectionReport->inspector_signed == null && $inspectionReport->approver_signed == null) {
+        if(in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()) && !$inspectionReport->inspector_signed && !$inspectionReport->approver_signed) {
             return true;
         }
 
         return false;
     }
+
+    public function approverSign(User $user, InspectionReport $inspectionReport)
+    {
+        return $inspectionReport->inspector_signed && !$inspectionReport->approver_signed && $user->id == $inspectionReport->approver_id;
+    }
+
+    public function permitteeSign(User $user, InspectionReport $inspectionReport)
+    {
+        return !$inspectionReport->permittee_signed && !$inspectionReport->inspector_signed && !$inspectionReport->approver_signed && $user->id == $inspectionReport->user_id;
+    }
+
+    public function inspectorSign(User $user, InspectionReport $inspectionReport)
+    {
+        return $inspectionReport->permittee_signed && !$inspectionReport->inspector_signed && !$inspectionReport->approver_signed && $user->id == $inspectionReport->inspector_id;
+    }
+
 }

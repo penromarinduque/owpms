@@ -18,7 +18,7 @@ use App\Models\Position;
 use App\Notifications\InspectionProofSubmitted;
 use Illuminate\Support\Facades\Notification;
 use App\Models\User;
-
+use App\Notifications\InspectionReportCreated;
 
 class InspectionController extends Controller
 {
@@ -380,16 +380,22 @@ class InspectionController extends Controller
             return redirect()->back()->with('error', 'Inspection date is required.');
         }
 
-        InspectionReport::create([
-            'ltp_application_id' => $ltp_application_id,
-            'user_id' => $ltp_application->permittee->user_id,
-            'inspector_id' => auth()->user()->id,
-            'approver_id' => $request->input('approver'),
-            'inspection_date' => $request->input('inspection_date'),
-            'approver_position' => $request->input('approver_position')
-        ]);
-
-        return redirect(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']))->with('success', 'Inspection report created successfully!');
+        return DB::transaction(function () use ($request, $ltp_application, $ltp_application_id) {
+            $inspectionReport = InspectionReport::create([
+                'ltp_application_id' => $ltp_application_id,
+                'user_id' => $ltp_application->permittee->user_id,
+                'inspector_id' => auth()->user()->id,
+                'approver_id' => $request->input('approver'),
+                'inspection_date' => $request->input('inspection_date'),
+                'approver_position' => $request->input('approver_position')
+            ]);
+    
+            $ntf_rcvrs = User::whereIn('id', [$ltp_application->permittee->user_id, $inspectionReport->inspectorId, $inspectionReport->approverId])->get();
+    
+            Notification::send($ntf_rcvrs, new InspectionReportCreated($ltp_application));
+    
+            return redirect(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']))->with('success', 'Inspection report created successfully!');
+        });
     }
 
     public function update (Request $request, string $ltp_application_id, string $id) {

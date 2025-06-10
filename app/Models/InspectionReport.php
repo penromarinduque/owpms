@@ -23,4 +23,8 @@ class InspectionReport extends Model implements Auditable
     public function approver() {
         return $this->belongsTo(User::class, 'approver_id');
     }
+
+    public function ltpApplication() {
+        return $this->belongsTo(LtpApplication::class);
+    }
 }

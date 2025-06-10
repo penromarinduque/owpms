@@ -77,6 +77,21 @@
                     </nav>
                 </div>
             @endif
+
+            <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseForSignatures" aria-expanded="false" aria-controls="collapseLayouts">
+                <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
+                For Signatures
+                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+            </a>
+            <div class="collapse @yield('for-signatures')" id="collapseForSignatures" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'request_letter']) }}">LTP Request Letter</a>
+                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'inspection_report']) }}">Inspection Reports</a>
+                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'payment_order']) }}">Order of Payments</a>
+                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'ltp']) }}">Local Transport Permits</a>
+                </nav>
+            </div>
+
             
             @if(Auth::user()->usertype=='admin' || Auth::user()->usertype=='internal')
                 <div class="sb-sidenav-menu-heading">MAINTENANCE</div>
@@ -98,6 +113,7 @@
                     LTP Requirements
                 </a>
             @endif
+
             @if(Auth::user()->usertype=='admin')
                 <a class="nav-link @yield('active-positions')" href="{{ route('positions.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-list-ol"></i></div>

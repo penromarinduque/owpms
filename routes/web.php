@@ -22,6 +22,7 @@ use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
@@ -304,6 +305,14 @@ Route::middleware('auth')->group(function (){
         Route::post('/store', [InspectionController::class, 'store'])->name('inspection.store');
         Route::post('/update/{id}', [InspectionController::class, 'update'])->name('inspection.update');
         Route::get('/print/{id}', [InspectionController::class, 'print'])->name('inspection.print');
+    });
+
+    // For Signatures
+    Route::prefix('for-signatures')->group(function () {
+       Route::get('/', [ForSignaturesController::class, 'index'])->name('for-signatures.index'); 
+       Route::post('inspection-report-permittee-sign/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSign'])->name('for-signatures.inspectionReportPermitteeSign');
+       Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
+       Route::post('inspection-report-approver-sign/{id}', [ForSignaturesController::class, 'inspectionReportApproverSign'])->name('for-signatures.inspectionReportApproverSign');
     });
 
     

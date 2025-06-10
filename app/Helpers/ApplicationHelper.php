@@ -152,6 +152,22 @@ class ApplicationHelper
             return $number . $suffixes[$number % 10];
     }
 
+    function setForSignatoriesDocumentName($type){
+        if($type == "inspection_report"){
+            return "Inspection Report";
+        }
+        else if($type == "ltp"){
+            return "Local Transport Permit";
+        }
+        else if($type == "payment_order"){
+            return "Order of Payment";
+        }
+        else if($type == "request_letter"){
+            return "Request Letter";
+        }
+        return "";
+    }
+
     public function test(){
         return "Helper Facade working";
     }
