@@ -18,7 +18,7 @@ Inspection Report
         <div class="card-body">
             <form class="row bg-light py-4 align-content-center justify-content-center" method="POST" action="{{ route('inspection.update',['ltp_application_id' => Crypt::encryptString($ltp_application->id) , 'id' => Crypt::encryptString($inspection_report->id)]) }}" enctype="multipart/form-data">
                 @csrf
-                <div class="col-8 bg-white p-5">
+                <div class="col-8 bg-white p-5 mb-3">
 
                     {{-- SELECT INSPECTION DATE --}}
                     <div class="modal fade" id="selectInspectionDateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -159,7 +159,13 @@ Inspection Report
                 </div>
                 <div class="d-flex justify-content-end gap-1">
                     @can('view', $inspection_report)
-                        <a href="{{ route('inspection.print', ['id' => Crypt::encryptString($inspection_report->id), 'ltp_application_id' => Crypt::encryptString($inspection_report->ltp_application_id)]) }}" target="_blank" type="button" class="btn btn-outline-primary btn-submit"><i class="fas fa-print me-2"></i>Print</a>
+                        <a href="{{ route('inspection.print', ['id' => Crypt::encryptString($inspection_report->id), 'ltp_application_id' => Crypt::encryptString($inspection_report->ltp_application_id)]) }}" target="_blank" class="btn btn-outline-primary"><i class="fas fa-print me-2"></i>Print</a>
+                    @endcan
+                    @can('uploadDocument', $inspection_report)
+                        <button class="btn btn-outline-primary" type="button" onclick="showUploadInspectionReportModal('{{ route('inspection.uploadDocument',['id' => Crypt::encryptString($inspection_report->id), 'ltp_application_id' => Crypt::encryptString($inspection_report->ltp_application_id)] ) }}')"><i class="fas fa-upload me-2"></i>Upload</button>
+                    @endcan
+                    @can('downloadDocument', $inspection_report)
+                        <a href="{{ route('inspection.downloadDocument', ['id' => Crypt::encryptString($inspection_report->id), 'ltp_application_id' => Crypt::encryptString($inspection_report->ltp_application_id)]) }}" class="btn btn-outline-primary" target="_blank"><i class="fas fa-download me-2"></i>Download</a>
                     @endcan
                     @can('update', $inspection_report)
                         <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Save Changes</button>
@@ -169,8 +175,10 @@ Inspection Report
         </div>
     </div>
 </div>
+@endsection
 
-
+@section('includes')
+    @include('components.uploadInspectionReport')
 @endsection
 
 @section('script-extra')

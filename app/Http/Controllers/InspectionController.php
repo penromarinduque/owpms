@@ -444,4 +444,38 @@ class InspectionController extends Controller
             "_position" => $_position
         ]);
     }
+
+    public function uploadDocument(Request $request, string $ltp_application_id, string $id) {
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $id = Crypt::decryptString($id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+        $inspectionReport = InspectionReport::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'document' => 'required|mimes:pdf|max:10485760'
+        ]);
+
+        Gate::authorize('uploadDocument', $inspectionReport);
+
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'uploadDocument')->withInput()->with('error', 'Failed to upload document.');
+        }
+
+        return DB::transaction(function () use ($request, $ltp_application, $id) {
+            $request->file('document')->storeAs('inspection_report', $id . '.' . $request->file('document')->getClientOriginalExtension(), 'private');
+
+            return redirect()->back()->with('success', 'Document uploaded successfully!');
+        });
+    }
+
+    public function downloadDocument(Request $request, string $ltp_application_id, string $id) {
+        $ltp_application_id = Crypt::decryptString($ltp_application_id);
+        $id = Crypt::decryptString($id);
+        $ltp_application = LtpApplication::find($ltp_application_id);
+        $inspectionReport = InspectionReport::find($id);
+
+        Gate::authorize('downloadDocument', $inspectionReport);
+
+        return Storage::disk('private')->response('inspection_report/' . $id . '.' . 'pdf');
+    }
 }

@@ -54,6 +54,10 @@ class User extends Authenticatable
         ];
     }
 
+    public function empPosition(){
+        return $this->belongsTo(Position::class, 'position', 'id');
+    }
+
     public function wildlifePermits()
     {
         return $this->hasMany(Permittee::class, 'user_id');

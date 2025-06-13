@@ -12,10 +12,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\LtpRequirement;
 use App\Models\LtpFee;
+use App\Models\LtpPermit;
+use App\Models\User;
 use App\Notifications\LtpApplicationAccepted;
 use App\Notifications\LtpApplicationReturned;
 use App\Notifications\LtpApplicationReviewed;
+use App\Notifications\LtpPermitCreated;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\Rule;
 
 class LtpApplicationController extends Controller
 {
@@ -164,6 +169,112 @@ class LtpApplicationController extends Controller
             Notification::send($ltp_application->permittee->user, new LtpApplicationAccepted($ltp_application));
 
             return redirect()->route('ltpapplication.index', ['status' => LtpApplication::STATUS_ACCEPTED])->with('success', 'Successfully accepted application. You can visit the accepted tab to generate payment orders.');
+        });
+    }
+
+    public function permit(Request $request, string $id) {
+        $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+        $_user = new User();
+
+        $permit = LtpPermit::where('ltp_application_id', $ltp_application->id)->first();
+
+        Gate::authorize('generateLtp', $ltp_application);
+
+        if($permit) {
+            return redirect()->route('ltpapplication.editPermit', ['id' => Crypt::encryptString($ltp_application->id)]);
+        }
+
+        return view('admin.ltpapplications.permit', [
+            'ltp_application' => $ltp_application,
+            '_user' => $_user
+        ]);
+    }
+
+    public function createPermit(Request $request, string $id) {
+        $ltp_application = LtpApplication::find(Crypt::decryptString($id)); 
+        $request->validate([
+            'approver' => ['required', Rule::notIn([$request->input('chief_rps'), $request->input('chief_tsd')])],
+            'permit_no' => 'required',
+            'approver_designation' => 'required',
+            'chief_tsd' => ['required', Rule::notIn([$request->input('approver'),$request->input('chief_rps')])],
+            'chief_rps' => ['required', Rule::notIn([$request->input('approver'), $request->input('chief_tsd')])],
+            'transport_date' => 'required',
+        ], [
+            'approver.not_in' => 'Approver must be different from Chief RPS and Chief TSD.',
+            'chief_tsd.not_in' => 'Chief TSD must be different from Approver and Chief RPS.',
+            'chief_rps.not_in' => 'Chief RPS must be different from Approver and Chief TSD.',
+        ]);
+
+        Gate::authorize('generateLtp', $ltp_application);
+        
+        return DB::transaction(function () use ($ltp_application, $request) {
+            
+            LtpPermit::create([
+                'ltp_application_id' => $ltp_application->id,
+                'permit_number' => $request->input('permit_no'),
+                'penro' => $request->input('approver'),
+                'chief_tsd' => $request->input('chief_tsd'),
+                'chief_rps' => $request->input('chief_rps'),
+                'approver_designation' => $request->input('approver_designation')
+            ]);
+
+            $ltp_application->transport_date = $request->input('transport_date');
+            $ltp_application->save();
+    
+            Notification::send($ltp_application->permittee->user, new LtpPermitCreated($ltp_application));
+
+            return redirect()->back()->with('success', 'Successfully created permit.');
+        });
+    }
+
+    public function editPermit(Request $request, string $id) {
+        $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+        $permit = $ltp_application->permit;
+
+        Gate::authorize('generateLtp', $ltp_application);
+
+        return view('admin.ltpapplications.edit-permit', [
+            'ltp_application' => $ltp_application,
+            'permit' => $permit,
+            '_user' => new User
+        ]);
+    }
+
+    public function updatePermit(Request $request, string $id) {
+        $ltp_application = LtpApplication::find(Crypt::decryptString($id)); 
+        $request->validate([
+            'approver' => ['required', Rule::notIn([$request->input('chief_rps'), $request->input('chief_tsd')])],
+            'permit_no' => 'required',
+            'approver_designation' => 'required',
+            'chief_tsd' => ['required', Rule::notIn([$request->input('approver'),$request->input('chief_rps')])],
+            'chief_rps' => ['required', Rule::notIn([$request->input('approver'), $request->input('chief_tsd')])],
+            'transport_date' => 'required',
+        ], [
+            'approver.not_in' => 'Approver must be different from Chief RPS and Chief TSD.',
+            'chief_tsd.not_in' => 'Chief TSD must be different from Approver and Chief RPS.',
+            'chief_rps.not_in' => 'Chief RPS must be different from Approver and Chief TSD.',
+        ]);
+
+        Gate::authorize('updateLtp', $ltp_application);
+        
+        return DB::transaction(function () use ($ltp_application, $request) {
+            
+            LtpPermit::where([
+                'ltp_application_id' => $ltp_application->id
+            ])->update([
+                'permit_number' => $request->input('permit_no'),
+                'penro' => $request->input('approver'),
+                'chief_tsd' => $request->input('chief_tsd'),
+                'chief_rps' => $request->input('chief_rps'),
+                'approver_designation' => $request->input('approver_designation')
+            ]);
+
+            $ltp_application->transport_date = $request->input('transport_date');
+            $ltp_application->save();
+    
+            // Notification::send($ltp_application->permittee->user, new LtpPermitCreated($ltp_application));
+
+            return redirect()->back()->with('success', 'Successfully updated permit.');
         });
     }
 

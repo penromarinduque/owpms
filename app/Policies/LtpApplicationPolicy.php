@@ -101,4 +101,30 @@ class LtpApplicationPolicy
     public function owned(User $user, LtpApplication $ltpApplication) {
         return ($user->id == $ltpApplication->permittee->user_id);
     }
+
+    public function generateLtp(User $user, LtpApplication $ltpApplication) {
+        $inspectionReport = $ltpApplication->inspectionReport;
+
+        return $inspectionReport 
+            && $ltpApplication->application_status == LtpApplication::STATUS_INSPECTED 
+            && in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions())
+            && $inspectionReport->permittee_signed
+            && $inspectionReport->inspector_signed
+            && $inspectionReport->approver_signed;
+    }
+
+    public function updateLtp(User $user, LtpApplication $ltpApplication) {
+        $inspectionReport = $ltpApplication->inspectionReport;
+        $ltp = $ltpApplication->permit;
+
+        return $inspectionReport 
+            && $ltpApplication->application_status == LtpApplication::STATUS_INSPECTED 
+            && in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions())
+            && $inspectionReport->permittee_signed
+            && $inspectionReport->inspector_signed
+            && $inspectionReport->approver_signed
+            && (
+                !$ltp->penro_signed && !$ltp->chief_tsd_signed && !$ltp->chief_rps_signed
+            );
+    }
 }

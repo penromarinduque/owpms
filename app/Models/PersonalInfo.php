@@ -31,6 +31,10 @@ protected $fillable = ['user_id', 'last_name', 'first_name', 'middle_name', 'gen
         return $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name;
     }
 
+    public function getAddressAttribute(){
+        return $this->barangay->barangay_name . ', ' . $this->barangay->municipality->municipality_name . ', ' . $this->barangay->municipality->province->province_name;
+    }
+
 
 
 

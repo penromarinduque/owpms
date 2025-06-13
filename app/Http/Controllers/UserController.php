@@ -60,7 +60,7 @@ class UserController extends Controller
                 'username' => $request->input('username'),
                 'usertype' => $request->input('user_type'),
                 'password' => bcrypt($request->input('password')),
-                'position_id' => $request->input('position'),
+                'position' => $request->input('position'),
                 'is_active_user' => 1,
             ]);
     

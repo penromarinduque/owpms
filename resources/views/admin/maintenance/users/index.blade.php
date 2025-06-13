@@ -44,6 +44,7 @@ active
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Position</th>
                         <th>Email</th>
                         <th>Username</th>
                         <th class="text-center">User Type</th>
@@ -56,6 +57,7 @@ active
                 @forelse($users as $user)
                     <tr>
                         <td>{{ strtoupper($user->first_name.' '.$user->last_name) }}</td>
+                        <td>{{ $user->empPosition ? $user->empPosition->position : '' }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->username }}</td>
                         <td class="text-center">

@@ -44,7 +44,7 @@ class LtpApplication extends Model implements Auditable
     // }
 
     public function ltpApplicationSpecies(){
-        return $this->hasMany(LtpApplicationSpecie::class);
+        return $this->hasMany(LtpApplicationSpecie::class,);
     }
 
 
@@ -108,5 +108,13 @@ class LtpApplication extends Model implements Auditable
             return $this->where('application_status', $status)->where('permittee_id', $permittee_id)->count();
         }
         return $this->where('application_status', $status)->count();
+    }
+
+    public function inspectionReport() {
+        return $this->hasOne(InspectionReport::class, 'ltp_application_id', 'id');
+    }
+
+    public function permit(){
+        return $this->hasOne(LtpPermit::class, 'ltp_application_id', 'id');
     }
 }

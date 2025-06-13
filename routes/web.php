@@ -152,6 +152,10 @@ Route::middleware('auth')->group(function (){
             Route::get('preview/{id}', [MyApplicationController::class, 'preview'])->name('ltpapplication.preview')->middleware('permission:LTP_APPLICATION_INDEX');
             Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return')->middleware('permission:LTP_APPLICATION_RETURN');
             Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept')->middleware('permission:LTP_APPLICATION_ACCEPT');
+            Route::get('permit/{id}', [LtpApplicationController::class, 'permit'])->name('ltpapplication.permit')->middleware('permission:LTP_APPLICATION_INSPECT');
+            Route::post('permit/{id}', [LtpApplicationController::class, 'createPermit'])->name('ltpapplication.createPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
+            Route::get('edit-permit/{id}', [LtpApplicationController::class, 'editPermit'])->name('ltpapplication.editPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
+            Route::post('update-permit/{id}', [LtpApplicationController::class, 'updatePermit'])->name('ltpapplication.updatePermit')->middleware('permission:LTP_APPLICATION_INSPECT');
         });
         Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
     });
@@ -305,6 +309,8 @@ Route::middleware('auth')->group(function (){
         Route::post('/store', [InspectionController::class, 'store'])->name('inspection.store');
         Route::post('/update/{id}', [InspectionController::class, 'update'])->name('inspection.update');
         Route::get('/print/{id}', [InspectionController::class, 'print'])->name('inspection.print');
+        Route::post('/upload-document/{id}', [InspectionController::class, 'uploadDocument'])->name('inspection.uploadDocument');
+        Route::get('/download-document/{id}', [InspectionController::class, 'downloadDocument'])->name('inspection.downloadDocument');
     });
 
     // For Signatures

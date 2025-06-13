@@ -200,6 +200,9 @@ active
                                         <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
                                     @endif
                                     @if (in_array(request('status'), ['inspected']))   
+                                        @can('generateLtp', $ltp_application)
+                                            <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit"><i class="fas fa-file-pdf"></i></a>
+                                        @endcan
                                         <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report"><i class="fas fa-file-pdf"></i></a>
                                     @endif
 
