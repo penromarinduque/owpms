@@ -48,7 +48,7 @@ active
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center">No record found</td>
+                            <td colspan="4" class="text-center">No records found</td>
                         </tr>
                     @endforelse
                 </tbody>

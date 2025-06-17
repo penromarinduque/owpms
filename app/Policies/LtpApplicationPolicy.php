@@ -127,4 +127,8 @@ class LtpApplicationPolicy
                 !$ltp->penro_signed && !$ltp->chief_tsd_signed && !$ltp->chief_rps_signed
             );
     }
+
+    public function releaseLtp(User $user, LtpApplication $ltpApplication) {
+        return in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions());
+    }
 }

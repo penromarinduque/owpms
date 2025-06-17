@@ -15,11 +15,13 @@ use App\Models\LtpFee;
 use App\Models\LtpPermit;
 use App\Models\User;
 use App\Notifications\LtpApplicationAccepted;
+use App\Notifications\LtpApplicationReleased;
 use App\Notifications\LtpApplicationReturned;
 use App\Notifications\LtpApplicationReviewed;
 use App\Notifications\LtpPermitCreated;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class LtpApplicationController extends Controller
@@ -278,5 +280,39 @@ class LtpApplicationController extends Controller
         });
     }
 
-    
+    public function releaseLtp(Request $request, string $id) {
+        $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+
+        $validator = Validator::make($request->all() + $request->allFiles(), [
+            'ltp' => 'required|mimetypes:application/pdf'
+        ]);
+
+        if($validator->fails()) {
+            session(['forward_url' => url()->current()]);
+            return redirect()->back()->withErrors($validator, 'releaseLtp')->withInput()->with('error', 'Failed to release LTP.');
+        }
+
+        Gate::authorize('releaseLtp', $ltp_application);
+
+        return DB::transaction(function () use ($ltp_application, $request) {
+            // update application status and progress
+            $ltp_application->application_status = LtpApplication::STATUS_RELEASED;
+            $ltp_application->save();
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $ltp_application->id,
+                'user_id' => Auth::user()->id,
+                'status' => LtpApplication::STATUS_RELEASED,
+                'remarks' => 'LTP has been released by ' . Auth::user()->personalInfo->getFullNameAttribute()
+            ]);
+
+            $permit = $ltp_application->permit;
+
+            $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf');
+
+            Notification::send($ltp_application->permittee->user, new LtpApplicationReleased($ltp_application));
+
+            return redirect()->back()->with('success', 'Successfully released LTP.');
+        });
+
+    }
 }

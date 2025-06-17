@@ -1,6 +1,6 @@
 <div class="modal  fade" id="returnApplicationModal" tabindex="-1" aria-labelledby="returnApplicationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form action="{{ route('ltpapplication.return') }}" method="POST" class="modal-content">
+        <form action="{{ route('ltpapplication.return') }}" method="POST" class="modal-content" enctype="multipart/form-data">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title" id="returnApplicationModalLabel">Return Application</h5>

@@ -110,6 +110,11 @@ class PermissionSeeder extends Seeder
                 'description' => 'LTP Application Inspect',
                 'permission_group' => 'LTP_APPLICATION'
             ],
+            [
+                'permission_tag' => 'LTP_APPLICATION_RELEASE',
+                'description' => 'An action authorizing the releasing of Local Transport Permits',
+                'permission_group' => 'LTP_APPLICATION'
+            ],
 
             // WILDLIFE TYPES
             [

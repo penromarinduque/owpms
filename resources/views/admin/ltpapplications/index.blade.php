@@ -199,11 +199,14 @@ active
                                     @if (in_array(request('status'), ['paid', 'for-inspection', 'inspection-rejected']))   
                                         <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
                                     @endif
-                                    @if (in_array(request('status'), ['inspected']))   
+                                    @if (in_array($ltp_application->application_status, ['inspected']))   
                                         @can('generateLtp', $ltp_application)
                                             <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit"><i class="fas fa-file-pdf"></i></a>
                                         @endcan
                                         <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report"><i class="fas fa-file-pdf"></i></a>
+                                        @endif
+                                    @if (in_array($ltp_application->application_status, ['approved']))
+                                        <a href="#" onclick="showReleaseLtpModal('{{ route('ltpapplication.release', Crypt::encryptString($ltp_application->id)) }}')" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Release LTP"><i class="fa-solid fa-arrow-right-from-bracket"></i> Release LTP</a>
                                     @endif
 
                                     <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs"><i class="fas fa-history"></i></a>
@@ -221,7 +224,10 @@ active
         </div>
     </div>
 </div>
+@endsection
 
-@include('components.confirm')
-@include('components.viewApplicationLogs')
+@section('includes')
+    @include('components.confirm')
+    @include('components.viewApplicationLogs')
+    @include('components.releaseLtp')
 @endsection

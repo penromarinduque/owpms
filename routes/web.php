@@ -156,6 +156,7 @@ Route::middleware('auth')->group(function (){
             Route::post('permit/{id}', [LtpApplicationController::class, 'createPermit'])->name('ltpapplication.createPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::get('edit-permit/{id}', [LtpApplicationController::class, 'editPermit'])->name('ltpapplication.editPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::post('update-permit/{id}', [LtpApplicationController::class, 'updatePermit'])->name('ltpapplication.updatePermit')->middleware('permission:LTP_APPLICATION_INSPECT');
+            Route::post('release-ltp/{id}', [LtpApplicationController::class, 'releaseLtp'])->name('ltpapplication.release');
         });
         Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
     });

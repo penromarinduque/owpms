@@ -31,6 +31,7 @@ class ApplicationHelper
             LtpApplication::STATUS_FOR_INSPECTION => 'For Inspection',
             LtpApplication::STATUS_INSPECTED => 'Inspected',
             LtpApplication::STATUS_APPROVED => 'Approved',
+            LtpApplication::STATUS_RELEASED => 'Released',
             LtpApplication::STATUS_EXPIRED => 'Expired',
             LtpApplication::STATUS_REJECTED => 'Rejected',
             LtpApplication::STATUS_INSPECTION_REJECTED => 'Inspection Rejected',    
@@ -53,6 +54,7 @@ class ApplicationHelper
             LtpApplication::STATUS_INSPECTION_REJECTED => 'danger',
             LtpApplication::STATUS_INSPECTED => 'primary',
             LtpApplication::STATUS_APPROVED => 'success',
+            LtpApplication::STATUS_RELEASED => 'success',
             LtpApplication::STATUS_EXPIRED => 'secondary',
             default => 'secondary',
         };
@@ -73,6 +75,7 @@ class ApplicationHelper
             LtpApplication::STATUS_INSPECTION_REJECTED => 'danger',
             LtpApplication::STATUS_INSPECTED => 'primary',
             LtpApplication::STATUS_APPROVED => 'success',
+            LtpApplication::STATUS_RELEASED => 'success',
             LtpApplication::STATUS_EXPIRED => 'secondary',
             default => 'secondary',
         };
@@ -140,7 +143,8 @@ class ApplicationHelper
 
         if($category == "approved") {
             return [
-                LtpApplication::STATUS_APPROVED
+                LtpApplication::STATUS_APPROVED,
+                LtpApplication::STATUS_RELEASED
             ];
         }
 
