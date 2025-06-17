@@ -278,6 +278,7 @@ Route::middleware('auth')->group(function (){
             Route::post('/', [RoleController::class, 'store'])->name('iam.roles.store')->middleware('permission:ROLES_CREATE');
             Route::get('/{id}', [RoleController::class, 'edit'])->name('iam.roles.edit')->middleware('permission:ROLES_UPDATE');
             Route::post('/update/{id}', [RoleController::class, 'update'])->name('iam.roles.update')->middleware('permission:ROLES_UPDATE');
+            Route::delete('/delete/{id}', [RoleController::class, 'delete'])->name('iam.roles.delete')->middleware('permission:ROLES_DELETE');
         });
 
         Route::middleware(['userType:admin'])->prefix('user_roles')->group(function () {

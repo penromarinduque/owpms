@@ -273,6 +273,11 @@ class PermissionSeeder extends Seeder
                 'description' => 'View the list of Roles',
                 'permission_group' => 'ROLES'
             ],
+            [
+                'permission_tag' => 'ROLES_DELETE',
+                'description' => 'An action authorizinf the deletion of roles.',
+                'permission_group' => 'ROLES'
+            ],
 
             // USER_ROLES
             [

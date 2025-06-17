@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Role;                                                
 use App\Models\Permission;
 use App\Models\RolePermission;
+use App\Models\UserRole;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 
@@ -98,6 +99,17 @@ class RoleController extends Controller
 
             return redirect()->back()->with("success", "Role updated successfully");
         });
+    }
+
+    public function delete (string $id) {
+        //
+        $role_id = Crypt::decryptString($id);
+        $role = Role::find($role_id);
+        if(UserRole::where('role_id', $role_id)->exists()) {
+            return redirect()->back()->with('error', 'Role is in use.');
+        }
+        $role->delete();
+        return redirect()->route('iam.roles.index')->with("success", "Role deleted successfully");
     }
     
 }

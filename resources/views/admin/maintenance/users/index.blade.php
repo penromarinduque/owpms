@@ -84,9 +84,9 @@ active
                             </div>
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('users.edit', ['id'=>Crypt::encrypt($user->id)]) }}" title="Edit" alt="Edit" class="btn btn-sm btn-primary"><i class="fas fa-edit fa-lg"></i></a>
+                            <a href="{{ route('users.edit', ['id'=>Crypt::encrypt($user->id)]) }}" title="Edit" alt="Edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit fa-lg"></i></a>
                             @if (in_array($user->usertype, ['internal', 'admin']))
-                                <a href="{{ route('iam.user_roles.edit', ['id'=>Crypt::encryptString($user->id)]) }}" title="Edit Role" alt="Edit Role" class="btn btn-sm btn-warning"><i class="fas fa-key fa-lg"></i></a>
+                                <a href="{{ route('iam.user_roles.edit', ['id'=>Crypt::encryptString($user->id)]) }}" title="Edit Role" alt="Edit Role" class="btn btn-sm btn-outline-warning"><i class="fas fa-key fa-lg"></i></a>
                             @endif
                         </td>
                     </tr>

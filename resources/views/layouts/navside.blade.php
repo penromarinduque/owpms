@@ -1,3 +1,16 @@
+@php
+    $canViewSpecieMaintenance = auth()->user()->can('viewAny', App\Models\WildlifeType::class) ||
+                    auth()->user()->can('viewAny', App\Models\SpecieClass::class) ||
+                    auth()->user()->can('viewAny', App\Models\SpecieFamily::class) || 
+                    auth()->user()->can('viewAny', App\Models\Specie::class);
+
+    $canViewMaintenance = $canViewSpecieMaintenance
+                    || auth()->user()->can('viewAny', App\Models\LtpRequirement::class)
+                    || auth()->user()->can('viewAny', App\Models\Position::class)
+                    || auth()->user()->can('viewAny', App\Models\LtpFee::class)
+                    || auth()->user()->can('viewAny', App\Models\Signatory::class);
+@endphp
+
 <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
     <div class="sb-sidenav-menu">
         <div class="nav">
@@ -106,41 +119,58 @@
                 </nav>
             </div>
             
-            @if(Auth::user()->usertype=='admin' || Auth::user()->usertype=='internal')
+            @if(Auth::user()->usertype=='admin' || Auth::user()->usertype=='internal' && $canViewMaintenance)
                 <div class="sb-sidenav-menu-heading">MAINTENANCE</div>
-                <a class="nav-link collapsed" href="{{ route('species.index') }}" data-bs-toggle="collapse" data-bs-target="#collapseSpecies" aria-expanded="false" aria-controls="collapseLayouts">
-                    <div class="sb-nav-link-icon"><i class="fas fa-feather-alt"></i></div>
-                    Species
-                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse @yield('species-show')" id="collapseSpecies" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                    <nav class="sb-sidenav-menu-nested nav">
-                        <a class="nav-link @yield('active-types')" href="{{ route('specietypes.index') }}">Wildlife Types</a>
-                        <a class="nav-link @yield('active-classes')" href="{{ route('specieclasses.index') }}">Class</a>
-                        <a class="nav-link @yield('active-families')" href="{{ route('speciefamilies.index') }}">Family</a>
-                        <a class="nav-link @yield('active-species')" href="{{ route('species.index') }}">List of Species</a>
-                    </nav>
-                </div>
-                <a class="nav-link @yield('active-ltprequirements')" href="{{ route('ltprequirements.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
-                    LTP Requirements
-                </a>
+                @if ($canViewSpecieMaintenance)
+                    <a class="nav-link collapsed" href="{{ route('species.index') }}" data-bs-toggle="collapse" data-bs-target="#collapseSpecies" aria-expanded="false" aria-controls="collapseLayouts">
+                        <div class="sb-nav-link-icon"><i class="fas fa-feather-alt"></i></div>
+                        Species
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse @yield('species-show')" id="collapseSpecies" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            @can('viewAny', App\Models\WildlifeType::class)
+                                <a class="nav-link @yield('active-types')" href="{{ route('specietypes.index') }}">Wildlife Types</a>
+                            @endcan
+                            @can('viewAny', App\Models\SpecieClass::class)
+                                <a class="nav-link @yield('active-classes')" href="{{ route('specieclasses.index') }}">Class</a>
+                            @endcan
+                            @can('viewAny', App\Models\SpecieFamily::class)
+                                <a class="nav-link @yield('active-families')" href="{{ route('speciefamilies.index') }}">Family</a>
+                            @endcan
+                            @can('viewAny', App\Models\Specie::class)
+                                <a class="nav-link @yield('active-species')" href="{{ route('species.index') }}">List of Species</a>
+                            @endcan
+                        </nav>
+                    </div>
+                @endif
+                @can('viewAny', App\Models\LtpRequirement::class)
+                    <a class="nav-link @yield('active-ltprequirements')" href="{{ route('ltprequirements.index') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                        LTP Requirements
+                    </a>
+                @endcan
+                @can('viewAny', App\Models\Position::class)
+                    <a class="nav-link @yield('active-positions')" href="{{ route('positions.index') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-list-ol"></i></div>
+                        Positions
+                    </a>
+                @endcan
+                @can('viewAny', App\Models\LtpFee::class)
+                    <a class="nav-link @yield('active-ltpfees')" href="{{ route('ltpfees.index') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        LTP Fees
+                    </a>
+                @endcan
+                @can('viewAny', App\Models\Signatory::class)
+                    <a class="nav-link @yield('active-signatories')" href="{{ route('signatories.index') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
+                        Signatories
+                    </a>
+                @endcan
             @endif
 
             @if(Auth::user()->usertype=='admin')
-                <a class="nav-link @yield('active-positions')" href="{{ route('positions.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-list-ol"></i></div>
-                    Positions
-                </a>
-                <a class="nav-link @yield('active-ltpfees')" href="{{ route('ltpfees.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
-                    LTP Fees
-                </a>
-                <a class="nav-link @yield('active-signatories')" href="{{ route('signatories.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
-                    Signatories
-                </a>
-
                 <div class="sb-sidenav-menu-heading">User Access</div>
                 <a class="nav-link @yield('active-users')" href="{{ route('users.index') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>

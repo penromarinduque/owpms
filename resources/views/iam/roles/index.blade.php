@@ -42,8 +42,8 @@ active
                             <td>{{ $role->role_description }}</td>
                             <td class="text-center"><span class="badge text-{{ $role->is_active == 1 ? 'bg-primary' : 'bg-secondary' }}">{{ $role->is_active ? 'Active' : 'Inactive' }}</span></td>
                             <td class="text-center">
-                                <a href="{{ route('iam.roles.edit', ['id' => Crypt::encryptString($role->id)]) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                                
+                                <a href="#" onclick="showConfirDeleteModal ('{{ route('iam.roles.delete', ['id' => Crypt::encryptString($role->id)]) }}' , {{ $role->id }}, 'This action is irreversible are you sure you want to remove this role?', 'Remove Role')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                                <a href="{{ route('iam.roles.edit', ['id' => Crypt::encryptString($role->id)]) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                             </td>
                         </tr>
                     @empty
@@ -58,6 +58,10 @@ active
     </div>
 </div>
 
-@include('components.returnApplication')
-@include('components.confirm')
+@endsection
+
+@section('includes')
+    @include('components.returnApplication')
+    @include('components.confirm')
+    @include('components.confirmDelete')
 @endsection
