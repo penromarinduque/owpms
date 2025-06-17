@@ -270,7 +270,7 @@ class LtpApplicationController extends Controller
             ]);
 
             $ltp_application->transport_date = $request->input('transport_date');
-            $ltp_application->save();
+            $ltp_application->save();   
     
             // Notification::send($ltp_application->permittee->user, new LtpPermitCreated($ltp_application));
 

@@ -34,6 +34,7 @@ class LtpApplication extends Model implements Auditable
     const STATUS_INSPECTION_REJECTED = 'inspection-rejected';
     const STATUS_INSPECTED = 'inspected';
     const STATUS_APPROVED = 'approved';
+    const STATUS_RELEASED= 'released';
     const STATUS_REJECTED = 'rejected';
     const STATUS_EXPIRED = 'expired';
 
@@ -44,7 +45,7 @@ class LtpApplication extends Model implements Auditable
     // }
 
     public function ltpApplicationSpecies(){
-        return $this->hasMany(LtpApplicationSpecie::class,);
+        return $this->hasMany(LtpApplicationSpecie::class);
     }
 
 

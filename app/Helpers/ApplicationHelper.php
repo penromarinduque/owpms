@@ -2,12 +2,21 @@
 
 namespace App\Helpers;
 
+use App\Models\InspectionReport;
 use App\Models\LtpApplication;
+use App\Models\LtpPermit;
 use App\Models\Permittee;
 use Illuminate\Support\Carbon;
 
 class ApplicationHelper
 {
+    public $_inspection_report;
+    public $_ltp_permit;
+
+    public function __construct() {
+        $this->_inspection_report = new InspectionReport();
+        $this->_ltp_permit = new LtpPermit();
+    }
     public static function formatApplicationStatus($status): string
     {
         return match ($status) {
@@ -166,10 +175,38 @@ class ApplicationHelper
             return "Request Letter";
         }
         return "";
+        
+    }
+
+    public function displayBadgeCount($color, $count) {
+        if($count <= 0){
+            return "";
+        }
+        if($count > 99){
+            return "<span class='badge rounded-pill bg-$color'>99+</span>";
+        }
+        return "<span class='badge rounded-pill bg-$color'>$count</span>";
+    }
+
+    public function getForSignatoriesCount($type){
+        if($type == "inspection_report"){
+            return $this->_inspection_report->pendingSignaturesFor(auth()->user()->id)->count();
+        }
+        else if($type == "ltp"){
+            return $this->_ltp_permit->pendingSignaturesFor(auth()->user()->id)->count();
+        }
+        else if($type == "payment_order"){
+            // return $_payment_order->getForSignatoriesCount();
+        }
+        else if($type == "request_letter"){
+            // return $_request_letter->getForSignatoriesCount();
+        }
+        return 0;
     }
 
     public function test(){
         return "Helper Facade working";
     }
+
     
 }

@@ -319,6 +319,9 @@ Route::middleware('auth')->group(function (){
        Route::post('inspection-report-permittee-sign/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSign'])->name('for-signatures.inspectionReportPermitteeSign');
        Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
        Route::post('inspection-report-approver-sign/{id}', [ForSignaturesController::class, 'inspectionReportApproverSign'])->name('for-signatures.inspectionReportApproverSign');
+       Route::post('ltp-chief-rps-sign/{id}', [ForSignaturesController::class, 'ltpChiefRpsSign'])->name('for-signatures.ltpChiefRpsSign');
+       Route::post('ltp-chief-tsd-sign/{id}', [ForSignaturesController::class, 'ltpChiefTsdSign'])->name('for-signatures.ltpChiefTsdSign');
+       Route::post('ltp-penro-sign/{id}', [ForSignaturesController::class, 'ltpPenroSign'])->name('for-signatures.ltpPenroSign');
     });
 
     

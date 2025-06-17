@@ -47,25 +47,34 @@ For Signatures
             </ul> --}}
 
             <div class="table-responsive">
+                @php $totalSpan = 4 @endphp
                 <table class="table table-bordered table-hover table-striped">
                     <thead>
                         <tr>
-                            <th>Document</th>
-                            <th>Application No.</th>
-                            <th width="500px" class="text-center">Actions</th>
+                            @if (request('type') == 'inspection_report')
+                                @php $totalSpan = 3 @endphp
+                                <th>Document</th>
+                                <th>Application No.</th>
+                                <th width="500px" class="text-center">Actions</th>
+                            @endif
+                            @if (request('type') == 'ltp')
+                                @php $totalSpan = 4 @endphp
+                                <th>Document</th>
+                                <th>Permit No.</th>
+                                <th>Application No.</th>
+                                <th width="500px" class="text-center">Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($docs as $doc)
                             <tr>
-                                <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
-                                <td>
-                                    @if (request('type') == 'inspection_report')
+                                @if (request('type') == 'inspection_report')   
+                                    <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
+                                    <td>
                                         {{ $doc->ltpApplication->application_no }}
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if (request('type') == 'inspection_report')
+                                    </td>
+                                    <td class="text-center">
                                         @can('inspectorSign', $doc)
                                             <button class="btn btn-outline-primary"  onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportInspectorSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Inspector Signed</button>
                                         @endcan
@@ -75,12 +84,32 @@ For Signatures
                                         @can('permitteeSign', $doc)
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Permittee Signed</button>
                                         @endcan
-                                    @endif
-                                </td>
+                                    </td>
+                                @endif
+                                @if (request('type') == 'ltp')   
+                                    <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
+                                    <td>
+                                        {{ $doc->permit_number }}
+                                    </td>
+                                    <td>
+                                        {{ $doc->ltpApplication->application_no }}
+                                    </td>
+                                    <td class="text-center">
+                                        @can('chiefRpsSign', $doc)
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpChiefRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Chief RPS Signed</button>
+                                        @endcan
+                                        @can('chiefTsdSign', $doc)
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpChiefTsdSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Chief TSD Signed</button>
+                                        @endcan
+                                        @can('penroSign', $doc)
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpPenroSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">PENRO Signed</button>
+                                        @endcan
+                                    </td>
+                                @endif
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center">No Documents found</td>
+                                <td colspan="{{ $totalSpan }}" class="text-center">No Documents found</td>
                             </tr>
                         @endforelse
                     </tbody>

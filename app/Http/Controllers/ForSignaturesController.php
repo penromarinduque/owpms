@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Helpers\ApplicationHelper;
 use App\Http\Controllers\Controller;
 use App\Models\InspectionReport;
+use App\Models\LtpApplication;
+use App\Models\LtpApplicationProgress;
+use App\Models\LtpPermit;
+use App\Notifications\LtpPermitApproved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 
 class ForSignaturesController extends Controller
 {
@@ -18,7 +24,6 @@ class ForSignaturesController extends Controller
         $type = $request->input('type');
         
         $docs = $this->getDocuments($type);
-
         
         return view('for_signatures.index', [
             'docs' => $docs,
@@ -53,24 +58,74 @@ class ForSignaturesController extends Controller
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
 
+    public function ltpChiefRpsSign(Request $request, string $id) {
+        $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
+        $ltpApplication = $ltpPermit->ltpApplication;
+        Gate::authorize('chiefRpsSign', $ltpPermit);
+        return DB::transaction(function () use ($ltpPermit, $ltpApplication) {
+            $ltpPermit->chief_rps_signed = true;
+            $ltpPermit->save();
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $ltpApplication->id,
+                'user_id' => auth()->user()->id,
+                'status' => $ltpApplication->application_status,
+                'remarks' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
+            return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
+        });
+    }
+
+    public function ltpChiefTsdSign(Request $request, string $id) {
+        $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
+        $ltpApplication = $ltpPermit->ltpApplication;
+        Gate::authorize('chiefTsdSign', $ltpPermit);
+        return DB::transaction(function () use ($ltpPermit, $ltpApplication) {
+            $ltpPermit->chief_tsd_signed = true;
+            $ltpPermit->save();
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $ltpApplication->id,
+                'user_id' => auth()->user()->id,
+                'status' => $ltpApplication->application_status,
+                'remarks' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
+            return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
+        });
+    }
+
+    public function ltpPenroSign(Request $request, string $id) {
+        $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
+        $ltpApplication = $ltpPermit->ltpApplication;
+        Gate::authorize('penroSign', $ltpPermit);
+        return DB::transaction(function () use ($ltpPermit, $ltpApplication) {
+            $ltpPermit->penro_signed = true;
+            $ltpPermit->save();
+
+            $ltpApplication->application_status = LtpApplication::STATUS_APPROVED;
+            $ltpApplication->save();
+
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $ltpApplication->id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_APPROVED,
+                'remarks' => 'Local Transport Permit has been approved by PENRO ' . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
+    
+            Notification::send($ltpApplication->permittee->user, new LtpPermitApproved($ltpPermit));
+    
+            return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
+        });
+    }
+
     private function getDocuments($type) {
         if($type == 'inspection_report') {
-            return InspectionReport::where(function ($query) {
-                $query->where('inspector_id', auth()->user()->id)
-                    ->where('inspector_signed', false)
-                    ->where('permittee_signed', true);
-            })->orWhere(function ($query) {
-                $query->where('approver_id', auth()->user()->id)
-                    ->where('approver_signed', false)
-                    ->where('permittee_signed', true)
-                    ->where('inspector_signed', true);
-            })
-            ->orWhere(function ($query) {
-                $query->where('user_id', auth()->user()->id)
-                    ->where('permittee_signed', false);
-            })
-            ->paginate(50);
+            return InspectionReport::pendingSignaturesFor(auth()->user()->id)->paginate(50);
         }
+
+        if($type == "ltp") {
+            return LtpPermit::pendingSignaturesFor(auth()->user()->id)->paginate(50);
+        }
+
         return [];
+        
     }
 }

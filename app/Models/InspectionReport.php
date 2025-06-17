@@ -27,4 +27,21 @@ class InspectionReport extends Model implements Auditable
     public function ltpApplication() {
         return $this->belongsTo(LtpApplication::class);
     }
+
+    public function scopePendingSignaturesFor($query, $userId) {
+        return $query->where(function ($query) use ($userId) {
+                $query->where('inspector_id', $userId)
+                    ->where('inspector_signed', false)
+                    ->where('permittee_signed', true);
+            })->orWhere(function ($query)  use ($userId)  {
+                $query->where('approver_id', $userId)
+                    ->where('approver_signed', false)
+                    ->where('permittee_signed', true)
+                    ->where('inspector_signed', true);
+            })
+            ->orWhere(function ($query)  use ($userId)  {
+                $query->where('user_id', $userId)
+                    ->where('permittee_signed', false);
+            });
+    }
 }
