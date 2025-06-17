@@ -305,22 +305,28 @@ class PermissionSeeder extends Seeder
             [
                 'permission_tag' => 'PAYMENT_ORDERS_INDEX',
                 'description' => 'Viewing of Payment Orders',
-                'permission_group' => 'PAYMENT_ORDERS'
+                'permission_group' => 'PAYMENTS'
             ],
             [
                 'permission_tag' => 'PAYMENT_ORDERS_CREATE',
                 'description' => 'Creation of Payment Orders',
-                'permission_group' => 'PAYMENT_ORDERS'
+                'permission_group' => 'PAYMENTS'
             ],
             [
                 'permission_tag' => 'PAYMENT_ORDERS_UPDATE',
                 'description' => 'Update of Payment Orders',
-                'permission_group' => 'PAYMENT_ORDERS'
+                'permission_group' => 'PAYMENTS'
             ],
             [
                 'permission_tag' => 'PAYMENT_ORDERS_DELETE',
                 'description' => 'Delete of Payment Orders',
-                'permission_group' => 'PAYMENT_ORDERS'
+                'permission_group' => 'PAYMENTS'
+            ],
+            // ISSUED OR
+            [
+                'permission_tag' => 'ISSUED_OR_INDEX',
+                'description' => 'An action authorizing the viewing of list of Issued OR.',
+                'permission_group' => 'PAYMENTS'
             ],
 
             // SIGNATORIES

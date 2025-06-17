@@ -42,7 +42,7 @@
                 <div class="{{ request()->routeIs('paymentorder.index') ? '' : 'collapse'}}" id="collapseLayouts1" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link @yield('active-paymentorder')"  href="{{ route('paymentorder.index') }}">Order of Payment</a>
-                        <a class="nav-link" href="">Issued OR</a>
+                        <a class="nav-link @yield('active-issuedor')"  href="{{ route('issuedor.index') }}" href="">Issued OR</a>
                     </nav>
                 </div>
                 {{-- APPLICATIONS --}}

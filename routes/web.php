@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
+use App\Http\Controllers\IssuedOrController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
@@ -173,6 +174,11 @@ Route::middleware('auth')->group(function (){
         Route::get('show/{id}', [PaymentOrderController::class, 'show'])->name('paymentorder.show')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('view/{id}', [PaymentOrderController::class, 'view'])->name('paymentorder.view');
         Route::get('view-receipt/{id}', [PaymentOrderController::class, 'viewReceipt'])->name('paymentorder.viewreceipt');
+    });
+
+    // Issued OR
+    Route::prefix('issued-or')->group(function () {
+        Route::get('/', [IssuedOrController::class, 'index'])->name('issuedor.index')->middleware('permission:ISSUED_OR_INDEX');
     });
 
     // Maintenance
