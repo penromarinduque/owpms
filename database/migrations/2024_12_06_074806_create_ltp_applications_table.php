@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('transport_date');
             $table->text('purpose')->nullable();
             $table->string('destination');
+            $table->string('request_letter', 150)->nullable();
             $table->string('digital_signature', 150)->nullable();
             $table->timestamps();
         });

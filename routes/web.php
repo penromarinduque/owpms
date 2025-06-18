@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function (){
             Route::get('/{id}', [PermitteeController::class, 'edit'])->name('permittees.edit')->middleware('permission:PERMITTEE_UPDATE');
             Route::post('/update/{id}', [PermitteeController::class, 'update'])->name('permittees.update')->middleware('permission:PERMITTEE_UPDATE');
         });
+        Route::get('view-permit/{id}', [PermitteeController::class, 'viewPermit'])->name('permittees.viewpermit');
     });
 
     // Users
@@ -143,6 +144,7 @@ Route::middleware('auth')->group(function (){
     Route::prefix('app-requirements/{id}')->group(function () {
         Route::get('', [MyApplicationController::class, 'requirements'])->name('myapplication.requirements');
         Route::post('upload', [LtpApplicationRequirementController::class, 'store'])->name('myapplication.upload-requirement');
+        Route::get('view', [LtpApplicationRequirementController::class, 'view'])->name('apprequirements.view');
     });
 
     // LTP Applications

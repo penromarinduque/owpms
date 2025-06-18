@@ -70,6 +70,11 @@ class LtpApplicationPolicy
         return $user->id == $ltpApplication->permittee->user_id;
     }
 
+    public function submit(User $user, LtpApplication $ltpApplication): bool
+    {
+        return $user->id == $ltpApplication->permittee->user_id;
+    }
+
     /**
      * Determine whether the user can delete the model.
      */

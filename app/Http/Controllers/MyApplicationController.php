@@ -19,7 +19,9 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ApplicationHelper;
+use App\Notifications\LtpApplicationSubmitted;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class MyApplicationController extends Controller
@@ -32,14 +34,25 @@ class MyApplicationController extends Controller
         $_helper = new ApplicationHelper;
         $_ltp_application = new LtpApplication;
 
-        $status = $request->status ?? 'draft';
-        $ltp_application_query = LtpApplication::where([
-            'permittee_id' => Auth::user()->wcp()->id,
-            'application_status' => $status
-        ])
-        ->orderBy('created_at', 'DESC');
+        $status = $request->status ?? 'all';
+        $category = $request->category ?? 'submitted';
 
-        $ltp_applications = $ltp_application_query->paginate(50);
+        if($status == 'all') {
+            $ltp_applications = LtpApplication::where([
+                'permittee_id' => Auth::user()->wcp()->id
+            ])
+            ->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category))
+            ->orderBy('created_at', 'DESC')
+            ->paginate(50);
+        }
+        else {
+            $ltp_applications = LtpApplication::where([
+                'permittee_id' => Auth::user()->wcp()->id,
+                'application_status' => $status
+            ])
+            ->orderBy('created_at', 'DESC')
+            ->paginate(50);
+        }
 
         return view('permittee.myapplication.index', [
             'title' => 'My Applications',
@@ -299,11 +312,21 @@ class MyApplicationController extends Controller
         ]);
     }
 
-    public function submit(string $id) {
-        return DB::transaction(function () use ($id) {
+    public function submit(Request $request, string $id) {
+        $_user = new User;
+
+        $validator = Validator::make($request->all(), [
+            'document' => 'required|mimes:pdf'
+        ]);
+
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
+        }
+
+        return DB::transaction(function () use ($id, $request, $_user) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
 
-            Gate::authorize('update', $ltp_application);
+            Gate::authorize('submit', $ltp_application);
 
             if(!$ltp_application) {
                 return redirect()->back()->with('error', 'Application not found!');
@@ -322,6 +345,8 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
+            $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf', 'private');
+
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();
             
@@ -330,6 +355,8 @@ class MyApplicationController extends Controller
                 "user_id" => Auth::user()->id,
                 "status" => LtpApplicationProgress::STATUS_SUBMITTED
             ]);
+
+            Notification::send($_user->getAllInternals(), new LtpApplicationSubmitted($ltp_application));
 
             return Redirect::route('myapplication.index')->with('success', 'Application successfully submitted!');
         });

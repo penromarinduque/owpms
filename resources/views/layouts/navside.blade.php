@@ -28,9 +28,11 @@
                 </a>
                 <div class="collapse @yield('show')" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
-                        <a class="nav-link" href="">Local Transport Permit</a>
-                        <a class="nav-link" href="{{route('permittees.index')}}">Permittee</a>
-                        <a class="nav-link" href="">10% Release</a>
+                        <a class="nav-link" href="">Local Transport Permit*</a>
+                        @can('viewAny', App\Models\Permittee::class)
+                            <a class="nav-link" href="{{route('permittees.index')}}">Permittee</a>
+                        @endcan
+                        <a class="nav-link" href="">10% Release*</a>
                     </nav>
                 </div>
                 {{-- PAYMENTS --}}
@@ -72,7 +74,6 @@
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'expired' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'expired', 'status' => 'all']) }}">Expired</a> 
                     </nav>
                 </div>
-                {{-- FOR SIGNATURE --}}
             @endif
 
             @if(Auth::user()->usertype=='permittee')
@@ -94,6 +95,7 @@
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('myapplication.index', ['status' => 'approved']) }}">Approved</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'rejected']) }}">Rejected</a>
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('status') == 'expired' ? 'active' : '' }}"  href="{{ route('myapplication.index', ['status' => 'expired']) }}">Expired</a> --}}
+                        <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('category') == 'draft' ? 'active' : '' }}" href="{{ route('myapplication.index', ['category' => 'draft', 'status' => 'draft']) }}">Drafts</a> 
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('category') == 'submitted' ? 'active' : '' }}" href="{{ route('myapplication.index', ['category' => 'submitted', 'status' => 'all']) }}">Submitted</a> 
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('category') == 'reviewed' ? 'active' : '' }}" href="{{ route('myapplication.index', ['category' => 'reviewed', 'status' => 'all']) }}">Reviewed</a> 
                         <a class="nav-link {{ request()->routeIs('myapplication.index') && request()->query('category') == 'returned' ? 'active' : '' }}" href="{{ route('myapplication.index', ['category' => 'returned', 'status' => 'all']) }}">Returned</a> 
@@ -105,6 +107,7 @@
                 </div>
             @endif
 
+            {{-- FOR SIGNATURE --}}
             <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseForSignatures" aria-expanded="false" aria-controls="collapseLayouts">
                 <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
                 For Signatures
@@ -112,10 +115,14 @@
             </a>
             <div class="collapse @yield('for-signatures')" id="collapseForSignatures" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                 <nav class="sb-sidenav-menu-nested nav">
-                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'request_letter']) }}">LTP Request Letter</a>
+                    {{-- @if (Auth::user()->usertype=='permittee')
+                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'request_letter']) }}">LTP Request Letter</a>
+                    @endif --}}
                     <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'inspection_report']) }}">Inspection Reports  {!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('inspection_report')) !!}</a>
-                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'payment_order']) }}">Order of Payments</a>
-                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'ltp']) }}">Local Transport Permits {!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('ltp')) !!}</a>
+                    @if (Auth::user()->usertype=='admin' || Auth::user()->usertype=='internal')
+                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'payment_order']) }}">Order of Payments</a>
+                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'ltp']) }}">Local Transport Permits {!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('ltp')) !!}</a>
+                    @endif
                 </nav>
             </div>
             

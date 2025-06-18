@@ -188,8 +188,8 @@ active
                                     <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
                                 </td>
                                 <td class="text-center align-middle">
-                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview">
-                                        <i class="fas fa-eye"></i>
+                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details">
+                                        <i class="fas fa-info-circle"></i>
                                     </a>
                                     @if ($status == 'draft')                                        
                                         <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit">
@@ -254,24 +254,7 @@ active
     </div>
 </div>
 
-<div class="modal fade" id="submitApplicationModal">
-    <div class="modal-dialog">
-        <form action="" method="POST" class="modal-content">
-            @csrf
-            <div class="modal-header">
-                <h4 class="modal-title">Submit Application</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to submit this application? This action cannot be undone</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </form >
-    </div>
-</div>
+
 
 <div class="modal fade" id="resubmitApplicationModal">
     <div class="modal-dialog">
@@ -317,10 +300,7 @@ active
         });
     }
 
-    function showSubmitApplicationModal(action){
-        $('#submitApplicationModal form').attr('action', action);
-        $('#submitApplicationModal').modal('show');
-    }
+    
     function showResubmitApplicationModal(action){
         $('#resubmitApplicationModal form').attr('action', action);
         $('#resubmitApplicationModal').modal('show');
@@ -332,7 +312,7 @@ active
     @include('components.confirmDelete')
     @include('components.viewApplicationLogs')
     @include('components.permitteeUploadReceipt')
-    {{-- @include('components.toast') --}}
+    @include('components.submitApplication')
 @endsection
 
 

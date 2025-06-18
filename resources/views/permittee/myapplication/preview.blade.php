@@ -14,16 +14,27 @@ My Applications
     </ol>
 
     <div class="d-flex justify-content-end gap-2 mb-2">
-        <a class="btn btn-sm btn-primary" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print</a>
+        <a class="btn btn-sm btn-outline-primary" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print Request Letter</a>
         <div class="dropdown">
-            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-file-alt me-1"></i> Permits
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item" href="{{ asset('storage/'.$wcp->document) }}" target="_blank"><i class="fas fa-file-pdf me-1"></i> Wildlife Collectors Permit</a></li>
-                <li><a class="dropdown-item" href="{{ asset('storage/'.$wfp->document) }}" target="_blank"><i class="fas fa-file-pdf me-1"></i> Wildlife Farm Permit</a></li>
+                <li><a class="dropdown-item" href="{{ route('permittees.viewpermit', Crypt::encryptString($ltp_application->permittee->user->wcp()->id)) }}" target="_blank"><i class="fas fa-file-pdf me-1"></i> Wildlife Collectors Permit</a></li>
+                <li><a class="dropdown-item" href="{{ route('permittees.viewpermit', Crypt::encryptString($ltp_application->permittee->user->wfp()->id)) }}" target="_blank"><i class="fas fa-file-pdf me-1"></i> Wildlife Farm Permit</a></li>
             </ul>
         </div>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownActionButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-file-alt me-1"></i> Actions
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownActionButton">
+                @if ($ltp_application->application_status == 'draft')
+                    <li><a class="dropdown-item" href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"><i class="fas fa-upload me-1"></i> Submit Application</a></li>
+                @endif
+            </ul>
+        </div>
+        
     </div>
 
     <div class="card mb-4">
@@ -112,7 +123,7 @@ My Applications
                 @forelse($ltp_application->attachments as $attachment)
                     <div class="col-lg-3 col-sm-6">
                         <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
-                        <h6><a href="{{ asset('storage/'.$attachment->file_path) }}" target="_blank">View Attachment</a></h6>
+                        <h6><a href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($attachment->id)]) }}" target="_blank">View Attachment</a></h6>
                     </div>
                 @empty
                     <div class="col-lg-3 col-sm-6">
@@ -123,6 +134,10 @@ My Applications
         </div>
     </div>
 </div>
-@include('components.returnApplication')
-@include('components.confirm')
+@endsection
+
+@section('includes')
+    @include('components.returnApplication')
+    @include('components.confirm')
+    @include('components.submitApplication')
 @endsection

@@ -30,7 +30,7 @@ class LtpApplicationController extends Controller
     public function index(Request $request) { 
         $status = $request->status ?? 'all';
         $category = $request->category ?? "submitted";
-
+        
         $_helper = new ApplicationHelper;
         $ltp_application_query = LtpApplication::query();
 

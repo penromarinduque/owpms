@@ -123,7 +123,7 @@ class PermitteeController extends Controller
                 ]);
 
                 if($request->hasFile('wfp_document')) {
-                    $path = $request->file('wfp_document')->store('public/wfp');
+                    $path = $request->file('wfp_document')->storeAs('wfp', $permittee_wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension(), 'private');
                     $permittee_wfp->document = $path;
                     $permittee_wfp->save();
                 }
@@ -150,7 +150,7 @@ class PermitteeController extends Controller
                 ]);
 
                 if($request->hasFile('wcp_document')) {
-                    $path = $request->file('wcp_document')->store('wcp');
+                    $path = $request->file('wcp_document')->storeAs('wcp', $permittee_wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension(), 'private');
                     $permittee_wcp->document = $path;
                     $permittee_wcp->save();
                 }
@@ -192,12 +192,15 @@ class PermitteeController extends Controller
         $_wildlifefarm = new WildlifeFarm;
 
         $permittee = $_permittee->getPermittee($id);
+        $user = User::find($permittee->user_id);
         $permit_type = (!empty($permittee)) ? $permittee->permit_type : 'Permit';
         $wildlife_farm = (!empty($permittee)) ? $_wildlifefarm->getWildlifeFarm($permittee->id) : null;
+        
 
         return view('admin.permittee.show', [
             'permittee' => $permittee,
             'permit_type' => $permit_type,
+            'wildlife_farm' => $wildlife_farm,
         ]);
     }
 
@@ -213,11 +216,17 @@ class PermitteeController extends Controller
 
         // $permittee = Permittee::find($permittee_id);
         $user = User::query()->with(['personalInfo'])->find($user_id);
+        $wfp = $user->wfp();
+        $wcp = $user->wcp();
+
+        // return $wfp;
 
         return view('admin.permittee.edit', [
             'user_id' => $user_id,
             'barangays' => $barangays,
             'user' => $user,
+            'wfp' => $wfp,
+            'wcp' => $wcp
         ]);
     }
 
@@ -236,13 +245,30 @@ class PermitteeController extends Controller
             'gender' => 'required',
             'contact_info' => 'required',
             'barangay_id' => 'required',
-            'business_name' => 'required|max:150',
+            'farm_name' => 'required',
+            'location' => 'required',
+            'size' => 'required',
+            'height' => 'required',
+            'permit_number_wfp' => 'required',
+            'valid_from_wfp' => 'required',
+            'valid_to_wfp' => 'required',
+            'date_of_issue_wfp' => 'required',
+            'permit_number_wcp' => 'required',
+            'valid_from_wcp' => 'required',
+            'valid_to_wcp' => 'required',
+            'date_of_issue_wcp' => 'required',
+            'wfp_document' => 'nullable|mimes:pdf',
+            'wcp_document' => 'nullable|mimes:pdf',
         ], [
             'barangay_id.required' => 'The barangay/municipality field is required.'
         ]);
 
+
         return DB::transaction(function () use ($request, $user_id) {
             $user = User::find($user_id);
+            $wfp = $user->wfp();
+            $wcp = $user->wcp();
+            $farm = $wfp->wildlifeFarm;
             
             $personalInfo = PersonalInfo::where('user_id',$user->id)->update([
                 'last_name' => $request->input('lastname'),
@@ -253,10 +279,35 @@ class PermitteeController extends Controller
                 'barangay_id' => $request->input('barangay_id'),
             ]);
 
-            $farm = $user->wfp()->wildlifeFarm;
-            $farm->update([
-                'farm_name' => $request->input('business_name'),
-            ]);
+            $wfp->permit_number = $request->input('permit_number_wfp');
+            $wfp->valid_from = $request->input('valid_from_wfp');
+            $wfp->valid_to = $request->input('valid_to_wfp');
+            $wfp->date_of_issue = $request->input('date_of_issue_wfp');
+            $wfp->save();
+            
+            $farm->farm_name = $request->input('farm_name');
+            $farm->location = $request->input('location');
+            $farm->size = $request->input('size');
+            $farm->height = $request->input('height');
+            $farm->save();
+
+            $wcp->permit_number = $request->input('permit_number_wcp');
+            $wcp->valid_from = $request->input('valid_from_wcp');
+            $wcp->valid_to = $request->input('valid_to_wcp');
+            $wcp->date_of_issue = $request->input('date_of_issue_wcp');
+            $wcp->save();
+
+            if($request->hasFile('wcp_document')) {
+                $path = $request->file('wcp_document')->storeAs('wcp', $wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension(), 'private');
+                $wcp->document = $path;
+                $wcp->save();
+            }
+
+            if($request->hasFile('wfp_document')) {
+                $path = $request->file('wfp_document')->storeAs('wfp', $wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension(), 'private');
+                $wfp->document = $path;
+                $wfp->save();
+            }
 
             return Redirect::route('permittees.index')->with('success', 'Successfully saved!');
         });
@@ -276,7 +327,7 @@ class PermitteeController extends Controller
         $permittee = Permittee::find($permittee_id);
 
         if ($request->hasFile('permit_file')) {
-            $path = $request->file('permit_file')->store($permittee->permit_type);
+            $path = $request->file('permit_file')->storeAs('permits', $permittee->id .'.'. $request->file('permit_file')->getClientOriginalExtension(), 'private');
             $permittee->document = $path;
             $permittee->save();
         }
@@ -317,5 +368,13 @@ class PermitteeController extends Controller
             'wfp' => $wfp,
             'user' => $user
         ]);
+    }
+
+    public function viewPermit(string $id){
+        $permittee_id = Crypt::decryptString($id);
+        $permittee = Permittee::find($permittee_id);
+
+        $path = storage_path('app/private/' . $permittee->document);
+        return response()->file($path);
     }
 }

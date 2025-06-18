@@ -89,9 +89,9 @@
 <body>
     <div class="container letter-content">
         <!-- Letterhead -->
-        <div class=" text-center">
-            <h5 class="mb-0">REPUBLIC OF THE PHILIPPINES</h5>
-            <h5 class="mt-0 mb-0">{{ strtoupper($wfp->wildlifeFarm->farm_name) }}</h5>
+        <div class=" text-center  pb-2">
+            <h6 class="mb-0">REPUBLIC OF THE PHILIPPINES</h6>
+            <h6 class="mt-0 mb-0">{{ strtoupper($wfp->wildlifeFarm->farm_name) }}</h6>
             <p class="mt-0 mb-0">{{ $wfp->wildlifeFarm->barangay->barangay_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->municipality_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->province->province_name }}</p>
             <p class="mt-0 mb-0">Contact No. {{ $wfp->user->personalInfo->contact_no }} | Email: {{ $wfp->user->email }}</p>
         </div>
@@ -115,8 +115,8 @@
                 <p class="subject-line">Subject: Application for Local Transport Permit of Butterfly Species</p>
                 <p><strong>Madam:</strong></p>
                 <p>Greetings!!</p>
-                <p>
-                    Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,
+                <p class="text-justify">
+                    &nbsp;&nbsp;&nbsp;&nbsp;Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,
                     the
                     undersigned would like to apply for the <strong>Local Transport Permit</strong> of the following
                     Butterfly Pupae
@@ -125,52 +125,55 @@
             </div>
 
             <!-- Table -->
-            <table class="table table-bordered table-sm">
-                <thead class="table-light">
-                    <tr>
-                        <th>No.</th>
-                        <th>Common Name</th>
-                        <th>Scientific Name</th>
-                        <th>Family Name</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if(!empty($application->ltpApplicationSpecies))
-                        @php
-                            $c = 1;
-                            $total = 0;
-                        @endphp
-                        @foreach($application->ltpApplicationSpecies as $ltp_specie)
+            <div class="px-4">
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>No.</th>
+                            <th>Common Name</th>
+                            <th>Scientific Name</th>
+                            <th>Family Name</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(!empty($application->ltpApplicationSpecies))
                             @php
-                                $total += $ltp_specie->quantity;
+                                $c = 1;
+                                $total = 0;
                             @endphp
-                            <tr>
-                                <td>{{$c++}}</td>
-                                <td>{{$ltp_specie->specie->local_name}}</td>
-                                <td>{{$ltp_specie->specie->specie_name}}</td>
-                                <td>{{$ltp_specie->specie->family->family}}</td>
-                                <td>{{$ltp_specie->quantity}}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                    <tr class="fw-bold">
-                        <td colspan="4" class="text-end">TOTAL</td>
-                        <td>{{$total}}</td>
-                    </tr>
-                </tbody>
-            </table>
+                            @foreach($application->ltpApplicationSpecies as $ltp_specie)
+                                @php
+                                    $total += $ltp_specie->quantity;
+                                @endphp
+                                <tr>
+                                    <td>{{$c++}}</td>
+                                    <td>{{$ltp_specie->specie->local_name}}</td>
+                                    <td>{{$ltp_specie->specie->specie_name}}</td>
+                                    <td>{{$ltp_specie->specie->family->family}}</td>
+                                    <td>{{$ltp_specie->quantity}}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                        <tr class="fw-bold">
+                            <td colspan="4" class="text-end">TOTAL</td>
+                            <td>{{$total}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <br>
             
             <!-- Purpose Statement -->
             <div class="mb-4">
-                <p>
-                    The listed pupae/live species will be transported on or before
-                    <strong>{{date('F j, Y', strtotime($application->transport_date))}}</strong> for the purpose of
-                    <u>&nbsp;{{$application->purpose}}&nbsp;</u> at <strong>{{ $application->destination }}</strong>.
+                <p class="text-justify">
+                    &nbsp;&nbsp;&nbsp;&nbsp;The listed pupae/live species will be transported on or before
+                    <strong><u>&nbsp;&nbsp;{{date('F j, Y', strtotime($application->transport_date))}}&nbsp;&nbsp;</u></strong> for the purpose of
+                    <strong><u>&nbsp;&nbsp;{{$application->purpose}}&nbsp;&nbsp;</u></strong> at 
+                    <strong><u>&nbsp;&nbsp;{{ $application->destination }}&nbsp;&nbsp;</u></strong>.
                 </p>
-                <p>Thank you.</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;Thank you.</p>
             </div>
 
             <!-- Signature Block -->
@@ -178,8 +181,7 @@
                 <p>Sincerely,</p>
                 <p class="mt-2 ">
                     <strong >{{ strtoupper($wcp->user->personalInfo->first_name) }} {{ strtoupper(substr($wcp->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($wcp->user->personalInfo->last_name) }}</strong><br>
-                    Owner<br>
-                    {{ $wfp->wildlifeFarm->farm_name }}
+                    Owner, {{ $wfp->wildlifeFarm->farm_name }}
                 </p>
             </div>
         </div>

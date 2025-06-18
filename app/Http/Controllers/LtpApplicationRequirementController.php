@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\LtpApplicationAttachment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Gate;
 
 class LtpApplicationRequirementController extends Controller
 {
@@ -17,7 +19,7 @@ class LtpApplicationRequirementController extends Controller
 
         if($request->hasFile('document_file')) {
             $file = $request->file('document_file');
-            $fileName = 'requirement_' . time() . $file->getClientOriginalExtension();
+            $fileName = 'requirement_' . time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('requirements', $fileName, 'private'); // store('requirements');
             $attachment = LtpApplicationAttachment::where('ltp_application_id', $request->application_id)->where('ltp_requirement_id', $request->requirement_id)->first();
             if($attachment) {
@@ -34,5 +36,14 @@ class LtpApplicationRequirementController extends Controller
             }
         }
         return redirect()->back()->with('success', 'Successfully saved!');
+    }
+
+    public function view(Request $request, string $id) {
+        $attachment = LtpApplicationAttachment::find(Crypt::decryptString($id));
+
+        Gate::authorize('view', $attachment);
+
+        $path = storage_path('app/private/' . $attachment->file_path);
+        return response()->file($path);
     }
 }

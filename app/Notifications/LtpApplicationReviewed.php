@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\LtpApplication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,12 +14,12 @@ class LtpApplicationReviewed extends Notification
 {
     use Queueable;
 
-    public $ltpApplication;
+    public LtpApplication $ltpApplication;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($ltpApplication)
+    public function __construct(LtpApplication $ltpApplication)
     {
         //
         $this->ltpApplication = $ltpApplication;

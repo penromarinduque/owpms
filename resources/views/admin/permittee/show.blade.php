@@ -58,7 +58,7 @@ active
                         <tr>
                             <th >Permit File</th>
                             <td>
-                                <a href="{{ Storage::url($permittee->document) }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                <a href="{{ route('permittees.viewpermit', Crypt::encryptString($permittee->id)) }}" target="_blank" class="btn btn-sm btn-primary">View</a>
                                 <a href="#" data-bs-target="#uploadPermitModal" data-bs-toggle="modal" class="btn btn-sm btn-success" >Upload</a>
                             </td>
                         </tr>
