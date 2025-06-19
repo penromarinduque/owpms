@@ -13,11 +13,12 @@ class EnsureHasUserType
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $userType): Response
+    public function handle(Request $request, Closure $next, ...$userTypes): Response
     {
-        if (auth()->user()->usertype !== $userType) {
+        if (!in_array(auth()->user()->usertype, $userTypes)) {
             abort(403);
         }
+
         return $next($request);
     }
 }

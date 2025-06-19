@@ -9,6 +9,13 @@
                     || auth()->user()->can('viewAny', App\Models\Position::class)
                     || auth()->user()->can('viewAny', App\Models\LtpFee::class)
                     || auth()->user()->can('viewAny', App\Models\Signatory::class);
+
+    $canViewSubmittedTab = auth()->user()->can('viewSubmittedTab', App\Models\LtpApplication::class);
+    $canViewReviewedTab = auth()->user()->can('viewReviewedTab', App\Models\LtpApplication::class);
+
+    $canViewPaymentOrders = auth()->user()->can('viewAny', App\Models\PaymentOrder::class);
+    $canViewIssuedOfficialReceipts = auth()->user()->can('viewIssuedOr', App\Models\PaymentOrder::class);
+    $canViewPaymentsNav = $canViewPaymentOrders || $canViewIssuedOfficialReceipts;
 @endphp
 
 <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
@@ -36,17 +43,23 @@
                     </nav>
                 </div>
                 {{-- PAYMENTS --}}
-                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts1" aria-expanded="false" aria-controls="collapseLayouts">
-                    <div class="sb-nav-link-icon"><i class="fas fa-money-bill"></i></div>
-                    Payment
-                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="{{ request()->routeIs('paymentorder.index') ? '' : 'collapse'}}" id="collapseLayouts1" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                    <nav class="sb-sidenav-menu-nested nav">
-                        <a class="nav-link @yield('active-paymentorder')"  href="{{ route('paymentorder.index') }}">Order of Payment</a>
-                        <a class="nav-link @yield('active-issuedor')"  href="{{ route('issuedor.index') }}" href="">Issued OR</a>
-                    </nav>
-                </div>
+                @if ($canViewPaymentsNav)
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts1" aria-expanded="false" aria-controls="collapseLayouts">
+                        <div class="sb-nav-link-icon"><i class="fas fa-money-bill"></i></div>
+                        Payment
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="{{ request()->routeIs('paymentorder.index') ? '' : 'collapse'}}" id="collapseLayouts1" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            @if ($canViewPaymentOrders)
+                                <a class="nav-link @yield('active-paymentorder')"  href="{{ route('paymentorder.index') }}">Order of Payment</a>
+                            @endif
+                            @if ($canViewIssuedOfficialReceipts)
+                                <a class="nav-link @yield('active-issuedor')"  href="{{ route('issuedor.index') }}" href="">Issued OR</a>
+                            @endif
+                        </nav>
+                    </div>
+                @endif
                 {{-- APPLICATIONS --}}
                 <a class="nav-link {{ request()->routeIs('ltpapplication.index') ? '' : 'collapsed'}}" href="#" data-bs-toggle="collapse" data-bs-target="#adminApplicationsCollapse" >
                     <div class="sb-nav-link-icon"><i class="fas fa-file-import"></i></div>
@@ -65,8 +78,12 @@
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'approved' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'approved']) }}">Approved</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'rejected' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'rejected']) }}">Rejected</a>
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('status') == 'expired' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['status' => 'expired']) }}">Expired</a> --}}
-                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'submitted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'submitted', 'status' => 'all']) }}">Submitted</a> 
-                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'reviewed' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'reviewed', 'status' => 'all']) }}">Reviewed</a> 
+                        @if ($canViewSubmittedTab)
+                            <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'submitted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'submitted', 'status' => 'all']) }}">Submitted</a> 
+                        @endif
+                        @if ($canViewReviewedTab)
+                            <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'reviewed' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'reviewed', 'status' => 'all']) }}">Reviewed</a> 
+                        @endif
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'returned' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'returned', 'status' => 'all']) }}">Returned</a> 
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'accepted', 'status' => 'all']) }}">Accepted</a> 
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'rejected' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'rejected', 'status' => 'all']) }}">Rejected</a> 
@@ -118,10 +135,10 @@
                     {{-- @if (Auth::user()->usertype=='permittee')
                         <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'request_letter']) }}">LTP Request Letter</a>
                     @endif --}}
-                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'inspection_report']) }}">Inspection Reports  {!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('inspection_report')) !!}</a>
+                    <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'inspection_report']) }}">Inspection Reports&nbsp;&nbsp;{!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('inspection_report')) !!}</a>
                     @if (Auth::user()->usertype=='admin' || Auth::user()->usertype=='internal')
-                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'payment_order']) }}">Order of Payments</a>
-                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'ltp']) }}">Local Transport Permits {!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('ltp')) !!}</a>
+                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'payment_order']) }}">Order of Payments&nbsp;&nbsp;{!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('payment_order')) !!}</a>
+                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'ltp']) }}">Local Transport Permits&nbsp;&nbsp;{!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('ltp')) !!}</a>
                     @endif
                 </nav>
             </div>

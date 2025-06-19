@@ -116,12 +116,16 @@ active
             </ul> --}}
 
             <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=all&category=received" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-file-export me-1"></i>Reviewed</a>
-                </li>
+                @can('viewSubmittedTab', App\Models\LtpApplication::class)
+                    <li class="nav-item">
+                        <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
+                    </li>
+                @endcan
+                @can('viewReviewedTab', App\Models\LtpApplication::class)
+                    <li class="nav-item">
+                        <a href="?status=all&category=reviewed" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-eye me-1"></i>Reviewed</a>
+                    </li>
+                @endcan
                 <li class="nav-item">
                     <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
                 </li>
@@ -184,19 +188,25 @@ active
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('ltpapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
-                                    @if (in_array(request('status'), ['submitted', 'resubmitted']))
+                                    @can('accept', $ltp_application)
+                                        <a href="#" onclick="showAcceptApplicationModal('{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Accept/Receive"><i class="fas fa-check"></i></a>
+                                    @endcan
+                                    @if (in_array($ltp_application->application_status, ['submitted', 'resubmitted']) && Gate::allows('review', $ltp_application))
                                         <a href="#" onclick="showConfirmModal('{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}', 'Viewing this application will mark it as Under Review. Are you sure you want to continue?', 'Confirm Review', 'GET')" class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
-                                    @if (in_array(request('status'), ['under-review']))
+                                    @if (
+                                        in_array($ltp_application->application_status, ['under-review']) 
+                                        && (Gate::allows('accept', $ltp_application ) || Gate::allows('reject', $ltp_application))
+                                    )
                                         <a href="{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
-                                    @if (in_array(request('status'), ['accepted']))   
+                                    @can('generatePaymentOrder', $ltp_application)
                                         <a href="{{ route('paymentorder.create', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Generate Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
-                                    @endif
-                                    @if (in_array(request('status'), ['payment-in-process']))   
+                                    @endcan
+                                    @if (in_array($ltp_application->application_status, ['payment-in-process']))   
                                         <a href="{{ route('paymentorder.show', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
-                                    @if (in_array(request('status'), ['paid', 'for-inspection', 'inspection-rejected']))   
+                                    @if (in_array($ltp_application->application_status, ['paid', 'for-inspection', 'inspection-rejected']))   
                                         <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
                                     @endif
                                     @if (in_array($ltp_application->application_status, ['inspected']))   
@@ -230,4 +240,5 @@ active
     @include('components.confirm')
     @include('components.viewApplicationLogs')
     @include('components.releaseLtp')
+    @include('components.acceptApplicationModal')
 @endsection

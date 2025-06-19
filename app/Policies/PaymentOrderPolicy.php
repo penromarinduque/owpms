@@ -13,7 +13,15 @@ class PaymentOrderPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
+    }
+
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewIssuedOr(User $user): bool
+    {
+        return in_array('ISSUED_OR_INDEX', $user->getUserPermissions());
     }
 
     /**
@@ -63,4 +71,35 @@ class PaymentOrderPolicy
     {
         return false;
     }
+
+    public function approverSign(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $user->id == $paymentOrder->approved_by && in_array($paymentOrder->approved_signed, [null, false]) ;
+    }
+
+    public function preparerSign(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $user->id == $paymentOrder->prepared_by && in_array($paymentOrder->prepared_signed, [null, false]);
+    }
+
+    public function uploadDocument(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_UPDATE', $user->getUserPermissions());
+    }
+
+    public function updatePayment(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_UPDATE', $user->getUserPermissions()) && $paymentOrder->document;
+    }
+
+    public function downloadSignedOrder(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions()) && $paymentOrder->document;
+    }
+
+    public function uploadSignedOrder(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions()) ;
+    }
+
 }

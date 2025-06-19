@@ -39,23 +39,24 @@ active
                     <tbody>
                         @forelse ($paymentOrders as $paymentOrder)
                             <tr>
-                                <td><a href="{{ route('paymentorder.show', Crypt::encryptString($paymentOrder->id)) }}" target="_blank">{{ $paymentOrder->order_number }}</a></td>
+                                <td>{{ $paymentOrder->order_number }}</td>
                                 <td class="text-center">{{ $paymentOrder->issued_date->format("F d, Y") }}</td>
                                 <td>{{ $paymentOrder->ltpApplication->permittee->user->personalInfo->first_name . ' ' . $paymentOrder->ltpApplication->permittee->user->personalInfo->last_name }}</td>
                                 <td class="text-center">{{ strtoupper($paymentOrder->payment_method) }}</td>
-                                <td>{{ $paymentOrder->payment_reference }}</td>
-                                <td>{{ $paymentOrder->receipt }}</td>
+                                <td>{{ $paymentOrder->payment_reference ? $paymentOrder->payment_reference : 'N/A' }}</td>
+                                <td>{{ $paymentOrder->receipt ? $paymentOrder->receipt : 'N/A' }}</td>
                                 <td class="text-center">
                                     <span class="badge rounded-pill bg-{{ $paymentOrder->status === 'pending' ? 'warning' : ($paymentOrder->status === 'paid' ? 'success' : 'danger') }}">{{ ucfirst($paymentOrder->status) }}</span>
                                 </td>
                                 <td class="text-center">
-                                    <a href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" class="btn btn-sm btn-outline-primary @if($paymentOrder->status !== 'pending') disabled @endif" data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a>
+                                    <a class="btn btn-sm btn-outline-primary" href="{{ route('paymentorder.show', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" data-bs-toggle="tooltip" data-bs-title="View Details"><i class="fas fa-eye"></i> Details</a>
+                                    {{-- <a href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" class="btn btn-sm btn-outline-primary @if($paymentOrder->status !== 'pending') disabled @endif" data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a>
                                     <a href="{{ route('paymentorder.print', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template"><i class="fas fa-print "></i></a>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <a href="{{ route('paymentorder.download', Crypt::encryptString($paymentOrder->id)) }}" class="btn btn-sm btn-outline-primary {{ $paymentOrder->document ? '' : 'disabled' }}" data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download"></i></a>
                                         <a href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment"><i class="fas fa-upload "></i></a>
                                         <a href="{{ route('paymentorder.view', Crypt::encryptString($paymentOrder->id)) }}" target="_blank"  class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="View Signed Order of Payment"><i class="fas fa-eye "></i></a>
-                                    </div>
+                                    </div> --}}
                                 </td>
                             </tr>
                         @empty
@@ -79,32 +80,30 @@ active
 
 @section('script-extra')
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('.select2').select2();
+    // $(document).ready(function() {
+    //     $('.select2').select2();
+    // });
+
+    // $(function(){
+    //     @if ($errors->updatePayment->any())
+    //         $("#updatePaymentModal").modal("show");
+    //     @endif
+    // });
 
 
-    });
+    // function generateBillNo() {
+    //     const now = new Date();
+    //     const year = now.getFullYear();
+    //     const month = String(now.getMonth() + 1).padStart(2, '0');
+    //     const day = String(now.getDate()).padStart(2, '0');
+    //     const hour = String(now.getHours()).padStart(2, '0');
+    //     const minute = String(now.getMinutes()).padStart(2, '0');
+    //     const second = String(now.getSeconds()).padStart(2, '0');
+    //     const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+    //     const randomNumber = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
 
-    $(function(){
-        @if ($errors->updatePayment->any())
-            $("#updatePaymentModal").modal("show");
-        @endif
-    });
-
-
-    function generateBillNo() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hour = String(now.getHours()).padStart(2, '0');
-        const minute = String(now.getMinutes()).padStart(2, '0');
-        const second = String(now.getSeconds()).padStart(2, '0');
-        const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
-        const randomNumber = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
-
-        $('#bill_no').val(`${year}-${month}-${day}${hour}${minute}${second}${milliseconds}${randomNumber}`);
-    }
+    //     $('#bill_no').val(`${year}-${month}-${day}${hour}${minute}${second}${milliseconds}${randomNumber}`);
+    // }
 
     
 </script>

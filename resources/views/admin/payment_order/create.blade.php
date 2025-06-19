@@ -100,8 +100,27 @@ active
                         <div class="card">
                             <div class="card-body text-center">
                                 <h6 class="mb-3">Prepared By</h6>
-                                <div class="border-bottom mb-2">{{ strtoupper($signatories['prepare']->user->personalInfo->first_name) }} {{ strtoupper(substr($signatories['prepare']->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($signatories['prepare']->user->personalInfo->last_name) }}  </div>
-                                <small class="text-muted">Revenue Collection Officer</small>
+                                <div class="border-bottom mb-2 py-2">
+                                    <select class="form-select select2 @error('prepared_by') is-invalid @enderror" name="prepared_by" id="prepared_by" onchange="preparedByChanged()">
+                                        <option value="">Select Prepared By</option>
+                                        @foreach ($_user->getAllInternals() as $user)
+                                            <option value="{{ $user->id }}" {{ old('prepared_by') == $user->id ? 'selected' : (auth()->user()->id == $user->id ? 'selected' : '') }} data-position="{{ $user->empPosition ? $user->empPosition->position : '' }}">{{ strtoupper($user->personalInfo->getFullNameAttribute()) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('prepared_by')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="">
+                                    <input class="form-control text-center @error('prepared_by_position') is-invalid @enderror" type="text" name="prepared_by_position" id="prepared_by_position">
+                                    @error('prepared_by_position')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -109,8 +128,27 @@ active
                         <div class="card">
                             <div class="card-body text-center">
                                 <h6 class="mb-3">Approved By</h6>
-                                <div class="border-bottom mb-2">{{ strtoupper($signatories['approve']->user->personalInfo->first_name) }} {{ strtoupper(substr($signatories['approve']->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($signatories['approve']->user->personalInfo->last_name) }}</div>
-                                <small class="text-muted">Chief Technical Services Division</small>
+                                <div class="border-bottom mb-2 py-2">
+                                    <select class="form-select select2 @error('approved_by') is-invalid @enderror" name="approved_by" id="approved_by" onchange="approvedByChanged()">
+                                        <option value="">Select Approved By</option>
+                                        @foreach ($_user->getAllInternals() as $user)
+                                            <option value="{{ $user->id }}" {{ old('approved_by') == $user->id ? 'selected' : '' }} data-position="{{ $user->empPosition ? $user->empPosition->position : '' }}">{{ strtoupper($user->personalInfo->getFullNameAttribute()) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('approved_by')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="">
+                                    <input class="form-control text-center @error('approved_by_position') is-invalid @enderror" type="text" name="approved_by_position" id="approved_by_position">
+                                    @error('approved_by_position')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -133,6 +171,9 @@ active
 <script type="text/javascript">
     $(document).ready(function() {
         $('.select2').select2();
+
+        $('#approved_by_position').change();
+        $('#prepared_by_position').change();
     });
 
     function generateBillNo() {
@@ -147,6 +188,16 @@ active
         const randomNumber = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
 
         $('#bill_no').val(`${year}-${month}-${day}${hour}${minute}${second}${milliseconds}${randomNumber}`);
+    }
+
+    function preparedByChanged() {
+        console.log($('#prepared_by option:selected').data('position'));
+        $('#prepared_by_position').val($('#prepared_by option:selected').data('position'));
+    }
+
+    function approvedByChanged() {
+        console.log($('#approved_by option:selected').data('position'));
+        $('#approved_by_position').val($('#approved_by option:selected').data('position'));
     }
 </script>
 @endsection

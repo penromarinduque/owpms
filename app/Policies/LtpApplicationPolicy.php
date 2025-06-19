@@ -136,4 +136,36 @@ class LtpApplicationPolicy
     public function releaseLtp(User $user, LtpApplication $ltpApplication) {
         return in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions());
     }
+
+    public function review(User $user, LtpApplication $ltpApplication) {
+        return in_array('LTP_APPLICATION_REVIEW', $user->getUserPermissions());
+    }
+
+    public function accept(User $user, LtpApplication $ltpApplication) {
+        return in_array('LTP_APPLICATION_ACCEPT', $user->getUserPermissions()) && $ltpApplication->application_status == LtpApplication::STATUS_REVIEWED;
+    }
+
+    public function return(User $user, LtpApplication $ltpApplication) {
+        return in_array('LTP_APPLICATION_RETURN', $user->getUserPermissions()) && $ltpApplication->application_status == LtpApplication::STATUS_UNDER_REVIEW;
+    }
+
+    public function viewSubmittedTab(User $user) {
+        $userPermissions = $user->getUserPermissions();
+        return in_array('LTP_APPLICATION_REVIEW', $userPermissions)
+            // || in_array('LTP_APPLICATION_ACCEPT', $userPermissions)
+            || in_array('LTP_APPLICATION_RETURN', $userPermissions);
+    }
+
+    public function viewReviewedTab(User $user) {
+        $userPermissions = $user->getUserPermissions();
+        return in_array('LTP_APPLICATION_ACCEPT', $userPermissions);
+    }
+
+    public function uploadRequirements(User $user, LtpApplication $ltpApplication) {
+        return ($user->id == $ltpApplication->permittee->user_id) && (in_array($ltpApplication->application_status, [LtpApplication::STATUS_DRAFT, LtpApplication::STATUS_RETURNED]));
+    }
+
+    public function generatePaymentOrder(User $user, LtpApplication $ltpApplication) {
+        return in_array($ltpApplication->application_status, [LtpApplication::STATUS_ACCEPTED]) && in_array('PAYMENT_ORDERS_CREATE', $user->getUserPermissions());
+    }
 }

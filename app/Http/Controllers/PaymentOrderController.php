@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\ApplicationHelper;
+use App\Models\User;
 use App\Notifications\LtpApplicationPaid;
 use App\Notifications\PaymentOrderCreated;
 use Illuminate\Support\Facades\Notification;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Notification;
 class PaymentOrderController extends Controller
 {
     public function index() {
+        Gate::authorize('viewAny', PaymentOrder::class);
         $paymentOrders = PaymentOrder::query()->with([
             'details',
         ])
@@ -36,10 +38,13 @@ class PaymentOrderController extends Controller
     public function create(Request $request, string $id) {
         $_ltp_application = new LtpApplication;
         $_ltp_fee = new LtpFee;
+        $_user = new User();
 
         $ltp_application_id = Crypt::decryptString($id);
         $ltp_application = LtpApplication::query()->with(["permittee.user"])->find($ltp_application_id);
         $ltp_fee = $_ltp_fee->getActiveFee();
+
+        Gate::authorize('generatePaymentOrder', $ltp_application);
 
         $prepare_signatory = Signatory::where([
             'generated_document_type_id' => 2,
@@ -59,6 +64,7 @@ class PaymentOrderController extends Controller
             '_ltp_application' => $_ltp_application,
             'ltp_application' => $ltp_application,
             'ltp_fee' => $ltp_fee,
+            '_user' => $_user,
             'signatories' => [
                 'prepare' => $prepare_signatory->first(),
                 'approve' => $approve_signatory->first()
@@ -75,8 +81,14 @@ class PaymentOrderController extends Controller
                 'ltp_fee_id' => 'required',
                 'ltp_application_id' => 'required',
                 'prepared_by' => 'required',
-                'approved_by' => 'required'
+                'approved_by' => 'required',
+                'prepared_by_position' => 'required',
+                'approved_by_position' => 'required'
             ]);
+
+            $ltp_application = LtpApplication::find($request->ltp_application_id);
+
+            Gate::authorize('generatePaymentOrder', $ltp_application);
 
             $paymentOrder = PaymentOrder::create([
                 'ltp_application_id' => $request->ltp_application_id,
@@ -86,7 +98,9 @@ class PaymentOrderController extends Controller
                 'payment_method' => PaymentOrder::PAYMENT_METHOD_CASH,
                 'issued_date' => now(),
                 'prepared_by' => $request->prepared_by,
-                'approved_by' => $request->approved_by
+                'approved_by' => $request->approved_by,
+                'prepared_by_position' => $request->prepared_by_position,
+                'approved_by_position' => $request->approved_by_position
             ]);
 
             $fee = LtpFee::find($request->ltp_fee_id);
@@ -97,9 +111,8 @@ class PaymentOrderController extends Controller
                 'legal_basis' => $fee->legal_basis
             ]);
 
-            LtpApplication::find($request->ltp_application_id)->update([
-                'application_status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS
-            ]);
+            $ltp_application->application_status = LtpApplication::STATUS_PAYMENT_IN_PROCESS;
+            $ltp_application->save();
 
             LtpApplicationProgress::create([
                 "ltp_application_id" => $request->ltp_application_id,
@@ -140,30 +153,26 @@ class PaymentOrderController extends Controller
             return redirect()->back()->withErrors($validator, 'upload')->withInput()->with('error', 'Failed to upload document');
         }
 
-        try {
-            return DB::transaction(function () use ($request, $id) {
-                $decryptedId = Crypt::decryptString($id);
-                $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
+        return DB::transaction(function () use ($request, $id) {
+            $decryptedId = Crypt::decryptString($id);
+            $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
 
-                $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
-                $path = $request->file('document_file')->storeAs('payment_order', $filename, 'private');
+            $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
+            $path = $request->file('document_file')->storeAs('payment_order', $filename, 'private');
 
-                $paymentOrder->update(['document' => $path]);
+            $paymentOrder->update(['document' => $path]);
 
-                $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
+            $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
 
-                LtpApplicationProgress::create([
-                    "ltp_application_id" => $paymentOrder->ltp_application_id,
-                    "user_id" => auth()->user()->id,
-                    'remarks' => '<br>' . auth()->user()->personalInfo->first_name . ' ' . auth()->user()->personalInfo->last_name . ' updated the document.',
-                    "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
-                ]);
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $paymentOrder->ltp_application_id,
+                "user_id" => auth()->user()->id,
+                'remarks' => '<br>' . auth()->user()->personalInfo->first_name . ' ' . auth()->user()->personalInfo->last_name . ' updated the document.',
+                "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
+            ]);
 
-                return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
-            });
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
-        }
+            return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
+        });
     }
 
     public function download(string $id) {
@@ -178,6 +187,8 @@ class PaymentOrderController extends Controller
 
     public function show(string $id) {
         $_helper = new ApplicationHelper;
+
+        Gate::authorize('viewAny', PaymentOrder::class);
 
         $paymentOrder = PaymentOrder::query()->with([
             'details',
@@ -205,10 +216,13 @@ class PaymentOrderController extends Controller
     }
 
     public function update(Request $request, string $payment_order_id) {
+
+        return $request;
         //
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:cancelled,paid',
-            'or_no' => 'required_if:status,paid'
+            'or_no' => 'required_if:status,paid',
+            'receipt' => 'required_if:status,paid'
         ]);
 
         if ($validator->fails()) {
@@ -218,10 +232,21 @@ class PaymentOrderController extends Controller
         try {
             return DB::transaction(function () use ($request, $payment_order_id) {
                 $paymentOrder = PaymentOrder::find(Crypt::decryptString($payment_order_id));
+
+                Gate::authorize('updatePayment', $paymentOrder);
+
+                $file = $request->file('receipt');
+
+                $filename = 'receipt_' . $paymentOrder->ltp_application_id . '.' . $file->getClientOriginalExtension();
+
+                $path = $file->storeAs('receipts', $filename, 'private');
+
                 $paymentOrder->update([
                     'status' => $request->status,
-                    'payment_reference' => $request->or_no
+                    'payment_reference' => $request->or_no,
+                    'receipt' => $path
                 ]);
+                
 
                 // update application progress
                 if($request->status == PaymentOrder::STATUS_PAID) {

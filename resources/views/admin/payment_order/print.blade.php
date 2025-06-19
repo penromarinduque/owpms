@@ -23,6 +23,7 @@
 
 <body >
     <div class="row">
+        
         <div class="col-6 p-3">
             <div class="header d-flex justify-content-center align-items-center mb-3">
                 <img src="{{ asset('images/denr_logo.png') }}" alt="DENR Logo" class="me-3" style="width: 70px; height: 70px;">
@@ -67,42 +68,42 @@
             
                 <table class="table table-bordered border-dark border-end-0 border-start-0">
                     <thead class="text-center">
-                        <tr>
-                            <th scope="col" class="fw-bold">Legal Basis (DAO/SEC)</th>
+                        <tr class="">
+                            <th scope="col" class="fw-bold border-start-0">Legal Basis (DAO/SEC)</th>
                             <th scope="col" class="fw-bold">Description and Computation of Fees and Charges Assessed</th>
-                            <th scope="col" class="fw-bold">Amount</th>
+                            <th scope="col" class="fw-bold border-end-0">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="p-3">{{ $paymentOrder->ltpFee->legal_basis }}</td>
+                            <td class="p-3  border-start-0">{{ $paymentOrder->ltpFee->legal_basis }}</td>
                             <td class="p-3">{{ $paymentOrder->ltpFee->fee_name }}</td>
-                            <td class="p-3">{{ $paymentOrder->ltpFee->amount }}</td>
+                            <td class="p-3 border-end-0">{{ $paymentOrder->ltpFee->amount }}</td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
             
                         <tr>
-                            <td colspan="2" class="text-center fw-bold p-2">TOTAL</td>
-                            <td class="p-2">{{ $paymentOrder->ltpFee->amount }}</td>
+                            <td colspan="2" class="text-center fw-bold p-2  border-start-0">TOTAL</td>
+                            <td class="p-2 border-end-0">{{ $paymentOrder->ltpFee->amount }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -112,12 +113,12 @@
                     <div class="col-6">
                         <label class="fw-bold mb-1">Prepared By:</label>
                         <div class=" border-dark mt-4 text-center text-uppercase">{{ $paymentOrder->preparedBy->personalInfo->first_name . ' ' . strtoupper(substr($paymentOrder->preparedBy->personalInfo->middle_name, 0, 1)) . '. ' . $paymentOrder->preparedBy->personalInfo->last_name }}</div>
-                        <div class="border-top border-dark pt-2 text-center">Signature of Immediate Head</div>
+                        <div class="border-top border-dark pt-2 text-center">{{ $paymentOrder->prepared_by_position }}</div>
                     </div>
                     <div class="col-6">
                         <label class="fw-bold mb-1">Approved By:</label>
                         <div class=" border-dark mt-4 text-center text-uppercase">{{ $paymentOrder->approvedBy->personalInfo->first_name . ' ' . strtoupper(substr($paymentOrder->approvedBy->personalInfo->middle_name, 0, 1)) . '. ' . $paymentOrder->approvedBy->personalInfo->last_name }}</div>
-                        <div class="border-top border-dark pt-2 text-center ">Signature of Immediate Head</div>
+                        <div class="border-top border-dark pt-2 text-center ">{{ $paymentOrder->approved_by_position }}</div>
                     </div>
                 </div>
             </div>
@@ -157,6 +158,7 @@
                 </div> --}}
             </div>
         </div>
+        
         <div class="col-6 p-3">
             <div class="header d-flex justify-content-center align-items-center mb-3">
                 <img src="{{ asset('images/denr_logo.png') }}" alt="DENR Logo" class="me-3" style="width: 70px; height: 70px;">
@@ -201,42 +203,42 @@
             
                 <table class="table table-bordered border-dark border-end-0 border-start-0">
                     <thead class="text-center">
-                        <tr>
-                            <th scope="col" class="fw-bold">Legal Basis (DAO/SEC)</th>
+                        <tr class="">
+                            <th scope="col" class="fw-bold border-start-0">Legal Basis (DAO/SEC)</th>
                             <th scope="col" class="fw-bold">Description and Computation of Fees and Charges Assessed</th>
-                            <th scope="col" class="fw-bold">Amount</th>
+                            <th scope="col" class="fw-bold border-end-0">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="p-3">{{ $paymentOrder->ltpFee->legal_basis }}</td>
+                            <td class="p-3  border-start-0">{{ $paymentOrder->ltpFee->legal_basis }}</td>
                             <td class="p-3">{{ $paymentOrder->ltpFee->fee_name }}</td>
-                            <td class="p-3">{{ $paymentOrder->ltpFee->amount }}</td>
+                            <td class="p-3 border-end-0">{{ $paymentOrder->ltpFee->amount }}</td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
                         <tr>
+                            <td class="p-3  border-start-0"></td>
                             <td class="p-3"></td>
-                            <td class="p-3"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3 border-end-0"></td>
                         </tr>
             
                         <tr>
-                            <td colspan="2" class="text-center fw-bold p-2">TOTAL</td>
-                            <td class="p-2">{{ $paymentOrder->ltpFee->amount }}</td>
+                            <td colspan="2" class="text-center fw-bold p-2  border-start-0">TOTAL</td>
+                            <td class="p-2 border-end-0">{{ $paymentOrder->ltpFee->amount }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -246,12 +248,12 @@
                     <div class="col-6">
                         <label class="fw-bold mb-1">Prepared By:</label>
                         <div class=" border-dark mt-4 text-center text-uppercase">{{ $paymentOrder->preparedBy->personalInfo->first_name . ' ' . strtoupper(substr($paymentOrder->preparedBy->personalInfo->middle_name, 0, 1)) . '. ' . $paymentOrder->preparedBy->personalInfo->last_name }}</div>
-                        <div class="border-top border-dark pt-2 text-center">Signature of Immediate Head</div>
+                        <div class="border-top border-dark pt-2 text-center">{{ $paymentOrder->prepared_by_position }}</div>
                     </div>
                     <div class="col-6">
                         <label class="fw-bold mb-1">Approved By:</label>
                         <div class=" border-dark mt-4 text-center text-uppercase">{{ $paymentOrder->approvedBy->personalInfo->first_name . ' ' . strtoupper(substr($paymentOrder->approvedBy->personalInfo->middle_name, 0, 1)) . '. ' . $paymentOrder->approvedBy->personalInfo->last_name }}</div>
-                        <div class="border-top border-dark pt-2 text-center ">Signature of Immediate Head</div>
+                        <div class="border-top border-dark pt-2 text-center ">{{ $paymentOrder->approved_by_position }}</div>
                     </div>
                 </div>
             </div>

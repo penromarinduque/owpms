@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Notifications\LtpApplicationAccepted;
 use App\Notifications\LtpApplicationReleased;
 use App\Notifications\LtpApplicationReturned;
+use App\Notifications\LtpApplicationReviewDone;
 use App\Notifications\LtpApplicationReviewed;
 use App\Notifications\LtpPermitCreated;
 use Illuminate\Support\Facades\Gate;
@@ -32,7 +33,11 @@ class LtpApplicationController extends Controller
         $category = $request->category ?? "submitted";
         
         $_helper = new ApplicationHelper;
+        $_ltp_requirement = new LtpRequirement;
+
         $ltp_application_query = LtpApplication::query();
+
+        $this->checkIndexAuthorization($category);
 
         if($status == 'all') {
             $ltp_applications = $ltp_application_query->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category));
@@ -49,7 +54,8 @@ class LtpApplicationController extends Controller
             '_helper' => $_helper,
             '_ltp_application' => new LtpApplication,
             'title' => 'LTP Applications',
-            "ltp_applications" => $ltp_applications->orderBy('created_at', 'DESC')->paginate(50)
+            "ltp_applications" => $ltp_applications->orderBy('created_at', 'DESC')->paginate(50),
+            "_ltp_requirement" => $_ltp_requirement
         ]);
     }
 
@@ -62,6 +68,8 @@ class LtpApplicationController extends Controller
             $ltp_application = LtpApplication::query()->with(['attachments'])->find($application_id);
             $ltp_requirements = $_ltp_requirement->getActiveRequirements();
 
+            Gate::authorize('review', $ltp_application);
+
             if(in_array($ltp_application->application_status, [LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_RESUBMITTED])) {
                 $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
                 $ltp_application->save();
@@ -72,7 +80,7 @@ class LtpApplicationController extends Controller
                     "status" => LtpApplicationProgress::STATUS_UNDER_REVIEW
                 ]);
 
-                Notification::send($ltp_application->permittee, new LtpApplicationReviewed($ltp_application));
+                Notification::send($ltp_application->permittee->user, new LtpApplicationReviewed($ltp_application));
             }
 
             $permittee = Permittee::find($ltp_application->permittee_id);
@@ -91,19 +99,25 @@ class LtpApplicationController extends Controller
     }
 
     public function return(Request $request) {
-
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id' => 'required',
             'remarks' => 'required'
         ]);
+
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'return')->withInput();
+        }
 
         return DB::transaction(function () use ($request) {
             $id = $request->id;
             $remarks = $request->remarks;
     
-            $ltp_application = LtpApplication::find($id)->update([
-                "application_status" => LtpApplication::STATUS_RETURNED,
-            ]);
+            $ltp_application = LtpApplication::find($id);
+
+            Gate::authorize('return', $ltp_application);
+
+            $ltp_application->application_status = LtpApplication::STATUS_RETURNED;
+            $ltp_application->save();
     
             LtpApplicationProgress::create([
                 "ltp_application_id" => $id,
@@ -112,11 +126,9 @@ class LtpApplicationController extends Controller
                 "remarks" => $remarks
             ]);
 
-            Notification::send(LtpApplication::find($id)->permittee, new LtpApplicationReturned($ltp_application));
+            Notification::send($ltp_application->permittee->user, new LtpApplicationReturned($ltp_application));
     
-            return redirect()
-                    ->back()
-                    ->with([
+            return redirect()->back()->with([
                         'success' => 'Successfully returned application.'
                     ]);
         });
@@ -138,6 +150,44 @@ class LtpApplicationController extends Controller
         ]);
     }
 
+    public function reviewed(Request $request,string $id) {
+        return DB::transaction(function () use ($id, $request) {
+            $_ltp_requirement = new LtpRequirement;
+
+            $ltp_application_id = Crypt::decryptString($id);
+
+            $ltp_application = LtpApplication::query()->with(["permittee.user"])->find($ltp_application_id);
+
+            Gate::authorize('review', $ltp_application);
+
+            if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
+                return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
+            }
+
+            if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , $ltp_application->permittee->user->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , $ltp_application->permittee->user->id)) {
+                return redirect()->back()->with('error', 'The clients WCP and/or WFP permit has expired or is not valid. Please renew the permit before submitting the application.');
+            }   
+
+            if(!LtpApplication::validateRequirements($ltp_application->id)) {
+                return redirect()->back()->with('error', 'Application does not have all required attachments!');
+            }
+
+            LtpApplication::find($ltp_application_id)->update([
+                "application_status" => LtpApplication::STATUS_REVIEWED,
+            ]);
+
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $ltp_application_id,
+                "user_id" => Auth::user()->id,
+                "status" => LtpApplicationProgress::STATUS_REVIEWED
+            ]);
+
+            Notification::send($ltp_application->permittee->user, new LtpApplicationReviewDone($ltp_application));
+
+            return redirect()->route('ltpapplication.index', ['status' => LtpApplication::STATUS_REVIEWED, 'category' => 'reviewed'])->with('success', 'Successfully reviewed application.');
+        });
+    }
+
     public function accept(Request $request,string $id) {
         return DB::transaction(function () use ($id, $request) {
             $_ltp_requirement = new LtpRequirement;
@@ -145,6 +195,8 @@ class LtpApplicationController extends Controller
             $ltp_application_id = Crypt::decryptString($id);
 
             $ltp_application = LtpApplication::query()->with(["permittee.user"])->find($ltp_application_id);
+
+            Gate::authorize('accept', $ltp_application);
 
             if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
                 return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
@@ -170,7 +222,7 @@ class LtpApplicationController extends Controller
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationAccepted($ltp_application));
 
-            return redirect()->route('ltpapplication.index', ['status' => LtpApplication::STATUS_ACCEPTED])->with('success', 'Successfully accepted application. You can visit the accepted tab to generate payment orders.');
+            return redirect()->route('ltpapplication.index', ['status' => LtpApplication::STATUS_ACCEPTED, 'category' => 'accepted'])->with('success', 'Successfully accepted application. You can visit the accepted tab to generate payment orders.');
         });
     }
 
@@ -314,5 +366,23 @@ class LtpApplicationController extends Controller
             return redirect()->back()->with('success', 'Successfully released LTP.');
         });
 
+    }
+
+    private function checkIndexAuthorization($category) {
+        if($category == 'submitted') {
+            Gate::authorize('viewSubmittedTab', LtpApplication::class);
+        }
+        if($category == 'reviewed') {
+            Gate::authorize('viewReviewedTab', LtpApplication::class);
+        }
+        // else if($category == 'approved') {
+        //     Gate::authorize('viewAnyApprovedLtp', LtpApplication::class);
+        // }
+        // else if($category == 'expired') {
+        //     Gate::authorize('viewAnyExpiredLtp', LtpApplication::class);
+        // }
+        // else if($category == 'returned') {
+        //     Gate::authorize('viewAnyReturnedLtp', LtpApplication::class);
+        // }
     }
 }

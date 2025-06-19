@@ -23,6 +23,10 @@ return new class extends Migration
             $table->date('issued_date');
             $table->integer('prepared_by');
             $table->integer('approved_by');
+            $table->boolean('prepared_signed')->nullable()->default(false);
+            $table->boolean('approved_signed')->nullable()->default(false);
+            $table->string('prepared_by_position');
+            $table->string('approved_by_position');
             $table->text('remarks')->nullable();
             $table->string('document', 100)->nullable();
             $table->timestamps();

@@ -9,10 +9,10 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\URL;
 
-class LtpApplicationAccepted extends Notification
+class LtpApplicationReviewDone extends Notification
 {
     use Queueable;
-    public $ltpApplication;
+public $ltpApplication;
 
     /**
      * Create a new notification instance.
@@ -39,9 +39,8 @@ class LtpApplicationAccepted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('Good news! Your LTP application has been accepted.')
-                    ->line('Your application requirements have been officially accepted/received by the Receiving Officer.')
-                    ->line('Please wait for the Order of Payment to be created then pay through the cashier.')
+                    ->line('Good news! Your LTP application has been reviewed.')
+                    ->line('Your application requirements have been reviewed and complied with. You may now proceed with submitting the application letter to the Records officer for official acceptance. ')
                     ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
@@ -56,8 +55,8 @@ class LtpApplicationAccepted extends Notification
         return [
             //
             'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
-            'title' => 'LTP Application Accepted',
-            'message' => 'Your application requirements have been officially accepted/received by the Receiving Officer.',
+            'title' => 'LTP Application Reviewed',
+            'message' => 'Your application requirements have been reviewed and complied with. You may now proceed with submitting the application letter to the Records officer for official acceptance.',
         ];
     }
 }

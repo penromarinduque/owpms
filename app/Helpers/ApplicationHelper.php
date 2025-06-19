@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\InspectionReport;
 use App\Models\LtpApplication;
 use App\Models\LtpPermit;
+use App\Models\PaymentOrder;
 use App\Models\Permittee;
 use Illuminate\Support\Carbon;
 
@@ -12,10 +13,12 @@ class ApplicationHelper
 {
     public $_inspection_report;
     public $_ltp_permit;
+    public $_payment_order;
 
     public function __construct() {
         $this->_inspection_report = new InspectionReport();
         $this->_ltp_permit = new LtpPermit();
+        $this->_payment_order = new PaymentOrder();
     }
     public static function formatApplicationStatus($status): string
     {
@@ -23,6 +26,7 @@ class ApplicationHelper
             LtpApplication::STATUS_DRAFT => 'Draft',
             LtpApplication::STATUS_SUBMITTED => 'Submitted',
             LtpApplication::STATUS_UNDER_REVIEW => 'Under Review',
+            LtpApplication::STATUS_REVIEWED => 'Reviewed',
             LtpApplication::STATUS_RETURNED => 'Returned',
             LtpApplication::STATUS_RESUBMITTED => 'Resubmitted',
             LtpApplication::STATUS_ACCEPTED => 'Accepted',
@@ -45,6 +49,7 @@ class ApplicationHelper
             LtpApplication::STATUS_DRAFT => 'secondary',
             LtpApplication::STATUS_SUBMITTED => 'primary',
             LtpApplication::STATUS_UNDER_REVIEW => 'warning',
+            LtpApplication::STATUS_REVIEWED => 'warning',
             LtpApplication::STATUS_RETURNED => 'warning',
             LtpApplication::STATUS_RESUBMITTED => 'primary',
             LtpApplication::STATUS_ACCEPTED => 'success',
@@ -66,6 +71,7 @@ class ApplicationHelper
             LtpApplication::STATUS_DRAFT => 'secondary',
             LtpApplication::STATUS_SUBMITTED => 'primary',
             LtpApplication::STATUS_UNDER_REVIEW => 'warning',
+            LtpApplication::STATUS_REVIEWED => 'warning',
             LtpApplication::STATUS_RETURNED => 'warning',
             LtpApplication::STATUS_RESUBMITTED => 'primary',
             LtpApplication::STATUS_ACCEPTED => 'success',
@@ -113,7 +119,7 @@ class ApplicationHelper
 
         if($category == "reviewed") {
             return [
-                
+                LtpApplication::STATUS_REVIEWED
             ];
         }
 
@@ -200,7 +206,7 @@ class ApplicationHelper
             return $this->_ltp_permit->pendingSignaturesFor(auth()->user()->id)->count();
         }
         else if($type == "payment_order"){
-            // return $_payment_order->getForSignatoriesCount();
+            return $this->_payment_order->pendingSignaturesFor(auth()->user()->id)->count();
         }
         else if($type == "request_letter"){
             // return $_request_letter->getForSignatoriesCount();

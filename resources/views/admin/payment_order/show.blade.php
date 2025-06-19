@@ -43,21 +43,22 @@ active
                 </dd>
                 <dt class="col-sm-3">Actions</dt>
                 <dd class="col-sm-9">
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" class="btn btn-sm btn-outline-primary @if($paymentOrder->status !== 'pending') disabled @endif" data-bs-toggle="tooltip" data-bs-title="Update Payment">
-                            <i class="fas fa-edit me-1"></i>Update Payment
-                        </a>
-                        <a href="{{ route('paymentorder.print', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template">
-                            <i class="fas fa-print me-1"></i>Print Template
-                        </a>
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <a href="{{ route('paymentorder.download', Crypt::encryptString($paymentOrder->id)) }}" class="btn btn-sm btn-outline-primary {{ $paymentOrder->document ? '' : 'disabled' }}" data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment">
-                                <i class="fas fa-file-download me-1"></i>Download
-                            </a>
-                            <a href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment">
-                                <i class="fas fa-upload me-1"></i>Upload
-                            </a>
-                        </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            Actions
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            @can('updatePayment', $paymentOrder)
+                                <li><a class="dropdown-item" href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" @if($paymentOrder->status !== 'pending') disabled @endif data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a></li>
+                            @endcan
+                            <li><a class="dropdown-item" href="{{ route('paymentorder.print', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template"><i class="fas fa-print me-1"></i>Print Template</a></li>
+                            @can('downloadSignedOrder', $paymentOrder)
+                                <li><a class="dropdown-item" href="{{ route('paymentorder.download', Crypt::encryptString($paymentOrder->id)) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download me-1"></i>Download</a></li>
+                            @endcan
+                            @can('uploadSignedOrder', $paymentOrder)
+                                <li><a class="dropdown-item" href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment"><i class="fas fa-upload me-1"></i>Upload</a></li>
+                            @endcan
+                        </ul>
                     </div>
                 </dd>
             </dl>
@@ -96,9 +97,12 @@ active
     </div>
 </div>
 
-@include('components.uploadPaymentOrder')
-@include('components.updatePayment')
 
+@endsection
+
+@section('includes')
+    @include('components.uploadPaymentOrder')
+    @include('components.updatePayment')
 @endsection
 
 

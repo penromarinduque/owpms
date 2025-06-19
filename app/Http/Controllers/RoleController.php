@@ -74,7 +74,7 @@ class RoleController extends Controller
         return DB::transaction(function () use ($request, $id) {
             $request->validate([
                 'role_name' => 'required|max:50',
-                'role_description' => 'required|max:50',
+                'role_description' => 'required|max:500',
                 'permissions' => 'required',
                 'is_active' => 'required'
             ]);

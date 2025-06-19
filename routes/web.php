@@ -149,18 +149,19 @@ Route::middleware('auth')->group(function (){
 
     // LTP Applications
     Route::prefix('ltpapplication')->group(function () {
-        Route::middleware(["userType:admin,internal"])->group(function () {
-            Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index')->middleware('permission:LTP_APPLICATION_INDEX');
+        // Route::middleware(["userType:admin,internal"])->group(function () {
+            Route::get('', [LtpApplicationController::class, 'index'])->name('ltpapplication.index');
             Route::get('review/{id}', [LtpApplicationController::class, 'review'])->name('ltpapplication.review')->middleware('permission:LTP_APPLICATION_REVIEW');
             Route::get('preview/{id}', [MyApplicationController::class, 'preview'])->name('ltpapplication.preview')->middleware('permission:LTP_APPLICATION_INDEX');
             Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return')->middleware('permission:LTP_APPLICATION_RETURN');
+            Route::post('reviewed/{id}', [LtpApplicationController::class, 'reviewed'])->name('ltpapplication.reviewed')->middleware('permission:LTP_APPLICATION_REVIEW');
             Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept')->middleware('permission:LTP_APPLICATION_ACCEPT');
             Route::get('permit/{id}', [LtpApplicationController::class, 'permit'])->name('ltpapplication.permit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::post('permit/{id}', [LtpApplicationController::class, 'createPermit'])->name('ltpapplication.createPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::get('edit-permit/{id}', [LtpApplicationController::class, 'editPermit'])->name('ltpapplication.editPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::post('update-permit/{id}', [LtpApplicationController::class, 'updatePermit'])->name('ltpapplication.updatePermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::post('release-ltp/{id}', [LtpApplicationController::class, 'releaseLtp'])->name('ltpapplication.release');
-        });
+        // });
         Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
     });
 
@@ -332,9 +333,10 @@ Route::middleware('auth')->group(function (){
        Route::post('ltp-chief-rps-sign/{id}', [ForSignaturesController::class, 'ltpChiefRpsSign'])->name('for-signatures.ltpChiefRpsSign');
        Route::post('ltp-chief-tsd-sign/{id}', [ForSignaturesController::class, 'ltpChiefTsdSign'])->name('for-signatures.ltpChiefTsdSign');
        Route::post('ltp-penro-sign/{id}', [ForSignaturesController::class, 'ltpPenroSign'])->name('for-signatures.ltpPenroSign');
+       Route::post('payment-order-preparer-signed/{id}', [ForSignaturesController::class, 'paymentOrderPreparerSign'])->name('for-signatures.paymentOrderPreparerSign');
+       Route::post('payment-order-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderApproverSign'])->name('for-signatures.paymentOrderApproverSign');
     });
 
-    
 });
 
 Route::get('/test-email', function () {

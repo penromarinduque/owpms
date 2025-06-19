@@ -8,6 +8,7 @@ use App\Models\InspectionReport;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Models\LtpPermit;
+use App\Models\PaymentOrder;
 use App\Notifications\LtpPermitApproved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -116,6 +117,24 @@ class ForSignaturesController extends Controller
         });
     }
 
+    public function paymentOrderPreparerSign(Request $request, string $id) {
+        $payment_order_id = Crypt::decryptString($id);
+        $payment_order = PaymentOrder::find($payment_order_id);
+        Gate::authorize('preparerSign', $payment_order);
+        $payment_order->prepared_signed = true;
+        $payment_order->save();
+        return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
+    }
+
+    public function paymentOrderApproverSign(Request $request, string $id) {
+        $payment_order_id = Crypt::decryptString($id);
+        $payment_order = PaymentOrder::find($payment_order_id);
+        Gate::authorize('approverSign', $payment_order);
+        $payment_order->approved_signed = true;
+        $payment_order->save();
+        return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
+    }
+
     private function getDocuments($type) {
         if($type == 'inspection_report') {
             return InspectionReport::pendingSignaturesFor(auth()->user()->id)->paginate(50);
@@ -123,6 +142,10 @@ class ForSignaturesController extends Controller
 
         if($type == "ltp") {
             return LtpPermit::pendingSignaturesFor(auth()->user()->id)->paginate(50);
+        }
+
+        if($type == "payment_order") {
+            return PaymentOrder::pendingSignaturesFor(auth()->user()->id)->paginate(50);
         }
 
         return [];

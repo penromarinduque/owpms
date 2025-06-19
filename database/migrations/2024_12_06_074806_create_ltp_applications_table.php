@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('permittee_id');
             $table->string('application_no');
-            $table->enum('application_status', ['draft', 'submitted', 'under-review', 'returned', 'resubmitted', 'accepted', 'payment-in-process', 'paid', 'for-inspection', 'inspection-rejected', 'approved', 'expired', 'released'])->default('draft');
+            $table->enum('application_status', ['draft', 'submitted', 'under-review', 'returned', 'resubmitted', 'accepted', 'payment-in-process', 'paid', 'for-inspection', 'inspection-rejected', 'approved', 'expired', 'released', 'reviewed'])->default('draft');
             $table->date('application_date');
             $table->date('transport_date');
             $table->text('purpose')->nullable();

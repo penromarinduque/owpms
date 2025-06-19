@@ -383,7 +383,8 @@ class MyApplicationController extends Controller
             "title" => "Application Requirements",
             "id" => $id,
             "requirements" => $requirements,
-            "attachments" => $attachments
+            "attachments" => $attachments,
+            "ltp_application" => $ltp_application
         ]);
     }
 

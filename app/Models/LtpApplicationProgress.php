@@ -14,6 +14,7 @@ class LtpApplicationProgress extends Model
     // 'submitted','under-review','returned','resubmitted','accepted','payment-in-process','paid','for-inspection'
     const STATUS_SUBMITTED = "submitted";
     const STATUS_UNDER_REVIEW = "under-review";
+    const STATUS_REVIEWED = "reviewed";
     const STATUS_RETURNED = "returned";
     const STATUS_RESUBMITTED = "resubmitted";
     const STATUS_ACCEPTED = "accepted";

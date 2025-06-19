@@ -51,13 +51,13 @@ Application Requirements
                                         $attachment = $attachments->firstWhere('ltp_requirement_id', $req->id);
                                     @endphp
                                     @if ($attachment)
-                                        <a href="{{ asset('storage/'.$attachment->file_path) }}" target="_blank"><i class="fas fa-eye"></i> View Attachment</a>
+                                        <a href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($attachment->id)]) }}" target="_blank"><i class="fas fa-eye"></i> View Attachment</a>
                                     @else
                                         <span class="text-secondary">No Uploaded Attachment</span> 
                                     @endif
                                 </td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-title="Upload Requirement" onclick="showUploadModal('{{ $req->id }}')"><i class="fas fa-upload"></i></button>
+                                    <button class="btn btn-primary btn-sm @cannot('uploadRequirements', $ltp_application) disabled @endcan"  data-bs-toggle="tooltip" data-bs-title="Upload Requirement" onclick="showUploadModal('{{ $req->id }}')"><i class="fas fa-upload"></i></button>
                                 </td>
                             </tr>
                         @empty

@@ -64,6 +64,12 @@ For Signatures
                                 <th>Application No.</th>
                                 <th width="500px" class="text-center">Actions</th>
                             @endif
+                            @if (request('type') == 'payment_order')
+                                @php $totalSpan = 4 @endphp
+                                <th>Document</th>
+                                <th>Order Number</th>
+                                <th width="500px" class="text-center">Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -103,6 +109,20 @@ For Signatures
                                         @endcan
                                         @can('penroSign', $doc)
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpPenroSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">PENRO Signed</button>
+                                        @endcan
+                                    </td>
+                                @endif
+                                @if (request('type') == 'payment_order')   
+                                    <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
+                                    <td>
+                                        {{ $doc->order_number }}
+                                    </td>
+                                    <td class="text-center">
+                                        @can('preparerSign', $doc)
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderPreparerSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Prepared By Signed</button>
+                                        @endcan
+                                        @can('approverSign', $doc)
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approved By Signed</button>
                                         @endcan
                                     </td>
                                 @endif

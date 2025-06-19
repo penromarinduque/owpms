@@ -52,6 +52,27 @@ class PaymentOrder extends Model implements Auditable
     public function approvedBy() {
         return $this->belongsTo(User::class, 'approved_by', 'id');
     }
+
+    public function scopePendingSignaturesFor($query, $userId)
+    {
+        return $query->where(function ($q) use ($userId) {
+            // Preparer: Hasn't signed yet (null or false)
+            $q->where('prepared_by', $userId)
+            ->where(function ($subQ) {
+                $subQ->whereNull('prepared_signed')
+                    ->orWhere('prepared_signed', false);
+            });
+        })->orWhere(function ($q) use ($userId) {
+            // Approver: Only if preparer has signed (true), but approver hasn't signed yet
+            $q->where('approved_by', $userId)
+            ->where(function ($subQ) {
+                 $subQ->whereNull('approved_signed')
+                    ->orWhere('approved_signed', false);
+            })
+            ->where('prepared_signed', true);
+        });
+    }
+
     
 
 

@@ -1,6 +1,6 @@
 <div class="modal fade" id="updatePaymentModal">
     <div class="modal-dialog">
-        <form method="POST" action="" class="modal-content">
+        <form method="POST" action="" class="modal-content" enctype="multipart/form-data">
             <div class="modal-header">
                 <h4 class="modal-title">Update Payment</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -23,6 +23,15 @@
                     <label class="form-label">OR No.</label>
                     <input type="text" class="form-control @error('or_no',  'updatePayment') is-invalid @enderror" name="or_no" placeholder="OR No." value="{{ old('or_no')  }}">
                     @error('or_no', 'updatePayment')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Receipt</label>
+                    <input type="file" id="receipt" accept="image/jpeg, image/png" class="form-control @error('receipt',  'updatePayment') is-invalid @enderror" name="receipt" placeholder="Receipt" >
+                    @error('receipt', 'updatePayment')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>

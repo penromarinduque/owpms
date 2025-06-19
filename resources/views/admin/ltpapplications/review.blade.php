@@ -17,8 +17,15 @@ active
     </ol>
 
     <div class="d-flex justify-content-end gap-2 mb-2">
-        <button class="btn btn-sm btn-success"data-bs-toggle="modal" data-bs-target="#acceptApplicationModal"><i class="fas fa-check me-1"></i>Accept Application</button>
-        <button class="btn btn-sm btn-warning" onclick="showReturnApplicationModal({{ $ltp_application }})"><i class="fas fa-arrow-left me-1"></i>Return Application</button>
+        {{-- @can('accept', $ltp_application)
+            <button class="btn btn-sm btn-success"data-bs-toggle="modal" data-bs-target="#acceptApplicationModal"><i class="fas fa-check me-1"></i>Accept Application</button>
+        @endcan --}}
+        @can('review', $ltp_application)
+            <button class="btn btn-sm btn-success"data-bs-toggle="modal" data-bs-target="#reviewApplicationModal"><i class="fas fa-check me-1"></i>Reviewed</button>
+        @endcan
+        @can('return', $ltp_application)
+            <button class="btn btn-sm btn-warning" onclick="showReturnApplicationModal({{ $ltp_application }})"><i class="fas fa-arrow-left me-1"></i>Return Application</button>
+        @endcan
     </div>
 
     <div class="card mb-4">
@@ -61,8 +68,8 @@ active
                     <h6>{{$ltp_application->application_no}}</h6>
                 </div>
                 <div class="col-lg-3 col-sm-6">
-                    <label>Application Status.</label>
-                    <h6>{{$_helper->formatApplicationStatus($ltp_application->application_status)}}</h6>
+                    <label>Application Status.</label><br>
+                    <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <label>Date Applied</label>
@@ -89,7 +96,7 @@ active
                 @forelse($ltp_application->attachments as $attachment)
                     <div class="col-lg-3 col-sm-6">
                         <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
-                        <h6><a href="{{ asset('storage/'.$attachment->file_path) }}" target="_blank">View Attachment</a></h6>
+                        <h6><a href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($attachment->id)]) }}" target="_blank">View Attachment</a></h6>
                     </div>
                 @empty
                     <div class="col-lg-3 col-sm-6">
@@ -101,37 +108,10 @@ active
     </div>
 </div>
 
+@endsection
 
-<div class="modal fade" id="acceptApplicationModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form class="modal-content" action="{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}" method="POST">
-            @csrf
-            <div class="modal-header">
-                <h5 class="modal-title" id="title">Accept Application</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Please double check if all the required attachments are physically submitted and complete before accepting the application. This cannot be undone.</p>
-                @foreach ($ltp_requirements as $req)
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="req_{{ $req->id }}" name="req[]" value="{{ $req->id }}" >
-                        <label class="form-check-label" for="req_{{ $req->id }}">
-                            {{ $req->requirement_name }} 
-                            @if ($req->is_mandatory)
-                                <span class="text-danger">*</span>
-                            @endif  
-                        </label>
-                    </div>
-                @endforeach
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-success btn-submit">Accept</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-@include('components.returnApplication')
-@include('components.confirm')
+@section('includes')
+    @include('components.reviewConfirmationModal')
+    @include('components.returnApplication')
+    @include('components.confirm')
 @endsection
