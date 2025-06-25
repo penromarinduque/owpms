@@ -43,7 +43,7 @@ class PaymentOrderCreated extends Notification
         return (new MailMessage)
                     ->line('Good day!')
                     ->line('Your Payment Order for LTP Application '.$this->ltpApplication->application_no.' has been created. You can now proceed to payment.')
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -55,7 +55,7 @@ class PaymentOrderCreated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'Payment Order Created',
             'message' => 'Your Payment Order for LTP Application '.$this->ltpApplication->application_no.' has been created. You can now proceed to payment.',
         ];

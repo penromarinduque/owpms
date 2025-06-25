@@ -44,7 +44,7 @@ class InspectionProofSubmitted extends Notification
                     ->line('Good day!')
                     ->line('Good Day! A new LTP Application is now ready for Inspection.')
                     ->line('Application Number: ' . $this->ltpApplication->application_no)
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('ltpapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -57,7 +57,7 @@ class InspectionProofSubmitted extends Notification
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('ltpapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'For Inspection',
             'message' => 'An LTP Application is now ready for Inspection.',
         ];

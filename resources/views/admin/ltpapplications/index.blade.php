@@ -129,15 +129,19 @@ active
                 <li class="nav-item">
                     <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
                 </li>
-                <li class="nav-item">
-                    <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
-                </li>
+                @can('viewAcceptedTab', App\Models\LtpApplication::class)
+                    <li class="nav-item">
+                        <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
+                    </li>
+                @endcan
                 <li class="nav-item">
                     <a href="?status=all&category=rejected" class="nav-link {{ request('category') == 'rejected' ? 'active' : ''}}"><i class="fas fa-times-circle me-1"></i>Rejected</a>
                 </li>
-                <li class="nav-item">
-                    <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
-                </li>
+                @can('viewApprovedTab', App\Models\LtpApplication::class)
+                    <li class="nav-item">
+                        <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
+                    </li>
+                @endcan
                 <li class="nav-item">
                     <a href="?status=expired&category=expired" class="nav-link {{ request('category') == 'expired' ? 'active' : ''}}"><i class="fas fa-calendar-times me-1"></i>Expired</a>
                 </li>
@@ -148,6 +152,9 @@ active
             <div class="d-flex justify-content-end mb-3">
                 <form class="row gap-0" action="" method="get">
                     <input type="hidden" name="category" value="{{ request('category') }}">
+                    <div class="col-auto">
+                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+                    </div>
                     <div class="col-auto pe-0">
                         <select class="form-select" name="status" id="">
                             <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
@@ -187,7 +194,9 @@ active
                                     <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
                                 </td>
                                 <td class="text-center align-middle">
-                                    <a href="{{ route('ltpapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Preview"><i class="fas fa-eye"></i></a>
+                                    @can('view', $ltp_application)
+                                        <a href="{{ route('ltpapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details"><i class="fas fa-file-alt"></i></a>
+                                    @endcan
                                     @can('accept', $ltp_application)
                                         <a href="#" onclick="showAcceptApplicationModal('{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Accept/Receive"><i class="fas fa-check"></i></a>
                                     @endcan
@@ -206,18 +215,19 @@ active
                                     @if (in_array($ltp_application->application_status, ['payment-in-process']))   
                                         <a href="{{ route('paymentorder.show', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
-                                    @if (in_array($ltp_application->application_status, ['paid', 'for-inspection', 'inspection-rejected']))   
-                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
-                                    @endif
-                                    @if (in_array($ltp_application->application_status, ['inspected']))   
-                                        @can('generateLtp', $ltp_application)
-                                            <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit"><i class="fas fa-file-pdf"></i></a>
-                                        @endcan
-                                        <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report"><i class="fas fa-file-pdf"></i></a>
-                                        @endif
-                                    @if (in_array($ltp_application->application_status, ['approved']))
+                                    @can('inspect', $ltp_application)  
+                                            <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
+                                            @if (in_array($ltp_application->application_status, ['inspected']))   
+                                                @can('generateLtp', $ltp_application)
+                                                    <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit"><i class="fas fa-file-pdf"></i></a>
+                                                @endcan
+                                                <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report"><i class="fas fa-file-pdf"></i></a>
+                                            @endif
+                                    @endcan
+
+                                    @can('releaseLtp', $ltp_application)
                                         <a href="#" onclick="showReleaseLtpModal('{{ route('ltpapplication.release', Crypt::encryptString($ltp_application->id)) }}')" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Release LTP"><i class="fa-solid fa-arrow-right-from-bracket"></i> Release LTP</a>
-                                    @endif
+                                    @endcan
 
                                     <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs"><i class="fas fa-history"></i></a>
                                 </td>

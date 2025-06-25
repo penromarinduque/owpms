@@ -41,7 +41,7 @@ class LtpPermitCreated extends Notification
         return (new MailMessage)
                     ->line('Good news! Your LTP Permit has been created.')
                     ->line('Your LTP Permit has been created and is now for approval. You will be notified once the Permit is approved and you can proceed to the next step. We appreciate your patience and understanding.')
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -54,7 +54,7 @@ class LtpPermitCreated extends Notification
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'Your LTP Permit has been created.',
             'message' => 'Your LTP Permit has been created and now for approval.',
         ];

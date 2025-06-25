@@ -41,7 +41,7 @@ public $ltpApplication;
         return (new MailMessage)
                     ->line('Good news! Your LTP application has been reviewed.')
                     ->line('Your application requirements have been reviewed and complied with. You may now proceed with submitting the application letter to the Records officer for official acceptance. ')
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -54,7 +54,7 @@ public $ltpApplication;
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'LTP Application Reviewed',
             'message' => 'Your application requirements have been reviewed and complied with. You may now proceed with submitting the application letter to the Records officer for official acceptance.',
         ];

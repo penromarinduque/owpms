@@ -42,7 +42,7 @@ class LtpApplicationReturned extends Notification
         return (new MailMessage)
                     ->line('Good day!')
                     ->line('One of our focals is reviewing your application and checking the requirements. Please wait for the review. You will be notified once the review is completed and you can proceed to the next step. We appreciate your patience and understanding.')
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -55,7 +55,7 @@ class LtpApplicationReturned extends Notification
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'LTP Application Returned',
             'message' => 'Your LTP application has been returned.',
         ];

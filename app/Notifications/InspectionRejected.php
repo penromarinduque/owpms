@@ -44,7 +44,7 @@ class InspectionRejected extends Notification
                     ->greeting('Good Day!')
                     ->line('Your LTP Application inspection has been rejected.')
                     ->line('Application Number: ' . $this->ltpApplication->application_no)
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -57,7 +57,7 @@ class InspectionRejected extends Notification
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'Inspection Rejected',
             'message' => 'Your LTP Application inspection has been rejected. Application Number: ' . $this->ltpApplication->application_no,
         ];

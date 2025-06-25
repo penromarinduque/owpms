@@ -42,7 +42,7 @@ class LtpApplicationExpired extends Notification implements ShouldQueue
         return (new MailMessage)
                     ->line('Good day!')
                     ->line('Dear valued customer, this is to inform you that your LTP application has expired due to the transport date being in the past. If you wish to submit another application, please feel free to do so.')
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -55,7 +55,7 @@ class LtpApplicationExpired extends Notification implements ShouldQueue
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'LTP Application Expired',
             'message' => 'Your LTP application has expired.',
         ];

@@ -37,8 +37,16 @@ class MyApplicationController extends Controller
         $status = $request->status ?? 'all';
         $category = $request->category ?? 'submitted';
 
+        $query = LtpApplication::query();
+
+        if($request->has('application_no')) {
+            $query->where([
+                ['application_no', 'LIKE', '%' . $request->application_no . '%']
+            ]);
+        }
+
         if($status == 'all') {
-            $ltp_applications = LtpApplication::where([
+            $ltp_applications = $query->where([
                 'permittee_id' => Auth::user()->wcp()->id
             ])
             ->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category))
@@ -46,7 +54,7 @@ class MyApplicationController extends Controller
             ->paginate(50);
         }
         else {
-            $ltp_applications = LtpApplication::where([
+            $ltp_applications = $query->where([
                 'permittee_id' => Auth::user()->wcp()->id,
                 'application_status' => $status
             ])

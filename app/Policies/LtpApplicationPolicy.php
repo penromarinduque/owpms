@@ -29,7 +29,8 @@ class LtpApplicationPolicy
      */
     public function inspect(User $user, LtpApplication $ltpApplication): bool
     {
-        return ($user->id == $ltpApplication->permittee->user_id || in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()));
+        return ($user->id == $ltpApplication->permittee->user_id || in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()))
+         && in_array($ltpApplication->application_status, [LtpApplication::STATUS_FOR_INSPECTION, LtpApplication::STATUS_PAID, LtpApplication::STATUS_INSPECTION_REJECTED, LtpApplication::STATUS_INSPECTED]);
     }
 
     /**
@@ -134,7 +135,16 @@ class LtpApplicationPolicy
     }
 
     public function releaseLtp(User $user, LtpApplication $ltpApplication) {
-        return in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions());
+        $permit = $ltpApplication->permit;
+        return in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions())
+            && $ltpApplication->application_status == LtpApplication::STATUS_APPROVED
+            && $permit->penro_signed && $permit->chief_tsd_signed && $permit->chief_rps_signed;
+    }
+
+    public function downloadLtp(User $user, LtpApplication $ltpApplication) {
+        $permit = $ltpApplication->permit;
+        return (in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions()) || $user->id == $ltpApplication->permittee->user_id)
+            && ($ltpApplication->application_status == LtpApplication::STATUS_RELEASED || ($permit->penro_signed && $permit->chief_tsd_signed && $permit->chief_rps_signed));
     }
 
     public function review(User $user, LtpApplication $ltpApplication) {
@@ -158,7 +168,24 @@ class LtpApplicationPolicy
 
     public function viewReviewedTab(User $user) {
         $userPermissions = $user->getUserPermissions();
-        return in_array('LTP_APPLICATION_ACCEPT', $userPermissions);
+        $allowedActions = [
+            'PAYMENT_ORDERS_CREATE', 
+            'PAYMENT_ORDERS_UPDATE', 
+            'PAYMENT_ORDERS_INDEX', 
+            'PAYMENT_ORDERS_DELETE', 
+            'LTP_APPLICATION_INSPECT', 
+        ];
+        return count(array_intersect($userPermissions, $allowedActions)) > 0;
+    }
+
+    public function viewAcceptedTab(User $user) {
+        $userPermissions = $user->getUserPermissions();
+        return in_array('LTP_APPLICATION_RETURN', $userPermissions);
+    }
+
+    public function viewApprovedTab(User $user) {
+        $userPermissions = $user->getUserPermissions();
+        return in_array('LTP_APPLICATION_RELEASE', $userPermissions);
     }
 
     public function uploadRequirements(User $user, LtpApplication $ltpApplication) {

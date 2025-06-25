@@ -22,6 +22,7 @@ use App\Notifications\LtpApplicationReviewed;
 use App\Notifications\LtpPermitCreated;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -38,6 +39,12 @@ class LtpApplicationController extends Controller
         $ltp_application_query = LtpApplication::query();
 
         $this->checkIndexAuthorization($category);
+
+        if($request->has('application_no')) {
+            $ltp_application_query->where([
+                ['application_no', 'LIKE', '%' . $request->application_no . '%']
+            ]);
+        }
 
         if($status == 'all') {
             $ltp_applications = $ltp_application_query->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category));
@@ -284,7 +291,7 @@ class LtpApplicationController extends Controller
     public function editPermit(Request $request, string $id) {
         $ltp_application = LtpApplication::find(Crypt::decryptString($id));
         $permit = $ltp_application->permit;
-
+        
         Gate::authorize('generateLtp', $ltp_application);
 
         return view('admin.ltpapplications.edit-permit', [
@@ -359,13 +366,24 @@ class LtpApplicationController extends Controller
 
             $permit = $ltp_application->permit;
 
-            $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf');
+            $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf', 'private');
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationReleased($ltp_application));
 
             return redirect()->back()->with('success', 'Successfully released LTP.');
         });
 
+    }
+
+    public function printPermit(Request $request, string $id) {
+        $permit = LtpPermit::find(Crypt::decryptString($id));
+        $ltp_application = LtpApplication::find($permit->ltp_application_id);
+
+        return view('admin.ltpapplications.print-permit', [
+            'ltp_application' => $ltp_application,
+            'permit' => $permit,
+            '_user' => new User
+        ]);
     }
 
     private function checkIndexAuthorization($category) {
@@ -384,5 +402,12 @@ class LtpApplicationController extends Controller
         // else if($category == 'returned') {
         //     Gate::authorize('viewAnyReturnedLtp', LtpApplication::class);
         // }
+    }
+
+    public function downloadLtp(Request $request, string $id) {
+        $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+        Gate::authorize('downloadLtp', $ltp_application);
+        $file = Storage::disk('private')->get('ltps/' . $ltp_application->permit->permit_number . '.pdf');
+        return response($file)->header('Content-Type', 'application/pdf');
     }
 }

@@ -150,7 +150,7 @@ active
                 </div>
 
                 <div class="d-flex justify-content-end gap-1">
-                    <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Save</button>
+                    <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Saves</button>
                 </div>
             </form>
         </div>

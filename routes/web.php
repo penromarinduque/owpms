@@ -133,7 +133,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::get('/print-request-letter/{id}', [MyApplicationController::class, 'printRequestLetter'])->name('myapplication.printRequestLetter');
         Route::post('/upload-receipt/{id}', [MyApplicationController::class, 'uploadReceipt'])->name('myapplication.uploadreceipt');
-        Route::get('/show/{id}', [MyApplicationController::class, 'show'])->name('myapplication.show');
+        // Route::get('/show/{id}', [MyApplicationController::class, 'show'])->name('myapplication.show');
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
         Route::post('/store', [MyApplicationController::class, 'store'])->name('myapplication.store');
@@ -160,7 +160,9 @@ Route::middleware('auth')->group(function (){
             Route::post('permit/{id}', [LtpApplicationController::class, 'createPermit'])->name('ltpapplication.createPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::get('edit-permit/{id}', [LtpApplicationController::class, 'editPermit'])->name('ltpapplication.editPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::post('update-permit/{id}', [LtpApplicationController::class, 'updatePermit'])->name('ltpapplication.updatePermit')->middleware('permission:LTP_APPLICATION_INSPECT');
+            Route::get('print-permit/{id}', [LtpApplicationController::class, 'printPermit'])->name('ltpapplication.printPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::post('release-ltp/{id}', [LtpApplicationController::class, 'releaseLtp'])->name('ltpapplication.release');
+            Route::get('download-ltp/{id}', [LtpApplicationController::class, 'downloadLtp'])->name('ltpapplication.downloadLtp');
         // });
         Route::get('render-logs', [LtpApplicationController::class, 'renderLogs'])->name('ltpapplication.renderLogs');
     });
@@ -339,6 +341,10 @@ Route::middleware('auth')->group(function (){
 
 });
 
+
+
+
+// test routes
 Route::get('/test-email', function () {
     $details = [
         'subject' => 'Test Email',
@@ -398,3 +404,5 @@ Route::get("token", function () {
 
 //     $ltp_applications_query->update(['application_status' => 'expired']);
 // });
+
+Route::view("test", "test");

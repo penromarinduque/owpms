@@ -12,6 +12,8 @@
 
     $canViewSubmittedTab = auth()->user()->can('viewSubmittedTab', App\Models\LtpApplication::class);
     $canViewReviewedTab = auth()->user()->can('viewReviewedTab', App\Models\LtpApplication::class);
+    $canViewAcceptedTab = auth()->user()->can('viewAcceptedTab', App\Models\LtpApplication::class);
+    $canViewApprovedTab = auth()->user()->can('viewApprovedTab', App\Models\LtpApplication::class);
 
     $canViewPaymentOrders = auth()->user()->can('viewAny', App\Models\PaymentOrder::class);
     $canViewIssuedOfficialReceipts = auth()->user()->can('viewIssuedOr', App\Models\PaymentOrder::class);
@@ -85,9 +87,13 @@
                             <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'reviewed' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'reviewed', 'status' => 'all']) }}">Reviewed</a> 
                         @endif
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'returned' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'returned', 'status' => 'all']) }}">Returned</a> 
-                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'accepted', 'status' => 'all']) }}">Accepted</a> 
+                        @if ($canViewAcceptedTab)
+                            <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'accepted' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'accepted', 'status' => 'all']) }}">Accepted</a> 
+                        @endif
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'rejected' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'rejected', 'status' => 'all']) }}">Rejected</a> 
-                        <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'approved' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'approved', 'status' => 'all']) }}">Approved</a> 
+                        @if ($canViewApprovedTab)
+                            <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'approved' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'approved', 'status' => 'all']) }}">Approved</a> 
+                        @endif
                         <a class="nav-link {{ request()->routeIs('ltpapplication.index') && request()->query('category') == 'expired' ? 'active' : '' }}" href="{{ route('ltpapplication.index', ['category' => 'expired', 'status' => 'all']) }}">Expired</a> 
                     </nav>
                 </div>

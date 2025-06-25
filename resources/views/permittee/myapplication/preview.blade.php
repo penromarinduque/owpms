@@ -32,6 +32,9 @@ My Applications
                 @if ($ltp_application->application_status == 'draft')
                     <li><a class="dropdown-item" href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"><i class="fas fa-upload me-1"></i> Submit Application</a></li>
                 @endif
+                @can('downloadLtp', $ltp_application)
+                    <li><a class="dropdown-item" href="{{ route('ltpapplication.downloadLtp', Crypt::encryptString($ltp_application->id)) }}" target="_blank"><i class="fas fa-download me-1"></i> Download Local Transport Permit</a></li>
+                @endcan
             </ul>
         </div>
         
@@ -40,7 +43,7 @@ My Applications
     <div class="card mb-4">
     	<div class="card-header">
             <i class="fas fa-list me-1"></i>
-            My Application
+            LTP Application
         </div>
     <div class="card-body">
 
@@ -60,76 +63,85 @@ My Applications
             @endif
 
             
-            <h5>Permittee Details</h5>
-
-            <div class="row mb-3">
-                <div class="col-lg-3 col-sm-6">
-                    <label>Permittee Name</label>
-                    <h6>{{$permittee->user->personalInfo->first_name}} {{$permittee->user->personalInfo->middle_name}} {{$permittee->user->personalInfo->last_name}}</h6>
+            <h6><i class="fas fa-id-card me-1"></i> Permittee Details</h6>
+            <div class="bg-light p-3 rounded-2">
+                <div class="row mb-3">
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Permittee Name</label>
+                        <h6>{{$permittee->user->personalInfo->first_name}} {{$permittee->user->personalInfo->middle_name}} {{$permittee->user->personalInfo->last_name}}</h6>
+                    </div>
+                    <div class="col-12"></div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Wildlife Collectors Permit</label>
+                        <h6>{{$permittee->user->wcp()->permit_number}} </h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>WCP Status</label>
+                        <h6>{{$permittee->user->wcp()->getValidity()}} </h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Wildlife Farm Permit</label>
+                        <h6>{{$permittee->user->wfp()->permit_number}} </h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>WFP Status</label>
+                        <h6>{{$permittee->user->wfp()->getValidity()}} </h6>
+                    </div>
+                    <div class="col-12"></div>
                 </div>
-                <div class="col-12"></div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>Wildlife Collectors Permit</label>
-                    <h6>{{$permittee->user->wcp()->permit_number}} </h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>WCP Status</label>
-                    <h6>{{$permittee->user->wcp()->getValidity()}} </h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>Wildlife Farm Permit</label>
-                    <h6>{{$permittee->user->wfp()->permit_number}} </h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>WFP Status</label>
-                    <h6>{{$permittee->user->wfp()->getValidity()}} </h6>
-                </div>
-                <div class="col-12"></div>
             </div>
 
-            <hr>
-            <h5>Application Details</h5>
-            <div class="row mb-3">
-                <div class="col-lg-3 col-sm-6">
-                    <label>Application No.</label>
-                    <h6>{{$ltp_application->application_no}}</h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>Application Status.</label>
-                    <h6>{{$_helper->formatApplicationStatus($ltp_application->application_status)}}</h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>Date Applied</label>
-                    <h6>{{$ltp_application->application_date->format('F d, Y')}}</h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>Transport Date</label>
-                    <h6>{{$ltp_application->transport_date->format('F d, Y')}}</h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>Purpose</label>
-                    <h6>{{$ltp_application->purpose}}</h6>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <label>Destination</label>
-                    <h6>{{$ltp_application->destination}}</h6>
-                </div>
+            <br>
 
+            <h6><i class="fas fa-file-alt me-1"></i> Application Details</h6>
+            <div class="bg-light p-3 rounded-2">
+                <div class="row mb-3 ">
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Application No.</label>
+                        <h6>{{$ltp_application->application_no}}</h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Application Status.</label>
+                        <h6>
+                            <span class="badge  bg-{{$_helper->setApplicationStatusBgColor($ltp_application->application_status)}}">{{$_helper->formatApplicationStatus($ltp_application->application_status)}}</span>
+                        </h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Date Applied</label>
+                        <h6>{{$ltp_application->application_date->format('F d, Y')}}</h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Transport Date</label>
+                        <h6>{{$ltp_application->transport_date->format('F d, Y')}}</h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Purpose</label>
+                        <h6>{{$ltp_application->purpose}}</h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Destination</label>
+                        <h6>{{$ltp_application->destination}}</h6>
+                    </div>
+    
+                </div>
             </div>
 
-            <hr>
-            <h5>Attachments</h5>
-            <div class="row mb-3">
-                @forelse($ltp_application->attachments as $attachment)
-                    <div class="col-lg-3 col-sm-6">
-                        <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
-                        <h6><a href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($attachment->id)]) }}" target="_blank">View Attachment</a></h6>
-                    </div>
-                @empty
-                    <div class="col-lg-3 col-sm-6">
-                        <label>No Attachments Submitted</label>
-                    </div>
-                @endforelse
+            <br>
+
+            <h6><i class="fas fa-paperclip me-2"></i>Attachments</h6>
+            <div class="bg-light p-3 rounded-2">
+                <div class="row mb-3">
+                    @forelse($ltp_application->attachments as $attachment)
+                        <div class="col-lg-3 col-sm-6">
+                            <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
+                            <h6><a href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($attachment->id)]) }}" target="_blank">View Attachment</a></h6>
+                        </div>
+                    @empty
+                        <div class="col-lg-3 col-sm-6">
+                            <label>No Attachments Submitted</label>
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>

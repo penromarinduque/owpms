@@ -217,7 +217,6 @@ class PaymentOrderController extends Controller
 
     public function update(Request $request, string $payment_order_id) {
 
-        return $request;
         //
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:cancelled,paid',
@@ -237,14 +236,14 @@ class PaymentOrderController extends Controller
 
                 $file = $request->file('receipt');
 
-                $filename = 'receipt_' . $paymentOrder->ltp_application_id . '.' . $file->getClientOriginalExtension();
+                $filename = $paymentOrder->ltp_application_id . '.' . $file->getClientOriginalExtension();
 
                 $path = $file->storeAs('receipts', $filename, 'private');
 
                 $paymentOrder->update([
                     'status' => $request->status,
                     'payment_reference' => $request->or_no,
-                    'receipt' => $path
+                    'receipt_url' => $path
                 ]);
                 
 

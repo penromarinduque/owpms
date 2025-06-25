@@ -49,5 +49,9 @@ class LtpPermit extends Model implements Auditable
     public function ltpApplication(){
         return $this->belongsTo(LtpApplication::class, 'ltp_application_id', 'id');
     }
+
+    public function approver(){
+        return $this->belongsTo(User::class, 'penro', 'id');
+    }
     
 }

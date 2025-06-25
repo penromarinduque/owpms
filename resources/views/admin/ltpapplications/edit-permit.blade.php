@@ -96,7 +96,7 @@ active
                         <div class="d-flex flex-column align-items-end">
                             <select name="approver" class="form-select text-center fw-bold select2 @error('approver') is-invalid @enderror" id="approver" onchange="approverChanged(event)">
                                 @foreach ($_user->getAllInternals() as $user)
-                                    <option value="{{ $user->id }}" data-designation="{{ $user->empPosition ? $user->empPosition->position : '' }}" class="fw-bold" {{ $user->id == old('approver') ? 'selected' : ($user->id == $permit->approver ? 'selected' : ($user->id == 11 ? 'selected' : '')) }} style="text-transform: uppercase"><u>&nbsp;&nbsp;{{ $user->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></option>
+                                    <option value="{{ $user->id }}" data-designation="{{ $user->empPosition ? $user->empPosition->position : '' }}" class="fw-bold" {{ $user->id == old('approver') ? 'selected' : ($user->id == $permit->penro ? 'selected' : ($user->id == 11 ? 'selected' : '')) }} style="text-transform: uppercase"><u>&nbsp;&nbsp;{{ $user->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></option>
                                 @endforeach
                             </select>
                             @error('approver')
@@ -150,6 +150,7 @@ active
                 </div>
 
                 <div class="d-flex justify-content-end gap-1">
+                    <a href="{{ route('ltpapplication.printPermit', Crypt::encryptString($permit->id)) }}" target="_blank" class="btn btn-outline-primary"><i class="fas fa-print me-2"></i>Print</a>
                     <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Save Changes</button>
                 </div>
             </form>

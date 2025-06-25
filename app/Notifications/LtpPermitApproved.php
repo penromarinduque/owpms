@@ -42,7 +42,7 @@ class LtpPermitApproved extends Notification
         return (new MailMessage)
                     ->line('Good news! Your Local Transport Permit has been approved.')
                     ->line('Your Local Transport Permit has been approved and will now proceed to the next step which is releasing the permit. We appreciate your patience and understanding.')
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpPermit->ltp_application_id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpPermit->ltp_application_id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -55,7 +55,7 @@ class LtpPermitApproved extends Notification
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpPermit->ltp_application_id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpPermit->ltp_application_id)]),
             'title' => 'Your Local Transport Permit has been approved.',
             'message' => 'Your LTP Permit has been approved and is now ready for realising.',
         ];

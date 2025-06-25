@@ -42,7 +42,7 @@ class LtpApplicationReleased extends Notification
         return (new MailMessage)
                     ->line('Good day!')
                     ->line('Your Local Transport Permit has been successfully released and now ready for viewing.')
-                    ->action('View Application', URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }
 
@@ -55,7 +55,7 @@ class LtpApplicationReleased extends Notification
     {
         return [
             //
-            'url' => URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
+            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
             'title' => 'LTP Released',
             'message' => 'Your Local Transport Permit has been released and now ready for viewing.',
         ];

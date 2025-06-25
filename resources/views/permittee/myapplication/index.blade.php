@@ -151,6 +151,9 @@ active
             <div class="d-flex justify-content-end mb-3">
                 <form class="row gap-0" action="" method="get">
                     <input type="hidden" name="category" value="{{ request('category') }}">
+                    <div class="col-auto">
+                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+                    </div>
                     <div class="col-auto pe-0">
                         <select class="form-select" name="status" id="">
                             <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>

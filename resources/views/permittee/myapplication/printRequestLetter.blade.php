@@ -17,8 +17,8 @@
         .letterhead {
             padding-bottom: 7px;
             margin-bottom: 10px;
-            border-bottom: 2px solid #000;
-            font-size: 1rem;
+            border-bottom: 2px solid maroon;
+            font-size: 12px;
         }
 
         .letterhead h4 {
@@ -29,6 +29,8 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 10px 10px;
+
+            font-size: 12px
         }
 
         .recipient-block {
@@ -71,12 +73,8 @@
                 top: 0;
                 width: 100%;
                 line-height: 1;
-                font-size: 1rem;
             }
 
-            .letterhead h4 {
-                font-size: 1.2rem;
-            }
 
             .main-content {
                 margin-top: 60px;
@@ -89,14 +87,14 @@
 <body>
     <div class="container letter-content">
         <!-- Letterhead -->
-        <div class=" text-center  pb-2">
-            <h6 class="mb-0">REPUBLIC OF THE PHILIPPINES</h6>
-            <h6 class="mt-0 mb-0">{{ strtoupper($wfp->wildlifeFarm->farm_name) }}</h6>
+        <div class=" text-center letterhead  pb-4 ">
+            <p class="mb-0 fw-bold">REPUBLIC OF THE PHILIPPINES</p>
+            <p class="mt-0 mb-0 fw-bold">{{ strtoupper($wfp->wildlifeFarm->farm_name) }}</p>
             <p class="mt-0 mb-0">{{ $wfp->wildlifeFarm->barangay->barangay_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->municipality_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->province->province_name }}</p>
             <p class="mt-0 mb-0">Contact No. {{ $wfp->user->personalInfo->contact_no }} | Email: {{ $wfp->user->email }}</p>
         </div>
 
-        <br>
+        <br><br>
 
         <div class="main-content">
 
