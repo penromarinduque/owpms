@@ -37,7 +37,7 @@
                 </a>
                 <div class="collapse @yield('show')" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
-                        <a class="nav-link" href="">Local Transport Permit*</a>
+                        <a class="nav-link " href="{{ route('ltps.index') }}">Local Transport Permit</a>
                         @can('viewAny', App\Models\Permittee::class)
                             <a class="nav-link" href="{{route('permittees.index')}}">Permittee</a>
                         @endcan

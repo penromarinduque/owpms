@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\LtpApplication;
 use Illuminate\Auth\Access\Response;
 use App\Models\LtpPermit;
 use App\Models\User;
@@ -77,5 +78,12 @@ class LtpPermitPolicy
     public function penroSign(User $user, LtpPermit $ltpPermit): bool
     {
         return $ltpPermit->penro == $user->id && $ltpPermit->chief_tsd_signed == true && $ltpPermit->chief_rps_signed == true && ($ltpPermit->penro_signed == false || $ltpPermit->penro_signed == null);
+    }
+
+    public function viewPermit(User $user, LtpPermit $ltpPermit): bool
+    {
+        $ltpApplication = $ltpPermit->ltpApplication;
+
+        return ($ltpApplication->permittee->user_id == $user->id || in_array($user->usertype, ['admin', 'internal'])) && $ltpApplication->application_status == LtpApplication::STATUS_RELEASED;
     }
 }

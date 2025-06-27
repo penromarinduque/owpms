@@ -48,7 +48,6 @@ class LtpApplication extends Model implements Auditable
         return $this->hasMany(LtpApplicationSpecie::class);
     }
 
-
     public function permittee(){
         return $this->belongsTo(Permittee::class);
     }

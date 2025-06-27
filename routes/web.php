@@ -25,6 +25,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\IssuedOrController;
+use App\Http\Controllers\LtpController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
@@ -337,6 +338,12 @@ Route::middleware('auth')->group(function (){
        Route::post('ltp-penro-sign/{id}', [ForSignaturesController::class, 'ltpPenroSign'])->name('for-signatures.ltpPenroSign');
        Route::post('payment-order-preparer-signed/{id}', [ForSignaturesController::class, 'paymentOrderPreparerSign'])->name('for-signatures.paymentOrderPreparerSign');
        Route::post('payment-order-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderApproverSign'])->name('for-signatures.paymentOrderApproverSign');
+    });
+
+    // LTP's
+    Route::prefix('ltps')->group(function () {
+        Route::get('/', [LtpController::class, 'index'])->name('ltps.index');
+        Route::get('/view-permit/{id}', [LtpController::class, 'viewPermit'])->name('ltps.viewPermit');
     });
 
 });

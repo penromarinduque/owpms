@@ -53,5 +53,17 @@ class LtpPermit extends Model implements Auditable
     public function approver(){
         return $this->belongsTo(User::class, 'penro', 'id');
     }
+
+    public function getStatusAttribute() {
+        if(!$this->chief_rps_signed) {
+            return '<span class="badge bg-secondary">Pending Chief RPS Signature</span>';
+        } else if(!$this->chief_tsd_signed) {
+            return '<span class="badge bg-secondary">Pending Chief TSD Signature</span>';
+        } else if(!$this->penro_signed) {
+            return '<span class="badge bg-secondary">Pending PENRO Signature</span>';
+        } else {
+            return '<span class="badge bg-success">Approved</span>';
+        }
+    }
     
 }

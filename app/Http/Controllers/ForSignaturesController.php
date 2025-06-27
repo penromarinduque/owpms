@@ -99,6 +99,7 @@ class ForSignaturesController extends Controller
         Gate::authorize('penroSign', $ltpPermit);
         return DB::transaction(function () use ($ltpPermit, $ltpApplication) {
             $ltpPermit->penro_signed = true;
+            $ltpPermit->approved_at = now();
             $ltpPermit->save();
 
             $ltpApplication->application_status = LtpApplication::STATUS_APPROVED;
