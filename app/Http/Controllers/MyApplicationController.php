@@ -120,7 +120,7 @@ class MyApplicationController extends Controller
                     }
                 }
             }
-            return Redirect::route('myapplication.index')->with('success', 'Successfully saved!');
+            return Redirect::route('myapplication.index', ['status' => 'draft', 'category' => 'draft'])->with('success', 'Successfully saved!');
         });
     }
 

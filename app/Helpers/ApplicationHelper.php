@@ -160,6 +160,12 @@ class ApplicationHelper
             ];
         }
 
+        if($category == "draft") {
+            return [
+                LtpApplication::STATUS_DRAFT
+            ];
+        }
+
         return [];
     }
 

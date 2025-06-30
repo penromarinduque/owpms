@@ -46,7 +46,7 @@ class InspectionReportCreated extends Notification
                     ->line('An Inspection Report of wildlife has been successfully created and is now awaiting your sign.')
                     ->line('Application Number: ' . $this->ltpApplication->application_no)
                     ->action('View Application', $notifiable->usertype == 'permittee' ?
-                        URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]) :
+                        URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]) :
                         URL::route('ltpapplication.index', ['status' => 'inspected', 'category' => 'accepted']))
                     ->line('Thank you for using our application!');
     }
@@ -61,7 +61,7 @@ class InspectionReportCreated extends Notification
          return [
             //
             'url' => $notifiable->usertype == 'permittee' ?
-                 URL::route('myapplication.show', ['id' => Crypt::encryptString($this->ltpApplication->id)]) :
+                 URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]) :
                  URL::route('ltpapplication.index', ['status' => 'inspected', 'category' => 'accepted']),
             'title' => 'Inspection Report Created',
             'message' => 'An Inspection Report of wildlife has been successfully created and is now awaiting your sign.',

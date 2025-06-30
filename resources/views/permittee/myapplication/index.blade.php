@@ -45,7 +45,7 @@ active
 
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link {{ $status == 'draft' ? 'active' : '' }}" aria-current="page" href="?status=draft">
+                    <a class="nav-link {{ request('category') == 'draft' ? 'active' : '' }}" aria-current="page" href="?status=draft&category=draft">
                         <i class="fas fa-file-alt me-1"></i>
                         Draft 
                     </a>

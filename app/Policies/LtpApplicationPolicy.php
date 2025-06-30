@@ -174,6 +174,7 @@ class LtpApplicationPolicy
             'PAYMENT_ORDERS_INDEX', 
             'PAYMENT_ORDERS_DELETE', 
             'LTP_APPLICATION_INSPECT', 
+            'LTP_APPLICATION_ACCEPT',
         ];
         return count(array_intersect($userPermissions, $allowedActions)) > 0;
     }

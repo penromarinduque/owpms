@@ -263,6 +263,7 @@ class PaymentOrderController extends Controller
                 ]);
 
                 Notification::send($paymentOrder->ltpApplication->permittee->user, new LtpApplicationPaid($paymentOrder->ltpApplication));
+                
 
                 return redirect()->back()->with('success', 'Payment updated successfully');
             });
