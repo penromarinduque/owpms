@@ -131,6 +131,11 @@
         </div>
     </div>
 
+    <img 
+        class="qr-code" 
+        src="{{ $_helper->generateQrCode(route('qr.index', ['document_type' => 'ltp', 'id' => Crypt::encryptString($permit->ltp_application_id)])) }}" 
+        alt="">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript">
         window.addEventListener('load', function () {

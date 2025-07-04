@@ -84,7 +84,8 @@ class LtpApplicationController extends Controller
                 LtpApplicationProgress::create([
                     "ltp_application_id" => $ltp_application->id,
                     "user_id" => Auth::user()->id,
-                    "status" => LtpApplicationProgress::STATUS_UNDER_REVIEW
+                    "status" => LtpApplicationProgress::STATUS_UNDER_REVIEW,
+                    "description" => "LTP Application is beeing reviewed by " . auth()->user()->personalInfo->getFullNameAttribute()
                 ]);
 
                 Notification::send($ltp_application->permittee->user, new LtpApplicationReviewed($ltp_application));
@@ -130,7 +131,8 @@ class LtpApplicationController extends Controller
                 "ltp_application_id" => $id,
                 "user_id" => Auth::user()->id,
                 "status" => LtpApplicationProgress::STATUS_RETURNED,
-                "remarks" => $remarks
+                "remarks" => $remarks,
+                "description" => "LTP Application has been returned by " . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationReturned($ltp_application));
@@ -186,7 +188,8 @@ class LtpApplicationController extends Controller
             LtpApplicationProgress::create([
                 "ltp_application_id" => $ltp_application_id,
                 "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_REVIEWED
+                "status" => LtpApplicationProgress::STATUS_REVIEWED,
+                "description" => "LTP Application has been reviewed by " . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationReviewDone($ltp_application));
@@ -224,7 +227,8 @@ class LtpApplicationController extends Controller
             LtpApplicationProgress::create([
                 "ltp_application_id" => $ltp_application_id,
                 "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_ACCEPTED
+                "status" => LtpApplicationProgress::STATUS_ACCEPTED,
+                "description" => "LTP Application has been accepted by " . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationAccepted($ltp_application));
@@ -361,7 +365,7 @@ class LtpApplicationController extends Controller
                 'ltp_application_id' => $ltp_application->id,
                 'user_id' => Auth::user()->id,
                 'status' => LtpApplication::STATUS_RELEASED,
-                'remarks' => 'LTP has been released by ' . Auth::user()->personalInfo->getFullNameAttribute()
+                'description' => 'LTP has been released by ' . Auth::user()->personalInfo->getFullNameAttribute()
             ]);
 
             $permit = $ltp_application->permit;

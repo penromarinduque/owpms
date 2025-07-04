@@ -256,7 +256,7 @@ class InspectionController extends Controller
                 'ltp_application_id' => $ltp_application_id,
                 'user_id' => auth()->user()->id,
                 'status' => LtpApplication::STATUS_FOR_INSPECTION,
-                'remarks' => "Inspection has been submitted by the permittee.",
+                'description' => "Inspection proof has been submitted by the permittee.",
             ]);
 
             Notification::send(User::whereIn('usertype', ['admin', 'internal'])->get(), new InspectionProofSubmitted($ltp_application));
@@ -289,6 +289,7 @@ class InspectionController extends Controller
             'ltp_application_id' => $ltp_application_id,
             'user_id' => auth()->user()->id,
             'status' => LtpApplication::STATUS_INSPECTION_REJECTED,
+            'description' => "LTP Application has been rejected by " . auth()->user()->personalInfo->getFullNameAttribute(),
             'remarks' => $request->remarks,
         ]);
         
@@ -323,7 +324,7 @@ class InspectionController extends Controller
                 'ltp_application_id' => $ltp_application_id,
                 'user_id' => auth()->user()->id,
                 'status' => LtpApplication::STATUS_INSPECTED,
-                'remarks' => "Inspection has been approved by the permittee.",
+                'remarks' => "Inspection has been approved by the " . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
     
             return redirect(route('inspection.createReport', Crypt::encryptString($ltp_application_id)))->with('success', 'Inspection approved successfully!');

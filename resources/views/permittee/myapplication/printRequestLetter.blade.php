@@ -58,6 +58,13 @@
             /* Remove padding from table cells */
         }
 
+        .qr-code {
+            text-align: center;
+            width: 200px;
+            display: block;
+            margin: 0rem auto;
+        }
+
         @media print {
             body {
                 padding: 20px;
@@ -182,6 +189,10 @@
                     Owner, {{ $wfp->wildlifeFarm->farm_name }}
                 </p>
             </div>
+            <img 
+                class="qr-code" 
+                src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($application->id), 'document_type' => 'request_letter']))) }}" 
+                alt="">
         </div>
     </div>
 

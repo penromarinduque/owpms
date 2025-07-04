@@ -117,7 +117,8 @@ class PaymentOrderController extends Controller
             LtpApplicationProgress::create([
                 "ltp_application_id" => $request->ltp_application_id,
                 "user_id" => auth()->user()->id,
-                "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
+                "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS,
+                "description" => "Order of Payment has been prepared by " . auth()->user()->personalInfo->getFullNameAttribute(),
             ]);
 
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
@@ -167,7 +168,7 @@ class PaymentOrderController extends Controller
             LtpApplicationProgress::create([
                 "ltp_application_id" => $paymentOrder->ltp_application_id,
                 "user_id" => auth()->user()->id,
-                'remarks' => '<br>' . auth()->user()->personalInfo->first_name . ' ' . auth()->user()->personalInfo->last_name . ' updated the document.',
+                'description' => "Signed Order of Payment has been uploaded by " . auth()->user()->personalInfo->getFullNameAttribute(),
                 "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
             ]);
 
@@ -258,12 +259,11 @@ class PaymentOrderController extends Controller
                 LtpApplicationProgress::create([
                     "ltp_application_id" => $paymentOrder->ltp_application_id,
                     "user_id" => auth()->user()->id,
-                    'remarks' => '<br>' . auth()->user()->personalInfo->first_name . ' ' . auth()->user()->personalInfo->last_name . ' updated the payment.',
+                    'description' => "Payment has been completed.",
                     "status" => LtpApplicationProgress::STATUS_PAID
                 ]);
 
                 Notification::send($paymentOrder->ltpApplication->permittee->user, new LtpApplicationPaid($paymentOrder->ltpApplication));
-                
 
                 return redirect()->back()->with('success', 'Payment updated successfully');
             });

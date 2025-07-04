@@ -109,12 +109,6 @@
                   </div>
                </div>
             </div>
-            <a class="carousel-control-prev" href="#banner1" role="button" data-slide="prev">
-                <i class="fa fa-chevron-left" aria-hidden="true"></i>
-            </a>
-            <a class="carousel-control-next" href="#banner1" role="button" data-slide="next">
-                <i class="fa fa-chevron-right" aria-hidden="true"></i>
-            </a>
          </div>
       </section>
       <!-- end banner -->

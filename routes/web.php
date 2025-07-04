@@ -30,6 +30,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\PaymentOrderController;
+use App\Http\Controllers\QrController;
 use App\Http\Controllers\SignatoryController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
@@ -348,8 +349,9 @@ Route::middleware('auth')->group(function (){
 
 });
 
-
-
+Route::prefix('qr')->group(function () {
+    Route::get('/', [QrController::class, 'index'])->name('qr.index');
+});
 
 // test routes
 Route::get('/test-email', function () {
@@ -393,23 +395,8 @@ Route::get("token", function () {
     return csrf_token();
 });
 
-// Route::get("test", function () {
-//     $ltp_applications_query = LtpApplication::query()->whereNotIn('application_status', ['draft','paid','for-inspection','approved', 'expired'])
-//     ->where('transport_date', '<=',  Carbon::now()->format('Y-m-d'));
-
-//     $ltp_applications = $ltp_applications_query->get();
-
-//     foreach ($ltp_applications as $ltp_application) {
-//         LtpApplicationProgress::create([
-//             'ltp_application_id' => $ltp_application->id,
-//             'status' => 'expired',
-//             'user_id' => $ltp_application->permittee->user->id,
-//             'remarks' => 'The application has expired due transport date being in the past.'
-//         ]);
-//         Notification::send($ltp_application->permittee->user, new LtpApplicationExpired($ltp_application));
-//     }
-
-//     $ltp_applications_query->update(['application_status' => 'expired']);
-// });
+Route::get("test", function () {
+    return redirect();
+});
 
 Route::view("test", "test");

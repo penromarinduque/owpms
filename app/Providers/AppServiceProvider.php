@@ -9,6 +9,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Helpers\ApplicationHelper;
+use App\Helpers\SodiumEncryptHelper;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 
@@ -30,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // 
         View::share('_helper', new ApplicationHelper);
+        View::share('_sodium', new SodiumEncryptHelper);
         
         // Paginator
         Paginator::useBootstrapFive();

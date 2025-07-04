@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\InspectionReport;
 use App\Models\LtpApplication;
+use App\Models\LtpApplicationProgress;
 use App\Models\LtpPermit;
 use App\Models\PaymentOrder;
 use App\Models\Permittee;
@@ -224,5 +225,18 @@ class ApplicationHelper
         return "Helper Facade working";
     }
 
-    
+    /**
+     * Generates a QR code for the given URL, LTP Application ID and document type.
+     *
+     * @param string $url
+     * @return string
+     */
+    public function generateQrCode($url){
+        return 'https://api.qrcode-monkey.com/qr/custom?size=1000&data='. $url .'&config={"eye" : "frame0","eyeBall" : "ball0","logo" : "http://owpms.penromarinduque.gov.ph/images/logo-small.png","logoMode" : "clean"}';
+    }
+
+    public function formatTimelineDescription(LtpApplicationProgress $log) {
+        $color = $this->setApplicationStatusBgColor($log->status);
+        return '<span class="badge  bg-'.$color.'">'. $this->formatApplicationStatus($log->status) .'</span><br><div class="bg-light p-2">'. (!in_array($log->description, ['', null, ' ', 'N/A', '<></>', '<p><br></p>']) ? $log->description : '<span class="text-muted">No Remarks</span>') . '</div>';
+    }
 }

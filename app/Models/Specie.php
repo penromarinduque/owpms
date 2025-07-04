@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Specie extends Model implements Auditable
@@ -71,5 +72,49 @@ class Specie extends Model implements Auditable
         } else {
             return $arr_constats;
         }
+    }
+
+    public function topExportedSpecie() {
+        $data =  DB::table('species')
+            ->select([
+                'ltp_application_species.specie_id',
+                'species.specie_name',
+                'species.local_name',
+                DB::raw('SUM(ltp_application_species.quantity) as exports'),
+            ])
+            ->leftJoin('ltp_application_species', 'ltp_application_species.specie_id', '=', 'species.id')
+            ->leftJoin(DB::raw('(
+                SELECT DISTINCT ltp_application_id
+                FROM ltp_application_progress
+                WHERE status = "released"
+            ) as progress'), 'ltp_application_species.ltp_application_id', '=', 'progress.ltp_application_id')
+            ->groupBy(
+                'ltp_application_species.specie_id',
+                'species.specie_name',
+                'species.local_name'
+            )
+            ->having('exports', '>', 0)
+            ->orderByDesc('exports')
+            ->limit(10)
+            ->get();
+
+        return $data;
+    }
+
+    public function totalExport() {
+        // return DB::table('ltp_application_species')
+        // ->join('ltp_application_progress', 'ltp_application_species.ltp_application_id', '=', 'ltp_application_progress.ltp_application_id')
+        // ->where('ltp_application_progress.status', 'released')
+        // ->sum('ltp_application_species.quantity');
+
+        return DB::table('ltp_application_species')
+            ->join(DB::raw('(
+                SELECT DISTINCT ltp_application_id
+                FROM ltp_application_progress
+                WHERE status = "released"
+            ) as released_apps'), function ($join) {
+                $join->on('ltp_application_species.ltp_application_id', '=', 'released_apps.ltp_application_id');
+            })
+            ->sum('ltp_application_species.quantity');
     }
 }

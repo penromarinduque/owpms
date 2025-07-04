@@ -1,6 +1,14 @@
 
-<div class="">
-    <div class="accordion" id="accordionLogs">
+<x-bladewind::timelines position="left" stacked="true">
+    @foreach ($logs as $key => $log)
+        <x-bladewind::timeline
+            completed="true"
+            date="{{ $log->created_at->format('F d, Y h:i A') }}"
+            content="{!! $_helper->formatTimelineDescription($log) !!}"
+            {{-- content="{{ $log->description }}" --}}
+            last="{{ $key == count($logs) - 1 ? true : false }}" />
+    @endforeach
+    {{-- <div class="accordion" id="accordionLogs">
         @foreach ($logs as $key => $log)
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading{{ $key }}">
@@ -12,10 +20,11 @@
                     aria-controls="collapse{{ $key }}">
                         <div class="d-flex justify-content-between w-100">
                             <div>
-                                {{ $log->created_at->diffForHumans() }} • {{ $log->created_at->format('F d, Y h:i A') }} </div>
-                                <div class="badge text-bg-{{ $_helper->setApplicationStatusBsColor($log->status) }} me-2" >
-                                    {{ strtoupper($_helper->formatApplicationStatus($log->status)) }}
-                                </div>
+                                {{ $log->created_at->diffForHumans() }} • {{ $log->created_at->format('F d, Y h:i A') }} 
+                            </div>
+                            <div class="badge text-bg-{{ $_helper->setApplicationStatusBsColor($log->status) }} me-2" >
+                                {{ strtoupper($_helper->formatApplicationStatus($log->status)) }}
+                            </div>
                         </div>
                     </button>
                 </h2>
@@ -44,5 +53,5 @@
                 </div>
             </div>
         @endforeach
-    </div>
-</div>
+    </div> --}}
+</x-bladewind::timelines>

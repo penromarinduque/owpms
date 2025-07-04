@@ -7,13 +7,24 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>@yield('title') | PENRO Marinduque - Online Wildlife Permitting and Management System (OWPMS)</title>
+        <title>PENRO Marinduque - Online Wildlife Permitting and Management System (OWPMS)</title>
         <link rel="icon" type="image/x-icon" href="{{ asset('images/logo-icon.ico') }}" sizes="16x16 32x32">
         <link href="{{ asset('assets/fontawesome-free-6.5.1-web/css/fontawesome.min.css') }}" rel="stylesheet" />
         <link href="{{ asset('assets/simple-datatables/style.min.css') }}" rel="stylesheet" />
         {{-- QUILL --}}
         <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+
+        
+
+        {{-- Bladewind UI --}}
+        <!-----------------------------------------------------------
+        -- animate.min.css by Daniel Eden (https://animate.style)
+        -- is required for the animation of notifications and slide out panels
+        -- you can ignore this step if you already have this file in your project
+        --------------------------------------------------------------------------->
+        <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
 
         {{-- <link href="{{ asset('css/theme.css') }}" rel="stylesheet" /> --}}
         <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
@@ -62,6 +73,9 @@
         <!-- Select2 -->
         <script src="{{ asset('assets/select2/dist/js/select2.min.js') }}"></script>
         <script src="{{ asset('js/jquery.ajaxrequestlaravel.js') }}" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script src="{{ asset('vendor/bladewind/js/helpers.js') }}"></script>
+
         <script type="text/javascript">
             // Fetch token from session
             var sanctumToken = '{{ session('sanctumToken') }}';

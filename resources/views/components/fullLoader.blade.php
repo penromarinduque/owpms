@@ -55,7 +55,7 @@
     }
 
 
-    .logo {
+    .logo-loader {
         animation: fade 2s linear infinite ;
         width: 170px !important;
         height: 170px !important;
@@ -88,7 +88,7 @@
     </div>
     <div class="c-outer">
     </div>
-    <img class="logo" src="{{ asset('images/logo-small.png') }}" width="100" height="100" alt="">
+    <img class="logo-loader" src="{{ asset('images/logo-small.png') }}" width="100" height="100" alt="">
     {{-- <div class="loader-text">
         <h2 class="">
             Please wait...

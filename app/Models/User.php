@@ -96,6 +96,25 @@ class User extends Authenticatable
         }
         return User::where('usertype', User::TYPE_INTERNAL)->where('is_active_user', 1)->get();
     }
-    
 
+    public function getAllInspectors()
+    {
+        return User::whereIn('id', function ($query) {
+            $query->select('user_id')
+                ->from('user_roles')
+                ->whereIn('role_id', function ($subQuery) {
+                    $subQuery->select('role_id')
+                            ->from('role_permissions')
+                            ->where('permission', 'LTP_APPLICATION_INSPECT');
+                });
+        })->get();
+    }
+
+    public function activeCount(){
+        return User::where('is_active_user', 1)->count();
+    }
+
+    public function activeCountByType($type){
+        return User::where('is_active_user', 1)->where('usertype', $type)->count();
+    }
 }

@@ -129,6 +129,7 @@ My Applications
             <br>
 
             <h6><i class="fas fa-paperclip me-2"></i>Attachments</h6>
+            
             <div class="bg-light p-3 rounded-2">
                 <div class="row mb-3">
                     @forelse($ltp_application->attachments as $attachment)

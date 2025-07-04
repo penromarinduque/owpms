@@ -361,7 +361,8 @@ class MyApplicationController extends Controller
             LtpApplicationProgress::create([
                 "ltp_application_id" => $ltp_application->id,
                 "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_SUBMITTED
+                "status" => LtpApplicationProgress::STATUS_SUBMITTED,
+                "description" => "Application has been submitted."
             ]);
 
             Notification::send($_user->getAllInternals(), new LtpApplicationSubmitted($ltp_application));
@@ -425,7 +426,8 @@ class MyApplicationController extends Controller
             LtpApplicationProgress::create([
                 "ltp_application_id" => $ltp_application->id,
                 "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_RESUBMITTED
+                "status" => LtpApplicationProgress::STATUS_RESUBMITTED,
+                "description" => 'Application has been resubmitted'
             ]);
 
             return Redirect::route('myapplication.index')->with('success', 'Application successfully resubmitted!');

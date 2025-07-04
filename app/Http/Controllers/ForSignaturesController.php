@@ -70,7 +70,7 @@ class ForSignaturesController extends Controller
                 'ltp_application_id' => $ltpApplication->id,
                 'user_id' => auth()->user()->id,
                 'status' => $ltpApplication->application_status,
-                'remarks' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
+                'description' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
             return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
         });
@@ -87,7 +87,7 @@ class ForSignaturesController extends Controller
                 'ltp_application_id' => $ltpApplication->id,
                 'user_id' => auth()->user()->id,
                 'status' => $ltpApplication->application_status,
-                'remarks' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
+                'description' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
             return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
         });

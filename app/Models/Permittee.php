@@ -120,6 +120,46 @@ class Permittee extends Model implements Auditable
 
     }
 
+    public function topExporters(){
+        $totalExports = DB::table('ltp_applications')
+        ->select([
+            DB::raw('SUM(specie_counts.exports) as total_exports'),
+            'permittees.user_id',
+            'personal_infos.first_name',
+            'personal_infos.last_name'
+        ])
+        ->leftJoin('permittees', 'permittees.id', '=', 'ltp_applications.permittee_id')
+        ->leftJoin('personal_infos', 'personal_infos.user_id', '=', 'permittees.user_id')
+        ->leftJoinSub(
+            DB::table('ltp_application_progress')
+                ->select(DB::raw('MIN(id) as id'), 'ltp_application_id')
+                ->where('status', 'released')
+                ->groupBy('ltp_application_id'),
+            'progress_released',
+            'progress_released.ltp_application_id',
+            '=',
+            'ltp_applications.id'
+        )
+        ->leftJoinSub(
+            DB::table('ltp_application_species')
+                ->select(DB::raw('SUM(quantity) as exports'), 'ltp_application_id')
+                ->groupBy('ltp_application_id'),
+            'specie_counts',
+            'specie_counts.ltp_application_id',
+            '=',
+            'ltp_applications.id'
+        )
+        ->leftJoin('ltp_application_progress', 'ltp_application_progress.id', '=', 'progress_released.id')
+        ->groupBy(
+            'permittees.user_id',
+            'personal_infos.first_name',
+            'personal_infos.last_name'
+            ) // group by necessary unique columns
+        ->get();
+
+        return $totalExports;
+    }
+
 
 
 }
