@@ -130,7 +130,7 @@ class Permittee extends Model implements Auditable
         ])
         ->leftJoin('permittees', 'permittees.id', '=', 'ltp_applications.permittee_id')
         ->leftJoin('personal_infos', 'personal_infos.user_id', '=', 'permittees.user_id')
-        ->leftJoinSub(
+        ->rightJoinSub(
             DB::table('ltp_application_progress')
                 ->select(DB::raw('MIN(id) as id'), 'ltp_application_id')
                 ->where('status', 'released')
@@ -154,7 +154,7 @@ class Permittee extends Model implements Auditable
             'permittees.user_id',
             'personal_infos.first_name',
             'personal_infos.last_name'
-            ) // group by necessary unique columns
+        )
         ->get();
 
         return $totalExports;

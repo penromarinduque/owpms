@@ -83,7 +83,7 @@ class Specie extends Model implements Auditable
                 DB::raw('SUM(ltp_application_species.quantity) as exports'),
             ])
             ->leftJoin('ltp_application_species', 'ltp_application_species.specie_id', '=', 'species.id')
-            ->leftJoin(DB::raw('(
+            ->rightJoin(DB::raw('(
                 SELECT DISTINCT ltp_application_id
                 FROM ltp_application_progress
                 WHERE status = "released"

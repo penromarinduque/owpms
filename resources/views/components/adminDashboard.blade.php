@@ -1,4 +1,4 @@
-@if (Auth::user()->usertype == 'admin')
+@if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'internal')
     @php
        $counts = [
         'totalUsers' => $_user->activeCount(),
@@ -91,7 +91,7 @@
                         <tr>
                             <td width="30%">{{ $permittee->first_name }} {{ $permittee->last_name }}</td>
                             <td width="30%">{{ number_format($permittee->total_exports, 0, '.', ',') }} pcs</td>
-                            <td><x-bladewind::progress-bar percentage="{{ $permittee->total_exports / $totalExports * 100 }}" shade="dark" color="pink" /></td>
+                            <td><x-bladewind::progress-bar percentage="{{ ($permittee->total_exports / $totalExports) * 100 }}" shade="dark" color="pink" /></td>
                         </tr>
                     @endforeach
                 </x-bladewind::table>
