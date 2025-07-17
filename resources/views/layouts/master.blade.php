@@ -15,16 +15,6 @@
         <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
-        
-
-        {{-- Bladewind UI --}}
-        <!-----------------------------------------------------------
-        -- animate.min.css by Daniel Eden (https://animate.style)
-        -- is required for the animation of notifications and slide out panels
-        -- you can ignore this step if you already have this file in your project
-        --------------------------------------------------------------------------->
-        <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
-        <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
 
         {{-- <link href="{{ asset('css/theme.css') }}" rel="stylesheet" /> --}}
         <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />

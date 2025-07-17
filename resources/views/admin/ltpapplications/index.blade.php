@@ -200,7 +200,7 @@ active
                                     @can('accept', $ltp_application)
                                         <a href="#" onclick="showAcceptApplicationModal('{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Accept/Receive"><i class="fas fa-check"></i></a>
                                     @endcan
-                                    @if (in_array($ltp_application->application_status, ['submitted', 'resubmitted']) && Gate::allows('review', $ltp_application))
+                                    @if (in_array($ltp_application->application_status, ['submitted', 'resubmitted', 'under-review']) && Gate::allows('review', $ltp_application))
                                         <a href="#" onclick="showConfirmModal('{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}', 'Viewing this application will mark it as Under Review. Are you sure you want to continue?', 'Confirm Review', 'GET')" class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
                                     @if (

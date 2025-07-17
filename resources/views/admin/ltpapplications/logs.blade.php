@@ -1,4 +1,13 @@
 
+{{-- Bladewind UI --}}
+<!-----------------------------------------------------------
+-- animate.min.css by Daniel Eden (https://animate.style)
+-- is required for the animation of notifications and slide out panels
+-- you can ignore this step if you already have this file in your project
+--------------------------------------------------------------------------->
+<link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
+<link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
+
 <x-bladewind::timelines position="left" stacked="true">
     @foreach ($logs as $key => $log)
         <x-bladewind::timeline
