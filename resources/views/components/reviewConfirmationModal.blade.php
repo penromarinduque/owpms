@@ -7,8 +7,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Please double check if all the required attachments are physically submitted and complete before accepting the application. This cannot be undone.</p>
-                @foreach ($ltp_requirements as $req)
+                {{-- <p>Please double check if all the required attachments are physically submitted and complete before accepting the application. This cannot be undone.</p> --}}
+                <p> 
+                    By clicking confirm, you acknowledge that you have verified all the attachments and you are marking this application as reviewed.
+                </p>
+                {{-- @foreach ($ltp_requirements as $req)
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="req_{{ $req->id }}" name="req[]" value="{{ $req->id }}" >
                         <label class="form-check-label" for="req_{{ $req->id }}">
@@ -18,7 +21,7 @@
                             @endif  
                         </label>
                     </div>
-                @endforeach
+                @endforeach --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -26,15 +26,83 @@ My Applications
         </div>
         <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownActionButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-file-alt me-1"></i> Actions
+                <i class="fa-regular fa-file-alt me-1"></i> Actions
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownActionButton">
                 @if ($ltp_application->application_status == 'draft')
-                    <li><a class="dropdown-item" href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"><i class="fas fa-upload me-1"></i> Submit Application</a></li>
+                    <li><a class="dropdown-item me-2" href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"><i class="fas fa-upload me-1"></i> Submit Application</a></li>
                 @endif
                 @can('downloadLtp', $ltp_application)
                     <li><a class="dropdown-item" href="{{ route('ltpapplication.downloadLtp', Crypt::encryptString($ltp_application->id)) }}" target="_blank"><i class="fas fa-download me-1"></i> Download Local Transport Permit</a></li>
                 @endcan
+                @if (auth()->user()->usertype == 'permittee')     
+                    @if ($ltp_application->application_status == 'draft')       
+                        <li>
+                            <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="dropdown-item" data-bs-toggle="tooltip" data-bs-title="Edit">
+                                <i class="fas fa-pen me-2"></i> Edit Application
+                            </a>
+                        </li>                                 
+                    @endif
+                    @if ($ltp_application->application_status == 'draft')         
+                        <li>
+                            <a href="#" class="dropdown-item text-danger" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete">
+                                <i class="fa-solid fa-trash me-2"></i> Delete Application
+                            </a>
+                        </li>                               
+                    @endif
+                    <li>
+                        <a href="{{ route('myapplication.requirements', ['id'=>Crypt::encryptString($ltp_application->id)]) }}" class="dropdown-item fs-6" data-bs-toggle="tooltip" data-bs-title="Requirements">
+                            <i class="fa-solid fa-file me-2"></i> Requirements
+                        </a>
+                    </li>
+                    @if ($ltp_application->application_status == 'returned')
+                        <li>
+                            <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
+                                <i class="fa-solid fa-cloud-arrow-up me-2"></i> Resubmit Application
+                            </a>
+                        </li>
+                    @endif
+                    @if (in_array($ltp_application->application_status, ['paid', 'approved', 'payment-in-process']))
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Payment</h6></li>
+                    @endif
+                    @if (in_array($ltp_application->application_status, ['payment-in-process']))
+                        <li>
+                            <a href="{{ route('paymentorder.view', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Order of Payment">
+                                <i class="fa-solid fa-file-invoice me-2"></i> Order of Payment
+                            </a>
+                        </li>
+                    @endif
+                    @if (in_array($ltp_application->application_status, ['paid', 'approved']))
+                        <li>
+                            <a href="#" onclick="showUploadReceiptModal('{{ route('myapplication.uploadreceipt', Crypt::encryptString($ltp_application->id)) }}')"class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Upload Receipt">
+                                <i class="fa-solid fa-receipt me-2"></i> Upload Receipt
+                            </a>
+                        </li>
+                        @php
+                            $paymentOrder = $ltp_application->paymentOrder;
+                        @endphp
+                        <li>
+                            <a href="{{ route('paymentorder.viewreceipt', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="dropdown-item @if(!$paymentOrder->receipt_url) disabled @endif"  data-bs-toggle="tooltip" data-bs-title="View Receipt">
+                                <i class="fa-solid fa-eye me-2"></i> View Receipt
+                            </a>
+                        </li>
+                    @endif
+                    @if (in_array($ltp_application->application_status, ['paid', 'inspection-rejected','all']) )   
+                    <li>
+                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="View Inspection">
+                            <i class="fa-solid fa-magnifying-glass me-2"></i> View Inspection
+                        </a> 
+                    </li>
+                    @endif
+                @endif
+                @if ($ltp_application->application_status != 'draft')
+                <li>
+                    <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Logs">
+                        <i class="fas fa-history me-2"></i> View Logs
+                    </a>
+                </li>
+                @endif
             </ul>
         </div>
         
@@ -153,4 +221,10 @@ My Applications
     @include('components.returnApplication')
     @include('components.confirm')
     @include('components.submitApplication')
+    @include('components.uploadPaymentOrder')
+    @include('components.updatePayment')
+    @include('components.confirmDelete')
+    @include('components.permitteeUploadReceipt')
+    @include('components.submitApplication')
+    @include('components.viewApplicationLogs')
 @endsection

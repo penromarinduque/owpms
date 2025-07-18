@@ -84,7 +84,7 @@ class PaymentOrderPolicy
 
     public function uploadDocument(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_UPDATE', $user->getUserPermissions());
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_CREATE', $user->getUserPermissions());
     }
 
     public function updatePayment(User $user, PaymentOrder $paymentOrder): bool
@@ -99,7 +99,12 @@ class PaymentOrderPolicy
 
     public function uploadSignedOrder(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions()) ;
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
+    }
+
+    public function viewReceipt(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && (in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions()) || $user->id == $paymentOrder->ltpApplication->permittee->user_id) && $paymentOrder->receipt_url;
     }
 
 }

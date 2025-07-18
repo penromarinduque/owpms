@@ -22,6 +22,14 @@ active
             Order of Payments List
         </div>
         <div class="card-body">
+            <div class="d-flex justify-content-end">
+                <form action="" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="search" class="form-control" placeholder="Search by Order Number or Permittee Name" value="{{ request('search') }}">
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+                    </div>
+                </form>
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover table-bordered table-striped">
                     <thead>

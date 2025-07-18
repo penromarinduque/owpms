@@ -18,6 +18,14 @@
             padding-bottom: 0px !important;
             padding-top: 0px !important;
         }
+        .qr-code {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            border: 1px solid black;
+        }
     </style>
     <title>Print Local Transport Permit</title>
 </head>
@@ -132,9 +140,9 @@
     </div>
 
     <img 
-        class="qr-code" 
-        src="{{ $_helper->generateQrCode(route('qr.index', ['document_type' => 'ltp', 'id' => Crypt::encryptString($permit->ltp_application_id)])) }}" 
-        alt="">
+                class="qr-code" 
+                src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($ltp_application->id), 'document_type' => 'ltp']))) }}" 
+                alt="">
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript">

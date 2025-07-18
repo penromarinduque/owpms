@@ -114,7 +114,7 @@ active
                                     @enderror
                                 </div>
                                 <div class="">
-                                    <input class="form-control text-center @error('prepared_by_position') is-invalid @enderror" type="text" name="prepared_by_position" id="prepared_by_position">
+                                    <input class="form-control text-center @error('prepared_by_position') is-invalid @enderror" type="text" name="prepared_by_position" id="prepared_by_position" value="{{ old('prepared_by_position', 'Inspecting Officer') }}">
                                     @error('prepared_by_position')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>

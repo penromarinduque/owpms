@@ -14,7 +14,7 @@ active
 
 @section('content')
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Edit Specie Type</h1>
+    <h1 class="mt-4">Edit Wildlife Type</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{{ route('specietypes.index') }}">Specie Types</a></li>
@@ -27,7 +27,7 @@ active
                 <a href="{{ route('specietypes.index') }}" class="btn btn-sm btn-danger">Back</a>
             </div>
             <i class="fas fa-plus-square me-1"></i>
-            Edit Specie Type here
+            Edit Wildlife Type here
         </div>
         <div class="card-body">
             @if(!empty($specie_type))

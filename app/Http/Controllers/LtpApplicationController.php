@@ -169,9 +169,9 @@ class LtpApplicationController extends Controller
 
             Gate::authorize('review', $ltp_application);
 
-            if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
-                return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
-            }
+            // if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
+            //     return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
+            // }
 
             if(!Permittee::validatePermit(Permittee::PERMIT_TYPE_WCP , $ltp_application->permittee->user->id) || !Permittee::validatePermit(Permittee::PERMIT_TYPE_WFP , $ltp_application->permittee->user->id)) {
                 return redirect()->back()->with('error', 'The clients WCP and/or WFP permit has expired or is not valid. Please renew the permit before submitting the application.');
@@ -233,7 +233,7 @@ class LtpApplicationController extends Controller
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationAccepted($ltp_application));
 
-            return redirect()->route('ltpapplication.index', ['status' => LtpApplication::STATUS_ACCEPTED, 'category' => 'accepted'])->with('success', 'Successfully accepted application. You can visit the accepted tab to generate payment orders.');
+            return redirect()->back()->with('success', 'Successfully accepted application. You can visit the accepted tab to generate payment orders.');
         });
     }
 

@@ -121,19 +121,6 @@ active
                     <h6>Initials</h6>
                     <div class="row">
                         <div class="col-sm-6">
-                            <select name="chief_tsd" id="chief_tsd" class="form-select select2 @error('chief_tsd') is-invalid @enderror">
-                                <option value="">-Select Chief TSD-</option>
-                                @foreach ($_user->getAllInternals() as $user)
-                                    <option value="{{ $user->id }}" {{ $user->id == old('chief_tsd') ? 'selected' : '' }} style="text-transform: uppercase"><u>&nbsp;&nbsp;{{ $user->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></option>
-                                @endforeach
-                            </select>
-                            @error('chief_tsd')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>                                
-                            @enderror
-                        </div>
-                        <div class="col-sm-6">
                             <select name="chief_rps" id="chief_rps" class="form-select select2 @error('chief_rps') is-invalid @enderror">
                                 <option value="">-Select Chief RPS-</option>
                                 @foreach ($_user->getAllInternals() as $user)
@@ -141,6 +128,19 @@ active
                                 @endforeach
                             </select>
                             @error('chief_rps')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>                                
+                            @enderror
+                        </div>
+                        <div class="col-sm-6">
+                            <select name="chief_tsd" id="chief_tsd" class="form-select select2 @error('chief_tsd') is-invalid @enderror">
+                                <option value="">-Select Chief TSD-</option>
+                                @foreach ($_user->getAllInternals() as $user)
+                                    <option value="{{ $user->id }}" {{ $user->id == old('chief_tsd') ? 'selected' : '' }} style="text-transform: uppercase"><u>&nbsp;&nbsp;{{ $user->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></option>
+                                @endforeach
+                            </select>
+                            @error('chief_tsd')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>                                

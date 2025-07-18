@@ -23,12 +23,19 @@ use Illuminate\Support\Facades\Notification;
 
 class PaymentOrderController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         Gate::authorize('viewAny', PaymentOrder::class);
-        $paymentOrders = PaymentOrder::query()->with([
-            'details',
-        ])
-        ->paginate(20);
+
+        $query = PaymentOrder::query()->with([
+            'details'
+        ]);
+
+        if($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('order_number', 'like', '%' . $search . '%');
+        }
+
+        $paymentOrders = $query->orderBy('created_at', 'desc')->paginate(20);
 
         return view('admin.payment_order.index', [
             'paymentOrders' => $paymentOrders
@@ -123,6 +130,7 @@ class PaymentOrderController extends Controller
 
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
 
+            return redirect()->route('paymentorder.print', ['id' => Crypt::encryptString($paymentOrder->id)])->with('success', 'Payment Order created successfully');
             return redirect()->route('paymentorder.index')->with('success', 'Payment Order created successfully');
         });
     }
@@ -277,7 +285,7 @@ class PaymentOrderController extends Controller
             $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
             $ltp_application = $paymentOrder->ltpApplication;
 
-            Gate::authorize('view', $ltp_application);
+            Gate::authorize('viewReceipt', $paymentOrder);
 
             return Storage::disk('private')->response($paymentOrder->receipt_url);
             

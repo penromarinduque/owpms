@@ -192,12 +192,12 @@
                         LTP Fees
                     </a>
                 @endcan
-                @can('viewAny', App\Models\Signatory::class)
+                {{-- @can('viewAny', App\Models\Signatory::class)
                     <a class="nav-link @yield('active-signatories')" href="{{ route('signatories.index') }}">
                         <div class="sb-nav-link-icon"><i class="fas fa-user-tie"></i></div>
                         Signatories
                     </a>
-                @endcan
+                @endcan --}}
             @endif
 
             @if(Auth::user()->usertype=='admin')

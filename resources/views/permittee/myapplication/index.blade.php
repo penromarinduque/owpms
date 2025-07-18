@@ -73,79 +73,6 @@ active
                 </li>
             </ul>
 
-            {{-- <ul class="nav nav-tabs">
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'draft' ? 'active' : '' }}" aria-current="page" href="?status=draft">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('draft', $permittee->id); @endphp
-                    Draft 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'submitted' ? 'active' : '' }}" href="?status=submitted">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('submitted', $permittee->id); @endphp
-                    Submitted 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'resubmitted' ? 'active' : '' }}" href="?status=resubmitted">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('resubmitted', $permittee->id); @endphp
-                    Resubmitted 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span> 
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'under-review' ? 'active' : '' }}" href="?status=under-review">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('under-review', $permittee->id); @endphp
-                    Under Review 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'returned' ? 'active' : '' }}" href="?status=returned">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('returned', $permittee->id); @endphp
-                    Returned 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'accepted' ? 'active' : '' }}" href="?status=accepted">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('accepted', $permittee->id); @endphp
-                    Accepted 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'payment-in-process' ? 'active' : '' }}" href="?status=payment-in-process">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('payment-in-process', $permittee->id); @endphp
-                    Payment In Processs 
-                     <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'paid' ? 'active' : '' }}" href="?status=paid">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('paid', $permittee->id); @endphp
-                    For Inspection 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'approved' ? 'active' : '' }}" href="?status=approved">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('approved', $permittee->id); @endphp
-                    Approved 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link {{ $status == 'expired' ? 'active' : '' }}" href="?status=expired">
-                    @php $count = $_ltp_application->getApplicationCountsByStatus('expired', $permittee->id); @endphp
-                    Expired 
-                    <span class="badge rounded-pill bg-primary">{{ $count > 0 ? ($count > 99 ? '99+' : $count): '' }}</span>
-                </a>
-              </li>
-            </ul> --}}
-
             <br>
 
             <div class="d-flex justify-content-end mb-3">
@@ -191,38 +118,38 @@ active
                                     <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
                                 </td>
                                 <td class="text-center align-middle">
-                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details">
+                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
-                                    @if ($status == 'draft')                                        
-                                        <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit">
+                                    @if ($ltp_application->application_status == 'draft')                                        
+                                        <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-outline-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit">
                                             <i class="fas fa-pen"></i>
                                         </a>
                                     @endif
-                                    @if ($status == 'draft')
+                                    {{-- @if ($ltp_application->application_status == 'draft')
                                         <a href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Submit">
                                             <i class="fa-solid fa-cloud-arrow-up"></i>
                                         </a>
-                                    @endif
-                                    @if ($status == 'draft')                                        
-                                        <a href="#" class="btn btn-sm btn-danger mb-2" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete">
+                                    @endif --}}
+                                    @if ($ltp_application->application_status == 'draft')                                        
+                                        <a href="#" class="btn btn-sm btn-outline-danger mb-2" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete">
                                             <i class="fa-solid fa-trash"></i>
                                         </a>
                                     @endif
-                                    <a href="{{ route('myapplication.requirements', ['id'=>Crypt::encryptString($ltp_application->id)]) }}" class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Requirements">
+                                    {{-- <a href="{{ route('myapplication.requirements', ['id'=>Crypt::encryptString($ltp_application->id)]) }}" class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Requirements">
                                         <i class="fa-solid fa-file"></i>
-                                    </a>
-                                    @if ($status == 'returned')
+                                    </a> --}}
+                                    {{-- @if ($ltp_application->application_status == 'returned')
                                         <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
                                             <i class="fa-solid fa-cloud-arrow-up"></i>
                                         </a>
-                                    @endif
-                                    @if (in_array($status, ['payment-in-process']))
+                                    @endif --}}
+                                    {{-- @if (in_array($ltp_application->application_status, ['payment-in-process']))
                                         <a href="{{ route('paymentorder.view', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Order of Payment">
                                             <i class="fa-solid fa-file-invoice"></i>
                                         </a>
-                                    @endif
-                                    @if (in_array($status, ['paid', 'approved']))
+                                    @endif --}}
+                                    {{-- @if (in_array($ltp_application->application_status, ['paid', 'approved']))
                                         <div class="btn-group" role="group" aria-label="Basic example">
                                             <a href="#" onclick="showUploadReceiptModal('{{ route('myapplication.uploadreceipt', Crypt::encryptString($ltp_application->id)) }}')"class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Upload Receipt">
                                                 <i class="fa-solid fa-receipt"></i>
@@ -234,11 +161,11 @@ active
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
                                         </div>
-                                    @endif
-                                    @if (in_array($status, ['paid', 'inspection-rejected']))   
-                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
-                                    @endif
-                                    @if ($status != 'draft')
+                                    @endif --}}
+                                    {{-- @if (in_array($ltp_application->application_status, ['paid', 'inspection-rejected','all']) )   
+                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
+                                    @endif --}}
+                                    @if ($ltp_application->application_status != 'draft')
                                         <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs">
                                             <i class="fas fa-history"></i>
                                         </a>
