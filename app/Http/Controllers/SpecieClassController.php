@@ -39,13 +39,13 @@ class SpecieClassController extends Controller
         $request->validate([
             'specie_class' => 'required|max:150|unique:specie_classes',
             'is_active_class' => 'required',
-            'specie_type' => 'required',
+            // 'specie_type' => 'required',
         ], [
-            'specie_type.unique' => 'specie class already exist.'
+            // 'specie_type.unique' => 'specie class already exist.'
         ]);
 
         SpecieClass::create([
-            'specie_type_id' => $request->specie_type,
+            // 'specie_type_id' => $request->specie_type,
             'specie_class' => $request->specie_class,
             'is_active_class' => $request->is_active_class
         ]);
@@ -82,11 +82,11 @@ class SpecieClassController extends Controller
         $validated = $request->validate([
             'specie_class' => 'required|max:150',
             'is_active_class' => 'required',
-            'specie_type' => 'required',
+            // 'specie_type' => 'required',
         ]);
         SpecieClass::find($id)->update([
             'specie_class' => $request->input('specie_class'),
-            'specie_type_id' => $request->input('specie_type'),
+            // 'specie_type_id' => $request->input('specie_type'),
             'is_active_class' => $request->input('is_active_class'),
         ]);
 

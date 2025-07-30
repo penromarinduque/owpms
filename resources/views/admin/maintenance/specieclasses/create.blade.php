@@ -29,16 +29,16 @@ active
             <i class="fas fa-plus-square me-1"></i>
             Add New Specie Class here
         </div>
-        <div class="card-body">
+        <div class="card-body" >
             <form method="POST" action="{{ route('specieclasses.store') }}" onsubmit="disableSubmitButton('btn_save');">
                 @csrf
                 <input type="hidden" class="form-control" name="is_active_class" id="is_active_class" value="1">
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label class="form-label" for="specie_type_id">Specie Type</label>
                     <select class="form-select" name="specie_type" id="specie_type">
                         <option value="">-Select Specie Type-</option>
                     </select>
-                </div>
+                </div> --}}
                 <div class="mb-3">
                     <label for="specie_class" class="form-label">Specie Class</label>
                     <input type="text" class="form-control" name="specie_class" id="specie_class" required value="{{ old('specie_class') }}">

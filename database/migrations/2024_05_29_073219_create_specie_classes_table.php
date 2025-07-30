@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('specie_classes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('specie_type_id');
+            // $table->foreignId('specie_type_id');
             $table->string('specie_class', 150)->unique();
             $table->tinyInteger('is_active_class')->default(0);
             $table->timestamps();

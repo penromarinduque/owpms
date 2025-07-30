@@ -46,7 +46,6 @@ active
                 <thead>
                     <tr>
                         <th>Class</th>
-                        <th>Specie Type</th>
                         <th>Is Active?</th>
                         <th><i class="fas fa-ellipsis-h" title="Action" alt="Action"></i></th>
                     </tr>
@@ -55,7 +54,6 @@ active
                     @forelse($specie_classes as $specie_class)
                     <tr>
                         <td>{{ $specie_class->specie_class }}</td>
-                        <td>{{ $specie_class->specieType->specie_type }}</td>
                         <td>{{ ($specie_class->is_active_class==1) ? 'YES' : 'NO' }}</td>
                         <td>
                             <a href="{{ route('specieclasses.edit', ['id'=>$specie_class->id]) }}" title="Edit" alt="Edit"><i class="fas fa-edit fa-lg"></i></a>
