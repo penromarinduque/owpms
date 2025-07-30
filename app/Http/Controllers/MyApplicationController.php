@@ -19,6 +19,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ApplicationHelper;
+use App\Models\Province;
 use App\Notifications\LtpApplicationSubmitted;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
@@ -76,8 +77,12 @@ class MyApplicationController extends Controller
      */
     public function create()
     {
+        $provinces = Province::query()->with([
+            'region'
+        ])->get();
         return view('permittee.myapplication.draft.create', [
-            'title' => 'Create New Application'
+            'title' => 'Create New Application',
+            "provinces" => $provinces
         ]);
     }
 
@@ -86,17 +91,15 @@ class MyApplicationController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            "transport_date" => "required|date",
+            "destination" => "nullable|exists:provinces,id",
+            "purpose" => "required|string",
+            "specie_id" => "required|array",
+            "quantity" => "required|array"
+        ]);
+        
         return DB::transaction(function () use ($request) {
-            $request->validate([
-                "transport_date" => "required|date",
-                "city" => "required|string",
-                "state" => "required|string",
-                "country" => "required|string",
-                "purpose" => "required|string",
-                "specie_id" => "required|array",
-                "quantity" => "required|array"
-            ]);
-            
             $ltp_application = LtpApplication::create([
                 'permittee_id' => Auth::user()->wcp()->id, 
                 'application_no' => date('YmdHis').rand(100,999), 
@@ -104,7 +107,7 @@ class MyApplicationController extends Controller
                 'application_date' => date('Y-m-d'), 
                 'transport_date' => $request->transport_date, 
                 'purpose' => $request->purpose, 
-                'destination' => $request->city.', '.$request->state.', '.$request->country, 
+                'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->destination == 'export' ? 1: null), 
                 'digital_signature' => NULL
             ]);
 

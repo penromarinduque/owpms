@@ -11,7 +11,7 @@ class WildlifeFarm extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['permittee_id', 'farm_name', 'location', 'size', 'height'];
+    protected $fillable = ['permittee_id', 'farm_name', 'location', 'size'];
 
     public function wildlifefarm()
     {

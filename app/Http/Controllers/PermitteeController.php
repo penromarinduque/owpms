@@ -74,8 +74,8 @@ class PermitteeController extends Controller
             'password' => 'required',
             'farm_name' => 'required',
             'location' => 'required',
-            'size' => 'required',
-            'height' => 'required',
+            'size' => '',
+            // 'height' => 'required',
             // 'permit_type_wfp' => 'required', 
             'permit_number_wfp' => 'required',
             'valid_from_wfp' => 'required',
@@ -133,8 +133,8 @@ class PermitteeController extends Controller
                         'permittee_id' => $permittee_wfp->id, 
                         'farm_name' => $request->farm_name, 
                         'location' => $request->location, 
-                        'size' => $request->size,
-                        'height' => $request->height
+                        'size' => $request->input('size'),
+                        // 'height' => $request->height
                     ]);
 
                 }

@@ -51,8 +51,23 @@ active
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <label>Place of Transport <span class="text-danger">*</span>:</label>
-                        <div class="row">
+                        <label>Purpose <span class="text-danger">*</span>:</label>
+                        <select name="purpose" id="purpose" class="form-select mb-2" required onchange="onPurposeChange(event);">
+                            <option value="" selected disabled>Select Purpose</option>
+                            <option value="research">Research</option>
+                            <option value="local sale">Local Sale</option>
+                            <option value="export">Export</option>
+                        </select>
+                    </div>
+                    <div class="col-md-7" id="destination_div">
+                        <label>Destination <span class="text-danger">*</span>:</label>
+                        <select name="destination" id="destination" class="form-select mb-2 select-2">
+                            <option value="" selected disabled>Select Destination</option>
+                            @foreach($provinces as $province)
+                                <option value="{{ $province->id }}">{{ $province->province_name }}, {{ $province->region->region_name }}</option>
+                            @endforeach
+                        </select>
+                        {{-- <div class="row">
                             <div class="col-md-3 mb-2">
                                 <input type="text" name="city" id="city" class="form-control" required placeholder="City">
                             </div>
@@ -62,11 +77,7 @@ active
                             <div class="col-md-6 mb-2">
                                 <input type="text" name="country" id="country" class="form-control" required placeholder="Country">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-7">
-                        <label>Purpose <span class="text-danger">*</span>:</label>
-                        <textarea class="form-control" name="purpose" id="purpose" required placeholder="Purpose"></textarea>
+                        </div> --}}
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -117,6 +128,18 @@ active
 
 @section('script-extra')
 <script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#destination_div").hide();
+
+        // Initialize the select2 plugin for the destination dropdown
+        $('#destination').select2({
+            placeholder: "Select Destination",
+            allowClear: true,
+            width: '100%',
+        });
+    });
+
     // Function to calculate and update the sum
     function updateDynamicSum(fld_class, result_element) {
         let sum = 0;
@@ -136,6 +159,16 @@ active
     function removeAdded(row_id, row_element) {
         $('#'+row_element+row_id).remove();
         updateDynamicSum('quantity', 'txt_total');
+    }
+
+    function onPurposeChange(e) {
+        const purpose = e.target.value;
+        if(purpose == 'local sale') {
+            $("#destination_div").show();
+        }
+        else {
+            $("#destination_div").hide();
+        }
     }
 
     jQuery(document).ready(function ($){
@@ -178,7 +211,7 @@ active
                     <td align="center">${itemData.family}</td>
                     <td align="center">
                         <input type="hidden" name="specie_id[]" id="specie_id" value="${itemData.id}" />
-                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" max="${itemData.maxqty}" required />
+                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" required />
                     </td>
                     <td align="center">
                         <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
@@ -199,6 +232,8 @@ active
         });
 
     });
+
+    
 </script>
 @endsection
 

@@ -58,7 +58,7 @@ Route::post('/forgot-password', [PasswordController::class, 'sendResetLink'])->n
 Route::get('/reset-password/{token}', [PasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [PasswordController::class, 'resetPassword'])->name('password.update');
 
-Route::middleware('auth')->group(function (){
+Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     // Audit Trails
     Route::get('/activity-logs', [AccountController::class, 'activityLogs'])->name('activity-logs');
 

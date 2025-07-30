@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wildlife_farms', function (Blueprint $table) {
+        Schema::create('regions', function (Blueprint $table) {
             $table->id();
-            $table->integer('permittee_id');
-            $table->string('farm_name', 150);
-            $table->string('location', 200);
-            $table->string('size', 50)->nullable();
-            // $table->string('height', 50);
+            $table->string('region_name', 50);
+            $table->string('region_description', 50);
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wildlife_farms');
+        Schema::dropIfExists('regions');
     }
 };

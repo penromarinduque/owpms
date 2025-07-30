@@ -67,7 +67,7 @@ active
                 	</div>
                 </div>
                 <div class="row mb-3">
-                	<div class="col-sm-2">
+                	<div class="col-sm-3">
                 		<label for="gender" class="form-label mb-0">Gender<b class="text-danger">*</b></label>
                 		<select class="form-select" name="gender" id="gender" required>
                 			<option value="">-Gender-</option>
@@ -78,7 +78,7 @@ active
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
-                	<div class="col-sm-4">
+                	<div class="col-sm-3">
                 		<label for="barangay_id" class="form-label mb-0">Address: Barangay / Municipality<b class="text-danger">*</b></label>
                 		<select class="form-control select2" name="barangay_id" id="barangay_id" style="width: 100%;" required>
                 			<option value="">- Barangay / Municipality -</option>
@@ -92,7 +92,7 @@ active
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                 	</div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-3">
                         <label for="contact_no" class="form-label mb-0">Contact Number<b class="text-danger">*</b></label>
                         <input type="text" class="form-control" name="contact_no" id="contact_no" placeholder="Contact Number" value="{{ old('contact_no') }}">
                         @error('contact_no')
@@ -138,20 +138,20 @@ active
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-                    <div class="col-sm-2">
-                        <label for="size">Size<b class="text-danger">*</b></label>
-                        <input type="text" class="form-control" name="size" id="size" placeholder="Size" value="{{ old('size') }}">
+                    <div class="col-sm-4">
+                        <label for="size">Area (sqm)<b class="text-danger"></b></label>
+                        <input type="text" class="form-control" name="size" id="size" placeholder="Area" value="{{ old('size') }}">
                         @error('size')
-                        <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-                    <div class="col-sm-2">
+                    {{-- <div class="col-sm-2">
                         <label for="height">Height<b class="text-danger">*</b></label>
                         <input type="text" class="form-control" name="height" id="height" placeholder="Height" value="{{ old('height') }}">
                         @error('height')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="row mb-3">
                     <input type="hidden" name="permit_type_wfp" id="permit_type_wfp" value="wfp">
@@ -184,7 +184,7 @@ active
                         @enderror
                     </div>
 
-                    <div class="col-sm-2">
+                    <div class="col-sm-3">
                         <label for="wfp_document">Document</label>
                         <input type="file" accept="application/pdf" class="form-control" name="wfp_document" id="wfp_document" placeholder="WFP Document" value="{{ old('wfp_document') }}">
                         @error('wfp_document')
@@ -224,7 +224,7 @@ active
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-3">
                         <label for="wcp_document">Document</label>
                         <input type="file" accept="application/pdf" class="form-control" name="wcp_document" id="wcp_document" placeholder="WCP Document" value="{{ old('wcp_document') }}">
                         @error('wcp_document')
@@ -255,7 +255,7 @@ active
                             </div>
                         </div>
                         @error('password')
-                        <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>

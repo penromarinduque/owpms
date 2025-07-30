@@ -5,7 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\EnsureHasUserType;
 use App\Http\Middleware\EnsureHasPermission;
-
+use App\Http\Middleware\EnsurePermitteeVerified;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->alias([
             'userType' => EnsureHasUserType::class,
-            'permission' => EnsureHasPermission::class
+            'permission' => EnsureHasPermission::class,
+            'permitteeVerified' => EnsurePermitteeVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
