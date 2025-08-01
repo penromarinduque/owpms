@@ -20,9 +20,12 @@
                     		<div class="col-lg-4 text-center">
                     			<div class="auth-header">
                     				<img src="{{ asset('images/logo-small.png') }}" width="50" align="center">
+                    				<img src="{{ asset('images/bagong-pilipinas.png') }}" width="60" align="center">
+                                    <br>
+                                    <br>
 	                    			<h4>Deparment of Enviroment and Natural Resources</h4>
 									<h4>Provincial Enviroment and Natural Resources Office</h4>
-									<h5>Boac, Marinduque</h5>
+                                    <br>
                     			</div>
                     		</div>
                     	</div>
