@@ -239,4 +239,17 @@ class ApplicationHelper
         $color = $this->setApplicationStatusBgColor($log->status);
         return '<span class="badge  bg-'.$color.'">'. $this->formatApplicationStatus($log->status) .'</span><br><div class="bg-light p-2">'. (!in_array($log->description, ['', null, ' ', 'N/A', '<></>', '<p><br></p>']) ? $log->description : '<span class="text-muted">No Remarks</span>') . '</div>';
     }
+
+    public function ltpApplicationCountByStatus($status)
+    {
+        $conditions = [];
+        if(auth()->user()->usertype == 'permittee') {
+            $conditions['permittee_id'] = auth()->user()->wcp()->id;
+        }
+
+        return LtpApplication::whereIn('application_status', $this->identifyApplicationStatusesByCategory($status))
+            ->where($conditions)
+            ->count();
+    }
+
 }
