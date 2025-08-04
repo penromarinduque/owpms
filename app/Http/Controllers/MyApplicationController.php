@@ -100,15 +100,21 @@ class MyApplicationController extends Controller
         ]);
         
         return DB::transaction(function () use ($request) {
+            $year = date('Y');  
+            $latest = LtpApplication::where('year', $year)->orderBy('no', 'DESC')->first();
+            $no = $latest ? $latest->no + 1 : 1;
+            $application_no = $year.date('md').str_pad($no, 5, '0', STR_PAD_LEFT);
             $ltp_application = LtpApplication::create([
                 'permittee_id' => Auth::user()->wcp()->id, 
-                'application_no' => date('YmdHis').rand(100,999), 
+                'application_no' => $application_no, 
                 'application_status' => LtpApplication::STATUS_DRAFT, 
                 'application_date' => date('Y-m-d'), 
                 'transport_date' => $request->transport_date, 
                 'purpose' => $request->purpose, 
                 'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->destination == 'export' ? 1: null), 
-                'digital_signature' => NULL
+                'digital_signature' => NULL,
+                'year' => $year,
+                'no' => $no
             ]);
 
             if ($ltp_application->id) {

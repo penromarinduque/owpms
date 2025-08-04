@@ -29,7 +29,7 @@
         <div class="col mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h1>100</h1>
+                    <h1>{{ $applicationCounts->created }}</h1>
                     <p>Applications Created</p>
                 </div>
             </div>
@@ -37,7 +37,7 @@
         <div class="col mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h1>100</h1>
+                    <h1>{{ $applicationCounts->approved }}</h1>
                     <p>Applications Approved</p>
                 </div>
             </div>
@@ -45,7 +45,7 @@
         <div class="col mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h1>100</h1>
+                    <h1>{{ $applicationCounts->expired }}</h1>
                     <p>Applications Ongoing</p>
                 </div>
             </div>
@@ -53,7 +53,7 @@
         <div class="col mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h1>100</h1>
+                    <h1>{{ $applicationCounts->expired }}</h1>
                     <p>Applications Expired</p>
                 </div>
             </div>

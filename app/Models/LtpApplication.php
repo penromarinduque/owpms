@@ -13,7 +13,7 @@ class LtpApplication extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature'];
+    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature', 'year', 'no'];
 
     protected $casts = [
         'application_date' => 'datetime',

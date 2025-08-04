@@ -42,7 +42,7 @@ active
                         @forelse ($permittee_species as $key => $ps)
                             <tr>
                                 <td class="text-center">{{ $key + 1 }}</td>
-                                <td >{{ $ps->specie->local_name }} ({{ $ps->specie->specie_name }})</td>
+                                <td >{{ $ps->specie->local_name }} <i>({{ $ps->specie->specie_name }})</i></td>
                                 <td >{{ $ps->quantity }} pc/s</td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-danger" onclick="showConfirDeleteModal('{{ route('permitteespecies.delete', Crypt::encryptString($ps->id)) }}', {{ $ps->id }}, 'Are you sure you want to delete this permittee species? ' + ' {{ $ps->specie->specie_name }}', 'Delete Permittee Species')">Delete</button>

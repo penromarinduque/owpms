@@ -16,8 +16,7 @@ active
 -- is required for the animation of notifications and slide out panels
 -- you can ignore this step if you already have this file in your project
 --------------------------------------------------------------------------->
-<link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
-<link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
+
 
 <div class="container-fluid p-4">
     {{-- <h1 class="mt-4">Dashboard</h1>

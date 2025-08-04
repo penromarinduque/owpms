@@ -206,8 +206,8 @@ active
             let newRow = `
                 <tr id="row_${itemData.id}">
                     <td align="center">${rowNumber}</td>
-                    <td align="center">${itemData.scientifcname}</td>
                     <td align="center">${itemData.commonname}</td>
+                    <td align="center"><i>${itemData.scientifcname}</i></td>
                     <td align="center">${itemData.family}</td>
                     <td align="center">
                         <input type="hidden" name="specie_id[]" id="specie_id" value="${itemData.id}" />

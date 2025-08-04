@@ -1,4 +1,6 @@
 @if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'internal')
+    <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
     @php
        $counts = [
         'totalUsers' => $_user->activeCount(),
