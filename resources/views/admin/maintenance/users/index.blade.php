@@ -39,6 +39,21 @@ active
                 <strong>{{ session('success') }}</strong>
             </div>
             @endif
+            
+
+            <div class="row justify-content-end mb-3">
+                <div class="col-auto">
+                    <form action="" method="GET">
+                        <select name="usertype" id="usertype" class="form-select" onchange="this.form.submit()">
+                            <option value="" selected disabled>Select User Type</option>
+                            <option value="all" >All</option>
+                            <option value="admin" {{ (request()->get('usertype') == 'admin') ? 'selected' : '' }}>Admin</option>
+                            <option value="internal" {{ (request()->get('usertype') == 'internal') ? 'selected' : '' }}>Internal</option>
+                            <option value="permittee" {{ (request()->get('usertype') == 'permittee') ? 'selected' : '' }}>Permittee</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
 
             <table class="table table-striped table-bordered" >
                 <thead>

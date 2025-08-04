@@ -14,13 +14,20 @@ use App\Models\Position;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::select('users.*', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name')
+        $query =  User::query()->select('users.*', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name')
             ->join('personal_infos', 'personal_infos.user_id', 'users.id')
-            ->with(['userRoles.role'])
-            ->paginate(20);
+            ->with(['userRoles.role']);
 
+        if($request->has('usertype') && $request->usertype != 'all')
+        {
+            $query->where("usertype", $request->usertype);
+        }
+
+        $users = $query->paginate(20);
+
+        
         return view('admin.maintenance.users.index', [
             'users' => $users
         ]);
