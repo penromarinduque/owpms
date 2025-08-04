@@ -32,6 +32,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\PaymentOrderController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\SignatoryController;
+use App\Http\Controllers\TestController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Notifications\LtpApplicationExpired;
@@ -395,8 +396,8 @@ Route::get("token", function () {
     return csrf_token();
 });
 
-Route::get("test", function () {
-    return redirect();
-});
 
-Route::view("test", "test");
+Route::prefix("tests")->group( function () {
+    Route::get("/", [TestController::class, 'create'])->name("test.create");
+    Route::post("/", [TestController::class, 'store'])->name("test.store");
+});

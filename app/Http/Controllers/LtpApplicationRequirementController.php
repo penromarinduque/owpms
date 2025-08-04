@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\LtpApplicationAttachment;
+use BaconQrCode\Encoder\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use setasign\Fpdi\Fpdi;
 
 class LtpApplicationRequirementController extends Controller
 {
@@ -18,6 +21,14 @@ class LtpApplicationRequirementController extends Controller
         ]);
 
         if($request->hasFile('document_file')) {
+            /**
+            
+
+            /**
+             * en pdf qr affixingfrom gpt
+            * */ 
+
+
             $file = $request->file('document_file');
             $fileName = 'requirement_' . time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('requirements', $fileName, 'private'); // store('requirements');

@@ -42,7 +42,7 @@ class UserController extends Controller
         return DB::transaction(function () use ($request) {
             // return $request;
             $validated = $request->validate([
-                'username' => 'required|min:6|max:16|unique:users',
+                'username' => 'required|min:6|max:50|unique:users',
                 'email' => 'required|max:150|unique:users',
                 'user_type' => 'required|in:admin,internal',
                 'password' => 'required',

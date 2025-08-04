@@ -46,6 +46,11 @@ class LtpApplicationController extends Controller
             ]);
         }
 
+        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()))
+        {
+            $ltp_application_query->whereIn('io_user_id', [Auth::user()->id, null]);
+        }
+
         if($status == 'all') {
             $ltp_applications = $ltp_application_query->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category));
         }
@@ -79,6 +84,7 @@ class LtpApplicationController extends Controller
 
             if(in_array($ltp_application->application_status, [LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_RESUBMITTED])) {
                 $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
+                $ltp_application->io_user_id = Auth::user()->id; // Set the IO user ID to the current user
                 $ltp_application->save();
 
                 LtpApplicationProgress::create([
