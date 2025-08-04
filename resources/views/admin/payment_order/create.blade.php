@@ -33,7 +33,7 @@ active
                 @error('prepared_by')<p class="text-danger">{{ $message }}</p>@enderror
                 @error('approved')<p class="text-danger">{{ $message }}</p>@enderror
 
-                <div class="row mb-3">
+                {{-- <div class="row mb-3">
                     <div class="col-12">
                         <label class="form-label">Bill No. <span class="text-danger">*</span></label>
                         <div class="input-group">
@@ -41,7 +41,7 @@ active
                             <button class="btn btn-sm btn-outline-primary" type="button" onclick="generateBillNo();"><i class="fas fa-redo me-1"></i>Generate</button>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 
                 <div class="row mb-3">
                     <div class="col-12">
