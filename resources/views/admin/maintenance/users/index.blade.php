@@ -22,9 +22,7 @@ active
             List of Users
         </div>
         <div class="card-body">
-             <div class="d-flex justify-content-end mb-2">
-                <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
-            </div>
+             
 
             @if(session('failed'))
             <div class="alert alert-danger alert-dismissible" role="alert">
@@ -41,17 +39,25 @@ active
             @endif
             
 
-            <div class="row justify-content-end mb-3">
-                <div class="col-auto">
-                    <form action="" method="GET">
-                        <select name="usertype" id="usertype" class="form-select" onchange="this.form.submit()">
-                            <option value="" selected disabled>Select User Type</option>
-                            <option value="all" >All</option>
-                            <option value="admin" {{ (request()->get('usertype') == 'admin') ? 'selected' : '' }}>Admin</option>
-                            <option value="internal" {{ (request()->get('usertype') == 'internal') ? 'selected' : '' }}>Internal</option>
-                            <option value="permittee" {{ (request()->get('usertype') == 'permittee') ? 'selected' : '' }}>Permittee</option>
-                        </select>
-                    </form>
+            <div class="row justify-content-space-between mb-3">
+                <div class="col">
+                    <div class="d-flex">
+                        <label for="" class="me-2">Filter : </label>
+                        <form action="" method="GET">
+                            <select name="usertype" id="usertype" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="" selected disabled>Select User Type</option>
+                                <option value="all" >All</option>
+                                <option value="admin" {{ (request()->get('usertype') == 'admin') ? 'selected' : '' }}>Admin</option>
+                                <option value="internal" {{ (request()->get('usertype') == 'internal') ? 'selected' : '' }}>Internal</option>
+                                <option value="permittee" {{ (request()->get('usertype') == 'permittee') ? 'selected' : '' }}>Permittee</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
+                    </div>
                 </div>
             </div>
 
