@@ -9,6 +9,8 @@ use App\Models\LtpPermit;
 use App\Models\PaymentOrder;
 use App\Models\Permittee;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use NumberToWords\NumberToWords;
 
 class ApplicationHelper
 {
@@ -242,14 +244,31 @@ class ApplicationHelper
 
     public function ltpApplicationCountByStatus($status)
     {
+        $query = LtpApplication::query();
         $conditions = [];
         if(auth()->user()->usertype == 'permittee') {
             $conditions['permittee_id'] = auth()->user()->wcp()->id;
         }
 
-        return LtpApplication::whereIn('application_status', $this->identifyApplicationStatusesByCategory($status))
-            ->where($conditions)
-            ->count();
+        $query->whereIn('application_status', $this->identifyApplicationStatusesByCategory($status))
+            ->where($conditions);
+
+        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()))
+        {
+            $query->whereIn('io_user_id', [Auth::user()->id, null]);
+        }
+
+        return $query->count();
+    }
+
+    public function numberToWords($num) {
+        $numberToWords = new NumberToWords();
+
+        $numberTransformer = $numberToWords->getNumberTransformer('en');
+
+        $words = ucwords($numberTransformer->toWords($num));
+
+        return $words;
     }
 
 }

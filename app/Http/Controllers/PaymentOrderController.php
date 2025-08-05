@@ -19,6 +19,8 @@ use App\Helpers\ApplicationHelper;
 use App\Models\User;
 use App\Notifications\LtpApplicationPaid;
 use App\Notifications\PaymentOrderCreated;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Faker\Provider\ar_EG\Payment;
 use Illuminate\Support\Facades\Notification;
 
 class PaymentOrderController extends Controller
@@ -79,35 +81,70 @@ class PaymentOrderController extends Controller
         ]);
     }
 
+    public function test() {
+        $query = PaymentOrder::query()
+        ->where('id', 2);
+
+        $paymentOrder = $query->first();
+        // return view('admin.payment_order.pdf', [
+        //     'payment_order' => $paymentOrder,
+        //     "ltp_application" => $paymentOrder->ltpApplication,
+        //     "ltp_fee" => $paymentOrder->ltpFee,
+        // ]);
+        $view = Pdf::loadView('admin.payment_order.pdf', [
+            'payment_order' => $paymentOrder,
+            "ltp_application" => $paymentOrder->ltpApplication,
+            "ltp_fee" => $paymentOrder->ltpFee,
+            'approved_by' => User::find($paymentOrder->approved_by),
+            'prepared_by' => User::find($paymentOrder->prepared_by),
+            'oop_approved_by' => User::find($paymentOrder->oop_approved_by),
+            
+        ]);
+        $view->setPaper('letter', 'portrait');
+        // return $view->download('payment_order.pdf');
+        return $view->stream('payment_order.pdf');
+
+
+        // return $query->first();
+    }
+
     public function store(Request $request) {
         //
         return DB::transaction(function () use ($request) {
             //
             $request->validate([
-                'bill_no' => 'required|unique:payment_orders,order_number',
                 'ltp_fee_id' => 'required',
                 'ltp_application_id' => 'required',
                 'prepared_by' => 'required',
                 'approved_by' => 'required',
-                'prepared_by_position' => 'required',
-                'approved_by_position' => 'required'
+                'oop_approved_by' => 'required'
             ]);
 
             $ltp_application = LtpApplication::find($request->ltp_application_id);
 
             Gate::authorize('generatePaymentOrder', $ltp_application);
 
+            $year = date('Y');  
+            $latest = PaymentOrder::where('year', $year)->orderBy('no', 'DESC')->first();
+            $no = $latest ? $latest->no + 1 : 1;
+            $bill_no = $year."-".date('m-').str_pad($no, 5, '0', STR_PAD_LEFT);
+
             $paymentOrder = PaymentOrder::create([
                 'ltp_application_id' => $request->ltp_application_id,
                 'ltp_fee_id' => $request->ltp_fee_id,
-                'order_number' => $request->bill_no,
+                'order_number' => $bill_no,
+                'year' => $year,
+                'no' => $no,
                 'status' => PaymentOrder::STATUS_PENDING,
                 'payment_method' => PaymentOrder::PAYMENT_METHOD_CASH,
                 'issued_date' => now(),
                 'prepared_by' => $request->prepared_by,
                 'approved_by' => $request->approved_by,
-                'prepared_by_position' => $request->prepared_by_position,
-                'approved_by_position' => $request->approved_by_position
+                'oop_approved_by' => $request->oop_approved_by,
+                'prepared_by_position' => User::find($request->prepared_by)->empPosition ? User::find($request->prepared_by)->empPosition->position : '',
+                'approved_by_position' => User::find($request->approved_by)->empPosition ? User::find($request->approved_by)->empPosition->position : '',
+                'oop_approved_by_position' => User::find($request->oop_approved_by)->empPosition ? User::find($request->oop_approved_by)->empPosition->position :'',
+                'address' => $ltp_application->permittee->user->personalInfo->address,
             ]);
 
             $fee = LtpFee::find($request->ltp_fee_id);
