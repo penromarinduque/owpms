@@ -66,7 +66,9 @@
                         <div class="collapse navbar-collapse" id="navbarsExample04">
                            <ul class="navbar-nav mr-auto">
                               <li class="nav-item active">
-                                 <a class="nav-link" href="{{ route('dashboard.index') }}">Dashboard</a>
+                                 @if (auth()->check())
+                                    <a class="nav-link" href="{{ route('dashboard.index') }}">Dashboard</a>
+                                 @endif
                               </li>
                               <li class="nav-item d_none">
                                  @if (!auth()->check())
