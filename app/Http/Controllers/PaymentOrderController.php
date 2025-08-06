@@ -91,7 +91,7 @@ class PaymentOrderController extends Controller
         //     "ltp_application" => $paymentOrder->ltpApplication,
         //     "ltp_fee" => $paymentOrder->ltpFee,
         // ]);
-        $view = Pdf::loadView('admin.payment_order.pdf', [
+        $view = Pdf::loadView('admin.payment_order.billing-statement-pdf', [
             'payment_order' => $paymentOrder,
             "ltp_application" => $paymentOrder->ltpApplication,
             "ltp_fee" => $paymentOrder->ltpFee,
@@ -103,9 +103,49 @@ class PaymentOrderController extends Controller
         $view->setPaper('letter', 'portrait');
         // return $view->download('payment_order.pdf');
         return $view->stream('payment_order.pdf');
-
-
         // return $query->first();
+    }
+
+    public function printBillingStatementTemplate() {
+        $query = PaymentOrder::query()
+        ->where('id', 2);
+        $paymentOrder = $query->first();
+        $view = Pdf::loadView('admin.payment_order.billing-statement-pdf', [
+            'payment_order' => $paymentOrder,
+            "ltp_application" => $paymentOrder->ltpApplication,
+            "ltp_fee" => $paymentOrder->ltpFee,
+            'approved_by' => User::find($paymentOrder->approved_by),
+            'prepared_by' => User::find($paymentOrder->prepared_by),
+            'oop_approved_by' => User::find($paymentOrder->oop_approved_by),
+        ]);
+        $view->setPaper('letter', 'portrait');
+        return $view->stream('payment_order.pdf');
+    }
+
+    public function printOopTemplate() {
+        $query = PaymentOrder::query()
+        ->where('id', 2);
+        $paymentOrder = $query->first();
+        // return view('admin.payment_order.oop-pdf', [
+        //     'payment_order' => $paymentOrder,
+        //     "ltp_application" => $paymentOrder->ltpApplication,
+        //     "ltp_fee" => $paymentOrder->ltpFee,
+        //     'approved_by' => User::find($paymentOrder->approved_by),
+        //     'prepared_by' => User::find($paymentOrder->prepared_by),
+        //     'oop_approved_by' => User::find($paymentOrder->oop_approved_by),
+            
+        // ]);
+        $view = Pdf::loadView('admin.payment_order.oop-pdf', [
+            'payment_order' => $paymentOrder,
+            "ltp_application" => $paymentOrder->ltpApplication,
+            "ltp_fee" => $paymentOrder->ltpFee,
+            'approved_by' => User::find($paymentOrder->approved_by),
+            'prepared_by' => User::find($paymentOrder->prepared_by),
+            'oop_approved_by' => User::find($paymentOrder->oop_approved_by),
+            
+        ]);
+        $view->setPaper('letter', 'landscape');
+        return $view->stream('payment_order.pdf');
     }
 
     public function store(Request $request) {
@@ -204,9 +244,12 @@ class PaymentOrderController extends Controller
             $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
 
             $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
+            $statement_filename = 'billing_statement_' . $paymentOrder->id . '.pdf';
             $path = $request->file('document_file')->storeAs('payment_order', $filename, 'private');
+            $path2 = $request->file('billing_statement_file')->storeAs('billing_statemenet', $statement_filename, 'private');
 
             $paymentOrder->update(['document' => $path]);
+            $paymentOrder->update(['billing_statement_doc' => $path2]);
 
             $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
 
@@ -221,16 +264,23 @@ class PaymentOrderController extends Controller
         });
     }
 
-    public function download(string $id) {
+    public function download(string $id, string $type) {
         $paymentOrder = PaymentOrder::query()->with([
             'details',
             'ltpApplication.permittee.user',
             'ltpFee'
         ])->find(Crypt::decryptString($id));
 
+        if($type == 'payment_order') {
+            return Storage::disk('private')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
+        }
+        if($type == 'billing_statement') {
+            return Storage::disk('private')->download($paymentOrder->billing_statement_doc, 'Billing Statement No. ' . $paymentOrder->order_number . '.pdf');
+        }
         return Storage::disk('private')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
+        
     }
-
+    
     public function show(string $id) {
         $_helper = new ApplicationHelper;
 

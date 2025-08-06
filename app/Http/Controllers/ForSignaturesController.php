@@ -136,6 +136,15 @@ class ForSignaturesController extends Controller
         return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
     }
 
+    public function paymentOrderOopApproverSign(Request $request, string $id) {
+        $payment_order_id = Crypt::decryptString($id);
+        $payment_order = PaymentOrder::find($payment_order_id);
+        Gate::authorize('oopApproverSign', $payment_order);
+        $payment_order->oop_approved_signed = true;
+        $payment_order->save();
+        return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
+    }
+
     private function getDocuments($type) {
         if($type == 'inspection_report') {
             return InspectionReport::pendingSignaturesFor(auth()->user()->id)->paginate(50);
@@ -145,8 +154,11 @@ class ForSignaturesController extends Controller
             return LtpPermit::pendingSignaturesFor(auth()->user()->id)->paginate(50);
         }
 
+        if($type == "billing_statement") {
+            return PaymentOrder::pendingBillingStatementSignaturesFor(auth()->user()->id)->paginate(50);
+        }
         if($type == "payment_order") {
-            return PaymentOrder::pendingSignaturesFor(auth()->user()->id)->paginate(50);
+            return PaymentOrder::pendingOopSignaturesFor(auth()->user()->id)->paginate(50);
         }
 
         return [];

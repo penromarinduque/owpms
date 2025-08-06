@@ -26,8 +26,8 @@ active
                 @csrf
                 <input type="hidden" name="ltp_application_id" value="{{ $ltp_application->id }}">
                 <input type="hidden" name="ltp_fee_id" value="{{ $ltp_fee->id }}">
-                <input type="hidden" name="prepared_by" value="{{ $signatories['prepare']->user_id }}">
-                <input type="hidden" name="approved_by" value="{{ $signatories['approve']->user_id }}">
+                {{-- <input type="hidden" name="prepared_by" value="{{ $signatories['prepare']->user_id }}">
+                <input type="hidden" name="approved_by" value="{{ $signatories['approve']->user_id }}"> --}}
                 @error('ltp_fee_id')<p class="text-danger">{{ $message }}</p>@enderror
                 @error('ltp_application_id')<p class="text-danger">{{ $message }}</p>@enderror
                 @error('prepared_by')<p class="text-danger">{{ $message }}</p>@enderror
@@ -50,7 +50,7 @@ active
                     </div>
                     <div class="mb-2 col-md-6">
                         Approved By:
-                        <select name="prepared_by" id="approved_by" class="form-select" onchange="approvedByChanged()">
+                        <select name="approved_by" id="approved_by" class="form-select" onchange="approvedByChanged()">
                             <option value="">Select Signatory</option>
                             @foreach ($_user->getAllInternals() as $user)
                                 <option value="{{ $user->id }}" {{ old('prepared_by') == $user->id ? 'selected' : (12 == $user->id ? 'selected' : '') }} data-position="{{ $user->empPosition ? $user->empPosition->position : '' }}" data-name="{{ $user->personalInfo->getFullNameAttribute() }}">{{ strtoupper($user->personalInfo->getFullNameAttribute()) }}</option>

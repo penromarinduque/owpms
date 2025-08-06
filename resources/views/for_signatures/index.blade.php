@@ -70,6 +70,12 @@ For Signatures
                                 <th>Order Number</th>
                                 <th width="500px" class="text-center">Actions</th>
                             @endif
+                            @if (request('type') == 'billing_statement')
+                                @php $totalSpan = 4 @endphp
+                                <th>Document</th>
+                                <th>Order Number</th>
+                                <th width="500px" class="text-center">Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -112,7 +118,7 @@ For Signatures
                                         @endcan
                                     </td>
                                 @endif
-                                @if (request('type') == 'payment_order')   
+                                @if (request('type') == 'billing_statement')   
                                     <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
                                     <td>
                                         {{ $doc->order_number }}
@@ -123,6 +129,17 @@ For Signatures
                                         @endcan
                                         @can('approverSign', $doc)
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approved</button>
+                                        @endcan
+                                    </td>
+                                @endif
+                                @if (request('type') == 'payment_order')   
+                                    <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
+                                    <td>
+                                        {{ $doc->order_number }}
+                                    </td>
+                                    <td class="text-center">
+                                        @can('oopApproverSign', $doc)
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderOopApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approved</button>
                                         @endcan
                                     </td>
                                 @endif

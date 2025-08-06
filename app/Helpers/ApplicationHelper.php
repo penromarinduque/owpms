@@ -190,6 +190,9 @@ class ApplicationHelper
         else if($type == "payment_order"){
             return "Order of Payment";
         }
+        else if($type == "billing_statement"){
+            return "Billing Statement";
+        }
         else if($type == "request_letter"){
             return "Request Letter";
         }
@@ -214,8 +217,11 @@ class ApplicationHelper
         else if($type == "ltp"){
             return $this->_ltp_permit->pendingSignaturesFor(auth()->user()->id)->count();
         }
+        else if($type == "billing_statement"){
+            return $this->_payment_order->pendingBillingStatementSignaturesFor(auth()->user()->id)->count();
+        }
         else if($type == "payment_order"){
-            return $this->_payment_order->pendingSignaturesFor(auth()->user()->id)->count();
+            return $this->_payment_order->pendingOopSignaturesFor(auth()->user()->id)->count();
         }
         else if($type == "request_letter"){
             // return $_request_letter->getForSignatoriesCount();

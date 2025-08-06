@@ -10,9 +10,18 @@
             <div class="modal-body">
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label">Document File</label>
-                    <input type="file" accept="application/pdf" class="form-control @error('document_file', 'upload') is-invalid @enderror" name="document_file" placeholder="Document File" required>
+                    <label class="form-label">Order of Payment</label>
+                    <input type="file" accept="application/pdf" class="form-control @error('document_file', 'upload') is-invalid @enderror" name="document_file" placeholder="Order of Payment" required>
                     @error('document_file', 'upload')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Billing Statement</label>
+                    <input type="file" accept="application/pdf" class="form-control @error('billing_statement_file', 'upload') is-invalid @enderror" name="billing_statement_file" placeholder="Billing Statement" required>
+                    @error('billing_statement_file', 'upload')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>

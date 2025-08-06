@@ -144,6 +144,7 @@
                     <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'inspection_report']) }}">Inspection Reports&nbsp;&nbsp;{!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('inspection_report')) !!}</a>
                     @if (Auth::user()->usertype=='admin' || Auth::user()->usertype=='internal')
                         <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'payment_order']) }}">Order of Payments&nbsp;&nbsp;{!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('payment_order')) !!}</a>
+                        <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'billing_statement']) }}">Billing Statement&nbsp;&nbsp;{!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('billing_statement')) !!}</a>
                         <a class="nav-link" href="{{ route('for-signatures.index', ['type' => 'ltp']) }}">Local Transport Permits&nbsp;&nbsp;{!! $_helper->displayBadgeCount('primary', $_helper->getForSignatoriesCount('ltp')) !!}</a>
                     @endif
                 </nav>

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="{{ public_path('css/styles.css') }}" rel="stylesheet" />
     <link href="{{ public_path('css/customize.css') }}" rel="stylesheet" />
-    <title>Pdf</title>
+    <title>@yield('title')</title>
 </head>
 <body>
     @yield('content')
