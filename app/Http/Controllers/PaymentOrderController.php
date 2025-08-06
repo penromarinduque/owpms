@@ -317,7 +317,8 @@ class PaymentOrderController extends Controller
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:cancelled,paid',
             'or_no' => 'required_if:status,paid',
-            'receipt' => 'required_if:status,paid'
+            'receipt' => 'required_if:status,paid',
+            'serial_no' => 'required_if:status,paid|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -339,7 +340,8 @@ class PaymentOrderController extends Controller
                 $paymentOrder->update([
                     'status' => $request->status,
                     'payment_reference' => $request->or_no,
-                    'receipt_url' => $path
+                    'receipt_url' => $path,
+                    'serial_number' => $request->serial_no
                 ]);
                 
 

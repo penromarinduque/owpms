@@ -33,8 +33,17 @@ class InspectionReport extends Model implements Auditable
                 $query->where('inspector_id', $userId)
                     ->where('inspector_signed', false)
                     ->where('permittee_signed', true);
-            })->orWhere(function ($query)  use ($userId)  {
+            })
+            ->orWhere(function ($query)  use ($userId)  {
                 $query->where('approver_id', $userId)
+                    ->where('approver_signed', false)
+                    ->where('rps_initial_id', true)
+                    ->where('permittee_signed', true)
+                    ->where('inspector_signed', true);
+            })
+            ->orWhere(function ($query)  use ($userId)  {
+                $query->where('rps_initial_id', $userId)
+                    ->where('rps_initial_id', false)
                     ->where('approver_signed', false)
                     ->where('permittee_signed', true)
                     ->where('inspector_signed', true);

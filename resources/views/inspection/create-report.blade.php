@@ -139,7 +139,7 @@ Generate Inspection Report
                                 <select class="form-select select2 @error('approver') is-invalid @enderror" name="approver" id="approver" onchange="changeApprover(event)">
                                     <option value="">-Select Approver-</option>
                                     @foreach($_user->getAllInternals() as $internal)
-                                        <option value="{{ $internal->id }}" data-position-id="{{ $internal->position }}">{{ $internal->personalInfo->getFullNameAttribute() }}</option>
+                                        <option value="{{ $internal->id }}" data-position-id="{{ $internal->position }}" {{ old('approver') ? old('approver') == $internal->id ? 'selected' : '' : ($internal->id == 12 ? 'selected' : '') }}>{{ $internal->personalInfo->getFullNameAttribute() }}</option>
                                     @endforeach
                                 </select>
                                 @error('approver')
@@ -156,6 +156,20 @@ Generate Inspection Report
                         </div>
                     </div>
 
+                    
+
+                </div>
+                <div class="col-8">
+                    <h6>Initial</h6>
+                    <select class="form-select select2 @error('chief_rps') is-invalid @enderror" name="chief_rps" id="chief_rps" onchange="changeApprover(event)">
+                        <option value="">-Select Initial-</option>
+                        @foreach($_user->getAllInternals() as $internal)
+                            <option value="{{ $internal->id }}" data-position-id="{{ $internal->position }}" {{ old('chief_rps') ? (old('chief_rps') == $internal->id ? 'selected' : '') : (($internal->id == 8) ? 'selected' : '') }}>{{ $internal->personalInfo->getFullNameAttribute() }}</option>
+                        @endforeach
+                    </select>
+                    @error('chief_rps')
+                        <small class="invalid-feedback">{{ $message }}</small>
+                    @enderror
                 </div>
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Save</button>
@@ -172,7 +186,7 @@ Generate Inspection Report
 <script>
     const positions = JSON.parse('{!! json_encode($_position->getAllPositions()) !!}');
     $(function(){
-        console.log(positions);
+        $("#approver").change();
         $('.select2').select2();
     })
 

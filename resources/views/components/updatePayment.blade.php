@@ -29,6 +29,15 @@
                     @enderror
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Serial No.</label>
+                    <input type="text" class="form-control @error('serial_no',  'updatePayment') is-invalid @enderror" name="serial_no" placeholder="Serial No." value="{{ old('serial_no')  }}">
+                    @error('serial_no', 'updatePayment')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Receipt</label>
                     <input type="file" id="receipt" accept="image/jpeg, image/png" class="form-control @error('receipt',  'updatePayment') is-invalid @enderror" name="receipt" placeholder="Receipt" >
                     @error('receipt', 'updatePayment')

@@ -30,7 +30,7 @@ class InspectionReportPolicy
 
     public function update(User $user, InspectionReport $inspectionReport)
     {
-        if(in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()) && !$inspectionReport->inspector_signed && !$inspectionReport->approver_signed) {
+        if(in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()) && !$inspectionReport->inspector_signed && !$inspectionReport->approver_signed && !$inspectionReport->rps_signed) {
             return true;
         }
 

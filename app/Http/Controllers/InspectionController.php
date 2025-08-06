@@ -372,7 +372,8 @@ class InspectionController extends Controller
 
         $request->validate([
             'approver' => 'required',
-            'approver_position' => 'required'
+            'approver_position' => 'required',
+            'chief_rps' => 'required',
         ]);
 
         Gate::authorize('inspect', $ltp_application);
@@ -388,7 +389,8 @@ class InspectionController extends Controller
                 'inspector_id' => auth()->user()->id,
                 'approver_id' => $request->input('approver'),
                 'inspection_date' => $request->input('inspection_date'),
-                'approver_position' => $request->input('approver_position')
+                'approver_position' => $request->input('approver_position'),
+                'rps_initial_id' => $request->input('chief_rps'),
             ]);
     
             $ntf_rcvrs = User::whereIn('id', [$ltp_application->permittee->user_id, $inspectionReport->inspectorId, $inspectionReport->approverId])->get();
@@ -404,12 +406,16 @@ class InspectionController extends Controller
         $ltp_application = LtpApplication::find($ltp_application_id);
 
         Gate::authorize('inspect', $ltp_application);
+        
 
         $inspection_report = InspectionReport::find(Crypt::decryptString($id));
 
+        Gate::authorize('update', $inspection_report);
+
         $request->validate([
             'approver' => 'required',
-            'approver_position' => 'required'
+            'approver_position' => 'required',
+            'chief_rps' => 'required',
         ]);
 
         if(!$request->has('inspection_date')) {
@@ -419,7 +425,8 @@ class InspectionController extends Controller
         $inspection_report->update([
             'approver_id' => $request->input('approver'),
             'inspection_date' => $request->input('inspection_date'),
-            'approver_position' => $request->input('approver_position')
+            'approver_position' => $request->input('approver_position'),
+            'rps_initial_id' => $request->input('chief_rps'),
         ]);
 
         return redirect(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']))->with('success', 'Inspection report updated successfully!');
