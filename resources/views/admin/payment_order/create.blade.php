@@ -83,7 +83,7 @@ active
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary btn-submit">
                         <i class="fas fa-check"></i>
-                        Create and Download Templates
+                        Save
                     </button>
                 </div>
             </form>

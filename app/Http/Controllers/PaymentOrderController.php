@@ -189,7 +189,7 @@ class PaymentOrderController extends Controller
 
             $fee = LtpFee::find($request->ltp_fee_id);
 
-            PaymentOrderDetail::create([
+            $payment_order = PaymentOrderDetail::create([
                 'payment_order_id' => $paymentOrder->id,
                 'item_description' => $fee->fee_name,
                 'legal_basis' => $fee->legal_basis
@@ -206,9 +206,8 @@ class PaymentOrderController extends Controller
             ]);
 
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
-
-            return redirect()->route('paymentorder.print', ['id' => Crypt::encryptString($paymentOrder->id)])->with('success', 'Payment Order created successfully');
-            return redirect()->route('paymentorder.index')->with('success', 'Payment Order created successfully');
+            
+            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Document downloaded successfully');
         });
     }
 
