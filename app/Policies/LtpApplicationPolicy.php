@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\LtpApplication;
+use App\Models\LtpApplicationAttachment;
+use App\Models\LtpRequirement;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -73,7 +75,9 @@ class LtpApplicationPolicy
 
     public function submit(User $user, LtpApplication $ltpApplication): bool
     {
-        return $user->id == $ltpApplication->permittee->user_id;
+        $requiredRequirements = LtpRequirement::where('is_mandatory', 1)->pluck('id')->toArray();
+        $attachments = LtpApplicationAttachment::where('ltp_application_id', $ltpApplication->id)->pluck('ltp_requirement_id')->toArray();
+        return $user->id == $ltpApplication->permittee->user_id && count(array_intersect($requiredRequirements, $attachments));
     }
 
     /**

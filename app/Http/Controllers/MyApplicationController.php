@@ -111,7 +111,7 @@ class MyApplicationController extends Controller
                 'application_date' => date('Y-m-d'), 
                 'transport_date' => $request->transport_date, 
                 'purpose' => $request->purpose, 
-                'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->destination == 'export' ? 1: null), 
+                'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null), 
                 'digital_signature' => NULL,
                 'year' => $year,
                 'no' => $no
@@ -163,6 +163,10 @@ class MyApplicationController extends Controller
     {
         $id = Crypt::decryptString($id);
 
+        $provinces = Province::query()->with([
+            'region'
+        ])->get();
+
         $ltp_application = LtpApplication::where([
             "id" => $id,
             "permittee_id" => Auth::user()->wcp()->id
@@ -185,7 +189,8 @@ class MyApplicationController extends Controller
         return view('permittee.myapplication.edit', [
             'title' => 'Edit Application',
             "ltp_application" => $ltp_application,
-            "ltp_application_species" => $ltp_application_species
+            "ltp_application_species" => $ltp_application_species,
+            "provinces" => $provinces
         ]);
     }
 
@@ -213,6 +218,7 @@ class MyApplicationController extends Controller
 
             $ltp_application->transport_date = $request->transport_date;
             $ltp_application->purpose = $request->purpose;
+            $ltp_application->destination = $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null);
             $ltp_application->save();
 
             LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)->delete();
@@ -228,7 +234,7 @@ class MyApplicationController extends Controller
                 }
             }           
 
-            return Redirect::route('myapplication.index')->with('success', 'Application successfully updated!');            
+            return Redirect::route('myapplication.index', ['status' => 'draft', 'category' => 'draft'])->with('success', 'Application successfully updated!');            
         });
     }
 

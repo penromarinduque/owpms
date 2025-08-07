@@ -43,11 +43,11 @@ active
         	    @csrf
                 <input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->id}}">
                 <div class="row mb-2">
-                    <div class="col-md-7">
+                    <div class="col-md-7 mb-2">
                         <div class="form-group">
                             <label>Date of Transport [on or before] <span class="text-danger">*</span>:</label>
                             <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('transport_date', 'validity_result');" required>
-                            <h5 class="mt-2">Validity: <span id="validity_result"></span></h5>
+                            <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5>
                         </div>
                     </div>
                     <div class="col-md-7">
@@ -67,17 +67,6 @@ active
                                 <option value="{{ $province->id }}">{{ $province->province_name }}, {{ $province->region->region_name }}</option>
                             @endforeach
                         </select>
-                        {{-- <div class="row">
-                            <div class="col-md-3 mb-2">
-                                <input type="text" name="city" id="city" class="form-control" required placeholder="City">
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <input type="text" name="state" id="state" class="form-control" required placeholder="State">
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <input type="text" name="country" id="country" class="form-control" required placeholder="Country">
-                            </div>
-                        </div> --}}
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -131,6 +120,15 @@ active
 
     $(document).ready(function() {
         $("#destination_div").hide();
+        $("#validity").hide();
+        $("#transport_date").change(function() {
+            if(!$("#transport_date").val()) {
+                $("#validity").hide();
+                return;
+            }
+            $("#validity").show();
+            addOneMonth('transport_date', 'validity_result');
+        });
 
         // Initialize the select2 plugin for the destination dropdown
         $('#destination').select2({
@@ -138,6 +136,8 @@ active
             allowClear: true,
             width: '100%',
         });
+
+        
     });
 
     // Function to calculate and update the sum
