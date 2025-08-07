@@ -52,6 +52,11 @@ class InspectionReportPolicy
         return $inspectionReport->permittee_signed && !$inspectionReport->inspector_signed && !$inspectionReport->approver_signed && $user->id == $inspectionReport->inspector_id;
     }
 
+    public function rpsSign(User $user, InspectionReport $inspectionReport)
+    {
+        return $inspectionReport->permittee_signed && $inspectionReport->inspector_signed && !$inspectionReport->approver_signed && !$inspectionReport->rps_signed && $user->id == $inspectionReport->rps_initial_id;
+    }
+
     public function uploadDocument(User $user, InspectionReport $inspectionReport)
     {
         return in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions()) &&  $inspectionReport->permittee_signed && $inspectionReport->inspector_signed && $inspectionReport->approver_signed;

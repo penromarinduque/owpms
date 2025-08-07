@@ -96,6 +96,9 @@ For Signatures
                                         @can('permitteeSign', $doc)
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
                                         @endcan
+                                        @can('rpsSign', $doc)
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                        @endcan
                                     </td>
                                 @endif
                                 @if (request('type') == 'ltp')   

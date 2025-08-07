@@ -59,6 +59,15 @@ class ForSignaturesController extends Controller
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
 
+    public function inspectionReportRpsSign(Request $request, string $id) {
+        $inspection_report_id = Crypt::decryptString($id);
+        $inspection_report = InspectionReport::find($inspection_report_id);
+        Gate::authorize('rpsSign', $inspection_report);
+        $inspection_report->rps_signed = true;
+        $inspection_report->save();
+        return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
+    }
+
     public function ltpChiefRpsSign(Request $request, string $id) {
         $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
         $ltpApplication = $ltpPermit->ltpApplication;
