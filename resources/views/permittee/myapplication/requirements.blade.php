@@ -15,6 +15,9 @@ Application Requirements
     	<div class="card-header">
             <i class="fas fa-list me-1"></i>
             List of My Requirements
+            <div class="float-end">
+                <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-secondary" ><i class="fas fa-arrow-left me-2"></i>Back to Application</a>
+            </div>
         </div>
         <div class="card-body">
             @if(session('failed'))

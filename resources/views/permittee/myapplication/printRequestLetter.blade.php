@@ -60,9 +60,16 @@
 
         .qr-code {
             text-align: center;
-            width: 200px;
+            width: 150px;
             display: block;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             margin: 0rem auto;
+        }
+
+        .qr-code img {
+            width: 100%;
         }
 
         @media print {
@@ -189,10 +196,13 @@
                     Owner, {{ $wfp->wildlifeFarm->farm_name }}
                 </p>
             </div>
-            <img 
-                class="qr-code" 
-                src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($application->id), 'document_type' => 'request_letter']))) }}" 
-                alt="">
+            <div class="qr-code">
+                <img 
+                    class="" 
+                    src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($application->id), 'document_type' => 'request_letter']))) }}" 
+                    alt="">
+                <p><small>Application No.: {{ $application->application_no }}</small></p>
+            </div>
         </div>
     </div>
 
