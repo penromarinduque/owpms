@@ -106,9 +106,10 @@ class PaymentOrderController extends Controller
         // return $query->first();
     }
 
-    public function printBillingStatementTemplate() {
+    public function printBillingStatementTemplate($id) {
+        $id = Crypt::decryptString($id);
         $query = PaymentOrder::query()
-        ->where('id', 2);
+        ->where('id', $id);
         $paymentOrder = $query->first();
         $view = Pdf::loadView('admin.payment_order.billing-statement-pdf', [
             'payment_order' => $paymentOrder,
@@ -122,14 +123,15 @@ class PaymentOrderController extends Controller
         return $view->stream('payment_order.pdf');
     }
 
-    public function printOopTemplate() {
+    public function printOopTemplate($id) {
+        $id = Crypt::decryptString($id);
         $query = PaymentOrder::query()
         ->with([
             'details',
             'ltpApplication.permittee.user',
             'ltpFee'
         ])
-        ->where('id', 2);
+        ->where('id', $id);
         $paymentOrder = $query->first();
         // return view('admin.payment_order.oop-pdf', [
         //     'payment_order' => $paymentOrder,
@@ -140,6 +142,7 @@ class PaymentOrderController extends Controller
         //     'oop_approved_by' => User::find($paymentOrder->oop_approved_by),
             
         // ]);
+        // return "asd";
         $view = Pdf::loadView('admin.payment_order.oop-pdf', [
             'payment_order' => $paymentOrder,
             "ltp_application" => $paymentOrder->ltpApplication,
