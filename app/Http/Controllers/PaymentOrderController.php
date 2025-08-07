@@ -124,6 +124,11 @@ class PaymentOrderController extends Controller
 
     public function printOopTemplate() {
         $query = PaymentOrder::query()
+        ->with([
+            'details',
+            'ltpApplication.permittee.user',
+            'ltpFee'
+        ])
         ->where('id', 2);
         $paymentOrder = $query->first();
         // return view('admin.payment_order.oop-pdf', [
