@@ -50,7 +50,7 @@ class Permittee extends Model implements Auditable
 
     public function getPermitteeWFP($user_id, $permit_type = 'wfp')
     {
-        return $this->select('permittees.*', 'wildlife_farms.farm_name', 'wildlife_farms.location', 'wildlife_farms.size', 'wildlife_farms.height')
+        return $this->select('permittees.*', 'wildlife_farms.farm_name', 'wildlife_farms.location', 'wildlife_farms.size')
             ->join('wildlife_farms', 'wildlife_farms.permittee_id', 'permittees.id')
             ->where('permittees.user_id', $user_id)
             ->where('permit_type', $permit_type)

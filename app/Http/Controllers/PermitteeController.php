@@ -248,7 +248,7 @@ class PermitteeController extends Controller
             'farm_name' => 'required',
             'location' => 'required',
             'size' => 'required',
-            'height' => 'required',
+            // 'height' => 'required',
             'permit_number_wfp' => 'required',
             'valid_from_wfp' => 'required',
             'valid_to_wfp' => 'required',
@@ -288,7 +288,7 @@ class PermitteeController extends Controller
             $farm->farm_name = $request->input('farm_name');
             $farm->location = $request->input('location');
             $farm->size = $request->input('size');
-            $farm->height = $request->input('height');
+            // $farm->height = $request->input('height');
             $farm->save();
 
             $wcp->permit_number = $request->input('permit_number_wcp');
