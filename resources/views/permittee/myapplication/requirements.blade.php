@@ -85,7 +85,7 @@ Application Requirements
                 <input type="hidden" name="application_id" value="{{$id}}">  
                 <div class="mb-3">
                     <label class="form-label">Document File</label>
-                    <input type="file" class="form-control" name="document_file" placeholder="Document File" required>
+                    <input type="file" class="form-control" name="document_file" placeholder="Document File" accept=".pdf, .jpeg, .jpg, .png" required>
                 </div>
             </div>
             <div class="modal-footer">  

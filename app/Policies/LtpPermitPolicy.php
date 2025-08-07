@@ -65,25 +65,25 @@ class LtpPermitPolicy
         return false;
     }
 
-    public function chiefRpsSign(User $user, LtpPermit $ltpPermit): bool
-    {
-        return $ltpPermit->chief_rps == $user->id && ($ltpPermit->chief_rps_signed == false || $ltpPermit->chief_rps_signed == null);
-    }
+    // public function chiefRpsSign(User $user, LtpPermit $ltpPermit): bool
+    // {
+    //     return $ltpPermit->chief_rps == $user->id && ($ltpPermit->chief_rps_signed == false || $ltpPermit->chief_rps_signed == null);
+    // }
 
     public function chiefTsdSign(User $user, LtpPermit $ltpPermit): bool
     {
-        return $ltpPermit->chief_tsd == $user->id && ($ltpPermit->chief_tsd_signed == false || $ltpPermit->chief_tsd_signed == null) && $ltpPermit->chief_rps_signed == true;
+        return $ltpPermit->chief_tsd == $user->id && ($ltpPermit->chief_tsd_signed == false || $ltpPermit->chief_tsd_signed == null);
     }
 
     public function penroSign(User $user, LtpPermit $ltpPermit): bool
     {
-        return $ltpPermit->penro == $user->id && $ltpPermit->chief_tsd_signed == true && $ltpPermit->chief_rps_signed == true && ($ltpPermit->penro_signed == false || $ltpPermit->penro_signed == null);
+        return $ltpPermit->penro == $user->id && $ltpPermit->chief_tsd_signed == true && ($ltpPermit->penro_signed == false || $ltpPermit->penro_signed == null);
     }
 
     public function viewPermit(User $user, LtpPermit $ltpPermit): bool
     {
         $ltpApplication = $ltpPermit->ltpApplication;
 
-        return ($ltpApplication->permittee->user_id == $user->id || in_array($user->usertype, ['admin', 'internal'])) && $ltpApplication->application_status == LtpApplication::STATUS_RELEASED;
+        return (($ltpApplication->permittee->user_id == $user->id) || in_array($user->usertype, ['admin', 'internal']))  && $ltpApplication->application_status == LtpApplication::STATUS_RELEASED;
     }
 }

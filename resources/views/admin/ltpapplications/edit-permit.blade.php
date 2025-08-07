@@ -26,7 +26,7 @@ active
                 @csrf
                 <div class="col-8 bg-white p-5 mb-4">
                     <p class="mb-0">Wildlife Transport</p>
-                    <p class="mb-0">Permit No. <input type="text" name="permit_no" value="{{ old('permit_no', $permit->permit_number) }}" class="form-control d-inline" style="width: 150px"></p>
+                    <p class="mb-0">Permit No. {{ $permit->permit_number }}</p>
                     <h3 class="text-center">LOCAL TRANSPORT PERMIT</h3><br>
         
                     <p>
@@ -120,7 +120,7 @@ active
                 <div class="col-8 ">
                     <h6>Initials</h6>
                     <div class="row">
-                        <div class="col-sm-6">
+                        {{-- <div class="col-sm-6">
                             <select name="chief_rps" id="chief_rps" class="form-select select2 @error('chief_rps') is-invalid @enderror">
                                 <option value="">-Select Chief RPS-</option>
                                 @foreach ($_user->getAllInternals() as $user)
@@ -132,7 +132,7 @@ active
                                     <strong>{{ $message }}</strong>
                                 </span>                                
                             @enderror
-                        </div>
+                        </div> --}}
                         <div class="col-sm-6">
                             <select name="chief_tsd" id="chief_tsd" class="form-select select2 @error('chief_tsd') is-invalid @enderror">
                                 <option value="">-Select Chief TSD-</option>

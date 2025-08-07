@@ -46,9 +46,12 @@ class LtpApplicationController extends Controller
             ]);
         }
 
-        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()))
+        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()) )
         {
-            $ltp_application_query->whereIn('io_user_id', [Auth::user()->id, null]);
+            $ltp_application_query->where(function ($query) {
+                $query->where('io_user_id', Auth::user()->id)
+                      ->orWhereNull('io_user_id');
+            });
         }
 
         if($status == 'all') {
@@ -264,28 +267,32 @@ class LtpApplicationController extends Controller
     public function createPermit(Request $request, string $id) {
         $ltp_application = LtpApplication::find(Crypt::decryptString($id)); 
         $request->validate([
-            'approver' => ['required', Rule::notIn([$request->input('chief_rps'), $request->input('chief_tsd')])],
-            'permit_no' => 'required',
+            'approver' => ['required'],
+            // 'permit_no' => 'required',
             'approver_designation' => 'required',
-            'chief_tsd' => ['required', Rule::notIn([$request->input('approver'),$request->input('chief_rps')])],
-            'chief_rps' => ['required', Rule::notIn([$request->input('approver'), $request->input('chief_tsd')])],
+            'chief_tsd' => ['required'],
+            // 'chief_rps' => ['required', Rule::notIn([$request->input('approver'), $request->input('chief_tsd')])],
             'transport_date' => 'required',
         ], [
             'approver.not_in' => 'Approver must be different from Chief RPS and Chief TSD.',
             'chief_tsd.not_in' => 'Chief TSD must be different from Approver and Chief RPS.',
-            'chief_rps.not_in' => 'Chief RPS must be different from Approver and Chief TSD.',
+            // 'chief_rps.not_in' => 'Chief RPS must be different from Approver and Chief TSD.',
         ]);
 
         Gate::authorize('generateLtp', $ltp_application);
         
         return DB::transaction(function () use ($ltp_application, $request) {
-            
+            $year = date('Y');  
+            $latest = LtpPermit::whereYear('created_at', $year)->orderBy('no', 'DESC')->first();
+            $no = $latest ? $latest->no + 1 : 1;
+            $permit_no = $year."-".str_pad($no, 5, '0', STR_PAD_LEFT);
             LtpPermit::create([
                 'ltp_application_id' => $ltp_application->id,
-                'permit_number' => $request->input('permit_no'),
+                'permit_number' => $permit_no,
+                'no' => $no,
                 'penro' => $request->input('approver'),
                 'chief_tsd' => $request->input('chief_tsd'),
-                'chief_rps' => $request->input('chief_rps'),
+                // 'chief_rps' => $request->input('chief_rps'),
                 'approver_designation' => $request->input('approver_designation')
             ]);
 
@@ -314,16 +321,16 @@ class LtpApplicationController extends Controller
     public function updatePermit(Request $request, string $id) {
         $ltp_application = LtpApplication::find(Crypt::decryptString($id)); 
         $request->validate([
-            'approver' => ['required', Rule::notIn([$request->input('chief_rps'), $request->input('chief_tsd')])],
-            'permit_no' => 'required',
+            'approver' => ['required'],
+            // 'permit_no' => 'required',
             'approver_designation' => 'required',
-            'chief_tsd' => ['required', Rule::notIn([$request->input('approver'),$request->input('chief_rps')])],
-            'chief_rps' => ['required', Rule::notIn([$request->input('approver'), $request->input('chief_tsd')])],
+            'chief_tsd' => ['required'],
+            // 'chief_rps' => ['required', Rule::notIn([$request->input('approver'), $request->input('chief_tsd')])],
             'transport_date' => 'required',
         ], [
             'approver.not_in' => 'Approver must be different from Chief RPS and Chief TSD.',
             'chief_tsd.not_in' => 'Chief TSD must be different from Approver and Chief RPS.',
-            'chief_rps.not_in' => 'Chief RPS must be different from Approver and Chief TSD.',
+            // 'chief_rps.not_in' => 'Chief RPS must be different from Approver and Chief TSD.',
         ]);
 
         Gate::authorize('updateLtp', $ltp_application);
@@ -333,10 +340,10 @@ class LtpApplicationController extends Controller
             LtpPermit::where([
                 'ltp_application_id' => $ltp_application->id
             ])->update([
-                'permit_number' => $request->input('permit_no'),
+                // 'permit_number' => $request->input('permit_no'),
                 'penro' => $request->input('approver'),
                 'chief_tsd' => $request->input('chief_tsd'),
-                'chief_rps' => $request->input('chief_rps'),
+                // 'chief_rps' => $request->input('chief_rps'),
                 'approver_designation' => $request->input('approver_designation')
             ]);
 

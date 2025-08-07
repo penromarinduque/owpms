@@ -130,7 +130,7 @@ class LtpApplicationPolicy
             && $inspectionReport->inspector_signed
             && $inspectionReport->approver_signed
             && (
-                !$ltp->penro_signed && !$ltp->chief_tsd_signed && !$ltp->chief_rps_signed
+                !$ltp->penro_signed && !$ltp->chief_tsd_signed
             );
     }
 
@@ -138,13 +138,13 @@ class LtpApplicationPolicy
         $permit = $ltpApplication->permit;
         return in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions())
             && $ltpApplication->application_status == LtpApplication::STATUS_APPROVED
-            && $permit->penro_signed && $permit->chief_tsd_signed && $permit->chief_rps_signed;
+            && $permit->penro_signed && $permit->chief_tsd_signed;
     }
 
     public function downloadLtp(User $user, LtpApplication $ltpApplication) {
         $permit = $ltpApplication->permit;
         return (in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions()) || $user->id == $ltpApplication->permittee->user_id)
-            && ($ltpApplication->application_status == LtpApplication::STATUS_RELEASED || ($permit && $permit->penro_signed && $permit->chief_tsd_signed && $permit->chief_rps_signed));
+            && ($ltpApplication->application_status == LtpApplication::STATUS_RELEASED || ($permit && $permit->penro_signed && $permit->chief_tsd_signed));
     }
 
     public function review(User $user, LtpApplication $ltpApplication) {

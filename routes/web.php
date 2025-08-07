@@ -337,7 +337,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
        Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
        Route::post('inspection-report-approver-sign/{id}', [ForSignaturesController::class, 'inspectionReportApproverSign'])->name('for-signatures.inspectionReportApproverSign');
        Route::post('inspection-report-rps-sign/{id}', [ForSignaturesController::class, 'inspectionReportRpsSign'])->name('for-signatures.inspectionReportRpsSign');
-       Route::post('ltp-chief-rps-sign/{id}', [ForSignaturesController::class, 'ltpChiefRpsSign'])->name('for-signatures.ltpChiefRpsSign');
+    //    Route::post('ltp-chief-rps-sign/{id}', [ForSignaturesController::class, 'ltpChiefRpsSign'])->name('for-signatures.ltpChiefRpsSign');
        Route::post('ltp-chief-tsd-sign/{id}', [ForSignaturesController::class, 'ltpChiefTsdSign'])->name('for-signatures.ltpChiefTsdSign');
        Route::post('ltp-penro-sign/{id}', [ForSignaturesController::class, 'ltpPenroSign'])->name('for-signatures.ltpPenroSign');
        Route::post('payment-order-preparer-signed/{id}', [ForSignaturesController::class, 'paymentOrderPreparerSign'])->name('for-signatures.paymentOrderPreparerSign');

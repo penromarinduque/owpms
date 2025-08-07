@@ -68,22 +68,22 @@ class ForSignaturesController extends Controller
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
 
-    public function ltpChiefRpsSign(Request $request, string $id) {
-        $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
-        $ltpApplication = $ltpPermit->ltpApplication;
-        Gate::authorize('chiefRpsSign', $ltpPermit);
-        return DB::transaction(function () use ($ltpPermit, $ltpApplication) {
-            $ltpPermit->chief_rps_signed = true;
-            $ltpPermit->save();
-            LtpApplicationProgress::create([
-                'ltp_application_id' => $ltpApplication->id,
-                'user_id' => auth()->user()->id,
-                'status' => $ltpApplication->application_status,
-                'description' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
-            ]);
-            return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
-        });
-    }
+    // public function ltpChiefRpsSign(Request $request, string $id) {
+    //     $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
+    //     $ltpApplication = $ltpPermit->ltpApplication;
+    //     Gate::authorize('chiefRpsSign', $ltpPermit);
+    //     return DB::transaction(function () use ($ltpPermit, $ltpApplication) {
+    //         $ltpPermit->chief_rps_signed = true;
+    //         $ltpPermit->save();
+    //         LtpApplicationProgress::create([
+    //             'ltp_application_id' => $ltpApplication->id,
+    //             'user_id' => auth()->user()->id,
+    //             'status' => $ltpApplication->application_status,
+    //             'description' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
+    //         ]);
+    //         return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
+    //     });
+    // }
 
     public function ltpChiefTsdSign(Request $request, string $id) {
         $ltpPermit = LtpPermit::find(Crypt::decryptString($id));

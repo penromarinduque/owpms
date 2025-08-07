@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body">
                 @csrf
-                <input type="file" name="document" id="document" class="form-control @error('document', 'uploadDocument') is-invalid @enderror">
+                <input type="file" name="document" id="document" accept="application/pdf" class="form-control @error('document', 'uploadDocument') is-invalid @enderror">
                 @error('document', 'uploadDocument')
                     <small class="invalid-feedback">{{ $message }}</small>
                 @enderror

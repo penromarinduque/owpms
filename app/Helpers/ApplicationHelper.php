@@ -261,7 +261,10 @@ class ApplicationHelper
 
         if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()))
         {
-            $query->whereIn('io_user_id', [Auth::user()->id, null]);
+            $query->where(function ($query) {
+                $query->where('io_user_id', Auth::user()->id)
+                      ->orWhereNull('io_user_id');
+            });
         }
 
         return $query->count();

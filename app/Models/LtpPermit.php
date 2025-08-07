@@ -20,19 +20,11 @@ class LtpPermit extends Model implements Auditable
     {
         return $query->where(function ($q) use ($userId) {
             $q->where(function($sub) use ($userId) {
-                $sub->where('chief_rps', $userId)
-                    ->where(function ($q) {
-                        $q->where('chief_rps_signed', false)
-                        ->orWhereNull('chief_rps_signed');
-                    });
-            })
-            ->orWhere(function($sub) use ($userId) {
                 $sub->where('chief_tsd', $userId)
                     ->where(function ($q) {
                         $q->where('chief_tsd_signed', false)
                         ->orWhereNull('chief_tsd_signed');
-                    })
-                    ->where('chief_rps_signed', true);
+                    });
             })
             ->orWhere(function($sub) use ($userId) {
                 $sub->where('penro', $userId)
@@ -40,7 +32,6 @@ class LtpPermit extends Model implements Auditable
                         $q->where('penro_signed', false)
                         ->orWhereNull('penro_signed');
                     })
-                    ->where('chief_rps_signed', true)
                     ->where('chief_tsd_signed', true);
             });
         });
@@ -55,9 +46,7 @@ class LtpPermit extends Model implements Auditable
     }
 
     public function getStatusAttribute() {
-        if(!$this->chief_rps_signed) {
-            return '<span class="badge bg-secondary">Pending Chief RPS Signature</span>';
-        } else if(!$this->chief_tsd_signed) {
+        if(!$this->chief_tsd_signed) {
             return '<span class="badge bg-secondary">Pending Chief TSD Signature</span>';
         } else if(!$this->penro_signed) {
             return '<span class="badge bg-secondary">Pending PENRO Signature</span>';

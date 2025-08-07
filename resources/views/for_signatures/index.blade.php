@@ -110,9 +110,9 @@ For Signatures
                                         {{ $doc->ltpApplication->application_no }}
                                     </td>
                                     <td class="text-center">
-                                        @can('chiefRpsSign', $doc)
+                                        {{-- @can('chiefRpsSign', $doc)
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpChiefRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
-                                        @endcan
+                                        @endcan --}}
                                         @can('chiefTsdSign', $doc)
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpChiefTsdSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
                                         @endcan

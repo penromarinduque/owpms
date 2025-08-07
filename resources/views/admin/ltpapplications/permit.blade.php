@@ -26,7 +26,7 @@ active
                 @csrf
                 <div class="col-8 bg-white p-5 mb-4">
                     <p class="mb-0">Wildlife Transport</p>
-                    <p class="mb-0">Permit No. <input type="text" name="permit_no" value="{{ date('Y') }}-" class="form-control d-inline" style="width: 150px"></p>
+                    <p class="mb-0">Permit No. <i>(Auto Generated)</i> </p>
                     <h3 class="text-center">LOCAL TRANSPORT PERMIT</h3><br>
         
                     <p>
@@ -120,7 +120,7 @@ active
                 <div class="col-8 ">
                     <h6>Initials</h6>
                     <div class="row">
-                        <div class="col-sm-6">
+                        {{-- <div class="col-sm-6">
                             <select name="chief_rps" id="chief_rps" class="form-select select2 @error('chief_rps') is-invalid @enderror">
                                 <option value="">-Select Chief RPS-</option>
                                 @foreach ($_user->getAllInternals() as $user)
@@ -132,12 +132,12 @@ active
                                     <strong>{{ $message }}</strong>
                                 </span>                                
                             @enderror
-                        </div>
+                        </div> --}}
                         <div class="col-sm-6">
                             <select name="chief_tsd" id="chief_tsd" class="form-select select2 @error('chief_tsd') is-invalid @enderror">
                                 <option value="">-Select Chief TSD-</option>
                                 @foreach ($_user->getAllInternals() as $user)
-                                    <option value="{{ $user->id }}" {{ $user->id == old('chief_tsd') ? 'selected' : '' }} style="text-transform: uppercase"><u>&nbsp;&nbsp;{{ $user->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></option>
+                                    <option value="{{ $user->id }}" {{ old('chief_tsd') && old('chief_tsd') == $user->id ? 'selected' : ($user->id == 12 ? 'selected' : '') }} style="text-transform: uppercase"><u>&nbsp;&nbsp;{{ $user->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></option>
                                 @endforeach
                             </select>
                             @error('chief_tsd')
@@ -150,7 +150,7 @@ active
                 </div>
 
                 <div class="d-flex justify-content-end gap-1">
-                    <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Saves</button>
+                    <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Save</button>
                 </div>
             </form>
         </div>
