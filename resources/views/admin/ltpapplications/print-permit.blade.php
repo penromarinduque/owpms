@@ -51,7 +51,7 @@
                 <u class="fw-bold" style="text-transform: uppercase">&nbsp;&nbsp;{{ $ltp_application->permittee->user->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u> of 
                 <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->permittee->user->personalInfo->getAddressAttribute() }}&nbsp;&nbsp;</u>
                 is authorized to transport to 
-                <u class="fw-bold">&nbsp;&nbsp;Manila&nbsp;&nbsp;</u>
+                <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->transportDestination }}&nbsp;&nbsp;</u>
                 the following wildlife for <u class="fw-bold">&nbsp;&nbsp;export&nbsp;&nbsp;</u> purpose.
             </p>
 

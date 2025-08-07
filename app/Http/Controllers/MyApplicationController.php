@@ -111,7 +111,7 @@ class MyApplicationController extends Controller
                 'application_date' => date('Y-m-d'), 
                 'transport_date' => $request->transport_date, 
                 'purpose' => $request->purpose, 
-                'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null), 
+                'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: auth()->user()->peronalInfo->barangay->municipality->province_id), 
                 'digital_signature' => NULL,
                 'year' => $year,
                 'no' => $no

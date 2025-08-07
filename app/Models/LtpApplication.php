@@ -117,4 +117,12 @@ class LtpApplication extends Model implements Auditable
     public function permit(){
         return $this->hasOne(LtpPermit::class, 'ltp_application_id', 'id');
     }
+
+    public function toDestination() {
+        return $this->belongsTo(Province::class, 'destination', 'id');
+    }
+
+    public function getTransportDestinationAttribute() {
+        return $this->toDestination ? $this->toDestination->province_name . ', ' . $this->toDestination->region->region_name . ", Philippines" : 'Unknown';
+    }
 }

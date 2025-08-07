@@ -186,24 +186,6 @@ active
 
 
 
-<div class="modal fade" id="resubmitApplicationModal">
-    <div class="modal-dialog">
-        <form action="" method="POST" class="modal-content">
-            @csrf
-            <div class="modal-header">
-                <h4 class="modal-title">Resubmit Application</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to resubmit this application? This action cannot be undone</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Resubmit</button>
-            </div>
-        </form >
-    </div>
-</div>
 
 @endsection
 
@@ -231,10 +213,6 @@ active
     }
 
     
-    function showResubmitApplicationModal(action){
-        $('#resubmitApplicationModal form').attr('action', action);
-        $('#resubmitApplicationModal').modal('show');
-    }
 </script>
 @endsection
 

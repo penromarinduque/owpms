@@ -183,7 +183,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;The listed pupae/live species will be transported on or before
                     <strong><u>&nbsp;&nbsp;{{date('F j, Y', strtotime($application->transport_date))}}&nbsp;&nbsp;</u></strong> for the purpose of
                     <strong><u>&nbsp;&nbsp;{{$application->purpose}}&nbsp;&nbsp;</u></strong> at 
-                    <strong><u>&nbsp;&nbsp;{{ $application->destination }}&nbsp;&nbsp;</u></strong>.
+                    <strong><u>&nbsp;&nbsp;{{ $application->transportDestination }}&nbsp;&nbsp;</u></strong>.
                 </p>
                 <p>&nbsp;&nbsp;&nbsp;&nbsp;Thank you.</p>
             </div>

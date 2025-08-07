@@ -9,7 +9,7 @@ My Applications
     <h1 class="mt-4">{{$title}}</h1>
 
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="#">Applications</a></li>
+        <li class="breadcrumb-item"><a href="#">Applicationss/a></li>
         <li class="breadcrumb-item">View</li>
     </ol>
 
@@ -188,7 +188,7 @@ My Applications
                     </div>
                     <div class="col-lg-3 col-sm-6">
                         <label>Destination</label>
-                        <h6>{{$ltp_application->destination}}</h6>
+                        <h6>{{ $ltp_application->transportDestination }}</h6>
                     </div>
     
                 </div>
@@ -215,6 +215,35 @@ My Applications
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="resubmitApplicationModal">
+    <div class="modal-dialog">
+        <form action="" method="POST" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h4 class="modal-title">Resubmit Application</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to resubmit this application? This action cannot be undone</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Resubmit</button>
+            </div>
+        </form >
+    </div>
+</div>
+@endsection
+
+@section('script-extra')
+<script type="text/javascript">
+    function showResubmitApplicationModal(action){
+        $('#resubmitApplicationModal form').attr('action', action);
+        $('#resubmitApplicationModal').modal('show');
+    }
+</script>
 @endsection
 
 @section('includes')
