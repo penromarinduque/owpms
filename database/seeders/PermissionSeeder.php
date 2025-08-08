@@ -322,6 +322,11 @@ class PermissionSeeder extends Seeder
                 'description' => 'Delete of Payment Orders',
                 'permission_group' => 'PAYMENTS'
             ],
+            [
+                'permission_tag' => 'PAYMENT_ORDERS_ENCODE_SERIAL_NO',
+                'description' => 'Encode SerialNumber of Payment Orders',
+                'permission_group' => 'PAYMENTS'
+            ],
             // ISSUED OR
             [
                 'permission_tag' => 'ISSUED_OR_INDEX',

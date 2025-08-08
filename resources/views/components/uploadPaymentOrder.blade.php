@@ -19,8 +19,8 @@
                     @enderror
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Billing Statement</label>
-                    <input type="file" accept="application/pdf" class="form-control @error('billing_statement_file', 'upload') is-invalid @enderror" name="billing_statement_file" placeholder="Billing Statement" required>
+                    <label class="form-label">Assesment of Fees and Charges</label>
+                    <input type="file" accept="application/pdf" class="form-control @error('billing_statement_file', 'upload') is-invalid @enderror" name="billing_statement_file" placeholder="Assesment of Fees and Charges" required>
                     @error('billing_statement_file', 'upload')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>

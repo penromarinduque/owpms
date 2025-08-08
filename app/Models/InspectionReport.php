@@ -24,6 +24,18 @@ class InspectionReport extends Model implements Auditable
         return $this->belongsTo(User::class, 'approver_id');
     }
 
+    public function inspector() {
+        return $this->belongsTo(User::class, 'inspector_id');
+    }
+
+    public function permittee() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function rpsInitial() {
+        return $this->belongsTo(User::class, 'rps_initial_id');
+    }
+
     public function ltpApplication() {
         return $this->belongsTo(LtpApplication::class);
     }

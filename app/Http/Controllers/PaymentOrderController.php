@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\ApplicationHelper;
 use App\Models\User;
+use App\Notifications\LtpApplicationIOPaid;
 use App\Notifications\LtpApplicationPaid;
 use App\Notifications\PaymentOrderCreated;
+use App\Notifications\SignedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Support\Facades\Notification;
@@ -214,6 +216,7 @@ class PaymentOrderController extends Controller
             ]);
 
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
+            Notification::send($paymentOrder->preparedBy, new SignedNotification(route('for-signatures.index', ['type' => "payment_order"]), 'Payment Order for LTP Application '. $paymentOrder->ltpApplication->application_no . ' has been created and is awaiting your signature.'));
             
             return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Document downloaded successfully');
         });
@@ -266,6 +269,17 @@ class PaymentOrderController extends Controller
                 'description' => "Signed Order of Payment has been uploaded by " . auth()->user()->personalInfo->getFullNameAttribute(),
                 "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
             ]);
+
+            if($paymentOrder->status != PaymentOrder::STATUS_PAID){
+                $cashiers = User::whereHas('userRoles', function ($query) {
+                $query->whereHas('role', function ($query) {
+                        $query->whereHas('rolePermissions', function ($query) {
+                            $query->where('permission', 'PAYMENT_ORDERS_UPDATE');
+                        });
+                    });
+                })->get();
+                Notification::send($cashiers, new \App\Notifications\OopApproved($paymentOrder));
+            }
 
             return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
         });
@@ -325,7 +339,7 @@ class PaymentOrderController extends Controller
             'status' => 'required|in:cancelled,paid',
             'or_no' => 'required_if:status,paid',
             'receipt' => 'required_if:status,paid',
-            'serial_no' => 'required_if:status,paid|max:255'
+            // 'serial_no' => 'required_if:status,paid|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -348,7 +362,7 @@ class PaymentOrderController extends Controller
                     'status' => $request->status,
                     'payment_reference' => $request->or_no,
                     'receipt_url' => $path,
-                    'serial_number' => $request->serial_no
+                    // 'serial_number' => $request->serial_no
                 ]);
                 
 
@@ -358,16 +372,15 @@ class PaymentOrderController extends Controller
                     $ltpApplication->update([
                         'application_status' => LtpApplication::STATUS_PAID
                     ]);
+                    LtpApplicationProgress::create([
+                        "ltp_application_id" => $paymentOrder->ltp_application_id,
+                        "user_id" => auth()->user()->id,
+                        'description' => "Payment has been completed.",
+                        "status" => LtpApplicationProgress::STATUS_PAID
+                    ]);
+                    Notification::send($paymentOrder->ltpApplication->permittee->user, new LtpApplicationPaid($paymentOrder->ltpApplication));
+                    Notification::send($paymentOrder->ltpApplication->ioUser, new LtpApplicationIOPaid($paymentOrder->ltpApplication));
                 }
-
-                LtpApplicationProgress::create([
-                    "ltp_application_id" => $paymentOrder->ltp_application_id,
-                    "user_id" => auth()->user()->id,
-                    'description' => "Payment has been completed.",
-                    "status" => LtpApplicationProgress::STATUS_PAID
-                ]);
-
-                Notification::send($paymentOrder->ltpApplication->permittee->user, new LtpApplicationPaid($paymentOrder->ltpApplication));
 
                 return redirect()->back()->with('success', 'Payment updated successfully');
             });
@@ -389,4 +402,35 @@ class PaymentOrderController extends Controller
             return redirect()->back()->with('error', $th->getMessage());
         }
     }   
+
+    public function encodeSerialNo(Request $request, string $id) {
+        $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+
+        Gate::authorize('encodeSerialNo', $paymentOrder);
+
+        $validation = Validator::make($request->all(), [
+            'serial_no' => 'required|max:255'
+        ]);
+
+        if($validation->fails()) {
+            return redirect()->back()->withErrors($validation, 'updateSerialNo')->withInput();
+        }
+
+        return DB::transaction(function () use ($request, $paymentOrder) {
+            $paymentOrder->update([
+                'serial_number' => $request->serial_no,
+            ]);
+
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $paymentOrder->ltp_application_id,
+                "user_id" => auth()->user()->id,
+                'description' => "Serial Number has been encoded by " . auth()->user()->personalInfo->getFullNameAttribute(),
+                "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
+            ]);
+
+            Notification::send($paymentOrder->oopApprovedBy, new SignedNotification(route('for-signatures.index', ['type' => "payment_order"]), 'Serial Number for paymenr order '. $paymentOrder->order_number . ' has been encoded by ' . auth()->user()->personalInfo->getFullNameAttribute(). ' and is ready for your signature.'));
+
+            return redirect()->back()->with('success', 'Serial Number encoded successfully');
+        });
+    }
 }

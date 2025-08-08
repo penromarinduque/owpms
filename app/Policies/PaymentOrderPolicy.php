@@ -79,7 +79,12 @@ class PaymentOrderPolicy
 
     public function oopApproverSign(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && $user->id == $paymentOrder->oop_approved_by && in_array($paymentOrder->oop_approved_signed, [null, false]) ;
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && $user->id == $paymentOrder->oop_approved_by && in_array($paymentOrder->oop_approved_signed, [null, false]) && $paymentOrder->serial_number;
+    }
+
+    public function encodeSerialNo(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && !$paymentOrder->oop_approved_signed && in_array('PAYMENT_ORDERS_ENCODE_SERIAL_NO', $user->getUserPermissions());
     }
 
     public function preparerSign(User $user, PaymentOrder $paymentOrder): bool
@@ -94,7 +99,7 @@ class PaymentOrderPolicy
 
     public function updatePayment(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_UPDATE', $user->getUserPermissions()) && $paymentOrder->document;
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && $paymentOrder->oop_approved_signed && in_array('PAYMENT_ORDERS_UPDATE', $user->getUserPermissions()) && $paymentOrder->document && $paymentOrder->status != 'paid';
     }
 
     public function downloadSignedOrder(User $user, PaymentOrder $paymentOrder): bool
@@ -104,7 +109,7 @@ class PaymentOrderPolicy
 
     public function uploadSignedOrder(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && $paymentOrder->oop_approved_signed && in_array('PAYMENT_ORDERS_CREATE', $user->getUserPermissions());
     }
 
     public function viewReceipt(User $user, PaymentOrder $paymentOrder): bool

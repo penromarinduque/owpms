@@ -19,6 +19,7 @@ use App\Notifications\InspectionProofSubmitted;
 use Illuminate\Support\Facades\Notification;
 use App\Models\User;
 use App\Notifications\InspectionReportCreated;
+use App\Notifications\SignedNotification;
 
 class InspectionController extends Controller
 {
@@ -74,7 +75,7 @@ class InspectionController extends Controller
         return DB::transaction(function () use ($request, $ltp_application, $ltp_application_id) {
             $imagesToInsert = [];
             foreach ($request->photos as $key => $value) {
-                $path = $value->storeAs('inspection-photos', time() . "_" . $ltp_application_id . '.' . $value->getClientOriginalExtension(), 'private');
+                $path = $value->storeAs('inspection-photos', time() . "_" . $ltp_application_id . '-' . $key . '.' . $value->getClientOriginalExtension(), 'private');
                 $imagesToInsert[] = [
                     'ltp_application_id' => $ltp_application->id,
                     'image_url' => $path,
@@ -396,6 +397,7 @@ class InspectionController extends Controller
             $ntf_rcvrs = User::whereIn('id', [$ltp_application->permittee->user_id, $inspectionReport->inspectorId, $inspectionReport->approverId])->get();
     
             Notification::send($ntf_rcvrs, new InspectionReportCreated($ltp_application));
+            Notification::send($inspectionReport->permittee, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An Inspection Report has been created and is ready for your signature.'));
     
             return redirect(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']))->with('success', 'Inspection report created successfully!');
         });

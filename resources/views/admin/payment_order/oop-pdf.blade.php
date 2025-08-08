@@ -202,7 +202,7 @@
                                 <td width="50%" class="text-end fw-bold">Serial No.: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center"></p></div></td>
                             </tr>
                             <tr>
-                                <td width="50%" class=" fw-bold">Fund Cluster : <u>101</u></td>
+                                <td width="50%" class=" fw-bold">Fund Cluster : <u>151</u></td>
                                 <td width="50%" class="text-end fw-bold">Date: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center">{{ date("d-M-y") }}</p></div></td>
                             </tr>
                         </table>

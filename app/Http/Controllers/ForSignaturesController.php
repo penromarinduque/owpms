@@ -9,7 +9,9 @@ use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Models\LtpPermit;
 use App\Models\PaymentOrder;
+use App\Models\User;
 use App\Notifications\LtpPermitApproved;
+use App\Notifications\SignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +40,7 @@ class ForSignaturesController extends Controller
         Gate::authorize('permitteeSign', $inspection_report);
         $inspection_report->permittee_signed = true;
         $inspection_report->save();
+        Notification::send($inspection_report->inspector, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been signed by the permittee and is now ready for your signature.'));
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
 
@@ -47,6 +50,7 @@ class ForSignaturesController extends Controller
         Gate::authorize('inspectorSign', $inspection_report);
         $inspection_report->inspector_signed = true;
         $inspection_report->save();
+        Notification::send($inspection_report->rpsInitial, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been signed by the Inspecting Officer and is now ready for your initial.'));
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
     
@@ -56,6 +60,7 @@ class ForSignaturesController extends Controller
         Gate::authorize('approverSign', $inspection_report);
         $inspection_report->approver_signed = true;
         $inspection_report->save();
+        Notification::send($inspection_report->ltpApplication->ioUser, new SignedNotification(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']), 'An inspection report has been signed by the Approver and is now ready for LTP creation.'));
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
 
@@ -65,6 +70,7 @@ class ForSignaturesController extends Controller
         Gate::authorize('rpsSign', $inspection_report);
         $inspection_report->rps_signed = true;
         $inspection_report->save();
+        Notification::send($inspection_report->approver, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been reviewed by the RPS In Charge and is now ready for your approval.'));
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
 
@@ -98,6 +104,7 @@ class ForSignaturesController extends Controller
                 'status' => $ltpApplication->application_status,
                 'description' => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
+            Notification::send($ltpPermit->chiefTsd, new SignedNotification(route('for-signatures.index', ['type' => 'ltp']), 'A Local Transport Permit has been reviewed by the Chief TSD and is now ready for PENRO approval.'));
             return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
         });
     }
@@ -121,8 +128,15 @@ class ForSignaturesController extends Controller
                 'remarks' => 'Local Transport Permit has been approved by PENRO ' . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
     
+            $recordsOfficers = User::whereHas('userRoles', function ($query) {
+                $query->whereHas('role', function ($query) {
+                    $query->whereHas('rolePermissions', function ($query) {
+                        $query->where('permission', 'LTP_APPLICATION_RELEASE');
+                    });
+                });
+            })->get();
+            Notification::send($recordsOfficers, new SignedNotification(route('ltps.index', ['type' => 'ltp']), 'A Local Transport Permit has been approved by PENRO and is now ready for release.'));
             Notification::send($ltpApplication->permittee->user, new LtpPermitApproved($ltpPermit));
-    
             return redirect()->route('for-signatures.index', ['type' => 'ltp'])->with('success', 'LTP permit signed successfully!');
         });
     }
@@ -133,6 +147,7 @@ class ForSignaturesController extends Controller
         Gate::authorize('preparerSign', $payment_order);
         $payment_order->prepared_signed = true;
         $payment_order->save();
+        Notification::send($payment_order->approvedBy, new SignedNotification(route('for-signatures.index', ['type' => 'billing_statement']), 'An Assessment of Fees and Charges has been signed by the preparer and is now ready for your approval.'));
         return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
     }
 
@@ -142,6 +157,14 @@ class ForSignaturesController extends Controller
         Gate::authorize('approverSign', $payment_order);
         $payment_order->approved_signed = true;
         $payment_order->save();
+        $serialNoEncoders = User::whereHas('userRoles', function ($query) {
+            $query->whereHas('role', function ($query) {
+                $query->whereHas('rolePermissions', function ($query) {
+                    $query->where('permission', 'PAYMENT_ORDERS_ENCODE_SERIAL_NO');
+                });
+            });
+        })->get();
+        Notification::send($serialNoEncoders, new SignedNotification(route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)]), 'An Assessment of Fees and Charges has been approved by the approver and is now ready for serial number encoding.'));
         return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
     }
 
@@ -151,6 +174,15 @@ class ForSignaturesController extends Controller
         Gate::authorize('oopApproverSign', $payment_order);
         $payment_order->oop_approved_signed = true;
         $payment_order->save();
+        $inspectors = User::whereHas('userRoles', function ($query) {
+            $query->whereHas('role', function ($query) {
+                $query->whereHas('rolePermissions', function ($query) {
+                    $query->where('permission', 'PAYMENT_ORDERS_CREATE');
+                });
+            });
+        })->get();
+        Notification::send($inspectors, new SignedNotification(route('paymentorder.show', Crypt::encryptString($payment_order->id)), 'Order of Payment has been approved by '. $payment_order->oopApprovedBy->personalInfo->getFullNameAttribute() . ' and is now ready for uploading.'));
+        
         return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
     }
 

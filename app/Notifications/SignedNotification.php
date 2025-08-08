@@ -6,25 +6,24 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\URL;
 
-class PaymentOrderCreated extends Notification
+class SignedNotification extends Notification
 {
     use Queueable;
-    public $paymentOrder;
-    public $ltpApplication;
 
+    public $url;
+    public $message;
+    public $title;
+    
     /**
      * Create a new notification instance.
-    */
-    public function __construct($paymentOrder)
+     */
+    public function __construct($url, $message, $title = 'For Signature')
     {
-        //
-        $this->paymentOrder = $paymentOrder;
-        $this->ltpApplication = $paymentOrder->ltpApplication;
+        $this->title = $title;
+        $this->url = $url;
+        $this->message = $message;
     }
-
     /**
      * Get the notification's delivery channels.
      *
@@ -42,8 +41,8 @@ class PaymentOrderCreated extends Notification
     {
         return (new MailMessage)
                     ->line('Good day!')
-                    ->line('Your Payment Order for LTP Application '.$this->ltpApplication->application_no.' has been created and is now awaiting signature.')
-                    ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
+                    ->line($this->message)
+                    ->action('View Signatories', $this->url)
                     ->line('Thank you for using our application!');
     }
 
@@ -55,9 +54,9 @@ class PaymentOrderCreated extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'url' => URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]),
-            'title' => 'Payment Order Created',
-            'message' => 'Your Payment Order for LTP Application '.$this->ltpApplication->application_no.' has been created and is now awaiting signature.',
+            'url' => $this->url,
+            'title' => $this->title,
+            'message' => $this->message,
         ];
     }
 }

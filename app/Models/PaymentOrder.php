@@ -53,11 +53,16 @@ class PaymentOrder extends Model implements Auditable
         return $this->belongsTo(User::class, 'approved_by', 'id');
     }
 
+    public function oopApprovedBy() {
+        return $this->belongsTo(User::class, 'oop_approved_by', 'id');
+    }
+
     public function scopePendingOopSignaturesFor($query, $userId)
     {
         return $query->where(function ($q) use ($userId) {
             $q->where('prepared_signed', true)
             ->where('approved_signed', true)
+            ->whereNotNull('serial_number')
             ->where('oop_approved_by', $userId)
             ->where(function ($q)  {
                 $q->whereNull('oop_approved_signed')

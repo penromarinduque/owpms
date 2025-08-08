@@ -48,17 +48,20 @@ active
                             Actions
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            @if (auth()->user()->can('updatePayment', $paymentOrder) || auth()->user()->can('viewReceipt', $paymentOrder))
+                            @can('encodeSerialNo', $paymentOrder)
+                                <li><a class="dropdown-item" href="#" onclick="showUpdateSerialNoModal('{{ route('paymentorder.encodeSerialNo', Crypt::encryptString($paymentOrder->id)) }}')" @if($paymentOrder->status !== 'pending') disabled @endif data-bs-toggle="tooltip" data-bs-title="Update Serial No."><i class="fas fa-edit me-1"></i>Update Serial No.</a></li>
+                            @endcan
+                            @if (auth()->user()->can('updatePayment', $paymentOrder))
                                 <li><a class="dropdown-item" href="#" onclick="showUpdatePaymentModal('{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}')" @if($paymentOrder->status !== 'pending') disabled @endif data-bs-toggle="tooltip" data-bs-title="Update Payment"><i class="fas fa-edit me-1"></i>Update Payment</a></li>
                             @endif
                             <li><a class="dropdown-item" href="{{ route('paymentorder.printBillingStatementTemplate', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" data-bs-toggle="tooltip" data-bs-title="Print Assesment of Fees and Charges Template"><i class="fas fa-print me-1"></i>Print Assesment of Fees and Charges Template</a></li>
                             <li><a class="dropdown-item" href="{{ route('paymentorder.printOopTemplate', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" data-bs-toggle="tooltip" data-bs-title="Print Order of Payment Template"><i class="fas fa-print me-1"></i>Print Order of Payment Template</a></li>
                             @can('downloadSignedOrder', $paymentOrder)
                                 <li><a class="dropdown-item" href="{{ route('paymentorder.download', ['id' => Crypt::encryptString($paymentOrder->id), 'type' => 'payment_order']) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download me-1"></i>Download Order of Payment</a></li>
-                                <li><a class="dropdown-item" href="{{ route('paymentorder.download', ['id' => Crypt::encryptString($paymentOrder->id), 'type' => 'billing_statement']) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Billing Statement"><i class="fas fa-file-download me-1"></i>Download Billing Statement</a></li>
+                                <li><a class="dropdown-item" href="{{ route('paymentorder.download', ['id' => Crypt::encryptString($paymentOrder->id), 'type' => 'billing_statement']) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Assesment of Fees and Chardes"><i class="fas fa-file-download me-1"></i>Download Assesment of Fees and Charges</a></li>
                             @endcan
                             @can('uploadSignedOrder', $paymentOrder)
-                                <li><a class="dropdown-item" href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment"><i class="fas fa-upload me-1"></i>Upload</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment and Assement of Fees and Charges"><i class="fas fa-upload me-1"></i>Upload</a></li>
                             @endcan
                         </ul>
                     </div>
@@ -105,6 +108,7 @@ active
 @section('includes')
     @include('components.uploadPaymentOrder')
     @include('components.updatePayment')
+    @include('components.updateSerialNo')
 @endsection
 
 

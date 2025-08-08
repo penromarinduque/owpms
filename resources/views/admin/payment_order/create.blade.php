@@ -153,8 +153,8 @@ active
                             <td width="41%" class="text-center">{{ $ltp_fee->amount }}</td>
                         </tr>
                         <tr style="border-bottom: 1px solid black">
-                            <td width="20%" style="border-right: 1px solid black">&nbsp;</td>
-                            <td width="39%" style="border-right: 1px solid black">&nbsp;</td>
+                            <td width="20%" style="border-right: 1px solid black" class="text-center">Section 9</td>
+                            <td width="39%" style="border-right: 1px solid black" class="text-center">Fund 151</td>
                             <td width="41%">&nbsp;</td>
                         </tr>
                         <tr style="border-bottom: 1px solid black">
@@ -250,7 +250,7 @@ active
                             <td width="50%" class="text-end fw-bold">Serial No.: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center"></p></div></td>
                         </tr>
                         <tr>
-                            <td width="50%" class=" fw-bold">Fund Cluster : <u>101</u></td>
+                            <td width="50%" class=" fw-bold">Fund Cluster : <u>151</u></td>
                             <td width="50%" class="text-end fw-bold">Date: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center">{{ date("d-M-y") }}</p></div></td>
                         </tr>
                     </table>

@@ -45,6 +45,10 @@ class LtpPermit extends Model implements Auditable
         return $this->belongsTo(User::class, 'penro', 'id');
     }
 
+    public function chiefTsd(){
+        return $this->belongsTo(User::class, 'chief_tsd', 'id');
+    }
+
     public function getStatusAttribute() {
         if(!$this->chief_tsd_signed) {
             return '<span class="badge bg-secondary">Pending Chief TSD Signature</span>';

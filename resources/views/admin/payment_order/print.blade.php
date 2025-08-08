@@ -81,8 +81,8 @@
                             <td class="p-3 border-end-0">{{ $paymentOrder->ltpFee->amount }}</td>
                         </tr>
                         <tr>
-                            <td class="p-3  border-start-0"></td>
-                            <td class="p-3"></td>
+                            <td class="p-3  border-start-0">Section 9</td>
+                            <td class="p-3">Fund 151</td>
                             <td class="p-3 border-end-0"></td>
                         </tr>
                         <tr>

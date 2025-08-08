@@ -80,6 +80,10 @@ class LtpApplication extends Model implements Auditable
         return true;
     }
 
+    public function ioUser() {
+        return $this->belongsTo(User::class, 'io_user_id', 'id');
+    }
+
     public static function validateRequirements($id) {
         $attachments = LtpApplicationAttachment::where("ltp_application_id", $id)
             ->pluck("ltp_requirement_id")
