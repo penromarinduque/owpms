@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Barangay;
 use App\Models\PersonalInfo;
 use App\Models\Position;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -113,7 +114,8 @@ class UserController extends Controller
             'lastname' => 'required',
             'gender' => 'required',
             'username' => 'required|min:6|max:16',
-            'email' => 'required|max:150'
+            'email' => 'required|max:150',
+            'password' => 'nullable|min:8',
         ]);
 
         return DB::transaction(function () use ($request, $user_id) {
@@ -135,6 +137,12 @@ class UserController extends Controller
                 'last_name' => $request->input('lastname'),
                 'gender' => $request->input('gender'),
             ]);
+
+            if($request->has('password') && $request->input('password') != '' && $request->has('opt_cp')) {
+                User::find($user_id)->update([
+                    'password' => Hash::make($request->input('password')),
+                ]);
+            }
 
             return Redirect::route('users.index')->with('success', 'Successfully saved!');
         });
