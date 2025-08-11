@@ -13,7 +13,7 @@ Activity Logs
             <div class="card mb-2">
                 <div class="card-body">
                     <p class="mb-1">User : <span class="text-muted">{{ $log->user->personalInfo->getFullNameAttribute() }}</span></p>
-                    <p class="mb-1">Action : <span class="text-muted">{{ Str::title($log->event) }}</span></p>
+                    <p class="mb-1">Action : <span class=" badge bg-{{ $log->event == 'created' ? 'success' : ($log->event == 'updated' ? 'warning' : 'danger') }}">{{ Str::title($log->event) }}</span></p>
                     <p class="mb-1">Model : <span class="text-muted">{{ Str::title(Str::snake(class_basename($log->auditable_type), ' ')) }}</span></p>
                     @if (auth()->user()->usertype == 'admin')
                         @if ($log->event == 'updated')

@@ -7,6 +7,7 @@ use App\Models\LtpApplicationAttachment;
 use App\Models\LtpRequirement;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Storage;
 
 class LtpApplicationPolicy
 {
@@ -115,12 +116,15 @@ class LtpApplicationPolicy
     public function generateLtp(User $user, LtpApplication $ltpApplication) {
         $inspectionReport = $ltpApplication->inspectionReport;
 
+        $inspectionReportDocument = Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
+
         return $inspectionReport 
             && $ltpApplication->application_status == LtpApplication::STATUS_INSPECTED 
             && in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions())
             && $inspectionReport->permittee_signed
             && $inspectionReport->inspector_signed
-            && $inspectionReport->approver_signed;
+            && $inspectionReport->approver_signed
+            && $inspectionReportDocument;
     }
 
     public function updateLtp(User $user, LtpApplication $ltpApplication) {
