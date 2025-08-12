@@ -247,7 +247,7 @@ class PermitteeController extends Controller
             'barangay_id' => 'required',
             'farm_name' => 'required',
             'location' => 'required',
-            'size' => 'required',
+            // 'size' => 'required',
             // 'height' => 'required',
             'permit_number_wfp' => 'required',
             'valid_from_wfp' => 'required',

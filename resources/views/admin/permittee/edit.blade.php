@@ -132,19 +132,19 @@ active
                             @enderror
                         </div>
                         <div class="col-sm-2">
-                            <label for="size">Size<b class="text-danger">*</b></label>
-                            <input type="text" class="form-control" name="size" id="size" placeholder="Size" value="{{ old('size', $wfp->wildlifeFarm->size) }}">
+                            <label for="size">Area<b class="text-danger">*</b></label>
+                            <input type="text" class="form-control" name="size" id="size" placeholder="Area" value="{{ old('size', $wfp->wildlifeFarm->size) }}">
                             @error('size')
                             <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
-                        <div class="col-sm-2">
+                        {{-- <div class="col-sm-2">
                             <label for="height">Height<b class="text-danger">*</b></label>
                             <input type="text" class="form-control" name="height" id="height" placeholder="Height" value="{{ old('height', $wfp->wildlifeFarm->height) }}">
                             @error('height')
                             <small class="text-danger">{{ $message }}</small>
                             @enderror
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="row mb-3">
                         <input type="hidden" name="permit_type_wfp" id="permit_type_wfp" value="wfp">

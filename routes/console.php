@@ -17,8 +17,10 @@ Artisan::command('inspire', function () {
 
 Schedule::call(function () {
     $applications = LtpApplication::with(['permittee.user']) 
-        ->whereNotIn('application_status', ['draft', 'expired'])
-        ->whereDate('transport_date', '<=', Carbon::now())
+        ->where(function ($query) {
+            $query->whereNotIn('application_status', ['draft', 'expired'])
+            ->whereDate('transport_date', '<=', Carbon::now());
+        })
         ->get();
 
     $now = now();
@@ -31,7 +33,7 @@ Schedule::call(function () {
             'ltp_application_id' => $application->id,
             'status' => 'expired',
             'user_id' => $application->permittee->user->id,
-            'remarks' => 'The application has expired due to the transport date being in the past.',
+            'remarks' => "The application has expired because the transport date ({$application->transport_date->format('F d, Y')}) is in the past.",
             'created_at' => $now,
             'updated_at' => $now,
         ];
