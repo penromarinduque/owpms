@@ -20,7 +20,6 @@ active
     <div class="card mb-4">
     	<div class="card-header">
             <div class="float-end">
-                
                 <a href="{{ route('myapplication.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
             </div>
             <i class="fas fa-plus-square me-1"></i>
@@ -41,33 +40,33 @@ active
             </div>
             @endif
         	<form id="form_create" method="POST" action="{{ route('myapplication.store') }}" onsubmit="disableSubmitButton('btn_save');">
-        	@csrf
+        	    @csrf
                 <input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->id}}">
-                <div class="row">
-                    <div class="col-md-2">
+                <div class="row mb-2">
+                    <div class="col-md-7 mb-2">
                         <div class="form-group">
-                            <label>Date of Transport [on or before]*:</label>
-                            <input type="date" name="transport_date" id="transport_date" class="form-control" onchange="addOneMonth('transport_date', 'validity_result');" required>
-                            <h5>Validity: <span id="validity_result"></span></h5>
+                            <label>Date of Transport [on or before] <span class="text-danger">*</span>:</label>
+                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('transport_date', 'validity_result');" required>
+                            <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5>
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <label>Place of Transport*:</label>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <input type="text" name="city" id="city" class="form-control" required placeholder="City">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" name="state" id="state" class="form-control" required placeholder="State">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" name="country" id="country" class="form-control" required placeholder="Country">
-                            </div>
-                        </div>
+                        <label>Purpose <span class="text-danger">*</span>:</label>
+                        <select name="purpose" id="purpose" class="form-select mb-2" required onchange="onPurposeChange(event);">
+                            <option value="" selected disabled>Select Purpose</option>
+                            <option value="research">Research</option>
+                            <option value="local sale">Local Sale</option>
+                            <option value="export">Export</option>
+                        </select>
                     </div>
-                    <div class="col-md-3">
-                        <label>Purpose*:</label>
-                        <textarea class="form-control" name="purpose" id="purpose" required placeholder="Purpose"></textarea>
+                    <div class="col-md-7" id="destination_div">
+                        <label>Destination <span class="text-danger">*</span>:</label>
+                        <select name="destination" id="destination" class="form-select mb-2 select-2">
+                            <option value="" selected disabled>Select Destination</option>
+                            @foreach($provinces as $province)
+                                <option value="{{ $province->id }}">{{ $province->province_name }}, {{ $province->region->region_name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -108,7 +107,6 @@ active
                     </div>
                 </div>
                 <div class="float-end mt-4">
-                    <button type="button" id="btn_preview" class="btn btn-primary btn-block mr-1"><i class="fas fa-eye"></i> Preview</button>
                     <button type="submit" id="btn_save" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Save</button>
                 </div>
         	</form>
@@ -119,6 +117,29 @@ active
 
 @section('script-extra')
 <script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#destination_div").hide();
+        $("#validity").hide();
+        $("#transport_date").change(function() {
+            if(!$("#transport_date").val()) {
+                $("#validity").hide();
+                return;
+            }
+            $("#validity").show();
+            addOneMonth('transport_date', 'validity_result');
+        });
+
+        // Initialize the select2 plugin for the destination dropdown
+        $('#destination').select2({
+            placeholder: "Select Destination",
+            allowClear: true,
+            width: '100%',
+        });
+
+        
+    });
+
     // Function to calculate and update the sum
     function updateDynamicSum(fld_class, result_element) {
         let sum = 0;
@@ -140,6 +161,16 @@ active
         updateDynamicSum('quantity', 'txt_total');
     }
 
+    function onPurposeChange(e) {
+        const purpose = e.target.value;
+        if(purpose == 'local sale') {
+            $("#destination_div").show();
+        }
+        else {
+            $("#destination_div").hide();
+        }
+    }
+
     jQuery(document).ready(function ($){
         let rowNumber = 1; // Counter for incremental numbers
 
@@ -150,7 +181,7 @@ active
             if (searchkey.length > 0) {
                 $.ajax({
                     url: "/myapplication/ajaxgetspecies",
-                    method: "POST",
+                    method: "GET",
                     data: { searchkey: searchkey },
                     success: function (data) {
                          console.log(data);
@@ -168,15 +199,19 @@ active
         // Click on a result
         $(document).on("click", ".result-item", function () {
             let itemData = $(this).data(); // Retrieve data attributes
+            if($("#row_"+itemData.id).length > 0) {
+                showToast("warning", "Specie already added.");
+                return;
+            }
             let newRow = `
                 <tr id="row_${itemData.id}">
                     <td align="center">${rowNumber}</td>
-                    <td align="center">${itemData.scientifcname}</td>
                     <td align="center">${itemData.commonname}</td>
+                    <td align="center"><i>${itemData.scientifcname}</i></td>
                     <td align="center">${itemData.family}</td>
                     <td align="center">
                         <input type="hidden" name="specie_id[]" id="specie_id" value="${itemData.id}" />
-                        <input type="text" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" required />
+                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" required />
                     </td>
                     <td align="center">
                         <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
@@ -196,51 +231,10 @@ active
             }
         });
 
-        // Preview
-        document.getElementById('btn_preview').addEventListener('click', function () {
-            event.preventDefault(); // Prevent form submission
-            
-            // Collect all quantity fields
-            const quantities = document.querySelectorAll('input[name="quantity[]"]');
-            let valid = true;
-
-            // Check each quantity field
-            quantities.forEach((input) => {
-                if (!input.value || input.value <= 0) {
-                    valid = false;
-                    input.classList.add('border-red-500'); // Highlight invalid field
-                } else {
-                    input.classList.remove('border-red-500');
-                }
-            });
-
-            if (!valid) {
-                alert('Please ensure all Quantity fields are valid (greater than 0).');
-                return;
-            }
-
-            // If valid, proceed with AJAX
-            const formData = new FormData(document.getElementById('form_create'));
-
-            fetch('{{ route('myapplication.preview') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: formData,
-            })
-            .then(response => response.text())
-            .then(html => {
-                const previewWindow = window.open('', '_blank');
-                previewWindow.document.open();
-                previewWindow.document.write(html);
-                previewWindow.document.close();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Preview failed.');
-            });
-        });
     });
+
+    
 </script>
 @endsection
+
+@include('components.toast')

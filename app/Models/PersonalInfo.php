@@ -13,5 +13,29 @@ class PersonalInfo extends Model implements Auditable
 
     protected $primaryKey = "id"; // default it look for id
 
-    protected $fillable = ['user_id', 'lastname', 'firstname', 'middlename', 'gender', 'email', 'contact_no', 'barangay_id'];
+protected $fillable = ['user_id', 'last_name', 'first_name', 'middle_name', 'gender', 'email', 'contact_no', 'barangay_id'];
+
+    public function user() {
+        return $this->hasOne(User::class);
+    }
+
+    protected function barangay(){
+        return $this->hasOne(Barangay::class, 'id', 'barangay_id');
+    }
+
+    
+    public function getFullNameAttribute($useMiddleInitial = true){
+        if($useMiddleInitial){
+            return $this->first_name . ' ' . substr($this->middle_name, 0, 1) . '. ' . $this->last_name;
+        }
+        return $this->first_name . ' ' . $this->middle_name . ' ' . $this->last_name;
+    }
+
+    public function getAddressAttribute(){
+        return $this->barangay->barangay_name . ', ' . $this->barangay->municipality->municipality_name . ', ' . $this->barangay->municipality->province->province_name;
+    }
+
+
+
+
 }

@@ -35,7 +35,7 @@
                 <label class="form-check-label" for="showpass">Show Password</label>
             </div>
             <div class="d-flex align-items-center justify-content-between mt-1 mb-0">
-                <a class="float-end" href="">Forgot Password?</a>
+                <a class="float-end" href="{{ route('password.request') }}">Forgot Password?</a>
                 {{--<a class="text-success" href="{{route('register')}}"><b>Create Account</b></a>--}}
                 <button type="submit" name="btn_login" id="btn_login" class="btn btn-primary"><i class="fas fa-sign-in"></i> Login</button>
             </div>

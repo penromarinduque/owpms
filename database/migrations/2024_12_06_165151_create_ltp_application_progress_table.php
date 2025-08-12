@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->integer('ltp_application_id');
             $table->integer('user_id');
-            $table->enum('status', ['submitted', 'under-review', 'returned', 'resubmitted', 'accepted', 'payment-in-process', 'paid', 'for-inspection']);
+            $table->enum('status', ['submitted', 'under-review', 'returned', 'resubmitted', 'accepted', 'payment-in-process', 'paid', 'for-inspection', 'inspection-rejected',  'approved', 'expired', 'released', 'reviewed']);
+            $table->string('description', 200)->nullable();
             $table->text('remarks')->nullable();
             $table->timestamps();
         });

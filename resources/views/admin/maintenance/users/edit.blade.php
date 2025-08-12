@@ -29,14 +29,41 @@ active
         	@if(!empty($user))
         	<form method="POST" action="{{ route('users.update', [Crypt::encrypt($user->id)]) }}" onsubmit="disableSubmitButton('btn_update');">
         	@csrf
-        		 <div class="row mb-3">
-                	<div class="col-sm-4">
-                		<label for="name" class="form-label">Name</label>
-                		<input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{ $user->name }}">
-                        @error('name')
+            <div class="row mb-3">
+                    <div class="col-sm-4 mb-2">
+                        <label for="firstname" class="form-label">First Name <b class="text-danger">*</b></label>
+                        <input type="text" class="form-control" name="firstname" id="firstname" placeholder="First name" value="{{ old('firstname') ?? $user->personalInfo->first_name }}">
+                        @error('firstname')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
+                    </div>
+                    <div class="col-sm-4 mb-2">
+                        <label for="middlename" class="form-label">Middle Name <b class="text-danger">*</b></label>
+                        <input type="text" class="form-control" name="middlename" id="middlename" placeholder="Middle name" value="{{ old('middlename') ?? $user->personalInfo->middle_name }}">
+                        @error('middlename')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <div class="col-sm-4 mb-2">
+                		<label for="lastname" class="form-label">Last Name <b class="text-danger">*</b></label>
+                		<input type="text" class="form-control" name="lastname" id="lastname" placeholder="Last name" value="{{ old('lastname') ?? $user->personalInfo->last_name }}">
+                        @error('lastname')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                 	</div>
+                    <div class="col-sm-4 mb-2">
+                            <label for="gender" class="form-label">Gender <b class="text-danger">*</b></label>
+                		<select name="gender" id="gender" class="form-select" placeholder="Select Gender">
+                            <option value="">-Select Gender-</option>
+                            <option value="male" {{ (old('gender') == 'male' || $user->personalInfo->gender == 'male') ? 'selected' : '' }}>Male</option>
+                            <option value="female" {{ (old('gender') == 'female' || $user->personalInfo->gender == 'female') ? 'selected' : '' }}>Female</option>
+                        </select>
+                        @error('gender')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                	</div>
+                </div>
+        		 <div class="row mb-3">
                 	<div class="col-sm-4">
                 		<label for="email" class="form-label">Email</label>
                 		<input type="email" class="form-control" name="email" id="email" placeholder="Email" value="{{ $user->email }}">
@@ -69,9 +96,20 @@ active
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-                    <div class="col-sm-4">
-                		
-                	</div>
+                    @if($user->usertype != 'permittee')
+                        <div class="col-sm-4 mb-2">
+                            <label for="position" class="form-label">Position/Designation <b class="text-danger">*</b> </label>
+                            <select name="position" id="position" class="form-select select2" placeholder="Select Position/Designation">
+                                <option value="">-Select Position/Designation-</option>
+                                @foreach ($_position->getAllPositions() as $position)
+                                    <option value="{{ $position->id }}" {{ (old('position') == $position->id || $user->position == $position->id) ? 'selected' : '' }}>{{ $position->position }}</option>
+                                @endforeach
+                            </select>
+                            @error('position')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    @endif  
                 </div>
                 <button type="submit" id="btn_update" class="btn btn-primary btn-block float-end"><i class="fas fa-save"></i> Save Changes</button>
         	</form>

@@ -8,12 +8,19 @@ export default {
         './resources/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
+        "./vendor/mkocansey/bladewind/resources/views/**/*.blade.php",
     ],
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors : {
+                primary: colors.blue,
+                secondary: colors.slate,
+                dark: colors.gray,
+                green: colors.emerald,
+            }
         },
     },
     plugins: [],

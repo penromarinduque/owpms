@@ -6,16 +6,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Barangay;
+use App\Models\PersonalInfo;
+use App\Models\Position;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::select('users.*', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name')
+        $query =  User::query()->select('users.*', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name')
             ->join('personal_infos', 'personal_infos.user_id', 'users.id')
-            ->where('usertype', '<>', 1)
-            ->get();
+            ->with(['userRoles.role']);
+
+        if($request->has('usertype') && $request->usertype != 'all')
+        {
+            $query->where("usertype", $request->usertype);
+        }
+
+        $users = $query->paginate(20);
+
+        
         return view('admin.maintenance.users.index', [
             'users' => $users
         ]);
@@ -23,28 +36,55 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('admin.maintenance.users.create');
+        $_barangay = new Barangay;
+        $_position = new Position;
+        $barangays = $_barangay->getBarangays();
+        return view('admin.maintenance.users.create', [
+            'barangays' => $barangays,
+            '_position' => $_position
+        ]);
     }
 
     public function store(Request $request)
     {
-        // return $request;
-        $validated = $request->validate([
-            'name' => 'required',
-            'username' => 'required|min:6|max:16|unique:users',
-            'email' => 'required|max:150|unique:users',
-            'password' => 'required',
-        ]);
-
-        User::create([
-            'name' => $request->input('firstname').' '.$request->input('lastname'),
-            'email' => $request->input('email'),
-            'username' => $request->input('username'),
-            'password' => bcrypt($request->input('password')),
-            'usertype' => 'admin',
-            'is_active_user' => 1,
-        ]);
-        return Redirect::route('users.index')->with('success', 'Successfully saved!');
+        return DB::transaction(function () use ($request) {
+            // return $request;
+            $validated = $request->validate([
+                'username' => 'required|min:6|max:50|unique:users',
+                'email' => 'required|max:150|unique:users',
+                'user_type' => 'required|in:admin,internal',
+                'password' => 'required',
+                'middlename' => 'required',
+                'lastname' => 'required',
+                'firstname' => 'required',
+                'address' => 'required',
+                'gender' => 'required',
+                'contact_no' => 'required',
+                'position' => 'required'
+            ]);
+    
+            $user = User::create([
+                'email' => $request->input('email'),
+                'username' => $request->input('username'),
+                'usertype' => $request->input('user_type'),
+                'password' => bcrypt($request->input('password')),
+                'position' => $request->input('position'),
+                'is_active_user' => 1,
+            ]);
+    
+            PersonalInfo::create([
+                'user_id' => $user->id,
+                'first_name' => $request->input('firstname'),
+                'middle_name' => $request->input('middlename'),
+                'last_name' => $request->input('lastname'),
+                'barangay_id' => $request->input('address'),
+                'gender' => $request->input('gender'),
+                'contact_no' => $request->input('contact_no'),
+                'email' => $request->input('email'),
+            ]);
+    
+            return Redirect::route('users.index')->with('success', 'Successfully added user.');
+        });
     }
 
     public function show(string $id)
@@ -54,11 +94,13 @@ class UserController extends Controller
 
     public function edit(string $id)
     {
+        $_position = new Position;
         $user_id = Crypt::decrypt($id);
         $user = User::find($user_id);
 
         return view('admin.maintenance.users.edit', [
-            'user' => $user
+            'user' => $user,
+            '_position' => $_position
         ]);
     }
 
@@ -66,19 +108,44 @@ class UserController extends Controller
     {
         $user_id = Crypt::decrypt($id);
 
-        $validated = $request->validate([
-            'name' => 'required',
+        $request->validate([
+            'firstname' => 'required',
+            'middlename' => 'required',
+            'lastname' => 'required',
+            'gender' => 'required',
             'username' => 'required|min:6|max:16',
             'email' => 'required|max:150',
+            'password' => 'nullable|min:8',
         ]);
 
-        User::find($user_id)->update([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'username' => $request->input('username'),
-            'is_active_user' => 1,
-        ]);
-        return Redirect::route('users.index')->with('success', 'Successfully saved!');
+        return DB::transaction(function () use ($request, $user_id) {
+            User::find($user_id)->update([
+                'email' => $request->input('email'),
+                'username' => $request->input('username'),
+                'is_active_user' => 1,
+            ]);
+
+            if ($request->has('position')) {
+                User::find($user_id)->update([
+                    'position' => $request->input('position'),
+                ]);
+            }
+
+            PersonalInfo::where('user_id', $user_id)->update([
+                'first_name' => $request->input('firstname'),
+                'middle_name' => $request->input('middlename'),
+                'last_name' => $request->input('lastname'),
+                'gender' => $request->input('gender'),
+            ]);
+
+            if($request->has('password') && $request->input('password') != '' && $request->has('opt_cp')) {
+                User::find($user_id)->update([
+                    'password' => Hash::make($request->input('password')),
+                ]);
+            }
+
+            return Redirect::route('users.index')->with('success', 'Successfully saved!');
+        });
     }
 
     public function ajaxUpdateStatus(Request $request)
@@ -92,6 +159,23 @@ class UserController extends Controller
         } else {
            return Response()->json(['failed'=>'Failed']); 
         }
+    }
+
+    public function apiSearch(Request $request) {
+
+        $search = $request->keyword;
+        $users_query = User::query()->select('users.*', 'personal_infos.last_name', 'personal_infos.first_name', 'personal_infos.middle_name', DB::raw("CONCAT(personal_infos.last_name, ' ', personal_infos.middle_name, ' ', personal_infos.first_name) AS text"))
+            ->join('personal_infos', 'personal_infos.user_id', 'users.id')
+            ->where('users.username', 'like', "%{$search}%")
+            ->orWhere('personal_infos.last_name', 'like', "%{$search}%")
+            ->orWhere('personal_infos.first_name', 'like', "%{$search}%")
+            ->orWhere('personal_infos.middle_name', 'like', "%{$search}%");
+
+        if($request->has('usertype')) {
+            $users_query->whereIn('users.usertype', $request->usertype);
+        } 
+
+        return $users_query->get();
     }
 
     // DB: u522295882_owpms

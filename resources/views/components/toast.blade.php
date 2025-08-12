@@ -11,7 +11,15 @@
 </div>
 
 <!-- JavaScript to Show Toast -->
-<script>
+<script type="text/javascript" defer>
+    $(function () {
+        @if (session()->has('success'))
+            showToast('success', '{{ session('success') }}');
+        @elseif (session()->has('error'))
+            showToast('danger', '{{ session('error') }}');
+        @endif
+    });
+
     function showToast(color, message) {
         var $toast = document.getElementById('customToast');
         if (!$toast) return; // Prevent errors if the toast element is missing
@@ -24,8 +32,10 @@
         toastBody.innerHTML = message;
 
         // Show the toast
-        var toast = new bootstrap.Toast($toast);
+        var toast = new bootstrap.Toast($toast, {
+            autohide: false
+        });
+        
         toast.show();
     }
-
-    </script>
+</script>

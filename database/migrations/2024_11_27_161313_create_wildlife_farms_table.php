@@ -16,8 +16,8 @@ return new class extends Migration
             $table->integer('permittee_id');
             $table->string('farm_name', 150);
             $table->string('location', 200);
-            $table->string('size', 50);
-            $table->string('height', 50);
+            $table->string('size', 50)->nullable();
+            // $table->string('height', 50);
             $table->timestamps();
         });
     }

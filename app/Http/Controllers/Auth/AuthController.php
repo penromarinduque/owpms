@@ -26,6 +26,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($request->only('username', 'password'))) {
             $request->session()->regenerate();
+            $sanctumToken = auth()->user()->createToken('authToken')->plainTextToken;
+            // Store token in session
+            session(['sanctumToken' => $sanctumToken]);
             return redirect()->intended('dashboard');
         }
 
@@ -61,9 +64,28 @@ class AuthController extends Controller
     // Handle logout
     public function logout(Request $request)
     {
+        $user = auth()->user();
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        // Remove token from session
+        $sanctumToken = session('sanctumToken');
+        session()->forget('sanctumToken');
+
+        if (auth()->check()) {
+            auth()->user()->tokens()->delete();
+        }
+
+        // Delete the specific token
+        if ($sanctumToken) {
+            \Laravel\Sanctum\PersonalAccessToken::where('token', hash('sha256', $sanctumToken))->delete();
+        }
+
+        // Directly delete tokens from the database
+        if ($user) {
+            \Laravel\Sanctum\PersonalAccessToken::where('tokenable_id', $user->id)->delete();
+        }
 
         return redirect('/');
     }

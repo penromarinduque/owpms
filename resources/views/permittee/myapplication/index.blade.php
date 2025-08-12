@@ -1,3 +1,4 @@
+
 @extends('layouts.master')
 
 @section('title')
@@ -7,6 +8,10 @@ Permittees
 @section('active-myapplications')
 active
 @endsection
+
+@php
+    $status = request('status') ?? 'draft';
+@endphp
 
 @section('content')
 <div class="container-fluid px-4">
@@ -37,54 +42,155 @@ active
                 <strong>{{ session('success') }}</strong>
             </div>
             @endif
-            <ul class="nav nav-tabs">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Draft</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Submitted</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Under Review</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Approved</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Rejected</a>
-              </li>
-            </ul>
-            <table class="table table-sm" id="datatablesSimple">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Application Name</th>
-                        <th>Date Created</th>
-                        <th>Last Modified</th>
-                        <th>Draft Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
 
-                </tbody>
-            </table>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link {{ request('category') == 'draft' ? 'active' : '' }}" aria-current="page" href="?status=draft&category=draft">
+                        <i class="fas fa-file-alt me-1"></i>
+                        Draft 
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=all&category=reviewed" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-file-export me-1"></i>Reviewed</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=all&category=rejected" class="nav-link {{ request('category') == 'rejected' ? 'active' : ''}}"><i class="fas fa-times-circle me-1"></i>Rejected</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
+                </li>
+                <li class="nav-item">
+                    <a href="?status=expired&category=expired" class="nav-link {{ request('category') == 'expired' ? 'active' : ''}}"><i class="fas fa-calendar-times me-1"></i>Expired</a>
+                </li>
+            </ul>
+
+            <br>
+
+            <div class="d-flex justify-content-end mb-3">
+                <form class="row gap-0" action="" method="get">
+                    <input type="hidden" name="category" value="{{ request('category') }}">
+                    <div class="col-auto">
+                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+                    </div>
+                    <div class="col-auto pe-0">
+                        <select class="form-select" name="status" id="">
+                            <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
+                            @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
+                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary ">Filter</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-bordered" >
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Application No.</th>
+                            <th>Date Created</th>
+                            <th>Last Modified</th>
+                            <th class="text-center">Status</th>
+                            <th width="200px" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($ltp_applications as $key => $ltp_application)
+                            <tr>
+                                <td class="align-middle">{{ $key + 1 }}</td>
+                                <td class="align-middle">{{ $ltp_application->application_no }}</td>
+                                <td class="align-middle">{{ $ltp_application->created_at->format('F d, Y') }}</td>
+                                <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
+                                <td class="align-middle text-center">
+                                    <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    @if ($ltp_application->application_status == 'draft')                                        
+                                        <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-outline-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                    @endif
+                                    {{-- @if ($ltp_application->application_status == 'draft')
+                                        <a href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Submit">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        </a>
+                                    @endif --}}
+                                    @if ($ltp_application->application_status == 'draft')                                        
+                                        <a href="#" class="btn btn-sm btn-outline-danger mb-2" onclick="showConfirDeleteModal ('{{ route('myapplication.destroy', $ltp_application->id) }}' ,{{ $ltp_application->id }}, 'Are you sure you want to delete this application?', 'Delete Application')"  data-bs-toggle="tooltip" data-bs-title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    @endif
+                                    {{-- <a href="{{ route('myapplication.requirements', ['id'=>Crypt::encryptString($ltp_application->id)]) }}" class="btn btn-sm btn-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Requirements">
+                                        <i class="fa-solid fa-file"></i>
+                                    </a> --}}
+                                    {{-- @if ($ltp_application->application_status == 'returned')
+                                        <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        </a>
+                                    @endif --}}
+                                    {{-- @if (in_array($ltp_application->application_status, ['payment-in-process']))
+                                        <a href="{{ route('paymentorder.view', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Order of Payment">
+                                            <i class="fa-solid fa-file-invoice"></i>
+                                        </a>
+                                    @endif --}}
+                                    {{-- @if (in_array($ltp_application->application_status, ['paid', 'approved']))
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <a href="#" onclick="showUploadReceiptModal('{{ route('myapplication.uploadreceipt', Crypt::encryptString($ltp_application->id)) }}')"class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Upload Receipt">
+                                                <i class="fa-solid fa-receipt"></i>
+                                            </a>
+                                            @php
+                                                $paymentOrder = $ltp_application->paymentOrder;
+                                            @endphp
+                                            <a href="{{ route('paymentorder.viewreceipt', Crypt::encryptString($paymentOrder->id)) }}" target="_blank" class="btn btn-sm btn-outline-primary mb-2 @if(!$paymentOrder->receipt_url) disabled @endif"  data-bs-toggle="tooltip" data-bs-title="View Receipt">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    @endif --}}
+                                    {{-- @if (in_array($ltp_application->application_status, ['paid', 'inspection-rejected','all']) )   
+                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
+                                    @endif --}}
+                                    @if ($ltp_application->application_status != 'draft')
+                                        <a href="#" onclick="showViewApplicationLogsModal({{ $ltp_application->id }})" class="btn btn-sm btn-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Logs">
+                                            <i class="fas fa-history"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center">No record found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+
+
+
 @endsection
-
-
 
 @section('script-extra')
 <script type="text/javascript">
-    // function showDetails(id, show_to) {
-    //     $(this).ajaxRequestLaravel({
-    //         show_result: ['/permittees/show/'+id, show_to],
-    //         show_result_loader: true,
-    //     });
-    // }
-
     function ajaxUpdateStatus(chkbox_id, permittee_id) {
         var chkd = $('#'+chkbox_id).is(':checked');
         var stat = 0;
@@ -105,6 +211,16 @@ active
             }
         });
     }
+
+    
 </script>
 @endsection
+
+@section('includes')
+    @include('components.confirmDelete')
+    @include('components.viewApplicationLogs')
+    @include('components.permitteeUploadReceipt')
+    @include('components.submitApplication')
+@endsection
+
 

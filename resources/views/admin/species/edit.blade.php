@@ -101,13 +101,14 @@ active
                         <input type="text" class="form-control" name="wing_span" id="wing_span" placeholder="Wing Span (ave.)" value="{{ $specie->wing_span }}">
                     </div>
                 	<div class="col-sm-4">
-                        <label for="wing_span" class="form-label">Convservation Status:</label> <br>
-                        <input type="radio" value="rare" id="rare" name="conservation_status" {{ ($specie->conservation_status=='rare') ? 'checked' : '' }} >
-                        <label for="rare">Rare</label> &nbsp;
-                        <input type="radio" value="threatened" id="threatened" name="conservation_status" {{ ($specie->conservation_status=='threatened') ? 'checked' : '' }}>
-                        <label for="threatened">Threatened</label> &nbsp;
-                        <input type="radio" value="vulnerable" id="vulnerable" name="conservation_status" {{ ($specie->conservation_status=='vulnerable') ? 'checked' : '' }}>
-                        <label for="vulnerable">Vulnerable</label> &nbsp;
+                        <label for="conservation_status" class="form-label">Convservation Status:</label>
+                        <select class="form-select" name="conservation_status" id="conservation_status">
+                            <option value="rare" {{ ($specie->conservation_status=='rare') ? 'selected' : '' }}>Rare</option>
+                            <option value="threatened" {{ ($specie->conservation_status=='threatened') ? 'selected' : '' }}>Threatened</option>
+                            <option value="vulnerable" {{ ($specie->conservation_status=='vulnerable') ? 'selected' : '' }}>Vulnerable</option>
+                            <option value="endangered" {{ ($specie->conservation_status=='endangered') ? 'selected' : '' }}>Endangered</option>
+                            <option value="least concerned" {{ ($specie->conservation_status=='least concerned') ? 'selected' : '' }}>Least Concerned</option>
+                        </select>
                         @error('conservation_status')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror

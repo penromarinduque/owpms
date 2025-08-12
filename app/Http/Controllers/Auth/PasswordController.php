@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +25,8 @@ class PasswordController extends Controller
         $status = Password::sendResetLink($request->only('email'));
 
         return $status === Password::RESET_LINK_SENT
-            ? back()->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+            ? back()->with(['success' => __($status)])
+            : back()->withErrors(['email' => __($status)])->with('error', 'Unable to send password reset link.');
     }
 
     // Show the password reset form
@@ -53,8 +54,10 @@ class PasswordController extends Controller
             }
         );
 
+        User::where('email', $request->email)->update(['email_verified_at' => now()]);
+
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+            ? redirect()->route('dashboard.index')->with('success', __($status))
+            : back()->with('error', __($status))->withErrors(['email' => [__($status)]]);
     }
 }

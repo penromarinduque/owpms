@@ -35,7 +35,7 @@ active
                 <div class="row mb-3">
                 	<div class="col-sm-4">
                 		<label for="specie_type_id" class="form-label">Wildlife Type</label>
-                		<select class="form-select" name="specie_type_id" id="specie_type_id" onchange="onSelectType(event)" required>
+                		<select class="form-select" name="specie_type_id" id="specie_type_id"  required>
                 			<option value="">- Please Select Type-</option>
                             @foreach($specie_types as $specie_type)
                                 <option value="{{ $specie_type->id }}">{{ $specie_type->specie_type }}</option>
@@ -47,6 +47,9 @@ active
                 		<label for="specie_class_id" class="form-label">Specie Class</label>
                 		<select class="form-select" name="specie_class_id" id="specie_class_id" onchange="onSelectClass(event)" required>
                 			<option value="">- Please Select Class -</option>
+                            @foreach($specie_classes as $specie_class)
+                                <option value="{{ $specie_class->id }}">{{ $specie_class->specie_class }}</option>
+                            @endforeach
                 		</select>
                         @error('specie_class_id')<small class="text-danger">{{ $message }}</small>@enderror
                 	</div>
@@ -81,13 +84,14 @@ active
                         <input type="text" class="form-control" name="wing_span" id="wing_span" placeholder="Wing Span (ave.)" value="{{ old('wing_span') }}" >
                     </div>
                 	<div class="col-sm-4">
-                        <label for="wing_span" class="form-label">Convservation Status:</label> <br>
-                        <input type="radio" value="rare" id="rare" name="conservation_status" checked="checked">
-                        <label for="rare">Rare</label> &nbsp;
-                        <input type="radio" value="threatened" id="threatened" name="conservation_status">
-                        <label for="threatened">Threatened</label> &nbsp;
-                        <input type="radio" value="vulnerable" id="vulnerable" name="conservation_status">
-                        <label for="vulnerable">Vulnerable</label> &nbsp;
+                        <label for="conservation_status" class="form-label">Convservation Status:</label>
+                        <select class="form-select" name="conservation_status" id="conservation_status" required>
+                            <option value="rare">Rare</option>
+                            <option value="threatened">Threatened</option>
+                            <option value="vulnerable">Vulnerable</option>
+                            <option value="endangered">Endangered</option>
+                            <option value="least concerned">Least Concerned</option>
+                        </select>
                         @error('conservation_status')<small class="text-danger">{{ $message }}</small>@enderror
                     </div>
                 	<div class="col-sm-4"></div>
@@ -113,27 +117,27 @@ active
 
 @section('script-extra')
 <script>
-    function onSelectType(e){
-        const value = e.target.value;
-        if(!value){
-            return;
-        }
+    // function onSelectType(e){
+    //     const value = e.target.value;
+    //     if(!value){
+    //         return;
+    //     }
 
-        $.get(
-            "{{ route('specieclasses.apiGetByType') }}",
-            {
-                specie_type_id : value
-            },
-            function(data){
-                console.log(data);
-                $('#specie_class_id').empty();
-                $('#specie_class_id').append('<option value="">-Select Specie Class-</option>');
-                $.each(data, function(index, specie_class){
-                    $('#specie_class_id').append('<option value="'+specie_class.id+'">'+specie_class.specie_class+'</option>');
-                });
-            }
-        );
-    }
+    //     $.get(
+    //         "{{ route('specieclasses.apiGetByType') }}",
+    //         {
+    //             specie_type_id : value
+    //         },
+    //         function(data){
+    //             console.log(data);
+    //             $('#specie_class_id').empty();
+    //             $('#specie_class_id').append('<option value="">-Select Specie Class-</option>');
+    //             $.each(data, function(index, specie_class){
+    //                 $('#specie_class_id').append('<option value="'+specie_class.id+'">'+specie_class.specie_class+'</option>');
+    //             });
+    //         }
+    //     );
+    // }
 
     function onSelectClass(e){
         const value = e.target.value;

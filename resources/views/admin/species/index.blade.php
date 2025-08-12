@@ -56,7 +56,7 @@ active
                 <tbody>
                 @forelse($species as $specie)
                     <tr>
-                        <td>{{ $specie->specie_name }}</td>
+                        <td><i>{{ $specie->specie_name }}</i></td>
                         <td><a href="#modalDetails" data-bs-toggle="modal" onclick="showDetails('{{Crypt::encrypt($specie->id)}}', 'specie_details');">{{ $specie->local_name }}</a></td>
                         <td>{{ $specie->specie_type.'/'.$specie->specie_class.'/'.$specie->family }}</td>
                         <td>{{ ($specie->is_present==1) ? 'YES' : 'NO' }}</td>

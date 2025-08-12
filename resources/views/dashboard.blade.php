@@ -9,22 +9,24 @@ active
 @endsection
 
 @section('content')
-<div class="container-fluid px-4">
-    <h1 class="mt-4">Dashboard</h1>
+
+{{-- Bladewind UI --}}
+<!-----------------------------------------------------------
+-- animate.min.css by Daniel Eden (https://animate.style)
+-- is required for the animation of notifications and slide out panels
+-- you can ignore this step if you already have this file in your project
+--------------------------------------------------------------------------->
+
+
+<div class="container-fluid p-4">
+    {{-- <h1 class="mt-4">Dashboard</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href=""></a></li>
         <!-- <li class="breadcrumb-item active">Sidenav Light</li> -->
-    </ol>
-    <div class="card mb-4">
-        <div class="card-body">
-            <!-- This page is an example of using the light side navigation option. By appending the
-            <code>.sb-sidenav-light</code>
-            class to the
-            <code>.sb-sidenav</code>
-            class, the side navigation will take on a light color scheme. The
-            <code>.sb-sidenav-dark</code>
-            is also available for a darker option. -->
-        </div>
-    </div>
+    </ol> --}}
+    {{-- <div class="p-4 bg-light rounded-3"> --}}
+        @include('components.permitteeDashboard')
+        @include('components.adminDashboard')
+    {{-- </div> --}}
 </div>
 @endsection

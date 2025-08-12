@@ -15,12 +15,24 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         //
-        User::create([
+        $user = User::create([
             "email" => "admin@penromarinduque.gov.ph",
-            "password" => Hash::make("*OWPMS_2025*"),
+            "password" => Hash::make("123456789"),
             "username" => "administrator",
             "usertype" => User::TYPE_ADMIN,
             "is_active_user" => 1
         ]);
+
+        $user->personalInfo()->create([
+            "last_name" => "Admin",
+            "middlde_name" => "Admin",
+            "email" => "admin@penromarinduque.gov.ph",
+            "first_name" => "Admin",
+            "gender" => "male",
+            "contact_no" => "091235467896",
+            "barangay_id" => '12708'
+        ]);
+
+
     }
 }
