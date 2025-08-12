@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('specie_type_id');
             $table->integer('specie_class_id');
             $table->integer('specie_family_id');
-            $table->string('specie_name', 150)->unique();
+            $table->string('specie_name', 150);
             $table->tinyInteger('is_present')->default(0);
             $table->string('local_name', 150);
             $table->string('wing_span', 50)->nullable();
