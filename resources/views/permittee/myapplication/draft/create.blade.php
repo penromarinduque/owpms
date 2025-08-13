@@ -211,7 +211,7 @@ active
                     <td align="center">${itemData.family}</td>
                     <td align="center">
                         <input type="hidden" name="specie_id[]" id="specie_id" value="${itemData.id}" />
-                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" required />
+                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" min="1" required />
                     </td>
                     <td align="center">
                         <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>

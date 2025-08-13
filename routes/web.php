@@ -309,6 +309,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     // Notifications
     Route::prefix('notifications')->group(function () {
         Route::get('show/{id}', [NotificationController::class, 'show'])->name('notifications.show');
+        Route::get('', [NotificationController::class, 'index'])->name('notifications.index');
     });
 
     // Inspection

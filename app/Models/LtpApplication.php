@@ -71,7 +71,22 @@ class LtpApplication extends Model implements Auditable
             ->toArray();
 
         $has_endangered = collect($statuses)->intersect(['threatened', 'vulnerable', 'endangered'])->isNotEmpty();
-        $has_no_endangered = in_array('rare', $statuses);
+        $has_no_endangered = collect($statuses)->intersect(['rare'])->isNotEmpty();
+
+        if($has_endangered && $has_no_endangered) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function validateSpeciesUponCreation($specie_ids) {
+        $statuses = Specie::whereIn('id', $specie_ids)
+            ->pluck('conservation_status')
+            ->toArray();
+
+        $has_endangered = collect($statuses)->intersect(['threatened', 'vulnerable', 'endangered'])->isNotEmpty();
+        $has_no_endangered = collect($statuses)->intersect(['rare'])->isNotEmpty();
 
         if($has_endangered && $has_no_endangered) {
             return false;

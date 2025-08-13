@@ -98,8 +98,18 @@ class MyApplicationController extends Controller
             "specie_id" => "required|array",
             "quantity" => "required|array"
         ]);
+
+        if (!$request->has('specie_id')) {
+            return redirect()->back()->with('error', 'Please select at least one species.');
+        }
+
+        if(!LtpApplication::validateSpeciesUponCreation($request->specie_id)){
+            return redirect()->back()->with('error', 'Endangered species must be created separately.');
+        }
         
         return DB::transaction(function () use ($request) {
+
+            
             $year = date('Y');  
             $latest = LtpApplication::where('year', $year)->orderBy('no', 'DESC')->first();
             $no = $latest ? $latest->no + 1 : 1;
@@ -118,15 +128,14 @@ class MyApplicationController extends Controller
             ]);
 
             if ($ltp_application->id) {
-                if ($request->specie_id) {
-                    foreach ($request->specie_id as $key => $value) {
-                        LtpApplicationSpecie::create([
-                            'ltp_application_id' => $ltp_application->id, 
-                            'specie_id' => $request->specie_id[$key], 
-                            'quantity' => $request->quantity[$key], 
-                            'is_endangered' => 0
-                        ]);
-                    }
+                
+                foreach ($request->specie_id as $key => $value) {
+                    LtpApplicationSpecie::create([
+                        'ltp_application_id' => $ltp_application->id, 
+                        'specie_id' => $request->specie_id[$key], 
+                        'quantity' => $request->quantity[$key], 
+                        'is_endangered' => 0
+                    ]);
                 }
             }
             return Redirect::route('myapplication.index', ['status' => 'draft', 'category' => 'draft'])->with('success', 'Successfully saved!');

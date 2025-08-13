@@ -6,6 +6,7 @@
   <div class="offcanvas-body">
     <div class="list-group">
         @forelse (auth()->user()->unreadNotifications->take(10) as $notification)
+            
             <a href="{{ route('notifications.show', ['id' => Crypt::encryptString($notification->id)])}}" class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <h6 class="mb-0">{{ $notification->data['title'] }}</h6>
@@ -19,6 +20,11 @@
                 <p class="text-center mt-3">You don't have any notifications at the moment. Please check back later.</p>
             </div>
         @endforelse
+
+        @if (auth()->user()->unreadNotifications->count() > 10)
+
+            <p class="text-center mt-3"><a href="{{ route('notifications.index') }}" class="btn btn-sm btn-primary w-100">View All</a></p>
+        @endif
     </div>
 
   </div>
