@@ -9,7 +9,7 @@ class Barangay extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['municipality_id', 'barangay'];
+    protected $fillable = ['municipality_id', 'barangay_name'];
 
     public function municipality(){
         return $this->belongsTo(Municipality::class);
