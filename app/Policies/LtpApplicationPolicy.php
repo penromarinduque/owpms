@@ -116,7 +116,7 @@ class LtpApplicationPolicy
     public function generateLtp(User $user, LtpApplication $ltpApplication) {
         $inspectionReport = $ltpApplication->inspectionReport;
 
-        $inspectionReportDocument = Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
+        // $inspectionReportDocument = Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
 
         return $inspectionReport 
             && $ltpApplication->application_status == LtpApplication::STATUS_INSPECTED 
@@ -124,7 +124,7 @@ class LtpApplicationPolicy
             && $inspectionReport->permittee_signed
             && $inspectionReport->inspector_signed
             && $inspectionReport->approver_signed
-            && $inspectionReportDocument;
+            && Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
     }
 
     public function updateLtp(User $user, LtpApplication $ltpApplication) {
