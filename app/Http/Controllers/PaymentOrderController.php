@@ -215,10 +215,11 @@ class PaymentOrderController extends Controller
                 "description" => "Order of Payment has been prepared by " . auth()->user()->personalInfo->getFullNameAttribute(),
             ]);
 
+            // return $paymentOrder->preparedBy;
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
             Notification::send($paymentOrder->preparedBy, new SignedNotification(route('for-signatures.index', ['type' => "payment_order"]), 'Payment Order for LTP Application '. $paymentOrder->ltpApplication->application_no . ' has been created and is awaiting your signature.'));
             
-            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Document downloaded successfully');
+            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Order of Payment created successfully!');
         });
     }
 
