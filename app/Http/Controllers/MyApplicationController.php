@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ApplicationHelper;
 use App\Models\Province;
+use App\Models\SpecieNature;
 use App\Notifications\LtpApplicationSubmitted;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
@@ -37,6 +38,8 @@ class MyApplicationController extends Controller
 
         $status = $request->status ?? 'all';
         $category = $request->category ?? 'submitted';
+        $sort_by = $request->has('sort_by') ? $request->sort_by : 'created_at';
+        $sort_order = $request->has('sort_order') ? $request->sort_order : 'desc';
 
         $query = LtpApplication::query();
 
@@ -51,7 +54,7 @@ class MyApplicationController extends Controller
                 'permittee_id' => Auth::user()->wcp()->id
             ])
             ->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category))
-            ->orderBy('created_at', 'DESC')
+            ->orderBy($sort_by, $sort_order)
             ->paginate(50);
         }
         else {
@@ -59,7 +62,7 @@ class MyApplicationController extends Controller
                 'permittee_id' => Auth::user()->wcp()->id,
                 'application_status' => $status
             ])
-            ->orderBy('created_at', 'DESC')
+            ->orderBy($sort_by, $sort_order)
             ->paginate(50);
         }
 
@@ -82,7 +85,8 @@ class MyApplicationController extends Controller
         ])->get();
         return view('permittee.myapplication.draft.create', [
             'title' => 'Create New Application',
-            "provinces" => $provinces
+            "provinces" => $provinces,
+            "specie_natures" => SpecieNature::all(),
         ]);
     }
 
@@ -96,7 +100,13 @@ class MyApplicationController extends Controller
             "destination" => "nullable|exists:provinces,id",
             "purpose" => "required|string",
             "specie_id" => "required|array",
-            "quantity" => "required|array"
+            "quantity" => "required|array",
+            "specie_nature_id" => "required|exists:specie_natures,id"
+        ], [
+
+        ], [
+            "transport_date" => "Date of Application",
+            "specie_nature_id" => "Nature of Species"
         ]);
 
         if (!$request->has('specie_id')) {
@@ -121,10 +131,11 @@ class MyApplicationController extends Controller
                 'application_date' => date('Y-m-d'), 
                 'transport_date' => $request->transport_date, 
                 'purpose' => $request->purpose, 
+                'specie_nature_id' => $request->specie_nature_id,
                 'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: auth()->user()->personalInfo->barangay->municipality->province_id), 
                 'digital_signature' => NULL,
                 'year' => $year,
-                'no' => $no
+                'no' => $no,
             ]);
 
             if ($ltp_application->id) {
@@ -187,19 +198,24 @@ class MyApplicationController extends Controller
             return redirect()->back()->with('error', 'Application not found!');
         }
 
-        $ltp_application_species = LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)->with([
-            "specie.family", 
-            "specie",
-            "permitteeSpecies" => function (Builder $query) use ($ltp_application) {
-                $query->where("permittee_id", $ltp_application->permittee_id);
-            }
-        ])->get();
+        $ltp_application_species = LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)
+            ->join("species", "ltp_application_species.specie_id", "=", "species.id")
+            ->with([
+                "specie.family",
+                "specie",
+                "permitteeSpecies" => function (Builder $query) use ($ltp_application) {
+                    $query->where("permittee_id", $ltp_application->permittee_id);
+                }
+            ])
+            ->orderBy("species.specie_name", "ASC")
+            ->get();
 
         return view('permittee.myapplication.edit', [
             'title' => 'Edit Application',
             "ltp_application" => $ltp_application,
             "ltp_application_species" => $ltp_application_species,
-            "provinces" => $provinces
+            "provinces" => $provinces,
+            "specie_natures" => SpecieNature::all(),
         ]);
     }
 
@@ -214,7 +230,13 @@ class MyApplicationController extends Controller
                 "transport_date" => "required|date",
                 "purpose" => "required|string",
                 "specie_id" => "required|array",
-                "quantity" => "required|array"
+                "quantity" => "required|array",
+                "specie_nature_id" => "required|exists:specie_natures,id"
+            ],[
+
+            ],[
+                "transport_date" => "Application Date",
+                "specie_nature_id" => "Nature of Species"
             ]);
 
             $ltp_application = LtpApplication::find($id);
@@ -228,6 +250,7 @@ class MyApplicationController extends Controller
             $ltp_application->transport_date = $request->transport_date;
             $ltp_application->purpose = $request->purpose;
             $ltp_application->destination = $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null);
+            $ltp_application->specie_nature_id = $request->specie_nature_id;
             $ltp_application->save();
 
             LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)->delete();

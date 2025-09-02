@@ -32,6 +32,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\PaymentOrderController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\SignatoryController;
+use App\Http\Controllers\SpecieNatureController;
 use App\Http\Controllers\TestController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
@@ -273,6 +274,16 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
             Route::post('/store', [SignatoryController::class, 'store'])->name('signatories.store')->middleware('permission:SIGNATORIES_CREATE');
             Route::get('/edit/{id}', [SignatoryController::class, 'edit'])->name('signatories.edit')->middleware('permission:SIGNATORIES_UPDATE');
             Route::post('/update', [SignatoryController::class, 'update'])->name('signatories.update')->middleware('permission:SIGNATORIES_UPDATE');
+        });
+
+        // Nature of Species
+        Route::middleware(["userType:admin,internal"])->prefix('natureofspecies')->group(function () {
+            Route::get('/', [SpecieNatureController::class, 'index'])->name('natureofspecies.index')->middleware('permission:NATURE_OF_SPECIES_INDEX');
+            Route::get('/create', [SpecieNatureController::class, 'create'])->name('natureofspecies.create')->middleware('permission:NATURE_OF_SPECIES_CREATE');
+            Route::post('/store', [SpecieNatureController::class, 'store'])->name('natureofspecies.store')->middleware('permission:NATURE_OF_SPECIES_CREATE');
+            Route::get('/edit/{id}', [SpecieNatureController::class, 'edit'])->name('natureofspecies.edit')->middleware('permission:NATURE_OF_SPECIES_UPDATE');
+            Route::post('/update/{id}', [SpecieNatureController::class, 'update'])->name('natureofspecies.update')->middleware('permission:NATURE_OF_SPECIES_UPDATE');
+            Route::delete('/destroy/{id}', [SpecieNatureController::class, 'destroy'])->name('natureofspecies.destroy')->middleware('permission:NATURE_OF_SPECIES_DELETE');
         });
     });
 

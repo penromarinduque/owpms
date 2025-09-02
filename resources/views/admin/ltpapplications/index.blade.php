@@ -149,24 +149,50 @@ active
 
             <br>
 
-            <div class="d-flex justify-content-end mb-3">
-                <form class="row gap-0" action="" method="get">
-                    <input type="hidden" name="category" value="{{ request('category') }}">
-                    <div class="col-auto">
-                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+            <div class="d-flex gap-1 justify-content-end mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        Sort
                     </div>
-                    <div class="col-auto pe-0">
-                        <select class="form-select" name="status" id="">
-                            <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
-                            @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
-                            @endforeach
-                        </select>
+                    <div class="card-body">
+                        <form action="" method="get" class="d-flex gap-1">
+                            <input type="hidden" name="category" value="{{ request('category') }}">
+                            <input type="hidden" name="application_no" value="{{ request('application_no') }}" >
+                            <input type="hidden" name="status" value="{{ request('status') }}" >
+                            <select name="sort_by" id="" placeholder="Sort By" class="form-select">
+                                <option value="">-Select Sort By-</option>
+                                <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : ''}}>Date Created</option>
+                                <option value="application_no" {{ request('sort_by') == 'application_no' ? 'selected' : ''}}>Application No.</option>
+                            </select>
+                            <select class="form-select" name="sort_order" id="" placeholder="Sort Order">
+                                <option value="">-Select Sort Order-</option>
+                                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : ''}}>Ascending</option>
+                                <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : ''}}>Descending</option>
+                            </select>
+                            <button class="btn btn-primary ">Sort</button>
+                        </form>
                     </div>
-                    <div class="col-auto">
-                        <button class="btn btn-primary ">Filter</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        Filter
                     </div>
-                </form>
+                    <div class="card-body">
+                        <form class="d-flex gap-1" action="" method="get">
+                            <input type="hidden" name="category" value="{{ request('category') }}">
+                            <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                            <input type="hidden" name="sort_order" value="{{ request('sort_order') }}">
+                            <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+                            <select class="form-select" name="status" id="">
+                                <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
+                                @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
+                                    <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
+                                @endforeach
+                            </select>
+                            <button class="btn btn-primary ">Filters</button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <div class="table-responsive">

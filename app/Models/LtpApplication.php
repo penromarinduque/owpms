@@ -13,7 +13,7 @@ class LtpApplication extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature', 'year', 'no', 'io_user_id'];
+    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature', 'year', 'no', 'io_user_id', 'specie_nature_id'];
 
     protected $casts = [
         'application_date' => 'datetime',
@@ -143,5 +143,9 @@ class LtpApplication extends Model implements Auditable
 
     public function getTransportDestinationAttribute() {
         return $this->toDestination ? $this->toDestination->province_name . ', ' . $this->toDestination->region->region_name . ", Philippines" : 'Unknown';
+    }
+
+    public function specieNature() {
+        return $this->belongsTo(SpecieNature::class, 'specie_nature_id', 'id');
     }
 }
