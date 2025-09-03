@@ -83,31 +83,6 @@ class PaymentOrderController extends Controller
         ]);
     }
 
-    public function test() {
-        $query = PaymentOrder::query()
-        ->where('id', 2);
-
-        $paymentOrder = $query->first();
-        // return view('admin.payment_order.pdf', [
-        //     'payment_order' => $paymentOrder,
-        //     "ltp_application" => $paymentOrder->ltpApplication,
-        //     "ltp_fee" => $paymentOrder->ltpFee,
-        // ]);
-        $view = Pdf::loadView('admin.payment_order.billing-statement-pdf', [
-            'payment_order' => $paymentOrder,
-            "ltp_application" => $paymentOrder->ltpApplication,
-            "ltp_fee" => $paymentOrder->ltpFee,
-            'approved_by' => User::find($paymentOrder->approved_by),
-            'prepared_by' => User::find($paymentOrder->prepared_by),
-            'oop_approved_by' => User::find($paymentOrder->oop_approved_by),
-            
-        ]);
-        $view->setPaper('letter', 'portrait');
-        // return $view->download('payment_order.pdf');
-        return $view->stream('payment_order.pdf');
-        // return $query->first();
-    }
-
     public function printBillingStatementTemplate($id) {
         $id = Crypt::decryptString($id);
         $query = PaymentOrder::query()
