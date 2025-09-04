@@ -113,7 +113,7 @@ My Applications
             <i class="fas fa-list me-1"></i>
             LTP Application
         </div>
-    <div class="card-body">
+        <div class="card-body">
 
             @if (auth()->user()->usertype == "permittee")
                 <div class="alert alert-info" role="alert">
@@ -212,8 +212,51 @@ My Applications
                     @endforelse
                 </div>
             </div>
+
+            
         </div>
     </div>
+    @if (in_array($ltp_application->application_status, ['paid', 'approved', 'payment-in-process', 'inspected']))
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-money-bill me-1"></i>
+            Payment Details
+        </div>
+        <div class="card-body">
+            <div class="bg-light p-3 rounded-2">
+                <div class="row mb-3">
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Payable Amount</label>
+                        <h6>
+                            {{ $ltp_application->paymentOrder ? '₱ ' . number_format($ltp_application->paymentOrder->ltpFee->amount, 2) : 'N/A' }}
+                        </h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Payment Status</label>
+                        <h6>
+                            @if($ltp_application->paymentOrder)
+                                <span class="badge rounded-pill bg-{{ $ltp_application->paymentOrder->status !== 'paid' ? 'secondary' : 'success' }}">{{ ucfirst($ltp_application->paymentOrder->status) }}</span>
+                            @else
+                                N/A
+                            @endif
+                        </h6>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Actions</label>
+                        <div class="d-flex gap-1">
+                            <a href="{{ route('paymentorder.view', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-print me-1"></i> Payment Order
+                            </a>
+                            <a href="{{ route('paymentorder.view',['id' => Crypt::encryptString($ltp_application->id), 'type' => 'billing_statement']) }}" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-print me-1"></i> Assessment of Fees and Charges
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 

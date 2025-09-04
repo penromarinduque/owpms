@@ -295,8 +295,9 @@ class PaymentOrderController extends Controller
         ]);
     }
 
-    public function view(string $id) {
+    public function view(Request $request, string $id) {
         $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+        $type = $request->has('type') ? $request->type : 'payment_order';
 
         Gate::authorize('view', $paymentOrder);
         
@@ -305,6 +306,9 @@ class PaymentOrderController extends Controller
         }
 
         $path = storage_path('app/private/' . $paymentOrder->document);
+        if($type == 'billing_statement') {
+            $path = storage_path('app/private/' . $paymentOrder->billing_statement_doc);
+        }
         return response()->file($path);
     }
 
