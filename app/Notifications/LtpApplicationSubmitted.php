@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\LtpApplication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
@@ -46,5 +47,14 @@ class LtpApplicationSubmitted extends Notification
             'title' => 'New LTP Application',
             'message' => 'A new application has been submitted by ' . $this->ltpApplication->permittee->user->personalInfo->getFullNameAttribute(),
         ];
+    }
+
+    public function toBroadcast(object $notifiable): \Illuminate\Notifications\Messages\BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'url' => URL::route('ltpapplication.index', ['category' => 'submitted', 'status' => 'submitted']),
+            'title' => 'New LTP Application',
+            'message' => 'A new application has been submitted by ' . $this->ltpApplication->permittee->user->personalInfo->getFullNameAttribute(),
+        ]);
     }
 }

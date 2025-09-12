@@ -81,4 +81,24 @@ class AccountController extends Controller
             "logs" => $logs
         ]);
     }
+
+    public function storeSignature(Request $request) {
+        $request->validate([
+            'signature' => 'required',
+        ]);
+
+        $folderPath = storage_path('app/public/signatures/');
+
+        // decode base64
+        $image_parts = explode(";base64,", $request->signature);
+        $image_base64 = base64_decode($image_parts[1]);
+        $fileName = uniqid() . '.png';
+
+        file_put_contents($folderPath . $fileName, $image_base64);
+
+        // Save path to DB (e.g., users/signature field)
+        auth()->user()->update(['signature' => $fileName]);
+
+        return back()->with('success', 'Signature saved successfully!');
+    }
 }

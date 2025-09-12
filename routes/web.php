@@ -294,6 +294,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
             Route::get("edit/{id}", [AccountController::class, 'editPersonalInfo'])->name("account.personalInfo.edit");
             Route::post("update/{id}", [AccountController::class, 'updatePersonalInfo'])->name("account.personalInfo.update");
         });
+        Route::post("store-signature", [AccountController::class, 'storeSignature'])->name("account.storeSignature");
     });
 
     // User Access Management
