@@ -137,6 +137,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::get('/print-request-letter/{id}', [MyApplicationController::class, 'printRequestLetter'])->name('myapplication.printRequestLetter');
         Route::post('/upload-receipt/{id}', [MyApplicationController::class, 'uploadReceipt'])->name('myapplication.uploadreceipt');
+        Route::post('/cancel/{id}', [MyApplicationController::class, 'cancel'])->name('myapplication.cancel');
         // Route::get('/show/{id}', [MyApplicationController::class, 'show'])->name('myapplication.show');
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
@@ -295,6 +296,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
             Route::post("update/{id}", [AccountController::class, 'updatePersonalInfo'])->name("account.personalInfo.update");
         });
         Route::post("store-signature", [AccountController::class, 'storeSignature'])->name("account.storeSignature");
+        Route::get("view-signature/{id}", [AccountController::class, 'viewSignature'])->name("account.viewSignature");
     });
 
     // User Access Management

@@ -524,6 +524,30 @@ class MyApplicationController extends Controller
         }
     }
 
+    public function cancel(string $id) {
+        return DB::transaction(function () use ($id) {
+            $ltp_application = LtpApplication::find(Crypt::decryptString($id));
+
+            Gate::authorize('cancelApplication', $ltp_application);
+
+            if(!$ltp_application) {
+                return redirect()->back()->with('error', 'Application not found!');
+            }
+
+            $ltp_application->application_status = LtpApplication::STATUS_CANCELLED;
+            $ltp_application->save();
+            
+            LtpApplicationProgress::create([
+                "ltp_application_id" => $ltp_application->id,
+                "user_id" => Auth::user()->id,
+                "status" => LtpApplicationProgress::STATUS_CANCELLED,
+                "description" => 'Application has been cancelled'
+            ]);
+
+            return Redirect::route('myapplication.index')->with('success', 'Application successfully cancelled!');
+        });
+    }
+
     // public function viewPaymentOrder(string $id) {
     //     $application_id = Crypt::decryptString($id);
     //     $application = LtpApplication::find($application_id);

@@ -24,6 +24,7 @@ class LtpApplication extends Model implements Auditable
     const STATUS_DRAFT = 'draft';
     const STATUS_SUBMITTED = 'submitted';
     const STATUS_UNDER_REVIEW = 'under-review';
+    const STATUS_CANCELLED = 'cancelled';
     const STATUS_RETURNED = 'returned';
     const STATUS_RESUBMITTED = 'resubmitted';
     const STATUS_REVIEWED = 'reviewed';

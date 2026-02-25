@@ -103,6 +103,13 @@ My Applications
                     </a>
                 </li>
                 @endif
+                @can('cancel-application', $ltp_application)
+                <li>
+                    <a href="#" onclick="showConfirmModal('{{ route('myapplication.cancel', Crypt::encryptString($ltp_application->id)) }}', 'Are you sure you want to cancel this application?', 'Cancel Application')" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Cancel Application">
+                        <i class="fas fa-times-circle me-2"></i> Cancel Application
+                    </a>
+                </li>
+                @endcan
             </ul>
         </div>
         

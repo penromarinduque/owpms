@@ -142,10 +142,14 @@ Account
             Signature
         </div>
         <div class="card-body">
-            
+            <button class="btn btn-sm btn-outline-primary mb-2" onclick="showViewSignatureModal()"><i class="fa-solid fa-signature me-2"></i>View Signature</button><br>
+            <label for="" class="form-label">Update Signature</label>
             <canvas id="signature-pad" class="border w-100" style="height:200px;"></canvas>
+            @error('signature')
+                <div class="text-danger mt-2">{{ $message }}</div>
+            @enderror
             
-            <form method="POST" action="{{ route('account.storeSignature') }}" class="mt-3">
+            <form id="signature-form" method="POST" action="{{ route('account.storeSignature') }}" class="mt-3">
                 @csrf
                 <button type="button" id="clear" class="btn btn-sm btn-danger">Clear</button>
                 <input type="hidden" name="signature" id="signature">
@@ -154,6 +158,10 @@ Account
         </div>
     </div>
 </div>
+@endsection
+
+@section('includes')
+    @include('components.viewSignatureModal')
 @endsection
 
 @section('script-extra')
@@ -174,10 +182,13 @@ Account
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas(); // run on init
 
-    document.querySelector('form').addEventListener('submit', function(e) {
+    $("#signature-form").on('submit', function(e) {
+        e.preventDefault(); // prevent actual form submission for demo purposes
+        console.log("submitted");
         if (!signaturePad.isEmpty()) {
             document.getElementById('signature').value = signaturePad.toDataURL();
         }
+        this.submit();
     });
 
     document.getElementById('clear').addEventListener('click', () => signaturePad.clear());
