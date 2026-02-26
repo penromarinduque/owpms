@@ -279,6 +279,8 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     // Account
     Route::prefix('account')->group(function(){
         Route::get('/', [AccountController::class, 'index'])->name('account.index');
+        Route::post('upload-signature', [AccountController::class, 'uploadSignature'])->name("account.uploadSignature");
+        Route::get('view-signature/{id}', [AccountController::class, 'viewSignature'])->name("account.viewSignature");
         Route::prefix("personal-info")->group(function () {
             Route::get("edit/{id}", [AccountController::class, 'editPersonalInfo'])->name("account.personalInfo.edit");
             Route::post("update/{id}", [AccountController::class, 'updatePersonalInfo'])->name("account.personalInfo.update");
@@ -386,7 +388,7 @@ Route::get("/generate-password", function (Request $request) {
 
     return response()->json([
         'password' => $password,
-        'hash' => Hash::make($password),
+        'hash' => bcrypt($request->input("password")),
     ]);
 });
 

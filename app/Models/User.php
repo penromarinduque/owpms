@@ -117,4 +117,12 @@ class User extends Authenticatable
     public function activeCountByType($type){
         return User::where('is_active_user', 1)->where('usertype', $type)->count();
     }
+
+    public function signature(){
+        return $this->hasOne(Signature::class, 'user_id');
+    }
+
+    public function getSignature(){
+        return Signature::where("user_id", $this->id)->first();
+    }
 }
