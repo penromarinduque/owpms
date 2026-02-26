@@ -32,7 +32,7 @@ active
                 <div class="row mb-2">
                     <div class="col-md-7">
                         <div class="form-group mb-2">
-                            <label>Date of Transport [on or before] <span class="text-danger">*</span>:</label>
+                            <label>Date of Application [on or before] <span class="text-danger">*</span>:</label>
                             <input type="date" name="transport_date" id="transport_date" class="form-control" value="{{ $ltp_application->transport_date->format('Y-m-d') }}"  onchange="addOneMonth('transport_date', 'validity_result');" required>
                             <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5>
                         </div>
@@ -59,6 +59,18 @@ active
                             <option value="local sale" {{ $ltp_application->purpose == 'local sale' ? 'selected' : (old('purpose') == 'local sale' ? 'selected' : '') }}>Local Sale</option>
                             <option value="export" {{ $ltp_application->purpose == 'export' ? 'selected' : (old('purpose') == 'export' ? 'selected' : '') }}>Export</option>
                         </select>
+                    </div>
+                    <div class="col-md-7">
+                        <label>Nature of Species <span class="text-danger">*</span>:</label>
+                        <select name="specie_nature_id" id="purpose" class="form-select mb-2" required >
+                            <option value="" selected disabled>Select Nature of Species</option>
+                            @foreach($specie_natures as $nature)
+                                <option value="{{ $nature->id }}" {{ old('specie_nature_id') && old('specie_nature_id') == $nature->id ? 'selected' : ($ltp_application->specie_nature_id == $nature->id ? 'selected' : '')}}>{{ $nature->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('specie_nature_id')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="col-md-7" id="destination_div">
                         <label>Destination <span class="text-danger">*</span>:</label>
@@ -100,7 +112,7 @@ active
                                     <tr id="row_{{$species->specie->id}}">
                                         <td align="center">{{ $key+1 }}</td>
                                         <td align="center">{{ $species->specie->local_name }}</td>
-                                        <td align="center">{{ $species->specie->specie_name }}</td>
+                                        <td align="center"><i>{{ $species->specie->specie_name }}</i></td>
                                         <td align="center">{{ $species->specie->family->family }}</td>
                                         <td align="center">
                                             <input type="hidden" name="specie_id[]" id="specie_id" value="{{ $species->specie->id }}" />
@@ -146,6 +158,8 @@ active
             $("#validity").show();
             addOneMonth('transport_date', 'validity_result');
         });
+
+        $("#destination").select2();
     });
 
     function updateDynamicSum(fld_class, result_element) {
@@ -170,8 +184,9 @@ active
 
     function onPurposeChange(e) {
         const purpose = e.target.value;
-        if(purpose == 'local sale') {
+        if(['local sale', 'export'].includes(purpose)) {
             $("#destination_div").show();
+            $("#destination").val(purpose == 'local sale' ? '' : '1').trigger('change');
         }
         else {
             $("#destination_div").hide();

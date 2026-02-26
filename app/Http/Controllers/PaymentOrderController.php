@@ -83,31 +83,6 @@ class PaymentOrderController extends Controller
         ]);
     }
 
-    public function test() {
-        $query = PaymentOrder::query()
-        ->where('id', 2);
-
-        $paymentOrder = $query->first();
-        // return view('admin.payment_order.pdf', [
-        //     'payment_order' => $paymentOrder,
-        //     "ltp_application" => $paymentOrder->ltpApplication,
-        //     "ltp_fee" => $paymentOrder->ltpFee,
-        // ]);
-        $view = Pdf::loadView('admin.payment_order.billing-statement-pdf', [
-            'payment_order' => $paymentOrder,
-            "ltp_application" => $paymentOrder->ltpApplication,
-            "ltp_fee" => $paymentOrder->ltpFee,
-            'approved_by' => User::find($paymentOrder->approved_by),
-            'prepared_by' => User::find($paymentOrder->prepared_by),
-            'oop_approved_by' => User::find($paymentOrder->oop_approved_by),
-            
-        ]);
-        $view->setPaper('letter', 'portrait');
-        // return $view->download('payment_order.pdf');
-        return $view->stream('payment_order.pdf');
-        // return $query->first();
-    }
-
     public function printBillingStatementTemplate($id) {
         $id = Crypt::decryptString($id);
         $query = PaymentOrder::query()
@@ -215,10 +190,11 @@ class PaymentOrderController extends Controller
                 "description" => "Order of Payment has been prepared by " . auth()->user()->personalInfo->getFullNameAttribute(),
             ]);
 
+            // return $paymentOrder->preparedBy;
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
             Notification::send($paymentOrder->preparedBy, new SignedNotification(route('for-signatures.index', ['type' => "payment_order"]), 'Payment Order for LTP Application '. $paymentOrder->ltpApplication->application_no . ' has been created and is awaiting your signature.'));
             
-            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Document downloaded successfully');
+            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Order of Payment created successfully!');
         });
     }
 
@@ -319,8 +295,9 @@ class PaymentOrderController extends Controller
         ]);
     }
 
-    public function view(string $id) {
+    public function view(Request $request, string $id) {
         $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+        $type = $request->has('type') ? $request->type : 'payment_order';
 
         Gate::authorize('view', $paymentOrder);
         
@@ -329,6 +306,9 @@ class PaymentOrderController extends Controller
         }
 
         $path = storage_path('app/private/' . $paymentOrder->document);
+        if($type == 'billing_statement') {
+            $path = storage_path('app/private/' . $paymentOrder->billing_statement_doc);
+        }
         return response()->file($path);
     }
 

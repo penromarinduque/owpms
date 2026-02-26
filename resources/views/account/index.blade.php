@@ -136,5 +136,62 @@ Account
         </div>
     </div>
     @endif
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-signature"></i>
+            Signature
+        </div>
+        <div class="card-body">
+            <button class="btn btn-sm btn-outline-primary mb-2" onclick="showViewSignatureModal()"><i class="fa-solid fa-signature me-2"></i>View Signature</button><br>
+            <label for="" class="form-label">Update Signature</label>
+            <canvas id="signature-pad" class="border w-100" style="height:200px;"></canvas>
+            @error('signature')
+                <div class="text-danger mt-2">{{ $message }}</div>
+            @enderror
+            
+            <form id="signature-form" method="POST" action="{{ route('account.storeSignature') }}" class="mt-3">
+                @csrf
+                <button type="button" id="clear" class="btn btn-sm btn-danger">Clear</button>
+                <input type="hidden" name="signature" id="signature">
+                <button class="btn btn-sm btn-primary" type="submit">Save Signature</button>
+            </form>
+        </div>
+    </div>
 </div>
+@endsection
+
+@section('includes')
+    @include('components.viewSignatureModal')
+@endsection
+
+@section('script-extra')
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@5.0.10/dist/signature_pad.umd.min.js"></script>
+
+<script>
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas);
+
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear(); // clear to prevent stretched content
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas(); // run on init
+
+    $("#signature-form").on('submit', function(e) {
+        e.preventDefault(); // prevent actual form submission for demo purposes
+        console.log("submitted");
+        if (!signaturePad.isEmpty()) {
+            document.getElementById('signature').value = signaturePad.toDataURL();
+        }
+        this.submit();
+    });
+
+    document.getElementById('clear').addEventListener('click', () => signaturePad.clear());
+</script>
+
 @endsection

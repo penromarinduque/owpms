@@ -21,6 +21,7 @@ class LtpApplicationProgress extends Model
     const STATUS_PAYMENT_IN_PROCESS = "payment-in-process";
     const STATUS_PAID = "paid";
     const STATUS_FOR_INSPECTION = "for-inspection";
+    const STATUS_CANCELLED = "cancelled";
 
     public function user()
     {

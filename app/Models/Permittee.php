@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 use PDO;
+use Termwind\Components\Span;
 
 class Permittee extends Model implements Auditable
 {
@@ -158,6 +159,15 @@ class Permittee extends Model implements Auditable
         ->get();
 
         return $totalExports;
+    }
+
+    public function getPermitteeSpeciesAttribute(){
+        return Specie::whereIn('id', function($query){
+            $query->select('specie_id')
+                ->from('permittee_species')
+                ->where('permittee_id', $this->id);
+        })->get();
+
     }
 
 

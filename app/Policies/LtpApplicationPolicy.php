@@ -116,7 +116,7 @@ class LtpApplicationPolicy
     public function generateLtp(User $user, LtpApplication $ltpApplication) {
         $inspectionReport = $ltpApplication->inspectionReport;
 
-        $inspectionReportDocument = Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
+        // $inspectionReportDocument = Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
 
         return $inspectionReport 
             && $ltpApplication->application_status == LtpApplication::STATUS_INSPECTED 
@@ -124,7 +124,7 @@ class LtpApplicationPolicy
             && $inspectionReport->permittee_signed
             && $inspectionReport->inspector_signed
             && $inspectionReport->approver_signed
-            && $inspectionReportDocument;
+            && Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
     }
 
     public function updateLtp(User $user, LtpApplication $ltpApplication) {
@@ -203,5 +203,9 @@ class LtpApplicationPolicy
 
     public function generatePaymentOrder(User $user, LtpApplication $ltpApplication) {
         return in_array($ltpApplication->application_status, [LtpApplication::STATUS_ACCEPTED]) && in_array('PAYMENT_ORDERS_CREATE', $user->getUserPermissions());
+    }
+
+    public function cancelApplication(User $user, LtpApplication $ltpApplication) {
+        return ($user->id == $ltpApplication->permittee->user_id) && in_array($ltpApplication->application_status, [LtpApplication::STATUS_RESUBMITTED, LtpApplication::STATUS_SUBMITTED]);
     }
 }

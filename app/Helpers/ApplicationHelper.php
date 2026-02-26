@@ -103,7 +103,7 @@ class ApplicationHelper
             return 'permit-lv3'; // Within 3 months of expiry
         } elseif ($now->gte($validTo->copy()->subMonths(6))) {
             return 'permit-lv2'; // Within 6 months of expiry
-        } elseif ($now->gte($validTo->copy()->subYear())) {
+        } elseif ($now->gte($validTo->copy()->subYear()) || $now->lte($validTo)) {
             return 'permit-lv1'; // Within 1 year of expiry
         }
 

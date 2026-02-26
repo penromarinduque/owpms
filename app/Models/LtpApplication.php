@@ -13,7 +13,7 @@ class LtpApplication extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature', 'year', 'no', 'io_user_id'];
+    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature', 'year', 'no', 'io_user_id', 'specie_nature_id'];
 
     protected $casts = [
         'application_date' => 'datetime',
@@ -24,6 +24,7 @@ class LtpApplication extends Model implements Auditable
     const STATUS_DRAFT = 'draft';
     const STATUS_SUBMITTED = 'submitted';
     const STATUS_UNDER_REVIEW = 'under-review';
+    const STATUS_CANCELLED = 'cancelled';
     const STATUS_RETURNED = 'returned';
     const STATUS_RESUBMITTED = 'resubmitted';
     const STATUS_REVIEWED = 'reviewed';
@@ -71,7 +72,22 @@ class LtpApplication extends Model implements Auditable
             ->toArray();
 
         $has_endangered = collect($statuses)->intersect(['threatened', 'vulnerable', 'endangered'])->isNotEmpty();
-        $has_no_endangered = in_array('rare', $statuses);
+        $has_no_endangered = collect($statuses)->intersect(['rare'])->isNotEmpty();
+
+        if($has_endangered && $has_no_endangered) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function validateSpeciesUponCreation($specie_ids) {
+        $statuses = Specie::whereIn('id', $specie_ids)
+            ->pluck('conservation_status')
+            ->toArray();
+
+        $has_endangered = collect($statuses)->intersect(['threatened', 'vulnerable', 'endangered'])->isNotEmpty();
+        $has_no_endangered = collect($statuses)->intersect(['rare'])->isNotEmpty();
 
         if($has_endangered && $has_no_endangered) {
             return false;
@@ -128,5 +144,9 @@ class LtpApplication extends Model implements Auditable
 
     public function getTransportDestinationAttribute() {
         return $this->toDestination ? $this->toDestination->province_name . ', ' . $this->toDestination->region->region_name . ", Philippines" : 'Unknown';
+    }
+
+    public function specieNature() {
+        return $this->belongsTo(SpecieNature::class, 'specie_nature_id', 'id');
     }
 }

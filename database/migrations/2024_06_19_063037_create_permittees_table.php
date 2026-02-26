@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('permittees', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->string('permit_number', 100)->unique();
+            $table->string('permit_number', 100);
             $table->enum('permit_type', ['wcp', 'wfp']);
             $table->date('valid_from');
             $table->date('valid_to');

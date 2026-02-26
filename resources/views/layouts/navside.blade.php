@@ -172,6 +172,9 @@
                             @can('viewAny', App\Models\Specie::class)
                                 <a class="nav-link @yield('active-species')" href="{{ route('species.index') }}">List of Species</a>
                             @endcan
+                            @can('viewAny', App\Models\SpecieNature::class)
+                                <a class="nav-link @yield('active-specie-natures')" href="{{ route('natureofspecies.index') }}">Nature of Species</a>
+                            @endcan
                         </nav>
                     </div>
                 @endif

@@ -154,14 +154,14 @@
                                 $c = 1;
                                 $total = 0;
                             @endphp
-                            @foreach($application->ltpApplicationSpecies as $ltp_specie)
+                            @foreach($application->ltpApplicationSpecies->sortBy('specie.specie_name') as $ltp_specie)
                                 @php
                                     $total += $ltp_specie->quantity;
                                 @endphp
                                 <tr>
                                     <td>{{$c++}}</td>
                                     <td>{{$ltp_specie->specie->local_name}}</td>
-                                    <td>{{$ltp_specie->specie->specie_name}}</td>
+                                    <td><i>{{$ltp_specie->specie->specie_name}}</i></td>
                                     <td>{{$ltp_specie->specie->family->family}}</td>
                                     <td>{{$ltp_specie->quantity}}</td>
                                 </tr>

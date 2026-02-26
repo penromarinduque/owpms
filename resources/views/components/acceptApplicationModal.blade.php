@@ -11,12 +11,13 @@
                 @foreach ($_ltp_requirement->getActiveRequirements() as $req)
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="req_{{ $req->id }}" name="req[]" value="{{ $req->id }}" >
-                        <label class="form-check-label" for="req_{{ $req->id }}">
+                        <a class="form-check-label" href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($req->id)]) }}" target="_blank" >
+                            {{-- for="req_{{ $req->id }}" --}}
                             {{ $req->requirement_name }} 
                             @if ($req->is_mandatory)
                                 <span class="text-danger">*</span>
                             @endif  
-                        </label>
+                        </a>
                     </div>
                 @endforeach
             </div>

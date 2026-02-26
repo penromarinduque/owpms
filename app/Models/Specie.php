@@ -40,11 +40,12 @@ class Specie extends Model implements Auditable
             ->leftJoin('specie_classes', 'specie_classes.id', 'species.specie_class_id')
             ->leftJoin('specie_families', 'specie_families.id', 'species.specie_family_id')
             ->where(function ($qry) use ($searchkey) {
-                $qry->where('species.specie_name','LIKE',"%".$searchkey."%")
-                    ->orWhere('species.local_name','LIKE',"%".$searchkey."%")
-                    ->orWhere('specie_types.specie_type','LIKE',"%".$searchkey."%")
-                    ->orWhere('specie_classes.specie_class','LIKE',"%".$searchkey."%")
-                    ->orWhere('specie_families.family','LIKE',"%".$searchkey."%");
+                // $qry->where('species.specie_name','LIKE',"%".$searchkey."%")
+                //     ->orWhere('species.local_name','LIKE',"%".$searchkey."%")
+                //     ->orWhere('specie_types.specie_type','LIKE',"%".$searchkey."%")
+                //     ->orWhere('specie_classes.specie_class','LIKE',"%".$searchkey."%")
+                //     ->orWhere('specie_families.family','LIKE',"%".$searchkey."%");
+                $qry->where('species.local_name','LIKE', $searchkey."%");
             });
         return $species;
     }

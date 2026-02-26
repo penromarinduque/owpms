@@ -89,10 +89,10 @@
                         @php
                             $count = 0;
                         @endphp
-                        @foreach ($ltp_application->ltpApplicationSpecies as $specie)
+                        @foreach ($ltp_application->ltpApplicationSpecies->sortBy('specie.specie_name') as $specie)
                             <tr>
                                 <td class="border-0 align-middle">{{ $specie->specie->specie_name }}</td>
-                                <td class="text-center border-0 align-middle">pupae</td>
+                                <td class="text-center border-0 align-middle">{{ $ltp_application->specieNature->name }}</td>
                                 <td class="text-end border-0 align-middle">{{ number_format($specie->quantity, 0, '.', ',') }}</td>
                                 @php
                                     $count += $specie->quantity;

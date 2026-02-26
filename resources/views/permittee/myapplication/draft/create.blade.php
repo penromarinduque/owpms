@@ -45,8 +45,8 @@ active
                 <div class="row mb-2">
                     <div class="col-md-7 mb-2">
                         <div class="form-group">
-                            <label>Date of Transport [on or before] <span class="text-danger">*</span>:</label>
-                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('transport_date', 'validity_result');" required>
+                            <label>Date of Application [on or before] <span class="text-danger">*</span>:</label>
+                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('transport_date', 'validity_result');" value="{{ old('transport_date', date('Y-m-d')) }}" max="{{ date('Y-m-d') }}" required>
                             <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5>
                         </div>
                     </div>
@@ -58,6 +58,18 @@ active
                             <option value="local sale">Local Sale</option>
                             <option value="export">Export</option>
                         </select>
+                    </div>
+                    <div class="col-md-7">
+                        <label>Nature of Species <span class="text-danger">*</span>:</label>
+                        <select name="specie_nature_id" id="purpose" class="form-select mb-2" required >
+                            <option value="" selected disabled>Select Nature of Species</option>
+                            @foreach($specie_natures as $nature)
+                                <option value="{{ $nature->id }}">{{ $nature->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('specie_nature_id')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="col-md-7" id="destination_div">
                         <label>Destination <span class="text-danger">*</span>:</label>
@@ -163,11 +175,14 @@ active
 
     function onPurposeChange(e) {
         const purpose = e.target.value;
-        if(purpose == 'local sale') {
+        if(['local sale', 'export'].includes(purpose)) {
             $("#destination_div").show();
+            $("#destination").val(purpose == 'local sale' ? '' : '1').trigger('change');
+            $("#destination").attr('disabled', purpose == 'export' ? true : false);
         }
         else {
             $("#destination_div").hide();
+            $("#destination").attr('disabled', false);
         }
     }
 
@@ -211,7 +226,7 @@ active
                     <td align="center">${itemData.family}</td>
                     <td align="center">
                         <input type="hidden" name="specie_id[]" id="specie_id" value="${itemData.id}" />
-                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" required />
+                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" min="1" required />
                     </td>
                     <td align="center">
                         <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>

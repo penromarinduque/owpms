@@ -32,6 +32,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\PaymentOrderController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\SignatoryController;
+use App\Http\Controllers\SpecieNatureController;
 use App\Http\Controllers\TestController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
@@ -136,6 +137,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/preview/{id}', [MyApplicationController::class, 'preview'])->name('myapplication.preview');
         Route::get('/print-request-letter/{id}', [MyApplicationController::class, 'printRequestLetter'])->name('myapplication.printRequestLetter');
         Route::post('/upload-receipt/{id}', [MyApplicationController::class, 'uploadReceipt'])->name('myapplication.uploadreceipt');
+        Route::post('/cancel/{id}', [MyApplicationController::class, 'cancel'])->name('myapplication.cancel');
         // Route::get('/show/{id}', [MyApplicationController::class, 'show'])->name('myapplication.show');
         
         Route::delete('{id}', [MyApplicationController::class, 'destroy'])->name('myapplication.destroy');
@@ -274,6 +276,16 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
             Route::get('/edit/{id}', [SignatoryController::class, 'edit'])->name('signatories.edit')->middleware('permission:SIGNATORIES_UPDATE');
             Route::post('/update', [SignatoryController::class, 'update'])->name('signatories.update')->middleware('permission:SIGNATORIES_UPDATE');
         });
+
+        // Nature of Species
+        Route::middleware(["userType:admin,internal"])->prefix('natureofspecies')->group(function () {
+            Route::get('/', [SpecieNatureController::class, 'index'])->name('natureofspecies.index')->middleware('permission:NATURE_OF_SPECIES_INDEX');
+            Route::get('/create', [SpecieNatureController::class, 'create'])->name('natureofspecies.create')->middleware('permission:NATURE_OF_SPECIES_CREATE');
+            Route::post('/store', [SpecieNatureController::class, 'store'])->name('natureofspecies.store')->middleware('permission:NATURE_OF_SPECIES_CREATE');
+            Route::get('/edit/{id}', [SpecieNatureController::class, 'edit'])->name('natureofspecies.edit')->middleware('permission:NATURE_OF_SPECIES_UPDATE');
+            Route::post('/update/{id}', [SpecieNatureController::class, 'update'])->name('natureofspecies.update')->middleware('permission:NATURE_OF_SPECIES_UPDATE');
+            Route::delete('/destroy/{id}', [SpecieNatureController::class, 'destroy'])->name('natureofspecies.destroy')->middleware('permission:NATURE_OF_SPECIES_DELETE');
+        });
     });
 
     // Account
@@ -283,6 +295,8 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
             Route::get("edit/{id}", [AccountController::class, 'editPersonalInfo'])->name("account.personalInfo.edit");
             Route::post("update/{id}", [AccountController::class, 'updatePersonalInfo'])->name("account.personalInfo.update");
         });
+        Route::post("store-signature", [AccountController::class, 'storeSignature'])->name("account.storeSignature");
+        Route::get("view-signature/{id}", [AccountController::class, 'viewSignature'])->name("account.viewSignature");
     });
 
     // User Access Management
@@ -309,6 +323,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     // Notifications
     Route::prefix('notifications')->group(function () {
         Route::get('show/{id}', [NotificationController::class, 'show'])->name('notifications.show');
+        Route::get('', [NotificationController::class, 'index'])->name('notifications.index');
     });
 
     // Inspection
