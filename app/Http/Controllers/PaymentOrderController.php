@@ -231,8 +231,8 @@ class PaymentOrderController extends Controller
 
             $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
             $statement_filename = 'billing_statement_' . $paymentOrder->id . '.pdf';
-            $path = $request->file('document_file')->storeAs('payment_order', $filename, 'private');
-            $path2 = $request->file('billing_statement_file')->storeAs('billing_statemenet', $statement_filename, 'private');
+            $path = $request->file('document_file')->storeAs('payment_order', $filename);
+            $path2 = $request->file('billing_statement_file')->storeAs('billing_statemenet', $statement_filename);
 
             $paymentOrder->update(['document' => $path]);
             $paymentOrder->update(['billing_statement_doc' => $path2]);
@@ -269,12 +269,12 @@ class PaymentOrderController extends Controller
         ])->find(Crypt::decryptString($id));
 
         if($type == 'payment_order') {
-            return Storage::disk('private')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
+            return Storage::download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
         }
         if($type == 'billing_statement') {
-            return Storage::disk('private')->download($paymentOrder->billing_statement_doc, 'Billing Statement No. ' . $paymentOrder->order_number . '.pdf');
+            return Storage::download($paymentOrder->billing_statement_doc, 'Billing Statement No. ' . $paymentOrder->order_number . '.pdf');
         }
-        return Storage::disk('private')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
+        return Storage::download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
         
     }
     
@@ -336,7 +336,7 @@ class PaymentOrderController extends Controller
 
                 $filename = $paymentOrder->ltp_application_id . '.' . $file->getClientOriginalExtension();
 
-                $path = $file->storeAs('receipts', $filename, 'private');
+                $path = $file->storeAs('receipts', $filename);
 
                 $paymentOrder->update([
                     'status' => $request->status,
@@ -376,7 +376,7 @@ class PaymentOrderController extends Controller
 
             Gate::authorize('viewReceipt', $paymentOrder);
 
-            return Storage::disk('private')->response($paymentOrder->receipt_url);
+            return Storage::response($paymentOrder->receipt_url);
             
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());

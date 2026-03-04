@@ -124,7 +124,7 @@ class LtpApplicationPolicy
             && $inspectionReport->permittee_signed
             && $inspectionReport->inspector_signed
             && $inspectionReport->approver_signed
-            && Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
+            && Storage::exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
     }
 
     public function updateLtp(User $user, LtpApplication $ltpApplication) {

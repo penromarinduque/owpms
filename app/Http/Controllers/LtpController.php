@@ -25,7 +25,7 @@ class LtpController extends Controller
         $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
 
         Gate::authorize('viewPermit', $ltpPermit);
-        $file = Storage::disk('private')->get('ltps/' . $ltpPermit->ltpApplication->permit->permit_number . '.pdf');
+        $file = Storage::get('ltps/' . $ltpPermit->ltpApplication->permit->permit_number . '.pdf');
         return response($file)->header('Content-Type', 'application/pdf');
     }
 }

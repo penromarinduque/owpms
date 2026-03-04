@@ -123,7 +123,7 @@ class PermitteeController extends Controller
                 ]);
 
                 if($request->hasFile('wfp_document')) {
-                    $path = $request->file('wfp_document')->storeAs('wfp', $permittee_wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension(), 'private');
+                    $path = $request->file('wfp_document')->storeAs('wfp', $permittee_wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension());
                     $permittee_wfp->document = $path;
                     $permittee_wfp->save();
                 }
@@ -150,7 +150,7 @@ class PermitteeController extends Controller
                 ]);
 
                 if($request->hasFile('wcp_document')) {
-                    $path = $request->file('wcp_document')->storeAs('wcp', $permittee_wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension(), 'private');
+                    $path = $request->file('wcp_document')->storeAs('wcp', $permittee_wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension());
                     $permittee_wcp->document = $path;
                     $permittee_wcp->save();
                 }
@@ -298,13 +298,13 @@ class PermitteeController extends Controller
             $wcp->save();
 
             if($request->hasFile('wcp_document')) {
-                $path = $request->file('wcp_document')->storeAs('wcp', $wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension(), 'private');
+                $path = $request->file('wcp_document')->storeAs('wcp', $wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension());
                 $wcp->document = $path;
                 $wcp->save();
             }
 
             if($request->hasFile('wfp_document')) {
-                $path = $request->file('wfp_document')->storeAs('wfp', $wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension(), 'private');
+                $path = $request->file('wfp_document')->storeAs('wfp', $wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension());
                 $wfp->document = $path;
                 $wfp->save();
             }
@@ -327,7 +327,7 @@ class PermitteeController extends Controller
         $permittee = Permittee::find($permittee_id);
 
         if ($request->hasFile('permit_file')) {
-            $path = $request->file('permit_file')->storeAs('permits', $permittee->id .'.'. $request->file('permit_file')->getClientOriginalExtension(), 'private');
+            $path = $request->file('permit_file')->storeAs('permits', $permittee->id .'.'. $request->file('permit_file')->getClientOriginalExtension());
             $permittee->document = $path;
             $permittee->save();
         }

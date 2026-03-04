@@ -385,7 +385,7 @@ class LtpApplicationController extends Controller
 
             $permit = $ltp_application->permit;
 
-            $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf', 'private');
+            $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf');
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationReleased($ltp_application));
 
@@ -426,7 +426,7 @@ class LtpApplicationController extends Controller
     public function downloadLtp(Request $request, string $id) {
         $ltp_application = LtpApplication::find(Crypt::decryptString($id));
         Gate::authorize('downloadLtp', $ltp_application);
-        $file = Storage::disk('private')->get('ltps/' . $ltp_application->permit->permit_number . '.pdf');
+        $file = Storage::get('ltps/' . $ltp_application->permit->permit_number . '.pdf');
         return response($file)->header('Content-Type', 'application/pdf');
     }
 }

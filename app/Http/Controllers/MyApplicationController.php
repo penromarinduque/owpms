@@ -400,7 +400,7 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
-            $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf', 'private');
+            $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf');
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();
@@ -508,7 +508,7 @@ class MyApplicationController extends Controller
 
             $filename = 'receipt_' . $ltp_application_id . '.' . $file->getClientOriginalExtension();
 
-            $path = $file->storeAs('receipts', $filename, 'private');
+            $path = $file->storeAs('receipts', $filename);
 
             PaymentOrder::where([
                 "ltp_application_id" => $ltp_application_id,
