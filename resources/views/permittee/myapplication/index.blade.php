@@ -75,24 +75,78 @@ active
 
             <br>
 
-            <div class="d-flex justify-content-end mb-3">
-                <form class="row gap-0" action="" method="get">
-                    <input type="hidden" name="category" value="{{ request('category') }}">
-                    <div class="col-auto">
-                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+            <div class="d-flex gap-1 justify-content-end mb-3">
+                <div >
+                    <button class="btn btn-outline-primary" data-bs-target="#sortModal" data-bs-toggle="modal">
+                        <i class="fa-solid fa-sort mr-2"></i> Sort
+                    </button>
+                    <div class="modal fade" id="sortModal">
+                        <div class="modal-dialog">
+                            <form class="modal-content" action="" method="get" >
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="sortModalLabel">Sort</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="category" value="{{ request('category') }}">
+                                    <input type="hidden" name="application_no" value="{{ request('application_no') }}" >
+                                    <input type="hidden" name="status" value="{{ request('status') }}" >
+                                    <div class="mb-3">
+                                        <select name="sort_by" id="" placeholder="Sort By" class="form-select">
+                                            <option value="">-Select Sort By-</option>
+                                            <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : ''}}>Date Created</option>
+                                            <option value="application_no" {{ request('sort_by') == 'application_no' ? 'selected' : ''}}>Application No.</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <select class="form-select" name="sort_order" id="" placeholder="Sort Order">
+                                            <option value="">-Select Sort Order-</option>
+                                            <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : ''}}>Ascending</option>
+                                            <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : ''}}>Descending</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-primary">Sort</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-auto pe-0">
-                        <select class="form-select" name="status" id="">
-                            <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
-                            @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
-                            @endforeach
-                        </select>
+                </div>
+                <div >
+                    <button class="btn btn-outline-primary" data-bs-target="#filterModal" data-bs-toggle="modal">
+                        <i class="fa-solid fa-filter mr-2"></i> Filter
+                    </button>
+                    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form class="modal-content" method="get" action="">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="category" value="{{ request('category') }}">
+                                    <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                    <input type="hidden" name="sort_order" value="{{ request('sort_order') }}">
+                                    <div class="mb-2">
+                                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+                                    </div>
+                                    <div class="mb-2">
+                                        <select class="form-select" name="status" id="">
+                                            <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
+                                            @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
+                                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-primary ">Filter</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <button class="btn btn-primary ">Filter</button>
-                    </div>
-                </form>
+                </div>
             </div>
 
             <div class="table-responsive">

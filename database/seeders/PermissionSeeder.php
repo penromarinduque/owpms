@@ -356,6 +356,28 @@ class PermissionSeeder extends Seeder
                 'permission_group' => 'SIGNATORIES'
             ],
 
+            // SPECIE_NATURE
+            [
+                'permission_tag' => 'NATURE_OF_SPECIES_INDEX',
+                'description' => 'Viewing of Nature of Species',
+                'permission_group' => 'SPECIE_NATURES'
+            ],
+            [
+                'permission_tag' => 'NATURE_OF_SPECIES_CREATE',
+                'description' => 'Creation of Nature of Species',
+                'permission_group' => 'SPECIE_NATURES'
+            ],
+            [
+                'permission_tag' => 'NATURE_OF_SPECIES_UPDATE',
+                'description' => 'Update of Nature of Species',
+                'permission_group' => 'SPECIE_NATURES'
+            ],
+            [
+                'permission_tag' => 'NATURE_OF_SPECIES_DELETE',
+                'description' => 'Delete of Nature of Species',
+                'permission_group' => 'SPECIE_NATURES'
+            ],
+
         ];
 
         Permission::insert($permissions);

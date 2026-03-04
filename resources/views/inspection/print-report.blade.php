@@ -76,7 +76,7 @@
                                             $total = 0;
                                         @endphp
                                         @if(!empty($ltp_application->ltpApplicationSpecies))
-                                            @foreach($ltp_application->ltpApplicationSpecies as $ltp_specie)
+                                            @foreach($ltp_application->ltpApplicationSpecies->sortBy('specie.specie_name') as $ltp_specie)
                                                 @php
                                                     $total += $ltp_specie->quantity;
                                                 @endphp

@@ -37,6 +37,8 @@ class LtpApplicationController extends Controller
         $_ltp_requirement = new LtpRequirement;
 
         $ltp_application_query = LtpApplication::query();
+        $sort_by = $request->has('sort_by') && $request->sort_by != null ? $request->sort_by : 'created_at';
+        $sort_order = $request->has('sort_order') && $request->sort_order != null ? $request->sort_order : 'desc';
 
         $this->checkIndexAuthorization($category);
 
@@ -69,7 +71,7 @@ class LtpApplicationController extends Controller
             '_helper' => $_helper,
             '_ltp_application' => new LtpApplication,
             'title' => 'LTP Applications',
-            "ltp_applications" => $ltp_applications->orderBy('created_at', 'DESC')->paginate(50),
+            "ltp_applications" => $ltp_applications->orderBy($sort_by, $sort_order)->paginate(50),
             "_ltp_requirement" => $_ltp_requirement
         ]);
     }

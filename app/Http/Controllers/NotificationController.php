@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Gate;
 
 class NotificationController extends Controller
 {
+    public function index() {
+        $notifications = Notification::where('notifiable_id', auth()->user()->id)->where('read_at', null)->paginate(20);
+
+        return view('notifications.index', [
+            'notifications' => $notifications
+        ]);
+    }
+
     public function show(string $id)
     {
         $notification_id = Crypt::decryptString($id);

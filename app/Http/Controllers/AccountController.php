@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 use App\Models\PersonalInfo;
 use App\Models\Barangay;
 use App\Models\Signature;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -101,11 +102,44 @@ class AccountController extends Controller
         ]);
     }
 
-    public function viewSignature(Request $request, $id) {
-        $signature = Signature::where("user_id", $id)->first();
-        $file = Storage::get('signatures/' . $signature->signature);
-        return response($file)->header('Content-Type', 'image/png');
-        // return Storage::
-        // return Storage::get("signature", $signature->signature);
+    // public function viewSignature(Request $request, $id) {
+    //     $signature = Signature::where("user_id", $id)->first();
+    //     $file = Storage::get('signatures/' . $signature->signature);
+    //     return response($file)->header('Content-Type', 'image/png');
+    //     // return Storage::
+    //     // return Storage::get("signature", $signature->signature);
+    // }
+    public function storeSignature(Request $request)
+    {
+        $request->validate([
+            'signature' => 'required',
+        ]);
+
+        // Decode base64 image
+        $image_parts = explode(";base64,", $request->signature);
+        $image_base64 = base64_decode($image_parts[1]);
+        $fileName = auth()->user()->id . '.png';
+
+        // Store in 'public/signatures' using Laravel Storage
+        Storage::disk('private')->put('signatures/' . $fileName, $image_base64);
+
+        // Save file name (or full path if you prefer) to DB
+        User::find(auth()->user()->id)->update(['signature' => $fileName]);
+
+        return redirect()->back()->with('success', 'Signature saved successfully.');
     }
+
+    public function viewSignature(string $id) {
+        $_id = Crypt::decryptString($id);
+
+        $user = User::find($_id);
+
+        return Storage::disk('private')->response(
+            'signatures/' . $user->signature,
+            null, // keep original file name
+            ['Content-Type' => 'image/png'] // set MIME type properly
+        );
+
+    }
+
 }
