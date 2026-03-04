@@ -361,7 +361,6 @@ class PermitteeController extends Controller
         $wcp = $_permittee->getPermitteeWCP($user->id, 'wcp');
         $wfp = $_permittee->getPermitteeWFP($user->id, 'wfp');
 
-
         return view('components.permitteeInfoCard', [
             '_helper' => $_helper,
             'wcp' => $wcp,
