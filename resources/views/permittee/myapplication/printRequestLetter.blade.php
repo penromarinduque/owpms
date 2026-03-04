@@ -116,8 +116,8 @@
             <div class="recipient-block">
                 <p>{{date('F j, Y')}}</p>
                 <p>
-                    <strong>MS. IMELDA M. DIAZ</strong><br>
-                    PENR Officer<br>
+                    <strong>CESAR P. ODI, <i>RPF</i></strong><br>
+                    OIC, PENR Officer<br>
                     Boac, Marinduque
                 </p>
             </div>

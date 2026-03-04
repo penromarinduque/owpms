@@ -37,51 +37,55 @@ active
                 <strong>{{ session('success') }}</strong>
             </div>
             @endif
-            <table class="table table-bordered table-hover" >
-                <thead>
-                    <tr>
-                        <th>Permittee</th>
-                        <th>Gender</th>
-                        <th>Address</th>
-                        <th>Contact No</th>
-                        <th>Email</th>
-                        <th class="text-center">WFP/WCP Permit Numbers</th>
-                        <th>Active</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($permittees as $permittee)
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" >
+                    <thead>
                         <tr>
-                            <td>{{ strtoupper($permittee->last_name.', '.$permittee->first_name.' '.$permittee->middle_name) }}</td>
-                            <td>{{ ucwords(strtolower($permittee->gender)) }}</td>
-                            <td>{{ $permittee->barangay_name.', '.$permittee->municipality_name.', '.$permittee->province_name }}</td>
-                            <td>{{ $permittee->contact_no }}</td>
-                            <td>{{ $permittee->email }}</td>
-                            <td class="text-center">
-                                @if(!empty($permittee->wildlifePermits))
-                                    @foreach($permittee->wildlifePermits as $wildlifepermit)
-                                    <a href="{{route('permittees.show', [$wildlifepermit->id])}}" title="View Deatils">{{ strtoupper($wildlifepermit->permit_number) }}</a><br>
-                                    @endforeach
-                                @endif
-                            </td>
-                            <td>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus(event,'chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_user==1) ? 'checked' : '' }}>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}"><i class="fas fa-edit fa-lg me-2"></i>Edit Permittee</a>
-                                <a class="btn btn-sm btn-outline-primary" href="{{ route('permitteespecies.index', Crypt::encryptString($permittee->wildlifePermits()->firstWhere('permit_type', 'wcp')->id)) }}"><i class="fa-solid fa-bars-staggered me-2"></i>Species</a>
-                            </td>
+                            <th>Permittee</th>
+                            <th>Gender</th>
+                            <th>Address</th>
+                            <th>Contact No</th>
+                            <th>Email</th>
+                            <th class="text-center">WFP/WCP Permit Numbers</th>
+                            <th>Active</th>
+                            <th class="text-center">Actions</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center">No record found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($permittees as $permittee)
+                            <tr>
+                                <td>{{ strtoupper($permittee->last_name.', '.$permittee->first_name.' '.$permittee->middle_name) }}</td>
+                                <td class="text-center"><span class="badge {{ $permittee->gender == 'male' ? 'bg-primary' : 'bg-success' }}">{{ ucwords(strtolower($permittee->gender)) }}</span></td>
+                                <td>{{ $permittee->barangay_name.', '.$permittee->municipality_name.', '.$permittee->province_name }}</td>
+                                <td>{{ $permittee->contact_no }}</td>
+                                <td>{{ $permittee->email }}</td>
+                                <td class="text-center">
+                                    @if(!empty($permittee->wildlifePermits))
+                                        @foreach($permittee->wildlifePermits as $wildlifepermit)
+                                        <a href="{{route('permittees.show', [$wildlifepermit->id])}}" title="View Deatils">{{ strtoupper($wildlifepermit->permit_number) }}</a><br>
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$permittee->id}}" onclick="ajaxUpdateStatus(event,'chkActiveStat{{$permittee->id}}', '{{Crypt::encrypt($permittee->id)}}');" {{ ($permittee->is_active_user==1) ? 'checked' : '' }}>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-1">
+                                        <a class="btn btn-sm btn-outline-primary" href="{{ route('permittees.edit', ['id'=>Crypt::encrypt($permittee->id)]) }}"><i class="fas fa-edit fa-lg me-2"></i>Edit Permittee</a>
+                                        <a class="btn btn-sm btn-outline-primary" href="{{ route('permitteespecies.index', Crypt::encryptString($permittee->wildlifePermits()->firstWhere('permit_type', 'wcp')->id)) }}"><i class="fa-solid fa-bars-staggered me-2"></i>Species</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center">No record found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
             {{ $permittees->links() }}
         </div>
     </div>

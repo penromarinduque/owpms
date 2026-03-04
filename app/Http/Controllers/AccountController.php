@@ -121,7 +121,7 @@ class AccountController extends Controller
         $fileName = auth()->user()->id . '.png';
 
         // Store in 'public/signatures' using Laravel Storage
-        Storage::disk('private')->put('signatures/' . $fileName, $image_base64);
+        Storage::put('signatures/' . $fileName, $image_base64);
 
         // Save file name (or full path if you prefer) to DB
         User::find(auth()->user()->id)->update(['signature' => $fileName]);
@@ -129,17 +129,12 @@ class AccountController extends Controller
         return redirect()->back()->with('success', 'Signature saved successfully.');
     }
 
-    public function viewSignature(string $id) {
-        $_id = Crypt::decryptString($id);
-
-        $user = User::find($_id);
-
-        return Storage::disk('private')->response(
-            'signatures/' . $user->signature,
-            null, // keep original file name
-            ['Content-Type' => 'image/png'] // set MIME type properly
-        );
-
+    public function viewSignature(Request $request, $id) {
+        $signature = Signature::where("user_id", $id)->first();
+        $file = Storage::get('signatures/' . $signature->signature);
+        return response($file)->header('Content-Type', 'image/png');
+        // return Storage::
+        // return Storage::get("signature", $signature->signature);
     }
 
 }

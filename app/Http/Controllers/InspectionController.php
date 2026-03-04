@@ -150,11 +150,12 @@ class InspectionController extends Controller
 
         $path = $image->image_url;
 
-        if (!Storage::disk('private')->exists($path)) {
+        if (!Storage::exists($path)) {
             abort(404, 'File not found in storage');
         }
 
-        return Storage::disk('private')->response($path); // Or ->download($path)
+        return Storage::response($path);
+        // return Storage::disk('private'); // Or ->download($path)
     }
 
     public function viewVideo(string $ltp_application_id, string $id)
