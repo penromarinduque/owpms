@@ -136,62 +136,106 @@ Account
         </div>
     </div>
     @endif
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-header">
-            <i class="fa-solid fa-signature"></i>
-            Signature
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="card-title"><i class="fa-solid fa-signature me-2"></i>Signature</div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadSignatureModal"><i class="fa-solid fa-upload me-2"></i> Upload eSignature</button>
+            </div>
         </div>
         <div class="card-body">
-            <button class="btn btn-sm btn-outline-primary mb-2" onclick="showViewSignatureModal()"><i class="fa-solid fa-signature me-2"></i>View Signature</button><br>
-            <label for="" class="form-label">Update Signature</label>
-            <canvas id="signature-pad" class="border w-100" style="height:200px;"></canvas>
-            @error('signature')
-                <div class="text-danger mt-2">{{ $message }}</div>
-            @enderror
-            
-            <form id="signature-form" method="POST" action="{{ route('account.storeSignature') }}" class="mt-3">
-                @csrf
-                <button type="button" id="clear" class="btn btn-sm btn-danger">Clear</button>
-                <input type="hidden" name="signature" id="signature">
-                <button class="btn btn-sm btn-primary" type="submit">Save Signature</button>
-            </form>
+            <div class="mx-auto">
+                @php
+                    $signature = auth()->user()->getSignature();
+                @endphp
+                @if ($signature)
+                    <img class="d-block mx-auto" src="{{ route("account.viewSignature", ['id' => auth()->user()->id ]) }}" alt="">
+                @else
+                    <h6 class="text-center">No Signatures uploaded</h6>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="uploadSignatureModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">
+                        <i class="fa-solid fa-signature me-2"></i>
+                        Upload Signature
+                    </h6>
+                </div>
+                <div class="modal-body">
+                    <input type="file" id="signature-upload" accept=".png" class="form-control">
+                    <img id="imagePreview"  alt="">
+                    <div id="croppie"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary btn-submit-dynamic" id="btnUploadSignature">Upload</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 @endsection
-
-@section('includes')
-    @include('components.viewSignatureModal')
-@endsection
-
 @section('script-extra')
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@5.0.10/dist/signature_pad.umd.min.js"></script>
+    <script>
+        $(function(){
+            const croppie = $('#croppie').croppie({
+                viewport: {
+                    width: 300,
+                    height: 150
+                },
+                boundary: { height: 500 },
+                enableOrientation: true
+            });
 
-<script>
-    const canvas = document.getElementById('signature-pad');
-    const signaturePad = new SignaturePad(canvas);
+            $("#btnUploadSignature").click(function(){
+                $(".btn-submit-dynamic").attr("disabled", true)
+                croppie.croppie("result", "base64")
+                .then(function(p) {
+                    $.ajax({
+                        type: "POST",
+                        url: '{{ route("account.uploadSignature") }}',
+                        data: {
+                            userId: '{{ auth()->user()->id }}',
+                            signature: p
+                        },
+                        success: function (res) {
+                            console.log(res);
+                            $("#signature-upload").val("")
+                            croppie.croppie("destroy")
+                            $("#uploadSignatureModal").modal("hide")
+                            location.href = location.href
+                        },
+                        complete: function(){
+                            $(".btn-submit-dynamic").attr("disabled", false)
+                        }
+                    })
+                })
+            });
 
-    function resizeCanvas() {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        signaturePad.clear(); // clear to prevent stretched content
-    }
+            $("#signature-upload").change(function(){
+                const file = $(this)[0].files[0];
 
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas(); // run on init
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        initCroppie(e.srcElement.result, croppie);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please select a valid image file.');
+                }
+            })
+        });
 
-    $("#signature-form").on('submit', function(e) {
-        e.preventDefault(); // prevent actual form submission for demo purposes
-        console.log("submitted");
-        if (!signaturePad.isEmpty()) {
-            document.getElementById('signature').value = signaturePad.toDataURL();
+        function initCroppie(fileUrl, croppie) {
+            croppie.croppie('bind',{
+                url: fileUrl
+            })
         }
-        this.submit();
-    });
-
-    document.getElementById('clear').addEventListener('click', () => signaturePad.clear());
-</script>
-
+    </script>
 @endsection

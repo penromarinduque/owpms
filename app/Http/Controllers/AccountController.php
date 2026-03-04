@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\PersonalInfo;
 use App\Models\Barangay;
+use App\Models\Signature;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -84,6 +85,30 @@ class AccountController extends Controller
         ]);
     }
 
+    public function uploadSignature(Request $request) {
+        $userId = $request->input("userId");
+        $signature = $request->input("signature");
+        $base64 = explode(',', $signature);
+        $image = base64_decode($base64[1]);
+        $filename = $userId . "-" . time()  .'.png';
+        Storage::put("signatures/".$filename, $image);
+        Signature::updateOrCreate([
+            "user_id" => $userId
+        ], [
+            "signature" => $filename
+        ]);
+        return response([
+            "message" => "Signature Uploaded successfully"
+        ]);
+    }
+
+    // public function viewSignature(Request $request, $id) {
+    //     $signature = Signature::where("user_id", $id)->first();
+    //     $file = Storage::get('signatures/' . $signature->signature);
+    //     return response($file)->header('Content-Type', 'image/png');
+    //     // return Storage::
+    //     // return Storage::get("signature", $signature->signature);
+    // }
     public function storeSignature(Request $request)
     {
         $request->validate([

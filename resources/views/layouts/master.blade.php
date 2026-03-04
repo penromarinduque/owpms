@@ -15,6 +15,8 @@
         <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css">
+
         @yield('bladewind-ui')
 
 
@@ -68,6 +70,9 @@
         <script src="{{ asset('js/jquery.ajaxrequestlaravel.js') }}" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script src="{{ asset('vendor/bladewind/js/helpers.js') }}"></script>
+        
+        {{-- Image Cropper --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 
         <script type="text/javascript">
             // Fetch token from session
