@@ -371,12 +371,15 @@ class MyApplicationController extends Controller
         $_user = new User;
 
         $validator = Validator::make($request->all(), [
-            'document' => 'required|mimes:pdf'
+            'attach_signature_check' => 'required',
+            'document' => 'required_if_declined:attach_signature_check|mimes:pdf',
         ]);
 
         if($validator->fails()) {
             return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
         }
+
+        return "test";
 
         return DB::transaction(function () use ($id, $request, $_user) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
