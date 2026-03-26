@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to submit this application? This action cannot be undone</p>
-                <input type="hidden" name="attach_signature_check">
+                <input type="hidden" name="attach_signature_check" id="attach_signature_check">
                 <div class="mb-2">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="attach_signature" id="attach_signature" required onchange="onAttachSignatureChanged()">

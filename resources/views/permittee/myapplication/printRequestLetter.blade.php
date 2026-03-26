@@ -125,7 +125,7 @@
             <!-- Subject and Greeting -->
             <div class="mb-4">
                 <p class="subject-line">Subject: Application for Local Transport Permit of Butterfly Species</p>
-                <p><strong>Madam:</strong></p>
+                <p><strong>Sir:</strong></p>
                 <p>Greetings!!</p>
                 <p class="text-justify">
                     &nbsp;&nbsp;&nbsp;&nbsp;Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,

@@ -8,8 +8,11 @@ use App\Models\LtpApplicationProgress;
 use App\Models\LtpPermit;
 use App\Models\PaymentOrder;
 use App\Models\Permittee;
+use Docuseal\Docuseal;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use NumberToWords\NumberToWords;
 
 class ApplicationHelper
@@ -279,5 +282,63 @@ class ApplicationHelper
 
         return $words;
     }
+
+    public function createPdfForm($filePath)
+    {
+        $fileData = base64_encode(file_get_contents($filePath));
+
+        $docuseal = new \Docuseal\Api(env("DOCUSEAL_API_KEY"), 'https://docuseal.penromarinduque.gov.ph/api');
+
+        $submission = $docuseal->createSubmissionFromPdf([
+            'name' => 'Rental Agreement',
+            'documents' => [
+                [
+                'name' => 'rental-agreement',
+                'file' => $fileData
+                ]
+            ],
+            'submitters' => [
+                [
+                'role' => 'First Party',
+                'email' => 'jandusayjoe14@gmail.com'
+                ]
+            ]
+        ]);
+    }
+
+    // public function createPdfForm($filePath)
+    // {
+    //     $response = Http::withToken(env("DOCUSEAL_API_KEY"))
+    //         ->asMultipart()
+    //         ->post('https://docuseal.penromarinduque.gov.ph/api/v1/documents', [
+    //             [
+    //                 'name' => 'file',
+    //                 'contents' => fopen($filePath, 'r'),
+    //                 'filename' => 'document.pdf'
+    //             ],
+    //             [
+    //                 'name' => 'name',
+    //                 'contents' => 'Contract Agreement'
+    //             ],
+    //             [
+    //                 'name' => 'recipients[0][name]',
+    //                 'contents' => 'Test Name'
+    //             ],
+    //             [
+    //                 'name' => 'recipients[0][email]',
+    //                 'contents' => 'jandusayjoe14@gmail.com'
+    //             ],
+    //             [
+    //                 'name' => 'recipients[0][role]',
+    //                 'contents' => 'Signer'
+    //             ]
+    //         ]);
+
+    //     if ($response->failed()) {
+    //         dd($response->body());
+    //     }
+
+    //     return $response->json();
+    // }
 
 }

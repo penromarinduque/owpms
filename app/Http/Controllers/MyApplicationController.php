@@ -24,7 +24,9 @@ use App\Models\SpecieNature;
 use App\Notifications\LtpApplicationSubmitted;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class MyApplicationController extends Controller
 {
@@ -369,6 +371,8 @@ class MyApplicationController extends Controller
 
     public function submit(Request $request, string $id) {
         $_user = new User;
+        $_helper = new ApplicationHelper;
+        $_permittee = new Permittee;
 
         $validator = Validator::make($request->all(), [
             'attach_signature_check' => 'required',
@@ -379,9 +383,7 @@ class MyApplicationController extends Controller
             return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
         }
 
-        // return "test";
-
-        return DB::transaction(function () use ($id, $request, $_user) {
+        return DB::transaction(function () use ($id, $request, $_user, $_helper, $_permittee) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
 
             Gate::authorize('submit', $ltp_application);
@@ -389,6 +391,23 @@ class MyApplicationController extends Controller
             if(!$ltp_application) {
                 return redirect()->back()->with('error', 'Application not found!');
             }
+
+            $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
+                $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
+                Pdf::view("pdfs.request-letter", [
+                    "_helper" => $_helper,
+                    "application" => $ltp_application,
+                    "wfp" => $wfp,
+                    "wcp" => $wcp
+                ])
+                ->disk("s3")
+                ->save('request_letters/'.$ltp_application->id.'.pdf');
+
+                $result = $_helper->createPdfForm(Storage::temporaryUrl("request_letters/".$ltp_application->id.".pdf", now()->addMinutes(30)));
+
+                return redirect($result['signing_url']);
+
+            return "test";
 
             // Compliance Checks
             if(!LtpApplication::validateSpecies($ltp_application->id)) {
@@ -403,7 +422,22 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
-            $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf');
+            if($request->input('attach_signature_check') == 0) {
+                $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf');
+            }
+            else {
+                $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
+                $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
+                Pdf::view("pdfs.request-letter", [
+                    "_helper" => $_helper,
+                    "application" => $ltp_application,
+                    "wfp" => $wfp,
+                    "wcp" => $wcp
+                ])
+                ->format("a4")
+                ->disk("s3")
+                ->save('request_letters/'.$ltp_application->id.'.pdf');
+            }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();
@@ -550,17 +584,4 @@ class MyApplicationController extends Controller
             return Redirect::route('myapplication.index')->with('success', 'Application successfully cancelled!');
         });
     }
-
-    // public function viewPaymentOrder(string $id) {
-    //     $application_id = Crypt::decryptString($id);
-    //     $application = LtpApplication::find($application_id);
-
-    //     $payment_order = PaymentOrder::where([
-    //         "ltp_application_id" => $application_id
-    //     ])->first();
-
-    //     $path = storage_path('app/private/' . $payment_order->document);
-        
-    //     return response()->file($path);
-    // }
 }
