@@ -379,7 +379,7 @@ class MyApplicationController extends Controller
             return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
         }
 
-        return "test";
+        // return "test";
 
         return DB::transaction(function () use ($id, $request, $_user) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));

@@ -155,6 +155,7 @@ active
                         <tr>
                             <th>#</th>
                             <th>Application No.</th>
+                            <th>Transport Date</th>
                             <th>Date Created</th>
                             <th>Last Modified</th>
                             <th class="text-center">Status</th>
@@ -166,6 +167,7 @@ active
                             <tr>
                                 <td class="align-middle">{{ $key + 1 }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
+                                <td class="align-middle">{{ $ltp_application->transport_date->format('F d, Y') }}</td>
                                 <td class="align-middle">{{ $ltp_application->created_at->format('F d, Y') }}</td>
                                 <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
                                 <td class="align-middle text-center">
@@ -175,7 +177,7 @@ active
                                     <a href="{{ route('myapplication.preview', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
-                                    @if ($ltp_application->application_status == 'draft')                                        
+                                    @if (in_array($ltp_application->application_status, ['draft', 'submitted', 'resubmitted', 'under-review']))                                        
                                         <a href="{{ route('myapplication.edit', Crypt::encryptString($ltp_application->id)) }}"  class="btn btn-sm btn-outline-warning mb-2" data-bs-toggle="tooltip" data-bs-title="Edit">
                                             <i class="fas fa-pen"></i>
                                         </a>
