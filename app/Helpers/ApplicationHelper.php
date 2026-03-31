@@ -283,62 +283,40 @@ class ApplicationHelper
         return $words;
     }
 
-    public function createPdfForm($filePath)
-    {
-        $fileData = base64_encode(file_get_contents($filePath));
-
-        $docuseal = new \Docuseal\Api(env("DOCUSEAL_API_KEY"), 'https://docuseal.penromarinduque.gov.ph/api');
-
-        $submission = $docuseal->createSubmissionFromPdf([
-            'name' => 'Rental Agreement',
-            'documents' => [
-                [
-                'name' => 'rental-agreement',
-                'file' => $fileData
-                ]
-            ],
-            'submitters' => [
-                [
-                'role' => 'First Party',
-                'email' => 'jandusayjoe14@gmail.com'
-                ]
-            ]
-        ]);
-    }
-
     // public function createPdfForm($filePath)
     // {
-    //     $response = Http::withToken(env("DOCUSEAL_API_KEY"))
-    //         ->asMultipart()
-    //         ->post('https://docuseal.penromarinduque.gov.ph/api/v1/documents', [
+    //     $fileData = base64_encode(file_get_contents($filePath));
+
+    //     $docuseal = new \Docuseal\Api(env("DOCUSEAL_API_KEY"), 'https://docuseal.penromarinduque.gov.ph/api');
+
+    //     $submission = $docuseal->createSubmissionFromPdf([
+    //         'name' => 'Rental Agreement',
+    //         'documents' => [
     //             [
-    //                 'name' => 'file',
-    //                 'contents' => fopen($filePath, 'r'),
-    //                 'filename' => 'document.pdf'
-    //             ],
-    //             [
-    //                 'name' => 'name',
-    //                 'contents' => 'Contract Agreement'
-    //             ],
-    //             [
-    //                 'name' => 'recipients[0][name]',
-    //                 'contents' => 'Test Name'
-    //             ],
-    //             [
-    //                 'name' => 'recipients[0][email]',
-    //                 'contents' => 'jandusayjoe14@gmail.com'
-    //             ],
-    //             [
-    //                 'name' => 'recipients[0][role]',
-    //                 'contents' => 'Signer'
+    //             'name' => 'rental-agreement',
+    //             'file' => $fileData
     //             ]
-    //         ]);
-
-    //     if ($response->failed()) {
-    //         dd($response->body());
-    //     }
-
-    //     return $response->json();
+    //         ],
+    //         'submitters' => [
+    //             [
+    //             'role' => 'First Party',
+    //             'email' => 'jandusayjoe14@gmail.com'
+    //             ]
+    //         ]
+    //     ]);
     // }
+
+    public function createPdfForm($filePath)
+    {
+        return Http::withToken(env('DOCUMENSO_API_KEY'))
+            ->post('https://api.documenso.com', [
+                'title' => 'Official DENR Document',
+                'recipients' => [
+                    ['email' => 'client@example.com', 'role' => 'SIGNER']
+                ],
+                // Documenso will automatically email the signer
+                // using your Gmail SMTP settings.
+            ]);
+    }
 
 }

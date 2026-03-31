@@ -392,23 +392,6 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application not found!');
             }
 
-            $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
-                $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
-                Pdf::view("pdfs.request-letter", [
-                    "_helper" => $_helper,
-                    "application" => $ltp_application,
-                    "wfp" => $wfp,
-                    "wcp" => $wcp
-                ])
-                ->disk("s3")
-                ->save('request_letters/'.$ltp_application->id.'.pdf');
-
-                $result = $_helper->createPdfForm(Storage::temporaryUrl("request_letters/".$ltp_application->id.".pdf", now()->addMinutes(30)));
-
-                return redirect($result['signing_url']);
-
-            return "test";
-
             // Compliance Checks
             if(!LtpApplication::validateSpecies($ltp_application->id)) {
                 return redirect()->back()->with('error', 'Application cannot have both endangered and non-endangered species! Endagered species must be submitted separately.');
@@ -434,9 +417,22 @@ class MyApplicationController extends Controller
                     "wfp" => $wfp,
                     "wcp" => $wcp
                 ])
-                ->format("a4")
                 ->disk("s3")
                 ->save('request_letters/'.$ltp_application->id.'.pdf');
+                $pdfUrl = Storage::disk('s3')->temporaryUrl(
+                    'request_letters/'.$ltp_application->id.'.pdf', 
+                    now()->addMinutes(45),
+                    [
+                        'ResponseContentType' => 'application/pdf',
+                        'ResponseContentDisposition' => 'inline; filename="document.pdf"',
+                    ]
+                );
+                // $pdfUrl = Storage::disk('s3')->temporaryUrl(
+                //     'inspection-photos/1755151459_49-0.PNG', 
+                //     now()->addMinutes(45)
+                // );
+                // return redirect($pdfUrl);
+                return redirect()->route("documents.attachSignature", ['id' => Crypt::encryptString($ltp_application->id), "webhook" => "", "pdfUrl" => $pdfUrl]);
             }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;

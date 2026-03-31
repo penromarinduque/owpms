@@ -22,6 +22,7 @@ use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\IssuedOrController;
@@ -369,11 +370,17 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/view-permit/{id}', [LtpController::class, 'viewPermit'])->name('ltps.viewPermit');
     });
 
+    Route::prefix('documents')->group(function () {
+        Route::get('/attach-signature', [DocumentController::class, 'attachSignature'])->name('documents.attachSignature');
+    });
+
 });
 
 Route::prefix('qr')->group(function () {
     Route::get('/', [QrController::class, 'index'])->name('qr.index');
 });
+
+
 
 // test routes
 Route::get('/test-email', function () {
