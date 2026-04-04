@@ -96,7 +96,7 @@ class ApplicationHelper
 
     public function setPermitStatusColor(Permittee $permit)
     {
-        $now = Carbon::now();
+        $now = Carbon::now('PST');
         $validTo = $permit->valid_to;
 
         if ($now->gte($validTo)) {

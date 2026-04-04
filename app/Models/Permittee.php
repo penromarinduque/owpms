@@ -105,7 +105,7 @@ class Permittee extends Model implements Auditable
     }
 
     public function getValidity(){
-        if($this->valid_to < Carbon::now()) {
+        if($this->valid_to < Carbon::now('PST')) {
             return 'Expired';
         }
         return 'Valid';
@@ -113,7 +113,7 @@ class Permittee extends Model implements Auditable
 
     public static function validatePermit($type, $user_id){ 
         $permit = Permittee::where('user_id', $user_id)->where('permit_type', $type);
-        if($permit->first()->valid_to < Carbon::now()) {
+        if($permit->first()->valid_to < Carbon::now('PST')) {
             $permit->update(['status' => 'expired']);
             return false;
         }
