@@ -62,7 +62,7 @@
             text-align: center;
             width: 150px;
             display: block;
-            position: fixed;
+            /* position: fixed; */
             bottom: 20px;
             right: 20px;
             margin: 0rem auto;
@@ -83,7 +83,7 @@
             }
 
             .letterhead {
-                position: fixed;
+                /* position: fixed; */
                 top: 0;
                 width: 100%;
                 line-height: 1;

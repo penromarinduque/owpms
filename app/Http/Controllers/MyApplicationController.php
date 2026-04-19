@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Spatie\LaravelPdf\Enums\Format;
+use Spatie\LaravelPdf\Enums\Unit;
 use Spatie\LaravelPdf\Facades\Pdf;
 
 class MyApplicationController extends Controller
@@ -85,10 +87,12 @@ class MyApplicationController extends Controller
         $provinces = Province::query()->with([
             'region'
         ])->get();
+        $permittee = auth()->user()->wcp();
         return view('permittee.myapplication.draft.create', [
             'title' => 'Create New Application',
             "provinces" => $provinces,
             "specie_natures" => SpecieNature::all(),
+            "species" => $permittee->permittee_species
         ]);
     }
 
@@ -211,6 +215,7 @@ class MyApplicationController extends Controller
             ])
             ->orderBy("species.specie_name", "ASC")
             ->get();
+        $permittee = auth()->user()->wcp();
 
         return view('permittee.myapplication.edit', [
             'title' => 'Edit Application',
@@ -218,6 +223,7 @@ class MyApplicationController extends Controller
             "ltp_application_species" => $ltp_application_species,
             "provinces" => $provinces,
             "specie_natures" => SpecieNature::all(),
+            "species" => $permittee->permittee_species
         ]);
     }
 
@@ -361,7 +367,17 @@ class MyApplicationController extends Controller
 
         // return $wfp;
 
-        return view('permittee.myapplication.printRequestLetter', [
+        return Pdf::view("pdfs.request-letter", [
+                "_helper" => $_helper,
+                "application" => $application,
+                "wfp" => $wfp,
+                "wcp" => $wcp
+            ])
+            ->format(Format::A4)
+            ->scale(0.9)
+            ->margins(0, 0.4, 0.5, 0.3, Unit::Inch);
+
+        return view('pdfs.request-letter', [
             "_helper" => $_helper,
             "application" => $application,
             "wfp" => $wfp,
@@ -411,12 +427,16 @@ class MyApplicationController extends Controller
             else {
                 $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
                 $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
+
                 Pdf::view("pdfs.request-letter", [
                     "_helper" => $_helper,
                     "application" => $ltp_application,
                     "wfp" => $wfp,
                     "wcp" => $wcp
                 ])
+                ->format(Format::A4)
+                ->scale(0.9)
+                ->margins(0, 0.4, 0.5, 0.3, Unit::Inch)
                 ->disk("s3")
                 ->save('request_letters/'.$ltp_application->id.'.pdf');
                 $pdfUrl = Storage::disk('s3')->temporaryUrl(
@@ -432,7 +452,11 @@ class MyApplicationController extends Controller
                 //     now()->addMinutes(45)
                 // );
                 // return redirect($pdfUrl);
-                return redirect()->route("documents.attachSignature", ['id' => Crypt::encryptString($ltp_application->id), "webhook" => "", "pdfUrl" => $pdfUrl]);
+                return redirect()->route("documents.attachSignature", [
+                    'id' => Crypt::encryptString($ltp_application->id), 
+                    "webhook" => route("webhooks.requestLetterSigned"), 
+                    "pdfUrl" => $pdfUrl
+                ]);
             }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;

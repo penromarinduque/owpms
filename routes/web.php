@@ -35,6 +35,7 @@ use App\Http\Controllers\QrController;
 use App\Http\Controllers\SignatoryController;
 use App\Http\Controllers\SpecieNatureController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\WebhookController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Notifications\LtpApplicationExpired;
@@ -303,8 +304,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     });
 
     // User Access Management
-    Route::prefix('iam')->group(function () {
-        
+    Route::prefix('iam')->group(function () { 
         Route::middleware(['userType:admin'])->prefix('roles')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('iam.roles.index')->middleware('permission:ROLES_INDEX');
             Route::get('/create', [RoleController::class, 'create'])->name('iam.roles.create')->middleware('permission:ROLES_CREATE');
@@ -374,6 +374,9 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/attach-signature', [DocumentController::class, 'attachSignature'])->name('documents.attachSignature');
     });
 
+    Route::group(["prefix" => "webhooks", "as" => "webhooks."], function () {
+        Route::post('request-letter-signed', [WebhookController::class, 'requestLetterSigned'])->name('requestLetterSigned');
+    });
 });
 
 Route::prefix('qr')->group(function () {

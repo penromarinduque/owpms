@@ -9,7 +9,7 @@
 
     .letterhead {
         padding-bottom: 7px;
-        margin-bottom: 10px;
+        margin-bottom: 0px;
         border-bottom: 2px solid maroon;
         font-size: 12px;
     }
@@ -55,7 +55,7 @@
         text-align: center;
         width: 150px;
         display: block;
-        position: fixed;
+        /* position: fixed; */
         bottom: 20px;
         right: 20px;
         margin: 0rem auto;
@@ -76,7 +76,7 @@
         }
 
         .letterhead {
-            position: fixed;
+            /* position: fixed; */
             top: 0;
             width: 100%;
             line-height: 1;
@@ -84,117 +84,132 @@
 
 
         .main-content {
-            margin-top: 60px;
+            /* margin-top: 40px; */
         }
 
     }
 </style>
-<div class="" style="max-width: 700px; margin: 1rem auto;">
-    <div class=" text-center letterhead  pb-4 ">
-        <p class="mb-0 fw-bold">REPUBLIC OF THE PHILIPPINES</p>
-        <p class="mt-0 mb-0 fw-bold">{{ strtoupper($wfp->wildlifeFarm->farm_name) }}</p>
-        <p class="mt-0 mb-0">{{ $wfp->wildlifeFarm->barangay->barangay_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->municipality_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->province->province_name }}</p>
-        <p class="mt-0 mb-0">Contact No. {{ $wfp->user->personalInfo->contact_no }} | Email: {{ $wfp->user->email }}</p>
-    </div>
-    
-    <br><br>
-    
-    <div class="main-content">
-    
-        <!-- Date and Recipient -->
-        <div class="recipient-block">
-            <p>{{date('F j, Y')}}</p>
-            <p>
-                <strong>CESAR P. ODI, <i>RPF</i></strong><br>
-                OIC, PENR Officer<br>
-                Boac, Marinduque
-            </p>
-        </div>
-    
-        <!-- Subject and Greeting -->
-        <div class="mb-4">
-            <p class="subject-line">Subject: Application for Local Transport Permit of Butterfly Species</p>
-            <p><strong>Sir:</strong></p>
-            <p>Greetings!!</p>
-            <p class="text-justify">
-                &nbsp;&nbsp;&nbsp;&nbsp;Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,
-                the
-                undersigned would like to apply for the <strong>Local Transport Permit</strong> of the following
-                Butterfly Pupae
-                species specified in the table below.
-            </p>
-        </div>
-    
-        <!-- Table -->
-        <div class="px-4">
-            <table class="table table-bordered table-sm">
-                <thead class="table-light">
-                    <tr>
-                        <th>No.</th>
-                        <th>Common Name</th>
-                        <th>Scientific Name</th>
-                        <th>Family Name</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if(!empty($application->ltpApplicationSpecies))
-                        @php
-                            $c = 1;
-                            $total = 0;
-                        @endphp
-                        @foreach($application->ltpApplicationSpecies->sortBy('specie.specie_name') as $ltp_specie)
-                            @php
-                                $total += $ltp_specie->quantity;
-                            @endphp
-                            <tr>
-                                <td>{{$c++}}</td>
-                                <td>{{$ltp_specie->specie->local_name}}</td>
-                                <td><i>{{$ltp_specie->specie->specie_name}}</i></td>
-                                <td>{{$ltp_specie->specie->family->family}}</td>
-                                <td>{{$ltp_specie->quantity}}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                    <tr class="fw-bold">
-                        <td colspan="4" class="text-end">TOTAL</td>
-                        <td>{{$total}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    
-        <br>
-        
-        <!-- Purpose Statement -->
-        <div class="mb-4">
-            <p class="text-justify">
-                &nbsp;&nbsp;&nbsp;&nbsp;The listed pupae/live species will be transported on or before
-                <strong><u>&nbsp;&nbsp;{{date('F j, Y', strtotime($application->transport_date))}}&nbsp;&nbsp;</u></strong> for the purpose of
-                <strong><u>&nbsp;&nbsp;{{$application->purpose}}&nbsp;&nbsp;</u></strong> at 
-                <strong><u>&nbsp;&nbsp;{{ $application->transportDestination }}&nbsp;&nbsp;</u></strong>.
-            </p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;Thank you.</p>
-        </div>
-    
-        <!-- Signature Block -->
-        <div class="signature-block">
-            <p>Sincerely,</p>
-            <p class="mt-2 ">
-                <br>
-                {{-- @{{Sign;type=signature}} --}}
-                <br><strong >{{ strtoupper($wcp->user->personalInfo->first_name) }} {{ strtoupper(substr($wcp->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($wcp->user->personalInfo->last_name) }}</strong><br>
-                Owner, {{ $wfp->wildlifeFarm->farm_name }}
-            </p>
-        </div>
-        <div class="qr-code">
-            <img 
-                class="" 
-                src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($application->id), 'document_type' => 'request_letter']))) }}" 
-                alt="">
-            <p><small>Application No.: {{ $application->application_no }}</small></p>
-        </div>
-    </div>
+<div class="" style="margin:0rem auto;">
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    <br>
+                    <div class=" text-center letterhead ">
+                        <p class="mb-0 mt-0 fw-bold">REPUBLIC OF THE PHILIPPINES</p>
+                        <p class="mt-0 mb-0 fw-bold">{{ strtoupper($wfp->wildlifeFarm->farm_name) }}</p>
+                        <p class="mt-0 mb-0">{{ $wfp->wildlifeFarm->barangay->barangay_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->municipality_name }}, {{ $wfp->wildlifeFarm->barangay->municipality->province->province_name }}</p>
+                        <p class="mt-0 mb-0">Contact No. {{ $wfp->user->personalInfo->contact_no }} | Email: {{ $wfp->user->email }}</p>
+                    </div>
+                    <br><br>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="main-content">
+                        <!-- Date and Recipient -->
+                        <div class="recipient-block mt-0">
+                            <p mt-0>{{date('F j, Y')}}</p>
+                            <p>
+                                <strong>CESAR P. ODI, <i>RPF</i></strong><br>
+                                OIC, PENR Officer<br>
+                                Boac, Marinduque
+                            </p>
+                        </div>
+                    
+                        <!-- Subject and Greeting -->
+                        <div class="mb-4">
+                            <p class="subject-line">Subject: Application for Local Transport Permit of Butterfly Species</p>
+                            <p><strong>Sir:</strong></p>
+                            <p>Greetings!!</p>
+                            <p class="text-justify">
+                                &nbsp;&nbsp;&nbsp;&nbsp;Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,
+                                the
+                                undersigned would like to apply for the <strong>Local Transport Permit</strong> of the following
+                                Butterfly Pupae
+                                species specified in the table below.
+                            </p>
+                        </div>
+                    
+                        <!-- Table -->
+                        <div class="px-4">
+                            <table class="table table-bordered table-sm">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Common Name</th>
+                                        <th>Scientific Name</th>
+                                        <th>Family Name</th>
+                                        <th class="text-center">Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(!empty($application->ltpApplicationSpecies))
+                                        @php
+                                            $c = 1;
+                                            $total = 0;
+                                        @endphp
+                                        @foreach($application->ltpApplicationSpecies->sortBy('specie.specie_name') as $ltp_specie)
+                                            @php
+                                                $total += $ltp_specie->quantity;
+                                            @endphp
+                                            <tr>
+                                                <td>{{$c++}}</td>
+                                                <td>{{$ltp_specie->specie->local_name}}</td>
+                                                <td><i>{{$ltp_specie->specie->specie_name}}</i></td>
+                                                <td>{{$ltp_specie->specie->family->family}}</td>
+                                                <td class="text-center">{{number_format($ltp_specie->quantity, 0, '.', ',')}}</td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                    <tr class="fw-bold">
+                                        <td colspan="4" class="text-end">TOTAL</td>
+                                        <td>{{number_format($total, 0, '.', ',')}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                        <br>
+                        
+                        <div class="" style="page-break-inside: avoid">
+                            <!-- Purpose Statement -->
+                            <div class="mb-4">
+                                <p class="text-justify">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;The listed pupae/live species will be transported on or before
+                                    <strong><u>&nbsp;&nbsp;{{date('F j, Y', strtotime($application->transport_date))}}&nbsp;&nbsp;</u></strong> for the purpose of
+                                    <strong><u>&nbsp;&nbsp;{{$application->purpose}}&nbsp;&nbsp;</u></strong> at 
+                                    <strong><u>&nbsp;&nbsp;{{ $application->transportDestination }}&nbsp;&nbsp;</u></strong>.
+                                </p>
+                                <p>&nbsp;&nbsp;&nbsp;&nbsp;Thank you.</p>
+                            </div>
+                        
+                            <!-- Signature Block -->
+                            <div class="signature-block">
+                                <p>Sincerely,</p>
+                                <p class="mt-2 ">
+                                    <br>
+                                    {{-- @{{Sign;type=signature}} --}}
+                                    <br><strong >{{ strtoupper($wcp->user->personalInfo->first_name) }} {{ strtoupper(substr($wcp->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($wcp->user->personalInfo->last_name) }}</strong><br>
+                                    Owner, {{ $wfp->wildlifeFarm->farm_name }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="qr-code">
+                            <img 
+                                class="" 
+                                src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($application->id), 'document_type' => 'request_letter']))) }}" 
+                                alt="">
+                            <p><small>Application No.: {{ $application->application_no }}</small></p>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 @endsection
 
