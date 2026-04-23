@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to submit this application? This action cannot be undone</p>
+                <p id="message"></p>
                 <input type="hidden" name="attach_signature_check" id="attach_signature_check">
                 <div class="mb-2">
                     <div class="form-check">
@@ -44,8 +44,11 @@
         @endif
         onAttachSignatureChanged();
     })
-    function showSubmitApplicationModal(action){
+    function showSubmitApplicationModal(action, resubmit = false){
         $('#submitApplicationModal form').attr('action', action);
+        $('#submitApplicationModal .modal-title').html(resubmit ? 'Resubmit Application' : 'Submit Application');
+        $('#submitApplicationModal #message').html(resubmit ? 'Are you sure you want to resubmit this application? This action cannot be undone' : 'Are you sure you want to submit this application? This action cannot be undone');
+        $('#submitApplicationModal .btn-submit').html(resubmit ? 'Resubmit' : 'Submit');
         $('#submitApplicationModal').modal('show');
     }
     function onAttachSignatureChanged() {

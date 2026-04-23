@@ -15,19 +15,44 @@
                                 <input type="hidden" name="id" required id="id" value="{{ \Illuminate\Support\Facades\Crypt::decryptString(request()->get('id')) }}">
                                 <input type="hidden" name="xCoordinate" required id="xCoordinate">
                                 <input type="hidden" name="yCoordinate" required id="yCoordinate">
-                                <input type="hidden" name="signatureScale" required id="signatureScale">
+                                <input type="hidden" name="signatureWidth" required id="signatureWidth">
+                                <input type="hidden" name="signatureHeight" required id="signatureHeight">
                                 <input type="hidden" name="page" required id="page">
+                                @error('xCoordinate')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                                @error('yCoordinate')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                                @error('signatureWidth')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                                @error('signatureHeight')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                                @error('id')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                                 <div class="mb-3">
                                     <label for="" class="form-label">Select Signature</label>
-                                    <input type="file" name="signatureInput" id="signatureInput" class="form-control col col-md-6 col-lg-4" accept="image/png" >
+                                    <input type="file" name="signatureInput" id="signatureInput" class="form-control col col-md-6 col-lg-4" accept="image/png" onchange="onSignatureInputChange(event)">
+                                    @error('signatureInput')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="" class="form-label">Page</label>
-                                    <input type="number" value="1" name="signatureInput" id="page" class="form-control col col-md-6 col-lg-4" name="page" onchange="onPageChange(event)">
+                                    <input type="number" value="1"  id="page" class="form-control col col-md-6 col-lg-4" name="page" onchange="onPageChange(event)">
+                                    @error('page')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="signatureResizer" class="form-label">Resize Signature</label>
                                     <input type="range" class="form-range" id="signatureResizer" oninput="onSignatureResize(event)" min="1" max="5" value="1" step="0.001" >
+                                    @error('signatureScale')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-end">
@@ -43,7 +68,7 @@
                     <div style="background-color: gray !important; width: 100%; overflow: scroll;" class="p-3 mb-3 d-flex justify-content-center">
                         <div style="position: relative; margin: 0 auto;" >
                             <canvas id="pdfCanvas" class="mx-auto"></canvas>
-                            <img id="signaturePreview"  style="position:absolute; width:120px; display:none; cursor:move;">
+                            <img id="signaturePreview"  style="position:absolute; width:120px; display:none; x:0; y:0; cursor:move;" >
                         </div>
                     </div>
                 </div>
@@ -68,36 +93,15 @@
 
         $(function(){
             init();
-            initSignatureDragging();
         });
 
         function init(){
             
-
-            // Load PDF
             pdfjsLib.getDocument(url).promise.then(pdf => {
                 pdfDoc = pdf;
                 renderPage(clickData.page);
             });
-
-            let signatureFile = null;
-            document.getElementById("signatureInput").addEventListener("change", function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                signatureFile = file;
-
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    signature.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function onSignatureResize(event) {
-            $("#signaturePreview").css("scale", event.target.value);
-            $("#signatureScale").val(event.target.value);
+            initSignatureDragging();
         }
 
         function initSignatureDragging() {
@@ -129,19 +133,12 @@
                 signature.style.left = x + "px";
                 signature.style.top = y + "px";
 
-                // Save live position
-                clickData.x = x;
-                clickData.y = y;
-
-                const coordinates = getPdfCoordinates();
-                $("#xCoordinate").val(coordinates.x);
-                $("#yCoordinate").val(coordinates.y);
-                $("#page").val(coordinates.page);
             });
 
             // Mouse up
             document.addEventListener("mouseup", function () {
                 isDragging = false;
+                getPdfCoordinates();
             });
 
             // Click handler
@@ -160,8 +157,29 @@
                 // Show preview
                 signature.style.left = (x - 60) + "px";
                 signature.style.top = (y - 20) + "px";
+                getPdfCoordinates();
                 signature.style.display = "block";
             });
+        }
+
+        function onSignatureInputChange(e) {
+            let signatureFile = null;
+            const file = e.target.files[0];
+            if (!file) return;
+            signatureFile = file;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                signature.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            signature.style.display = "block";
+            getPdfCoordinates();
+        }
+
+        function onSignatureResize(event) {
+            $("#signaturePreview").css("scale", event.target.value);
+            getPdfCoordinates();
+
         }
 
         function renderPage(num) {
@@ -183,6 +201,7 @@
 
                 page.render(renderContext);
             });
+            getPdfCoordinates();
         }
 
         function onPageChange(event) {
@@ -194,31 +213,34 @@
             }
 
             clickData.page = page;
-
             renderPage(page);
         }
 
-        
-
         function getPdfCoordinates() {
+            let data = {
+                page: clickData.page,
+                x: (parseInt(signature.style.left)) / canvas.clientWidth,
+                y: (parseInt(signature.style.top)) / canvas.clientHeight,
+                w: $("#signaturePreview")[0].clientWidth / canvas.clientWidth,
+                h: $("#signaturePreview")[0].clientHeight / canvas.clientHeight
+            };
+            $("#signatureWidth").val(data.w);
+            $("#signatureHeight").val(data.h);
+            $("#xCoordinate").val(data.x);
+            $("#yCoordinate").val(data.y);
+            $("#page").val(data.page); 
+            console.log({
+                page: clickData.page,
+                x: (parseInt(signature.style.left)) / canvas.clientWidth,
+                y: (parseInt(signature.style.top)) / canvas.clientHeight,
+                w: $("#signaturePreview")[0].clientWidth / scale,
+                h: $("#signaturePreview")[0].clientHeight / scale
+            });
             return {
                 x: clickData.x / scale,
                 y: clickData.y / scale,
                 page: clickData.page
             };
-        }
-
-        function savePosition() {
-            const coords = getPdfCoordinates();
-
-            fetch('/save-signature-position', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(coords)
-            });
         }
     </script>
 @endsection

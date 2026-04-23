@@ -8,11 +8,13 @@ use App\Models\LtpApplicationProgress;
 use App\Models\Permittee;
 use App\Models\User;
 use App\Notifications\LtpApplicationSubmitted;
-use Illuminate\Container\Attributes\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use setasign\Fpdi\Fpdi;
 use Spatie\LaravelPdf\Enums\Format;
 use Spatie\LaravelPdf\Enums\Unit;
 use Spatie\LaravelPdf\Facades\Pdf;
@@ -21,37 +23,41 @@ class WebhookController extends Controller
 {
     //
     public function requestLetterSigned(Request $request) {
+        // return $request;
+        $request->validate([
+            "id" => "required",
+            "signatureInput" => "required|file",
+            "xCoordinate" => "required",
+            "yCoordinate" => "required",
+            "signatureWidth" => "required",
+            "signatureHeight" => "required",
+            "page" => "required"
+        ]);
+
+        // return $request;
+
+        // return $request;
+
         return DB::transaction(function () use ($request) {
             $_user = new User;
-            $_helper = new ApplicationHelper;
-            $_permittee = new Permittee;
             $ltp_application = LtpApplication::find($request->id);
-            
-            $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
-            $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
-            // $signatureFilename = auth()->user()->id.$request->file('signatureInput')->getClientOriginalName();
-            // $request->file('signatureInput')->storeAs('temp_signatures', $signatureFilename, 's3');
-            // Pdf::view("pdfs.request-letter", [
-            //     "_helper" => $_helper,
-            //     "application" => $ltp_application,
-            //     "wfp" => $wfp,
-            //     "wcp" => $wcp,
-            //     "signature" =>  (object)[
-            //         "url" => Storage::disk('s3')->url('temp_signatures/'.$signatureFilename),
-            //         "xCoordinate" => $request->xCoordinate,
-            //         "yCoordinate" => $request->yCoordinate,
-            //     ]
-            // ])
-            // ->format(Format::A4)
-            // ->scale(0.9)
-            // ->margins(0.2, 0.5, 0.5, 0.3, Unit::Inch)
-            // ->disk("s3")
-            // ->save('request_letters/'.$ltp_application->id.'.pdf');
+
+            $pdfFile = Storage::disk('s3')->get('request_letters/'.$ltp_application->id.'.pdf');
     
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();
-            
-            LtpApplicationProgress::create([
+
+            $this->attachSignature(
+                $request->signatureInput, 
+                $pdfFile, 
+                (float) $request->xCoordinate, 
+                (float) $request->yCoordinate, 
+                (float) $request->signatureWidth, 
+                (float) $request->signatureHeight, 
+                $request->page, "request_letters/" . 
+                $ltp_application->id . ".pdf");
+
+            LtpApplicationProgress::create([                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
                     "ltp_application_id" => $ltp_application->id,
                     "user_id" => Auth::user()->id,
                     "status" => LtpApplicationProgress::STATUS_SUBMITTED,
@@ -61,6 +67,61 @@ class WebhookController extends Controller
             Notification::send($_user->getAllInternals(), new LtpApplicationSubmitted($ltp_application));
     
             return Redirect::route('myapplication.index')->with('success', 'Application successfully submitted!');
-        })
+        });
+    }
+
+    private function attachSignature($signatureInput, $pdfFile, float $xPercent, float $yPercent, float $wPercent, float $hPercent, int $page, string $savePath) {
+        $tempPdf = tempnam(sys_get_temp_dir(), 'pdf_');
+        $tempSignature = tempnam(sys_get_temp_dir(), 'sig_') . '.' . $signatureInput->getClientOriginalExtension();
+        $outputPath = tempnam(sys_get_temp_dir(), 'out_') . '.pdf';
+
+        // download from S3
+        file_put_contents($tempPdf, $pdfFile);
+
+        // save signature
+        file_put_contents($tempSignature, $signatureInput->get());
+
+        $pdf = new Fpdi();
+        $pageCount = $pdf->setSourceFile($tempPdf);
+
+        for ($i = 1; $i <= $pageCount; $i++) {
+
+            $template = $pdf->importPage($i);
+            $size = $pdf->getTemplateSize($template);
+            // return var_dump($request->xCoordinate);
+            // return var_dump($size['width']);
+
+            $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+            $pdf->useTemplate($template);
+
+            if ($i == $page) {
+
+                $x = (float)$xPercent;
+                $y = (float)$yPercent;
+                $w = (float)$wPercent;
+                $h = (float)$hPercent;
+                
+                // 🔥 Let FPDI calculate size automatically
+                $pdf->Image(
+                    $tempSignature,
+                    ($size['width']) * $x,
+                    ($size['height']) * $y,
+                    ($size['width']) * $w, // width = auto
+                    ($size['height']) * $h  // height = auto
+                );
+            }
+        }
+
+        $pdf->Output('F', $outputPath);
+
+        Storage::disk('s3')->put(
+                $savePath,
+                file_get_contents($outputPath)
+            );
+
+        // cleanup
+        @unlink($tempPdf);
+        @unlink($tempSignature);
+        @unlink($outputPath);
     }
 }
