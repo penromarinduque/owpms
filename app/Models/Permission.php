@@ -13,4 +13,8 @@ class Permission extends Model implements Auditable
     protected $primaryKey = 'id';
     protected $guarded = [];
     
+    public function rolePermissions()
+    {
+        return $this->hasMany(RolePermission::class, 'permission', 'permission_tag');
+    }
 }

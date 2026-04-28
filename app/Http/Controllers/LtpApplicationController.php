@@ -37,6 +37,7 @@ class LtpApplicationController extends Controller
         $_ltp_requirement = new LtpRequirement;
 
         $ltp_application_query = LtpApplication::query();
+        $ltp_application_query->with(['permittee']);
         $sort_by = $request->has('sort_by') && $request->sort_by != null ? $request->sort_by : 'created_at';
         $sort_order = $request->has('sort_order') && $request->sort_order != null ? $request->sort_order : 'desc';
 
