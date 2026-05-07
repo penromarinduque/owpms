@@ -9,6 +9,7 @@ use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Models\LtpPermit;
 use App\Models\PaymentOrder;
+use App\Models\Position;
 use App\Models\User;
 use App\Notifications\LtpPermitApproved;
 use App\Notifications\SignedNotification;
@@ -17,6 +18,9 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
+use Spatie\LaravelPdf\Enums\Unit;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class ForSignaturesController extends Controller
 {
@@ -42,6 +46,65 @@ class ForSignaturesController extends Controller
         $inspection_report->save();
         Notification::send($inspection_report->inspector, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been signed by the permittee and is now ready for your signature.'));
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
+    }
+
+    public function inspectionReportPermitteeSignDigital(Request $request, string $id) {
+        $inspection_report_id = Crypt::decryptString($id);
+        $inspection_report = InspectionReport::find($inspection_report_id);
+        Gate::authorize('permitteeSign', $inspection_report);
+        $ltp_application_id = $inspection_report->ltp_application_id;
+        // return "test";
+        $ltp_application = LtpApplication::find($ltp_application_id);
+
+        $_helper = new ApplicationHelper;
+        $_user = new User;
+        $_position = new Position;
+
+        Gate::authorize('inspect', $ltp_application);
+
+        $inspection_report = InspectionReport::find(Crypt::decryptString($id));
+
+        // return Pdf::view('pdfs.inspection-report', [
+        //     'ltp_application' => $ltp_application,
+        //     'inspection_report' => $inspection_report,
+        //     '_helper' => $_helper,
+        //     "_user" => $_user,
+        //     "_position" => $_position
+        // ])
+        // ->paperSize(8.5, 13, 'in')
+        // ->margins(0.3, 0, 0.3, 0, Unit::Inch)
+        // ->withBrowsershot(function ($browsershot) {
+        //     $browsershot->timeout(120); // Set timeout to 120 seconds
+        // });
+
+        Pdf::view('pdfs.inspection-report', [
+            'ltp_application' => $ltp_application,
+            'inspection_report' => $inspection_report,
+            '_helper' => $_helper,
+            "_user" => $_user,
+            "_position" => $_position
+        ])
+        ->disk("s3")
+        ->paperSize(8.5, 13, 'in')
+        ->margins(0.3, 0, 0.3, 0, Unit::Inch)
+        ->withBrowsershot(function ($browsershot) {
+            $browsershot->timeout(120); // Set timeout to 120 seconds
+        })
+        ->save('inspection_report/' . $inspection_report_id . '.pdf');
+        $pdfUrl = Storage::disk('s3')->temporaryUrl(
+            'inspection_report/' . $inspection_report_id . '.pdf', 
+            now()->addMinutes(60),
+            [
+                'ResponseContentType' => 'application/pdf',
+                'ResponseContentDisposition' => 'inline; filename="document.pdf"',
+            ]
+        );
+
+        return redirect()->route("documents.attachSignature", [
+            'id' => Crypt::encryptString($inspection_report->id), 
+            "webhook" => route("webhooks.permiteeInspectionReportSigned"), 
+            "pdfUrl" => $pdfUrl
+        ]);
     }
 
     public function inspectionReportInspectorSign(Request $request, string $id) {

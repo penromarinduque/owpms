@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Spatie\LaravelPdf\Enums\Unit;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class LtpApplicationController extends Controller
 {
@@ -92,7 +94,7 @@ class LtpApplicationController extends Controller
                 $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
                 $ltp_application->io_user_id = Auth::user()->id; // Set the IO user ID to the current user
                 $ltp_application->save();
-
+                
                 LtpApplicationProgress::create([
                     "ltp_application_id" => $ltp_application->id,
                     "user_id" => Auth::user()->id,
@@ -115,7 +117,6 @@ class LtpApplicationController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
         }
-        
     }
 
     public function return(Request $request) {
@@ -399,11 +400,17 @@ class LtpApplicationController extends Controller
         $permit = LtpPermit::find(Crypt::decryptString($id));
         $ltp_application = LtpApplication::find($permit->ltp_application_id);
 
-        return view('admin.ltpapplications.print-permit', [
+        return Pdf::view('pdfs.permit', [
             'ltp_application' => $ltp_application,
             'permit' => $permit,
             '_user' => new User
-        ]);
+        ])
+        ->scale(1.1)
+        ->headerView('pdfs.header')
+        ->footerView('pdfs.footer')
+        ->paperSize(8.5, 13, 'in')
+        ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch);
+
     }
 
     private function checkIndexAuthorization($category) {
