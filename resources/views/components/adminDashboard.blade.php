@@ -126,8 +126,8 @@
     </div>
 
 
-    <div class="row mb-4">
-        <div class="col">
+    <div class="row">
+        <div class="col mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Most Exported Species</h5>
@@ -163,7 +163,7 @@
                 </div>
             </div>
         </div>
-        <div class="col">
+        <div class="col mb-4">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Top Exporter</h5>
@@ -175,7 +175,25 @@
                                 <tr>
                                     <td width="30%">{{ $permittee->first_name }} {{ $permittee->last_name }}</td>
                                     <td width="30%">{{ number_format($permittee->total_exports, 0, '.', ',') }} pcs</td>
-                                    <td><x-bladewind::progress-bar percentage="{{ ($permittee->total_exports / $totalExports) * 100 }}" shade="dark" color="pink" /></td>
+                                    <td>
+                                        @php
+                                            // Calculate percentage once to keep the HTML clean
+                                            $percentage = ($totalExports > 0) ? ($permittee->total_exports / $totalExports * 100) : 0;
+                                        @endphp
+
+                                        <div class="progress" style="height: 15px;">
+                                            <div class="progress-bar" 
+                                                role="progressbar" 
+                                                style="width: {{ $percentage }}%; background-color: #e21684;" 
+                                                aria-valuenow="{{ $percentage }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                                @if($percentage > 10)
+                                                    <span class="small fw-bold">{{ number_format($percentage, 0) }}%</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -255,6 +255,123 @@
                 </ul>
             </div>
         </li>
+
+        @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'internal' && $canViewMaintenance)
+    <li class="nav-item">
+        <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
+            <span class="sidebar-text fw-bold text-uppercase small">Maintenance</span>
+        </span>
+    </li>
+
+    @if ($canViewSpecieMaintenance)
+        {{-- Species Multi-level Menu --}}
+        <li class="nav-item">
+            <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#submenu-species">
+                <span>
+                    <span class="sidebar-icon"><i class="fas fa-feather-alt me-2"></i></span>
+                    <span class="sidebar-text">Species</span>
+                </span>
+                <span class="link-arrow"><i class="fas fa-angle-right"></i></span>
+            </span>
+            <div class="multi-level collapse {{ Request::is('specietypes*') || Request::is('specieclasses*') || Request::is('speciefamilies*') || Request::is('species*') || Request::is('natureofspecies*') ? 'show' : '' }}" id="submenu-species">
+                <ul class="flex-column nav">
+                    @can('viewAny', App\Models\WildlifeType::class)
+                    <li class="nav-item {{ request()->routeIs('specietypes.index') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('specietypes.index') }}">
+                            <span class="sidebar-text">Wildlife Types</span>
+                        </a>
+                    </li>
+                    @endcan
+                    
+                    @can('viewAny', App\Models\SpecieClass::class)
+                    <li class="nav-item {{ request()->routeIs('specieclasses.index') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('specieclasses.index') }}">
+                            <span class="sidebar-text">Class</span>
+                        </a>
+                    </li>
+                    @endcan
+
+                    @can('viewAny', App\Models\SpecieFamily::class)
+                    <li class="nav-item {{ request()->routeIs('speciefamilies.index') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('speciefamilies.index') }}">
+                            <span class="sidebar-text">Family</span>
+                        </a>
+                    </li>
+                    @endcan
+
+                    @can('viewAny', App\Models\Specie::class)
+                    <li class="nav-item {{ request()->routeIs('species.index') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('species.index') }}">
+                            <span class="sidebar-text">List of Species</span>
+                        </a>
+                    </li>
+                    @endcan
+
+                    @can('viewAny', App\Models\SpecieNature::class)
+                    <li class="nav-item {{ request()->routeIs('natureofspecies.index') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('natureofspecies.index') }}">
+                            <span class="sidebar-text">Nature of Species</span>
+                        </a>
+                    </li>
+                    @endcan
+                </ul>
+            </div>
+        </li>
+        @endif
+
+        {{-- LTP Requirements --}}
+        @can('viewAny', App\Models\LtpRequirement::class)
+        <li class="nav-item {{ request()->routeIs('ltprequirements.index') ? 'active' : '' }}">
+            <a href="{{ route('ltprequirements.index') }}" class="nav-link">
+                <span class="sidebar-icon"><i class="fas fa-list me-2"></i></span>
+                <span class="sidebar-text">LTP Requirements</span>
+            </a>
+        </li>
+        @endcan
+
+        {{-- Positions --}}
+        @can('viewAny', App\Models\Position::class)
+        <li class="nav-item {{ request()->routeIs('positions.index') ? 'active' : '' }}">
+            <a href="{{ route('positions.index') }}" class="nav-link">
+                <span class="sidebar-icon"><i class="fas fa-list-ol me-2"></i></span>
+                <span class="sidebar-text">Positions</span>
+            </a>
+        </li>
+        @endcan
+
+        {{-- LTP Fees --}}
+        @can('viewAny', App\Models\LtpFee::class)
+        <li class="nav-item {{ request()->routeIs('ltpfees.index') ? 'active' : '' }}">
+            <a href="{{ route('ltpfees.index') }}" class="nav-link">
+                <span class="sidebar-icon"><i class="fas fa-money-bill-wave me-2"></i></span>
+                <span class="sidebar-text">LTP Fees</span>
+            </a>
+        </li>
+        @endcan
+
+    @endif
+
+    @if(Auth::user()->usertype == 'admin')
+        <li class="nav-item">
+            <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
+                <span class="sidebar-text fw-bold text-uppercase small">User Access</span>
+            </span>
+        </li>
+
+        <li class="nav-item {{ request()->routeIs('users.index') ? 'active' : '' }}">
+            <a href="{{ route('users.index') }}" class="nav-link">
+                <span class="sidebar-icon"><i class="fas fa-users me-2"></i></span>
+                <span class="sidebar-text">Users</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->routeIs('iam.roles.index') ? 'active' : '' }}">
+            <a href="{{ route('iam.roles.index') }}" class="nav-link">
+                <span class="sidebar-icon"><i class="fas fa-lock me-2"></i></span>
+                <span class="sidebar-text">Roles</span>
+            </a>
+        </li>
+    @endif
     </ul>
   </div>
 </nav>

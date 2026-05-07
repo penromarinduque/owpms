@@ -22,12 +22,13 @@ active
     </ol>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                
-                <a href="{{ route('species.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
-            </div>
-            <i class="fas fa-edit me-1"></i>
-            Edit Specie here
+            <h5 class="card-header mb-0">
+                <div class="float-end">
+                    <a href="{{ route('species.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
+                </div>
+                <i class="fas fa-edit me-1"></i>
+                Edit Specie here
+            </h5>   
         </div>
         <div class="card-body">
             @if(!empty($specie))

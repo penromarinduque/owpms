@@ -22,8 +22,10 @@ active
 
     <div class="card mb-4">
     	<div class="card-header">
-            <i class="fas fa-list me-1"></i>
-            List of Roles
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list me-1"></i>
+                List of Roles
+            </h5>
         </div>
         <div class="card-body">
             <table class="table table-sm table-bordered table-hovered table-striped">

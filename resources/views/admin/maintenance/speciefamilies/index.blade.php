@@ -21,12 +21,13 @@ active
     </ol>
     <div class="card mb-4">
         <div class="card-header">
-            <div class="float-end">
-                
-                <a href="{{ route('speciefamilies.create') }}" class="btn btn-sm btn-primary">Add New</a>
-            </div>
-            <i class="fas fa-feather-alt me-1"></i>
-            List of Specie Families
+            <h5 class="mb-0 card-title">
+                <div class="float-end">
+                    <a href="{{ route('speciefamilies.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                </div>
+                <i class="fas fa-feather-alt me-1"></i>
+                List of Specie Families
+            </h5>
         </div>
         <div class="card-body">
             @if(session('failed'))
