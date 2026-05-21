@@ -16,27 +16,29 @@ Edit User Role
     
     <div class="card mb-4">
         <div class="card-header">
-            <i class="fas fa-user me-1"></i>
-            User Info
+            <h5 class="card-title mb-0">
+                <i class="fas fa-user me-1"></i>
+                User Info
+            </h5>
         </div>
         <div class="card-body">
             <table class="table table-bordered table-hover table-sm small">
                 <tbody>
                     <tr>
                         <th>Name</th>
-                        <td>{{ $user->personalInfo->first_name . ' ' . $user->personalInfo->last_name }}</td>
+                        <td class="align-content-center">{{ $user->personalInfo->first_name . ' ' . $user->personalInfo->last_name }}</td>
                     </tr>
                     <tr>
                         <th>Email</th>
-                        <td>{{ $user->email }}</td>
+                        <td class="align-content-center">{{ $user->email }}</td>
                     </tr>
                     <tr>
                         <th>Username</th>
-                        <td>{{ $user->username }}</td>
+                        <td class="align-content-center">{{ $user->username }}</td>
                     </tr>
                     <tr>
                         <th>User Type</th>
-                        <td><span class="badge bg-secondary">{{ $user->usertype }}</span></td>
+                        <td class="align-content-center"><span class="badge bg-secondary">{{ $user->usertype }}</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -44,8 +46,10 @@ Edit User Role
     </div>
     <div class="card mb-4">
     	<div class="card-header">
-            <i class="fas fa-edit me-1"></i>
-            Edit User Roles
+            <h5 class="card-title mb-0">
+                <i class="fas fa-edit me-1"></i>
+                Edit User Roles
+            </h5>
         </div>
         <div class="card-body">
             <div class="d-flex justify-content-end mb-2">

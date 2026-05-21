@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApplicationHelper;
+use App\Models\InspectionReport;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Models\Permittee;
 use App\Models\User;
 use App\Notifications\LtpApplicationSubmitted;
+use App\Notifications\SignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +69,43 @@ class WebhookController extends Controller
             Notification::send($_user->getAllInternals(), new LtpApplicationSubmitted($ltp_application));
     
             return Redirect::route('myapplication.index')->with('success', 'Application successfully submitted!');
+        });
+    }
+
+    public function permiteeInspectionReportSigned(Request $request) {
+        // return $request;
+        $request->validate([
+            "id" => "required",
+            "signatureInput" => "required|file",
+            "xCoordinate" => "required",
+            "yCoordinate" => "required",
+            "signatureWidth" => "required",
+            "signatureHeight" => "required",
+            "page" => "required"
+        ]);
+
+        return DB::transaction(function () use ($request) {
+            $_user = new User;
+            $inspectionReport = InspectionReport::find($request->id);
+
+            $pdfFile = Storage::disk('s3')->get('inspection_report/'.$inspectionReport->id.'.pdf');
+
+            $this->attachSignature(
+                $request->signatureInput, 
+                $pdfFile, 
+                (float) $request->xCoordinate, 
+                (float) $request->yCoordinate, 
+                (float) $request->signatureWidth, 
+                (float) $request->signatureHeight, 
+                $request->page, "inspection_report/" . 
+                $inspectionReport->id . ".pdf");
+
+            $inspectionReport->permittee_signed = true;
+            $inspectionReport->save();
+
+            Notification::send($inspectionReport->inspector, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been signed by the permittee and is now ready for your signature.'));
+
+            return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
         });
     }
 

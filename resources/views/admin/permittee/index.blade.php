@@ -21,9 +21,6 @@ active
             List of Permittees
         </div>
         <div class="card-body">
-             <div class="float-end mb-2">
-                <a href="{{ route('permittees.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
-            </div>
             @if(session('failed'))
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -37,6 +34,11 @@ active
                 <strong>{{ session('success') }}</strong>
             </div>
             @endif
+
+            <div class="d-flex justify-content-end mb-3">
+                <a href="{{ route('permittees.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-user-plus"></i> Add New</a>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover" >
                     <thead>

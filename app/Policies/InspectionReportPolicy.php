@@ -39,7 +39,7 @@ class InspectionReportPolicy
 
     public function approverSign(User $user, InspectionReport $inspectionReport)
     {
-        return $inspectionReport->inspector_signed && !$inspectionReport->approver_signed && $user->id == $inspectionReport->approver_id;
+        return $inspectionReport->permittee_signed == 1 && $inspectionReport->inspector_signed == 1 && $inspectionReport->approver_signed == 0 && $user->id == $inspectionReport->approver_id;
     }
 
     public function permitteeSign(User $user, InspectionReport $inspectionReport)

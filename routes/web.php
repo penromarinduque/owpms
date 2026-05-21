@@ -353,6 +353,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     Route::prefix('for-signatures')->group(function () {
        Route::get('/', [ForSignaturesController::class, 'index'])->name('for-signatures.index'); 
        Route::post('inspection-report-permittee-sign/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSign'])->name('for-signatures.inspectionReportPermitteeSign');
+       Route::post('inspection-report-permittee-sign-digital/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSignDigital'])->name('for-signatures.inspectionReportPermitteeSignDigital');
        Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
        Route::post('inspection-report-approver-sign/{id}', [ForSignaturesController::class, 'inspectionReportApproverSign'])->name('for-signatures.inspectionReportApproverSign');
        Route::post('inspection-report-rps-sign/{id}', [ForSignaturesController::class, 'inspectionReportRpsSign'])->name('for-signatures.inspectionReportRpsSign');
@@ -376,6 +377,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
 
     Route::group(["prefix" => "webhooks", "as" => "webhooks."], function () {
         Route::post('request-letter-signed', [WebhookController::class, 'requestLetterSigned'])->name('requestLetterSigned');
+        Route::post('permitee-inspection-report-signed', [WebhookController::class, 'permiteeInspectionReportSigned'])->name('permiteeInspectionReportSigned');
     });
 });
 

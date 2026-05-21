@@ -20,8 +20,10 @@ active
     <form method="POST" action="{{ route('iam.roles.store') }}" class="card mb-4">
         @csrf
     	<div class="card-header">
-            <i class="fas fa-list me-1"></i>
-            Create Role
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list me-1"></i>
+                Create Role
+            </h5>
         </div>
         <div class="card-body">
             <div class="mb-2">
