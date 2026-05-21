@@ -50,7 +50,6 @@ active
         </div>
     </div>
 </div>
-
 @endsection
 
 @section('script-extra')    
