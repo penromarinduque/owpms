@@ -369,15 +369,15 @@ class MyApplicationController extends Controller
 
     public function submit(Request $request, string $id) {
         $_user = new User;
-
+        
         $validator = Validator::make($request->all(), [
-            'document' => 'required|mimes:pdf'
+            'document' => $request->has('affix_digi_sign') ? 'nullable|mimes:pdf' : 'required|mimes:pdf'
         ]);
 
         if($validator->fails()) {
             return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
         }
-
+     
         return DB::transaction(function () use ($id, $request, $_user) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
 
@@ -400,7 +400,12 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
-            $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf');
+            if($request->input("affix_digi_sign")) {
+                $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf');
+            }
+            else {
+
+            }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();

@@ -9,9 +9,15 @@
             <div class="modal-body">
                 <p>Are you sure you want to submit this application? This action cannot be undone</p>
 
-                <div class="mb-2">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" name="affix_digi_sign" id="digital_signature_checkbox">
+                    <label class="form-check-label" for="digital_signature_checkbox">
+                        Affix Digital Signature
+                    </label>
+                </div>
+                <div class="mb-2" id="document_container">
                     <label for="document" class="form-label">Signed Request Letter Generated from the system <span class="text-danger">*</span></label>
-                    <input type="file" accept="application/pdf" name="document" id="document" class="form-control @error('document', 'submitApplication') is-invalid @enderror" required>
+                    <input type="file" accept="application/pdf" name="document" id="document" class="form-control @error('document', 'submitApplication') is-invalid @enderror">
                     @error('record', 'submitApplication')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -30,6 +36,16 @@
         @if($errors->submitApplication->any())
             $('#submitApplicationModal').modal('show');
         @endif
+
+        $("#digital_signature_checkbox").change(function(){
+            const affixSignature = $(this)[0].checked;
+            if(affixSignature){
+                $("#document_container").hide();
+            }
+            else{
+                $("#document_container").show();
+            }
+        })
     })
     function showSubmitApplicationModal(action){
         $('#submitApplicationModal form').attr('action', action);
