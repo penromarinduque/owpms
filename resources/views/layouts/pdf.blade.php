@@ -8,7 +8,7 @@
     <link href="{{ public_path('css/customize.css') }}" rel="stylesheet" />
     <title>@yield('title')</title>
 </head>
-<body>
+<body style="margin: 0px;">
     @yield('content')
 </body>
 </html>

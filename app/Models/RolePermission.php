@@ -19,4 +19,9 @@ class RolePermission extends Model implements Auditable
     public function permission() {
         return $this->belongsTo(Permission::class, 'permission_id', 'id');
     }
+
+    public function userRoles() {
+        return $this->hasMany(UserRole::class, 'role_id', 'role_id');
+    }
 }
+

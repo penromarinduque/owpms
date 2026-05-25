@@ -86,8 +86,14 @@ active
                         <label>Specie Details:</label>
                         <div class="row">
                             <div class="col-md-7">
-                                <input type="search" name="searchField" id="searchField" class="form-control" placeholder="Enter search key">
-                                <div class="searchresults" id="results"></div>
+                                <select name="" id="" class=" form-control specieSelect" onchange="onSpecieChange(event);">
+                                    <option value="" selected disabled >Select Species</option>
+                                    @foreach ($species as $specie)
+                                        <option data-object="{{ json_encode($specie) }}" value="{{ $specie->id }}"></option>
+                                    @endforeach
+                                </select>
+                                {{-- <input type="search" name="searchField" id="searchField" class="form-control" placeholder="Enter search key">
+                                <div class="searchresults" id="results"></div> --}}
                             </div>
                         </div>
                         
@@ -102,6 +108,7 @@ active
                                     <th class="text-center">Common Name</th>
                                     <th class="text-center">Scientific Name</th>
                                     <th class="text-center">Family Name</th>
+                                    <th class="text-center">Conservation Status</th>
                                     <th class="text-center" width="8%">Quantity</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -129,8 +136,48 @@ active
 
 @section('script-extra')
 <script type="text/javascript">
-
+    let rowNumber = 1;
     $(document).ready(function() {
+        $(".specieSelect").select2({
+            templateResult : function(data) {
+                const specie = $(data.element).data('object');
+                if(!specie){
+                    return data.text;
+                }
+                return $(`
+                    <span>
+                        Scientific Name: <b>${specie.specie_name}</b>, 
+                        Local Name: <b>${specie.local_name}</b>, 
+                        Family Name: <b>${specie.family.family}</b>
+                    </span>
+                `);
+            },
+            matcher: function(params, data) {
+                // Show all if no search term
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+
+                const term = params.term.toLowerCase();
+
+                const specie = $(data.element).data('object');
+                if (!specie) return null;
+
+                const scientific = (specie.specie_name || '').toLowerCase();
+                const local = (specie.local_name || '').toLowerCase();
+                const family = (specie.family?.family || '').toLowerCase();
+
+                // Match if term exists in ANY field
+                if (
+                    scientific.includes(term)
+                ) {
+                    return data;
+                }
+
+                return null;
+            }
+        });
+
         $("#destination_div").hide();
         $("#validity").hide();
         $("#transport_date").change(function() {
@@ -186,68 +233,31 @@ active
         }
     }
 
-    jQuery(document).ready(function ($){
-        let rowNumber = 1; // Counter for incremental numbers
-
-        // Search field input handler
-        $("#searchField").on("keyup", function () {
-            let searchkey = $(this).val();
-
-            if (searchkey.length > 0) {
-                $.ajax({
-                    url: "/myapplication/ajaxgetspecies",
-                    method: "GET",
-                    data: { searchkey: searchkey },
-                    success: function (data) {
-                         console.log(data);
-                        $("#results").html(data).show();
-                    },
-                    errr: function (data) {
-                        // console.log(data);
-                    }
-                });
-            } else {
-                $("#results").hide();
-            }
-        });
-
-        // Click on a result
-        $(document).on("click", ".result-item", function () {
-            let itemData = $(this).data(); // Retrieve data attributes
-            if($("#row_"+itemData.id).length > 0) {
-                showToast("warning", "Specie already added.");
-                return;
-            }
-            let newRow = `
-                <tr id="row_${itemData.id}">
-                    <td align="center">${rowNumber}</td>
-                    <td align="center">${itemData.commonname}</td>
-                    <td align="center"><i>${itemData.scientifcname}</i></td>
-                    <td align="center">${itemData.family}</td>
-                    <td align="center">
-                        <input type="hidden" name="specie_id[]" id="specie_id" value="${itemData.id}" />
-                        <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity" min="1" required />
-                    </td>
-                    <td align="center">
-                        <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${itemData.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
-                    </td>
-                </tr>
-            `;
-            $("#dataTable tbody").append(newRow);
-            rowNumber++; // Increment the row number
-            $("#results").hide(); // Hide results
-            $("#searchField").val(''); // Clear search field
-        });
-
-        // Hide search results when clicking outside
-        $(document).on("click", function (e) {
-            if (!$(e.target).closest("#searchField, #results").length) {
-                $("#results").hide();
-            }
-        });
-
-    });
-
+    function onSpecieChange(e) {
+        const specie = JSON.parse($(e.target)[0].selectedOptions[0].dataset.object);
+        if($("#row_"+specie.id).length > 0) {
+            showToast("warning", "Specie already added.");
+            return;
+        }
+        let newRow = `
+            <tr id="row_${specie.id}">
+                <td align="center">${rowNumber}</td>
+                <td align="center">${specie.specie_name}</td>
+                <td align="center">${specie.local_name}</td>
+                <td align="center">${specie.family.family}</td>
+                <td align="center">${specie.conservation_status.toUpperCase()}</td>
+                <td align="center">
+                    <input type="hidden" name="specie_id[]" id="specie_id" value="${specie.id}" />
+                    <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  required />
+                </td>
+                <td align="center">
+                    <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${specie.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
+                </td>
+            </tr>
+        `;
+        $("#dataTable tbody").append(newRow);
+        rowNumber++;
+    }
     
 </script>
 @endsection

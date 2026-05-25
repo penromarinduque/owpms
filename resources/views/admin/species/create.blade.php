@@ -22,12 +22,13 @@ active
     </ol>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                
-                <a href="{{ route('species.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
-            </div>
-            <i class="fas fa-plus-square me-1"></i>
-            Add New Specie here
+            <h5 class="mb-0 card-title">
+                <div class="float-end">
+                    <a href="{{ route('species.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
+                </div>
+                <i class="fas fa-plus-square me-1"></i>
+                Add New Specie here
+            </h5>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('species.store') }}" onsubmit="disableSubmitButton('btn_save');">

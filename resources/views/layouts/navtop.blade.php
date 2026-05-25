@@ -1,20 +1,25 @@
-<!-- Navbar Brand-->
-<a class="navbar-brand pr-1 desktop" href="/">
+<nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-md-none">
+    <a class="navbar-brand me-lg-5" href="/index.html">
+        <img class="navbar-brand-dark" src="{{ asset('images/logo-small.png') }}" alt="Volt logo" /> <img class="navbar-brand-light" src="{{ asset('images/logo-small.png') }}" alt="Volt logo" />
+    </a>
+    <div class="d-flex align-items-center">
+        <button class="navbar-toggler d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+{{-- <a class="navbar-brand pr-1 desktop" href="/">
     <img src="{{ asset('images/logo-small.png') }}" class="nav-logo d-inline">
     DENR - PENRO
 </a>
-<!-- Sidebar Toggle-->
+
 @if (auth()->user())
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
 @endif
-<!-- Navbar Search-->
-<form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-    {{-- <div class="input-group">
-        <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-        <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-    </div> --}}
-</form>
-<!-- Navbar-->
+
+<form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"></form>
+
 @if (auth()->user())
 <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
     @php
@@ -51,4 +56,4 @@
     </li>
 </ul>
 @endif
-
+ --}}

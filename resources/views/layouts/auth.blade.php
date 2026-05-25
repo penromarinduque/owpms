@@ -10,12 +10,15 @@
         <title>PENRO Marinduque - Online Wildlife Permitting and Management System (OWPMS)</title>
         <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
         <link href="{{ asset('css/customize.css') }}" rel="stylesheet" />
+         {{-- volt --}}
+        {{-- <link href="{{ asset('volt-assets/css/all.min.css') }}" rel="stylesheet" /> --}}
+        <link href="{{ asset('volt-assets/css/volt.css') }}" rel="stylesheet" />
     </head>
     <body class="bg-default">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
-                    <div class="container">
+                    <div class="container-fluid">
                     	<div class="row justify-content-center mt-5">
                     		<div class="col-lg-4 text-center">
                     			<div class="auth-header">

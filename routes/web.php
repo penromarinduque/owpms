@@ -22,6 +22,7 @@ use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\IssuedOrController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\QrController;
 use App\Http\Controllers\SignatoryController;
 use App\Http\Controllers\SpecieNatureController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\WebhookController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Notifications\LtpApplicationExpired;
@@ -302,8 +304,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     });
 
     // User Access Management
-    Route::prefix('iam')->group(function () {
-        
+    Route::prefix('iam')->group(function () { 
         Route::middleware(['userType:admin'])->prefix('roles')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('iam.roles.index')->middleware('permission:ROLES_INDEX');
             Route::get('/create', [RoleController::class, 'create'])->name('iam.roles.create')->middleware('permission:ROLES_CREATE');
@@ -352,6 +353,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     Route::prefix('for-signatures')->group(function () {
        Route::get('/', [ForSignaturesController::class, 'index'])->name('for-signatures.index'); 
        Route::post('inspection-report-permittee-sign/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSign'])->name('for-signatures.inspectionReportPermitteeSign');
+       Route::post('inspection-report-permittee-sign-digital/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSignDigital'])->name('for-signatures.inspectionReportPermitteeSignDigital');
        Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
        Route::post('inspection-report-approver-sign/{id}', [ForSignaturesController::class, 'inspectionReportApproverSign'])->name('for-signatures.inspectionReportApproverSign');
        Route::post('inspection-report-rps-sign/{id}', [ForSignaturesController::class, 'inspectionReportRpsSign'])->name('for-signatures.inspectionReportRpsSign');
@@ -369,11 +371,21 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/view-permit/{id}', [LtpController::class, 'viewPermit'])->name('ltps.viewPermit');
     });
 
+    Route::prefix('documents')->group(function () {
+        Route::get('/attach-signature', [DocumentController::class, 'attachSignature'])->name('documents.attachSignature');
+    });
+
+    Route::group(["prefix" => "webhooks", "as" => "webhooks."], function () {
+        Route::post('request-letter-signed', [WebhookController::class, 'requestLetterSigned'])->name('requestLetterSigned');
+        Route::post('permitee-inspection-report-signed', [WebhookController::class, 'permiteeInspectionReportSigned'])->name('permiteeInspectionReportSigned');
+    });
 });
 
 Route::prefix('qr')->group(function () {
     Route::get('/', [QrController::class, 'index'])->name('qr.index');
 });
+
+
 
 // test routes
 Route::get('/test-email', function () {

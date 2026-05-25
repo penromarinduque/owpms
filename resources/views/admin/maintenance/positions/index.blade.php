@@ -17,11 +17,13 @@ active
     </ol>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                <a href="{{ route('positions.create') }}" class="btn btn-sm btn-primary">Add New</a>
-            </div>
-            <i class="fas fa-list-ol me-1"></i>
-            List of Positions
+            <h5 class="card-title mb-0">
+                <div class="float-end">
+                    <a href="{{ route('positions.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                </div>
+                <i class="fas fa-list-ol me-1"></i>
+                List of Positions
+            </h5>
         </div>
         <div class="card-body">
             @if(session('failed'))

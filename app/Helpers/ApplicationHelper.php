@@ -8,8 +8,11 @@ use App\Models\LtpApplicationProgress;
 use App\Models\LtpPermit;
 use App\Models\PaymentOrder;
 use App\Models\Permittee;
+use Docuseal\Docuseal;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use NumberToWords\NumberToWords;
 
 class ApplicationHelper
@@ -278,6 +281,42 @@ class ApplicationHelper
         $words = ucwords($numberTransformer->toWords($num));
 
         return $words;
+    }
+
+    // public function createPdfForm($filePath)
+    // {
+    //     $fileData = base64_encode(file_get_contents($filePath));
+
+    //     $docuseal = new \Docuseal\Api(env("DOCUSEAL_API_KEY"), 'https://docuseal.penromarinduque.gov.ph/api');
+
+    //     $submission = $docuseal->createSubmissionFromPdf([
+    //         'name' => 'Rental Agreement',
+    //         'documents' => [
+    //             [
+    //             'name' => 'rental-agreement',
+    //             'file' => $fileData
+    //             ]
+    //         ],
+    //         'submitters' => [
+    //             [
+    //             'role' => 'First Party',
+    //             'email' => 'jandusayjoe14@gmail.com'
+    //             ]
+    //         ]
+    //     ]);
+    // }
+
+    public function createPdfForm($filePath)
+    {
+        return Http::withToken(env('DOCUMENSO_API_KEY'))
+            ->post('https://api.documenso.com', [
+                'title' => 'Official DENR Document',
+                'recipients' => [
+                    ['email' => 'client@example.com', 'role' => 'SIGNER']
+                ],
+                // Documenso will automatically email the signer
+                // using your Gmail SMTP settings.
+            ]);
     }
 
 }

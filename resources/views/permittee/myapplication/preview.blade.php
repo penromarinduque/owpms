@@ -57,9 +57,12 @@ My Applications
                     </li>
                     @if ($ltp_application->application_status == 'returned')
                         <li>
-                            <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
+                            {{-- <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
                                 <i class="fa-solid fa-cloud-arrow-up me-2"></i> Resubmit Application
-                            </a>
+                            </a> --}}
+                            <button class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Resubmit" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}', true)">
+                                <i class="fa-solid fa-cloud-arrow-up me-2"></i> Resubmit Application
+                            </button>
                         </li>
                     @endif
                     @if (in_array($ltp_application->application_status, ['paid', 'approved', 'payment-in-process']))

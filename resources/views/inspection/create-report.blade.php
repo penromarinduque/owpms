@@ -161,7 +161,7 @@ Generate Inspection Report
                 </div>
                 <div class="col-8">
                     <h6>Initial</h6>
-                    <select class="form-select select2 @error('chief_rps') is-invalid @enderror" name="chief_rps" id="chief_rps" onchange="changeApprover(event)">
+                    <select class="form-select select2 @error('chief_rps') is-invalid @enderror" name="chief_rps" id="chief_rps">
                         <option value="">-Select Initial-</option>
                         @foreach($_user->getAllInternals() as $internal)
                             <option value="{{ $internal->id }}" data-position-id="{{ $internal->position }}" {{ old('chief_rps') ? (old('chief_rps') == $internal->id ? 'selected' : '') : (($internal->id == 8) ? 'selected' : '') }}>{{ $internal->personalInfo->getFullNameAttribute() }}</option>

@@ -18,12 +18,13 @@ active
     </ol>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                
-                <a href="{{ route('ltprequirements.index') }}" class="btn btn-sm btn-danger">Back</a>
-            </div>
-            <i class="fas fa-edit me-1"></i>
-            Edit LTP Requirement here
+            <h5 class="card-title mb-0">
+                <div class="float-end">
+                    <a href="{{ route('ltprequirements.index') }}" class="btn btn-sm btn-danger">Back</a>
+                </div>
+                <i class="fas fa-edit me-1"></i>
+                Edit LTP Requirement here
+            </h5>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('ltprequirements.update', [$ltprequirement->id]) }}" onsubmit="disableSubmitButton('btn_update');">

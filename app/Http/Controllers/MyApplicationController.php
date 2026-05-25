@@ -24,7 +24,11 @@ use App\Models\SpecieNature;
 use App\Notifications\LtpApplicationSubmitted;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Spatie\LaravelPdf\Enums\Format;
+use Spatie\LaravelPdf\Enums\Unit;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class MyApplicationController extends Controller
 {
@@ -83,10 +87,12 @@ class MyApplicationController extends Controller
         $provinces = Province::query()->with([
             'region'
         ])->get();
+        $permittee = auth()->user()->wcp();
         return view('permittee.myapplication.draft.create', [
             'title' => 'Create New Application',
             "provinces" => $provinces,
             "specie_natures" => SpecieNature::all(),
+            "species" => $permittee->permittee_species
         ]);
     }
 
@@ -209,6 +215,7 @@ class MyApplicationController extends Controller
             ])
             ->orderBy("species.specie_name", "ASC")
             ->get();
+        $permittee = auth()->user()->wcp();
 
         return view('permittee.myapplication.edit', [
             'title' => 'Edit Application',
@@ -216,6 +223,7 @@ class MyApplicationController extends Controller
             "ltp_application_species" => $ltp_application_species,
             "provinces" => $provinces,
             "specie_natures" => SpecieNature::all(),
+            "species" => $permittee->permittee_species
         ]);
     }
 
@@ -359,7 +367,17 @@ class MyApplicationController extends Controller
 
         // return $wfp;
 
-        return view('permittee.myapplication.printRequestLetter', [
+        return Pdf::view("pdfs.request-letter", [
+                "_helper" => $_helper,
+                "application" => $application,
+                "wfp" => $wfp,
+                "wcp" => $wcp
+            ])
+            ->format(Format::A4)
+            ->scale(0.9)
+            ->margins(0, 0.4, 0.5, 0.3, Unit::Inch);
+
+        return view('pdfs.request-letter', [
             "_helper" => $_helper,
             "application" => $application,
             "wfp" => $wfp,
@@ -369,16 +387,19 @@ class MyApplicationController extends Controller
 
     public function submit(Request $request, string $id) {
         $_user = new User;
-        
+        $_helper = new ApplicationHelper;
+        $_permittee = new Permittee;
+
         $validator = Validator::make($request->all(), [
-            'document' => $request->has('affix_digi_sign') ? 'nullable|mimes:pdf' : 'required|mimes:pdf'
+            'attach_signature_check' => 'required',
+            'document' => 'required_if_declined:attach_signature_check|mimes:pdf',
         ]);
 
         if($validator->fails()) {
             return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
         }
-     
-        return DB::transaction(function () use ($id, $request, $_user) {
+
+        return DB::transaction(function () use ($id, $request, $_user, $_helper, $_permittee) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
 
             Gate::authorize('submit', $ltp_application);
@@ -400,11 +421,42 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
-            if($request->input("affix_digi_sign")) {
+            if($request->input('attach_signature_check') == 0) {
                 $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf');
             }
             else {
+                $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
+                $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
 
+                Pdf::view("pdfs.request-letter", [
+                    "_helper" => $_helper,
+                    "application" => $ltp_application,
+                    "wfp" => $wfp,
+                    "wcp" => $wcp
+                ])
+                ->format(Format::A4)
+                ->scale(0.9)
+                ->margins(0, 0.4, 0.5, 0.3, Unit::Inch)
+                ->disk("s3")
+                ->save('request_letters/'.$ltp_application->id.'.pdf');
+                $pdfUrl = Storage::disk('s3')->temporaryUrl(
+                    'request_letters/'.$ltp_application->id.'.pdf', 
+                    now()->addMinutes(45),
+                    [
+                        'ResponseContentType' => 'application/pdf',
+                        'ResponseContentDisposition' => 'inline; filename="document.pdf"',
+                    ]
+                );
+                // $pdfUrl = Storage::disk('s3')->temporaryUrl(
+                //     'inspection-photos/1755151459_49-0.PNG', 
+                //     now()->addMinutes(45)
+                // );
+                // return redirect($pdfUrl);
+                return redirect()->route("documents.attachSignature", [
+                    'id' => Crypt::encryptString($ltp_application->id), 
+                    "webhook" => route("webhooks.requestLetterSigned"), 
+                    "pdfUrl" => $pdfUrl
+                ]);
             }
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
@@ -552,17 +604,4 @@ class MyApplicationController extends Controller
             return Redirect::route('myapplication.index')->with('success', 'Application successfully cancelled!');
         });
     }
-
-    // public function viewPaymentOrder(string $id) {
-    //     $application_id = Crypt::decryptString($id);
-    //     $application = LtpApplication::find($application_id);
-
-    //     $payment_order = PaymentOrder::where([
-    //         "ltp_application_id" => $application_id
-    //     ])->first();
-
-    //     $path = storage_path('app/private/' . $payment_order->document);
-        
-    //     return response()->file($path);
-    // }
 }

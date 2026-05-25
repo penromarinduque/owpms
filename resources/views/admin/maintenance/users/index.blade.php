@@ -18,8 +18,10 @@ active
 
     <div class="card mb-4">
     	<div class="card-header">
-            <i class="fas fa-users me-1"></i>
-            List of Users
+            <h5 class="card-title mb-0">
+                <i class="fas fa-users me-1"></i>
+                List of Users
+            </h5>
         </div>
         <div class="card-body">
              
@@ -40,11 +42,11 @@ active
             
 
             <div class="row justify-content-space-between mb-3">
-                <div class="col">
+                <div class="col-lg-8">
                     <div class="d-flex">
                         <label for="" class="me-2">Filter : </label>
                         <form action="" method="GET">
-                            <select name="usertype" id="usertype" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <select name="usertype" id="usertype" class="form-select form-select-sm" style="min-width: 200px;" onchange="this.form.submit()">
                                 <option value="" selected disabled>Select User Type</option>
                                 <option value="all" >All</option>
                                 <option value="admin" {{ (request()->get('usertype') == 'admin') ? 'selected' : '' }}>Admin</option>
@@ -61,63 +63,65 @@ active
                 </div>
             </div>
 
-            <table class="table table-striped table-bordered" >
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                        <th class="text-center">User Type</th>
-                        <th class="text-center">Assigned Roles</th>
-                        <th class="text-center" style="width: 50px;">Active</th>
-                        <th class="text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @forelse($users as $user)
-                    <tr>
-                        <td>{{ strtoupper($user->first_name.' '.$user->last_name) }}</td>
-                        <td>{{ $user->empPosition ? $user->empPosition->position : '' }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->username }}</td>
-                        <td class="text-center">
-                            @php
-                                $userTypeColor = [
-                                    'admin' => 'warning',
-                                    'internal' => 'primary',
-                                    'permittee' => 'secondary',
-                                ];
-                            @endphp
-                            <span class="badge bg-{{ $userTypeColor[$user->usertype] ?? 'info' }}">{{ $user->usertype }}</span>
-                        </td>
-                        <td class="text-center">
-                            @forelse ($user->userRoles as $userRole)
-                                <span class="badge  bg-primary">{{ $userRole->role->role_name }}</span>
-                            @empty
-                                <span class="text-secondary">No Assigned Roles</span>
-                            @endforelse
-                        </td>
-                        <td class="text-center" >
-                            <div class="form-check form-switch">
-                              <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$user->id}}" onclick="ajaxUpdateStatus('chkActiveStat{{$user->id}}', '{{Crypt::encrypt($user->id)}}');" {{ ($user->is_active_user==1) ? 'checked' : '' }}>
-                              <!-- <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label> -->
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <a href="{{ route('users.edit', ['id'=>Crypt::encrypt($user->id)]) }}" title="Edit" alt="Edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit fa-lg"></i></a>
-                            @if (in_array($user->usertype, ['internal', 'admin']))
-                                <a href="{{ route('iam.user_roles.edit', ['id'=>Crypt::encryptString($user->id)]) }}" title="Edit Role" alt="Edit Role" class="btn btn-sm btn-outline-warning"><i class="fas fa-key fa-lg"></i></a>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="text-center">No users found.</td>
-                    </tr>
-                @endforelse
-                </tbody>
-            </table>
+            <div class="table-responsive mb-3">
+                <table class="table table-striped table-bordered" >
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th class="text-center">User Type</th>
+                            <th class="text-center">Assigned Roles</th>
+                            <th class="text-center" style="width: 50px;">Active</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($users as $user)
+                        <tr>
+                            <td>{{ strtoupper($user->first_name.' '.$user->last_name) }}</td>
+                            <td>{{ $user->empPosition ? $user->empPosition->position : '' }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->username }}</td>
+                            <td class="text-center">
+                                @php
+                                    $userTypeColor = [
+                                        'admin' => 'warning',
+                                        'internal' => 'primary',
+                                        'permittee' => 'secondary',
+                                    ];
+                                @endphp
+                                <span class="badge bg-{{ $userTypeColor[$user->usertype] ?? 'info' }}">{{ $user->usertype }}</span>
+                            </td>
+                            <td class="text-center">
+                                @forelse ($user->userRoles as $userRole)
+                                    <span class="badge  bg-primary">{{ $userRole->role->role_name }}</span>
+                                @empty
+                                    <span class="text-secondary">No Assigned Roles</span>
+                                @endforelse
+                            </td>
+                            <td class="text-center" >
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input" type="checkbox" role="switch" id="chkActiveStat{{$user->id}}" onclick="ajaxUpdateStatus('chkActiveStat{{$user->id}}', '{{Crypt::encrypt($user->id)}}');" {{ ($user->is_active_user==1) ? 'checked' : '' }}>
+                                  <!-- <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label> -->
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ route('users.edit', ['id'=>Crypt::encrypt($user->id)]) }}" title="Edit" alt="Edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit fa-lg"></i></a>
+                                @if (in_array($user->usertype, ['internal', 'admin']))
+                                    <a href="{{ route('iam.user_roles.edit', ['id'=>Crypt::encryptString($user->id)]) }}" title="Edit Role" alt="Edit Role" class="btn btn-sm btn-outline-warning"><i class="fas fa-key fa-lg"></i></a>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center">No users found.</td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                </table>
+            </div>
             {{ $users->links() }}
         </div>
     </div>
