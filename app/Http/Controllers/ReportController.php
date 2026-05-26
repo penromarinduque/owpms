@@ -229,6 +229,7 @@ class ReportController extends Controller
                 "quarter" => $request->quarter,
                 "semester" => $request->semester,
                 "year" => $request->year,
+                "month" => $request->month,
                 "selectedMonthsConfig" => $selectedMonthsConfig
             ])
             ->margins(30, 10, 30, 10)
@@ -237,6 +238,65 @@ class ReportController extends Controller
             ->headerView('pdfs.header')
             ->footerView('pdfs.footer');
         }
+        else if($request->type == 2){
+            $data  = DB::table('ltp_applications as la')
+                ->select([
+                    'la.id',
+                    'la.permittee_id',
+                    'permits.permit_number',
+                    'la.purpose',
+                    'pi.first_name',
+                    'pi.middle_name',
+                    'pi.last_name',
+                    'permits.approved_at as issuance_date',
+                    DB::raw('permits.approved_at + INTERVAL 1 MONTH as expiration_date'),
+                    'provinces.province_name',
+                    DB::raw('SUM(las.quantity) as total_species'),
+                    'lf.amount'
+                ])
+                ->leftJoin('permittees as p', 'p.id', '=', 'la.permittee_id')
+                ->leftJoin('personal_infos as pi', 'pi.user_id', '=', 'p.user_id')
+                ->leftJoin('ltp_permits as permits', 'permits.ltp_application_id', '=', 'la.id')
+                ->leftJoin('payment_orders as po', 'po.ltp_application_id', '=', 'la.id')
+                ->leftJoin('ltp_fees as lf', 'lf.id', '=', 'po.ltp_fee_id')
+                ->leftJoin('provinces', 'provinces.id', '=', 'la.destination')
+                ->join('ltp_application_species as las', 'las.ltp_application_id', '=', 'la.id')
+                ->whereIn('la.application_status', ['expired', 'approved', 'released'])
+                ->whereBetween('la.application_date', [$startDate, $endDate])
+                ->groupBy([
+                    'la.id',
+                    'la.permittee_id',
+                    'permits.permit_number',
+                    'la.purpose',
+                    'pi.first_name',
+                    'pi.middle_name',
+                    'pi.last_name',
+                    'permits.approved_at',
+                    'provinces.province_name',
+                    'lf.amount',
+                    'la.permittee_id',      // Included because it's used in ORDER BY
+                    'la.application_date'   // Included because it's used in ORDER BY
+                ])
+                ->orderBy('la.permittee_id', 'asc')
+                ->orderBy('la.application_date', 'asc')
+                ->get();
+                // return $data;
+                return Pdf::view('reports.templates.issued-ltp-by-permittee', [
+                    "data" => $data,
+                    "frequency" => $request->frequency,
+                    "quarter" => $request->quarter,
+                    "semester" => $request->semester,
+                    "year" => $request->year,
+                    "month" => $request->month
+                ])
+                ->margins(30, 10, 30, 10)
+                ->scale(0.75)
+                ->format($this->identifyReportFormat($request->paper))
+                ->orientation($this->identifyReportOrientation($request->orientation))
+                ->headerView('pdfs.header')
+                ->footerView('pdfs.footer');
+        }
+        
     }
 
     private function identifyStartDateBySemester($semester, $year){
