@@ -26,7 +26,7 @@ active
             Edit Application
         </div>
         <div class="card-body">
-            <form action="{{ route('myapplication.update', $ltp_application->id) }}" method="POST">
+            <form action="{{ route('myapplication.update', $ltp_application->id) }}" method="POST" id="editForm">
                 @csrf
                 @method('PATCH')
                 <div class="row mb-2">
@@ -209,6 +209,28 @@ active
         });
 
         $("#destination").select2();
+
+        $("#editForm").submit(function(e) {
+            e.preventDefault();
+            const form = $(this);
+            @if($ltp_application->status != 'draft')
+                Swal.fire({
+                    title: 'Confirm Submission',
+                    text: "Saving this application will return the application status to draft and needs to be resubmitted. Are you sure you want to save the changes?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, submit it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.off('submit').submit(); // Unbind the event and submit the form
+                    }
+                });
+            @else
+                form.off('submit').submit();
+            @endif
+        })
     });
 
     function onSpecieChange(e) {

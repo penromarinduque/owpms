@@ -296,6 +296,9 @@ class ReportController extends Controller
                 ->headerView('pdfs.header')
                 ->footerView('pdfs.footer');
         }
+        else if($request->type == 3){
+            
+        }
         
     }
 
