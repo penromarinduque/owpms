@@ -257,6 +257,7 @@ class MyApplicationController extends Controller
 
             $ltp_application->transport_date = $request->transport_date;
             $ltp_application->purpose = $request->purpose;
+            $ltp_application->application_status = LtpApplication::STATUS_DRAFT;
             $ltp_application->destination = $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null);
             $ltp_application->specie_nature_id = $request->specie_nature_id;
             $ltp_application->save();
