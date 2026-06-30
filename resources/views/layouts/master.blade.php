@@ -43,6 +43,17 @@
         {{-- Custom styles --}}
         <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 
+        <style>
+            main.content {
+                margin-left: 300px;
+            }
+            @media (max-width: 992px) {
+                main.content {
+                    margin-left: 0 !important;
+                }
+            }
+        </style>
+
     </head>
     <body class="vh-100">
         @include('components.fullLoader')
@@ -50,7 +61,7 @@
         @include('layouts.navtop')
         
         @include('layouts.navside')
-        <main class="content" style="margin-left: 300px;">
+        <main class="content" >
             {{-- TopBar --}}
             @include('layouts.topbar')
             <div style="min-height: 700px">

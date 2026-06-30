@@ -22,8 +22,8 @@
 <nav id="sidebarMenu" class="sidebar d-lg-block bg-gray-800 text-white collapse" data-simplebar style="min-width: 300px;">
   <div class="sidebar-inner px-2 pt-3">
     {{-- User card --}}
-    {{-- <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
-      <div class="d-flex align-items-center">
+    <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
+      {{-- <div class="d-flex align-items-center">
         <div class="avatar-lg me-4">
           <img src="/assets/img/team/profile-picture-3.jpg" class="card-img-top rounded-circle border-white"
             alt="Bonnie Green">
@@ -39,7 +39,7 @@
             Sign Out
           </a>
         </div>
-      </div>
+      </div> --}}
       <div class="collapse-close d-md-none">
         <a href="#sidebarMenu" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
           aria-expanded="true" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
           </svg>
         </a>
       </div>
-    </div> --}}
+    </div>
     <ul class="nav flex-column pt-3 pt-md-0">
         <li class="nav-item">
             <a href="{{ route('dashboard.index') }}" class="nav-link d-flex align-items-center @yield('active-dashboard')">
