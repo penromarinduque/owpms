@@ -22,8 +22,8 @@
 <nav id="sidebarMenu" class="sidebar d-lg-block bg-gray-800 text-white collapse" data-simplebar style="min-width: 300px;">
   <div class="sidebar-inner px-2 pt-3">
     {{-- User card --}}
-    {{-- <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
-      <div class="d-flex align-items-center">
+    <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
+      {{-- <div class="d-flex align-items-center">
         <div class="avatar-lg me-4">
           <img src="/assets/img/team/profile-picture-3.jpg" class="card-img-top rounded-circle border-white"
             alt="Bonnie Green">
@@ -39,7 +39,7 @@
             Sign Out
           </a>
         </div>
-      </div>
+      </div> --}}
       <div class="collapse-close d-md-none">
         <a href="#sidebarMenu" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
           aria-expanded="true" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
           </svg>
         </a>
       </div>
-    </div> --}}
+    </div>
     <ul class="nav flex-column pt-3 pt-md-0">
         <li class="nav-item">
             <a href="{{ route('dashboard.index') }}" class="nav-link d-flex align-items-center @yield('active-dashboard')">
@@ -256,14 +256,14 @@
             </div>
         </li>
 
-        @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'internal' && $canViewMaintenance)
-    <li class="nav-item">
-        <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
-            <span class="sidebar-text fw-bold text-uppercase small">Maintenance</span>
-        </span>
-    </li>
+    @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'internal' && $canViewMaintenance)
+        <li class="nav-item">
+            <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
+                <span class="sidebar-text fw-bold text-uppercase small">Maintenance</span>
+            </span>
+        </li>
 
-    @if ($canViewSpecieMaintenance)
+        @if ($canViewSpecieMaintenance)
         {{-- Species Multi-level Menu --}}
         <li class="nav-item">
             <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#submenu-species">
@@ -352,6 +352,40 @@
     @endif
 
     @if(Auth::user()->usertype == 'admin')
+        <li class="nav-item">
+            <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
+                <span class="sidebar-text fw-bold text-uppercase small">Reports</span>
+            </span>
+        </li>
+
+        <li class="nav-item">
+            <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#submenu-my-reports" aria-expanded="true">
+                <span>
+                    <span class="sidebar-icon"><i class="fas fa-file me-2"></i></span>
+                    <span class="sidebar-text" >Reports</span>
+                </span>
+                <span class="link-arrow"><svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd"></path>
+                    </svg>
+                </span>
+            </span>
+            <div class="multi-level collapse show" role="list" id="submenu-my-reports" aria-expanded="false">
+                <ul class="flex-column nav">
+                    <li class="nav-item {{ request()->routeIs('reports.issued-permits') ? 'active' : '' }}">
+                        <a href="{{ route('reports.issued-permits') }}" class="nav-link">
+                            <span class="sidebar-icon"><i class="fa-solid fa-stamp me-2"></i></span>
+                            <span class="sidebar-text">Issued Permits</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        {{--  --}}
+
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
                 <span class="sidebar-text fw-bold text-uppercase small">User Access</span>

@@ -32,6 +32,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\PaymentOrderController;
 use App\Http\Controllers\QrController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SignatoryController;
 use App\Http\Controllers\SpecieNatureController;
 use App\Http\Controllers\TestController;
@@ -403,6 +404,11 @@ Route::get('/test-email', function () {
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }
+});
+
+Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+    Route::get('issued-permits', [ReportController::class, 'issuedPermits'])->name('issued-permits');
+    Route::post('issued-permits', [ReportController::class, 'printIssuedPermits'])->name('print-issued-permits');
 });
 
 //  test routes
