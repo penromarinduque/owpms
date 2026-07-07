@@ -28,34 +28,36 @@ active
             </h5>
         </div>
         <div class="card-body">
-            <table class="table table-sm table-bordered table-hovered table-striped">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($roles as $role)
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hovered table-striped">
+                    <thead>
                         <tr>
-                            <td>{{ $role->role_name }}</td>
-                            <td>{{ $role->role_description }}</td>
-                            <td class="text-center"><span class="badge text-{{ $role->is_active == 1 ? 'bg-primary' : 'bg-secondary' }}">{{ $role->is_active ? 'Active' : 'Inactive' }}</span></td>
-                            <td class="text-center">
-                                <a href="#" onclick="showConfirDeleteModal ('{{ route('iam.roles.delete', ['id' => Crypt::encryptString($role->id)]) }}' , {{ $role->id }}, 'This action is irreversible are you sure you want to remove this role?', 'Remove Role')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
-                                <a href="{{ route('iam.roles.edit', ['id' => Crypt::encryptString($role->id)]) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                            </td>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Actions</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center">No records found</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            {{ $roles->links() }}
+                    </thead>
+                    <tbody>
+                        @forelse ($roles as $role)
+                            <tr>
+                                <td>{{ $role->role_name }}</td>
+                                <td>{{ $role->role_description }}</td>
+                                <td class="text-center"><span class="badge text-{{ $role->is_active == 1 ? 'bg-primary' : 'bg-secondary' }}">{{ $role->is_active ? 'Active' : 'Inactive' }}</span></td>
+                                <td class="text-center">
+                                    <a href="#" onclick="showConfirDeleteModal ('{{ route('iam.roles.delete', ['id' => Crypt::encryptString($role->id)]) }}' , {{ $role->id }}, 'This action is irreversible are you sure you want to remove this role?', 'Remove Role')" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                                    <a href="{{ route('iam.roles.edit', ['id' => Crypt::encryptString($role->id)]) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No records found</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                {{ $roles->links() }}
+            </div>
         </div>
     </div>
 </div>
