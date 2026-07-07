@@ -25,8 +25,7 @@
 
         {{-- bladewind --}}
         @yield('bladewind-ui')
-
-
+        
         {{-- <link href="{{ asset('css/theme.css') }}" rel="stylesheet" /> --}}
 
         {{-- sbadmin --}}
