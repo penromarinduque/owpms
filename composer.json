@@ -18,6 +18,7 @@
         "league/flysystem-aws-s3-v3": "3.0",
         "mkocansey/bladewind": "^3.0",
         "owen-it/laravel-auditing": "^13.6",
+        "pontedilana/php-weasyprint": "^2.7",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
         "simplesoftwareio/simple-qrcode": "^4.2",

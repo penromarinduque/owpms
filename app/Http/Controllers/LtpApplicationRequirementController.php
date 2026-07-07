@@ -54,7 +54,11 @@ class LtpApplicationRequirementController extends Controller
 
         Gate::authorize('view', $attachment);
 
-        $path = storage_path('app/private/' . $attachment->file_path);
-        return response()->file($path);
+        if (!Storage::disk('s3')->exists($attachment->file_path)) {
+            abort(404);
+        }
+
+        $path = Storage::disk('s3')->temporaryUrl($attachment->file_path, now()->addMinutes(30));
+        return redirect($path);
     }
 }
