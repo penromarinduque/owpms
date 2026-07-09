@@ -231,7 +231,7 @@ active
                             <th>Application No.</th>
                             <th class="text-center">Date Created</th>
                             <th class="text-center">Last Modified</th>
-                            <th width="300px" class="text-center">Transport Date</th>
+                            <th width="300px" class="text-center">Date of Application</th>
                             <th class="text-center">Status</th>
                             <th width="200px" class="text-center">Actions</th>
                         </tr>

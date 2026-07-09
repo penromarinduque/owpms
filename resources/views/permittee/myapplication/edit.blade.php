@@ -213,7 +213,7 @@ active
         $("#editForm").submit(function(e) {
             e.preventDefault();
             const form = $(this);
-            @if($ltp_application->status != 'draft')
+            @if($ltp_application->application_status != 'draft')
                 Swal.fire({
                     title: 'Confirm Submission',
                     text: "Saving this application will return the application status to draft and needs to be resubmitted. Are you sure you want to save the changes?",
