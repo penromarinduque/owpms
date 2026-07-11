@@ -194,7 +194,7 @@ class PaymentOrderController extends Controller
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
             Notification::send($paymentOrder->preparedBy, new SignedNotification(route('for-signatures.index', ['type' => "payment_order"]), 'Payment Order for LTP Application '. $paymentOrder->ltpApplication->application_no . ' has been created and is awaiting your signature.'));
             
-            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Order of Payment created successfully!');
+            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($paymentOrder->id)])->with('success', 'Order of Payment created successfully!');
         });
     }
 
@@ -245,17 +245,6 @@ class PaymentOrderController extends Controller
                 'description' => "Signed Order of Payment has been uploaded by " . auth()->user()->personalInfo->getFullNameAttribute(),
                 "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
             ]);
-
-            if($paymentOrder->status != PaymentOrder::STATUS_PAID){
-                $cashiers = User::whereHas('userRoles', function ($query) {
-                $query->whereHas('role', function ($query) {
-                        $query->whereHas('rolePermissions', function ($query) {
-                            $query->where('permission', 'PAYMENT_ORDERS_UPDATE');
-                        });
-                    });
-                })->get();
-                Notification::send($cashiers, new \App\Notifications\OopApproved($paymentOrder));
-            }
 
             return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
         });

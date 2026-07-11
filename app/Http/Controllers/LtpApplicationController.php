@@ -151,8 +151,8 @@ class LtpApplicationController extends Controller
             Notification::send($ltp_application->permittee->user, new LtpApplicationReturned($ltp_application));
     
             return redirect()->back()->with([
-                        'success' => 'Successfully returned application.'
-                    ]);
+                'success' => 'Successfully returned application.'
+            ]);
         });
 
     }
@@ -180,7 +180,7 @@ class LtpApplicationController extends Controller
 
             $ltp_application = LtpApplication::query()->with(["permittee.user"])->find($ltp_application_id);
 
-            Gate::authorize('review', $ltp_application);
+            Gate::authorize('reviewed', $ltp_application);
 
             // if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
             //     return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');

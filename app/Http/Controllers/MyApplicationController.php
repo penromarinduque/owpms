@@ -286,10 +286,11 @@ class MyApplicationController extends Controller
     {
         //
         return DB::transaction(function () use ($id) {
-            $ltp_application = LtpApplication::where("id", $id)->delete();
+            $ltp_application = LtpApplication::find($id);
 
             Gate::authorize('delete', $ltp_application);
-
+            
+            $ltp_application->delete();
             LtpApplicationSpecie::where("ltp_application_id", $id)->delete();
             return Redirect::route('myapplication.index')->with('success', 'Application successfully deleted!');
         });

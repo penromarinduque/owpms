@@ -60,7 +60,7 @@
                                 <table class="w-100">
                                     <tr>
                                         <td width="50%" class=" fw-bold">Entity Name : <u>DENR-PENRO</u></td>
-                                        <td width="50%" class="text-end fw-bold">Serial No.: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center"></p></div></td>
+                                        <td width="50%" class="text-end fw-bold">Serial No.: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center">{{ $ltp_application->paymentOrder->serial_no ? $ltp_application->paymentOrder->serial_no : '' }}</p></div></td>
                                     </tr>
                                     <tr>
                                         <td width="50%" class=" fw-bold">Fund Cluster : <u>151</u></td>

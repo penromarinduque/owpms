@@ -159,6 +159,10 @@ class LtpApplicationPolicy
         return in_array('LTP_APPLICATION_REVIEW', $user->getUserPermissions());
     }
 
+    public function reviewed(User $user, LtpApplication $ltpApplication) {
+        return in_array('LTP_APPLICATION_REVIEW', $user->getUserPermissions()) && ($ltpApplication->application_status == LtpApplication::STATUS_SUBMITTED || $ltpApplication->application_status == LtpApplication::STATUS_UNDER_REVIEW);
+    }
+
     public function accept(User $user, LtpApplication $ltpApplication) {
         return in_array('LTP_APPLICATION_ACCEPT', $user->getUserPermissions()) && $ltpApplication->application_status == LtpApplication::STATUS_REVIEWED;
     }

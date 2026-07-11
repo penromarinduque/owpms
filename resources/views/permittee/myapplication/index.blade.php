@@ -155,7 +155,7 @@ active
                         <tr>
                             <th>#</th>
                             <th>Application No.</th>
-                            <th>Transport Date</th>
+                            <th>Date of Application</th>
                             <th>Date Created</th>
                             <th>Last Modified</th>
                             <th class="text-center">Status</th>
@@ -230,7 +230,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">No record found.</td>
+                                <td colspan="7" class="text-center">No record found.</td>
                             </tr>
                         @endforelse
                     </tbody>

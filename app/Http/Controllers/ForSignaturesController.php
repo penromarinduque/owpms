@@ -12,6 +12,7 @@ use App\Models\PaymentOrder;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\LtpPermitApproved;
+use App\Notifications\PermitteeBillNotification;
 use App\Notifications\SignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -244,7 +245,17 @@ class ForSignaturesController extends Controller
                 });
             });
         })->get();
+
+        $cashiers = User::whereHas('userRoles', function ($query) {
+                $query->whereHas('role', function ($query) {
+                        $query->whereHas('rolePermissions', function ($query) {
+                            $query->where('permission', 'PAYMENT_ORDERS_UPDATE');
+                        });
+                    });
+                })->get();
+        Notification::send($cashiers, new \App\Notifications\OopApproved($paymentOrder));
         Notification::send($inspectors, new SignedNotification(route('paymentorder.show', Crypt::encryptString($payment_order->id)), 'Order of Payment has been approved by '. $payment_order->oopApprovedBy->personalInfo->getFullNameAttribute() . ' and is now ready for uploading.'));
+        Notification::send($payment_order->ltpApplication->permittee->user, new PermitteeBillNotification($payment_order));
         
         return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
     }
