@@ -294,11 +294,11 @@ class PaymentOrderController extends Controller
             return redirect()->back()->with('error', 'You are not authorized to view this document');
         }
 
-        $path = storage_path('app/private/' . $paymentOrder->document);
         if($type == 'billing_statement') {
-            $path = storage_path('app/private/' . $paymentOrder->billing_statement_doc);
+            // $path = storage_path('app/private/' . $paymentOrder->billing_statement_doc);
+            $path = Storage::response($paymentOrder->billing_statement_doc, now()->addMinutes(30));
         }
-        return response()->file($path);
+        return Storage::response($paymentOrder->document, now()->addMinutes(30)); // storage_path('app/private/' . $paymentOrder->document);
     }
 
     public function update(Request $request, string $payment_order_id) {
