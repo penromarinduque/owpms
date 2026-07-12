@@ -252,7 +252,7 @@ class ForSignaturesController extends Controller
                         });
                     });
                 })->get();
-        Notification::send($cashiers, new \App\Notifications\OopApproved($paymentOrder));
+        Notification::send($cashiers, new \App\Notifications\OopApproved($payment_order));
         Notification::send($inspectors, new SignedNotification(route('paymentorder.show', Crypt::encryptString($payment_order->id)), 'Order of Payment has been approved by '. $payment_order->oopApprovedBy->personalInfo->getFullNameAttribute() . ' and is now ready for uploading.'));
         Notification::send($payment_order->ltpApplication->permittee->user, new PermitteeBillNotification($payment_order));
         
