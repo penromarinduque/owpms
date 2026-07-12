@@ -21,6 +21,7 @@ class LtpRequirementPolicy
      */
     public function view(User $user, LtpRequirement $ltpRequirement): bool
     {
+        
         return false;
     }
 

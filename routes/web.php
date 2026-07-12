@@ -39,6 +39,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\WebhookController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
+use App\Models\User;
 use App\Notifications\LtpApplicationExpired;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -437,17 +438,7 @@ Route::prefix("tests")->group( function () {
     Route::post("/", [TestController::class, 'store'])->name("test.store");
 });
 
-Route::get('/test-gotenberg', function () {
-        return Pdf::html('
-        <html>
-            <body>
-                <h1>Hello World</h1>
-            </body>
-        </html>
-    ')
-    ->waitUntilReady()
-    ->download('test.pdf');
-    return Http::timeout(10)
-        ->get('http://gotenberg-zsckgkw0cc040k448c4g0og0.72.62.196.245.sslip.io/health')
-        ->body();
+Route::get("test", function () {
+    $_user = new User();
+    return $_user->getAllInspectors();
 });

@@ -472,7 +472,7 @@ class MyApplicationController extends Controller
                 "description" => "Application has been submitted."
             ]);
 
-            Notification::send($_user->getAllInternals(), new LtpApplicationSubmitted($ltp_application));
+            Notification::send($_user->getAllInspectors(), new LtpApplicationSubmitted($ltp_application));
 
             return Redirect::route('myapplication.index')->with('success', 'Application successfully submitted!');
         });

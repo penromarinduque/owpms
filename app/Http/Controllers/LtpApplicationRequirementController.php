@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LtpApplicationAttachment;
+use App\Models\LtpRequirement;
 use BaconQrCode\Encoder\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -50,8 +51,8 @@ class LtpApplicationRequirementController extends Controller
     }
 
     public function view(Request $request, string $id) {
+        $requirement = LtpRequirement::find(Crypt::decryptString($id));
         $attachment = LtpApplicationAttachment::find(Crypt::decryptString($id));
-
         Gate::authorize('view', $attachment);
 
         if (!Storage::disk('s3')->exists($attachment->file_path)) {
