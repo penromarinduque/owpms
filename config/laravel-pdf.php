@@ -101,6 +101,6 @@ return [
         /*
          * The timeout (default = 10 seconds)
          */
-        'timeout' => 10,
+        'timeout' => 120,
     ],
 ];

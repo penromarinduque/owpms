@@ -1,4 +1,7 @@
 @extends('layouts.pdf')
+@section('title')
+Inspection Report
+@endsection
 
 @section('content')
 <style>
@@ -17,7 +20,11 @@
             <tr>
                 <td class="">
                     <div class="header d-flex justify-content-center align-items-center mb-3 mx-auto w-fit">
-                        <img src="{{ public_path('images/denr_logo.png') }}" alt="DENR Logo" class="me-3" style="width: 80px; height: 80px;">
+                        {{-- <img src="{{ asset('images/denr_logo.png') }}" alt="DENR Logo" class="me-3" style="width: 80px; height: 80px;"> --}}
+                        <img
+                        src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/denr_logo.png'))) }}"
+                        style="width:80px;height:80px;"
+                    >
                         <small>
                             <div class="text-center">
                                 <p class="m-0 fw-bold ">DEPARTMENT OF ENVIRONMENT AND NATURAL RESOURCES</p>
@@ -25,8 +32,11 @@
                                 <p class="m-0  fw-bold">PENRO MARINDUQUE</p>
                             </div>
                         </small>
-
-                        <img src="{{ public_path('images/bagong-pilipinas.png') }}" alt="Bagong Pilipinas Logo" class="ms-3" style="width: 80px; height: 80px;">
+                        <img
+                        src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images//bagong-pilipinas.png'))) }}"
+                        style="width:80px;height:80px;"
+>
+                        {{-- <img src="{{ asset('images/bagong-pilipinas.png') }}" alt="Bagong Pilipinas Logo" class="ms-3" style="width: 80px; height: 80px;"> --}}
                     </div>
                 </td>
             </tr>

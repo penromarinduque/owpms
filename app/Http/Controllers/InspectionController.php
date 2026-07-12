@@ -352,8 +352,14 @@ class InspectionController extends Controller
 
         $inspection_report = InspectionReport::where(['ltp_application_id' => $ltp_application_id])->first();
 
-        if($inspection_report && Storage::exists('inspection_report/'.$inspection_report->id.'.pdf')) {
-            return Storage::response('inspection_report/'.$inspection_report->id.'.pdf');
+        if($inspection_report 
+        && Storage::exists('inspection_report/'.$inspection_report->id.'.pdf')
+        && ($inspection_report->permittee_signed || $inspection_report->inspector_signed || $inspection_report->approver_signed)
+        ) {
+            return Storage::response('inspection_report/'.$inspection_report->id.'.pdf', 'Inspection Report.pdf', [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="Inspection Report.pdf"'
+            ]);
         }
 
         if ($inspection_report) {
@@ -453,7 +459,7 @@ class InspectionController extends Controller
         Gate::authorize('inspect', $ltp_application);
 
         $inspection_report = InspectionReport::find(Crypt::decryptString($id));
-
+ 
         return Pdf::view('pdfs.inspection-report', [
             'ltp_application' => $ltp_application,
             'inspection_report' => $inspection_report,
@@ -463,9 +469,7 @@ class InspectionController extends Controller
         ])
         ->paperSize(8.5, 13, 'in')
         ->margins(0.3, 0, 0.3, 0, Unit::Inch)
-        ->withBrowsershot(function ($browsershot) {
-            $browsershot->timeout(120); // Set timeout to 120 seconds
-        });
+        ->waitUntilReady();
 
         return view('inspection.print-report', [
             'ltp_application' => $ltp_application,
@@ -507,6 +511,6 @@ class InspectionController extends Controller
 
         Gate::authorize('downloadDocument', $inspectionReport);
 
-        return Storage::response('inspection_report/' . $id . '.' . 'pdf');
+        return Storage::response('inspection_report/' . $id . '.' . 'pdf', 'Inspection Report.pdf');
     }
 }

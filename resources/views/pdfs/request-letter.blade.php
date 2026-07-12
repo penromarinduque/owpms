@@ -1,4 +1,7 @@
 @extends('layouts.pdf')
+@section('title')
+Request Letter
+@endsection
 @section('content')
 <style>
     /* body {

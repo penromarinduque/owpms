@@ -232,6 +232,7 @@ class ReportController extends Controller
                 "month" => $request->month,
                 "selectedMonthsConfig" => $selectedMonthsConfig
             ])
+            ->waitUntilReady()
             ->margins(30, 10, 30, 10)
             ->format($this->identifyReportFormat($request->paper))
             ->orientation($this->identifyReportOrientation($request->orientation))
@@ -289,6 +290,7 @@ class ReportController extends Controller
                     "year" => $request->year,
                     "month" => $request->month
                 ])
+                ->waitUntilReady()
                 ->margins(30, 10, 30, 10)
                 ->scale(0.75)
                 ->format($this->identifyReportFormat($request->paper))

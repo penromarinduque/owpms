@@ -370,8 +370,9 @@ class PermitteeController extends Controller
     }
 
     public function viewPermit(string $id){
-        $permittee_id = Crypt::decryptString($id);
-        $permittee = Permittee::find($permittee_id);
+        
+        $permit_id = Crypt::decryptString($id);
+        $permittee = Permittee::find($permit_id);
 
         $path = storage_path('app/private/' . $permittee->document);
         return response()->file($path);

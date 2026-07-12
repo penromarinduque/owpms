@@ -41,7 +41,9 @@ use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
 use App\Notifications\LtpApplicationExpired;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 Route::get('/', function () {
     return view('welcome');
@@ -433,4 +435,19 @@ Route::get("token", function () {
 Route::prefix("tests")->group( function () {
     Route::get("/", [TestController::class, 'create'])->name("test.create");
     Route::post("/", [TestController::class, 'store'])->name("test.store");
+});
+
+Route::get('/test-gotenberg', function () {
+        return Pdf::html('
+        <html>
+            <body>
+                <h1>Hello World</h1>
+            </body>
+        </html>
+    ')
+    ->waitUntilReady()
+    ->download('test.pdf');
+    return Http::timeout(10)
+        ->get('http://gotenberg-zsckgkw0cc040k448c4g0og0.72.62.196.245.sslip.io/health')
+        ->body();
 });

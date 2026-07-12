@@ -88,10 +88,9 @@ class ForSignaturesController extends Controller
         ->disk("s3")
         ->paperSize(8.5, 13, 'in')
         ->margins(0.3, 0, 0.3, 0, Unit::Inch)
-        ->withBrowsershot(function ($browsershot) {
-            $browsershot->timeout(120); // Set timeout to 120 seconds
-        })
+        ->waitUntilReady()
         ->save('inspection_report/' . $inspection_report_id . '.pdf');
+        
         $pdfUrl = Storage::disk('s3')->temporaryUrl(
             'inspection_report/' . $inspection_report_id . '.pdf', 
             now()->addMinutes(60),

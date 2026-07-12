@@ -1,4 +1,7 @@
 @extends('layouts.pdf')
+@section('title')
+Local Transport Permit
+@endsection
 
 @section('content')
 <style>

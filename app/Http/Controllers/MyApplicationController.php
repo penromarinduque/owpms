@@ -377,7 +377,8 @@ class MyApplicationController extends Controller
             ])
             ->format(Format::A4)
             ->scale(0.9)
-            ->margins(0, 0.4, 0.5, 0.3, Unit::Inch);
+            ->margins(0, 0.4, 0.5, 0.3, Unit::Inch)
+            ->waitUntilReady();
 
         return view('pdfs.request-letter', [
             "_helper" => $_helper,

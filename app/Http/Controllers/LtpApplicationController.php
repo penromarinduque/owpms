@@ -409,7 +409,8 @@ class LtpApplicationController extends Controller
         ->headerView('pdfs.header')
         ->footerView('pdfs.footer')
         ->paperSize(8.5, 13, 'in')
-        ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch);
+        ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch)
+        ->waitUntilReady();
 
     }
 
