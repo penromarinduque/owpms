@@ -23,8 +23,7 @@ Inspection Report
                         {{-- <img src="{{ asset('images/denr_logo.png') }}" alt="DENR Logo" class="me-3" style="width: 80px; height: 80px;"> --}}
                         <img
                         src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/denr_logo.png'))) }}"
-                        style="width:80px;height:80px;"
-                    >
+                        style="width:80px;height:80px;" >
                         <small>
                             <div class="text-center">
                                 <p class="m-0 fw-bold ">DEPARTMENT OF ENVIRONMENT AND NATURAL RESOURCES</p>
@@ -34,8 +33,7 @@ Inspection Report
                         </small>
                         <img
                         src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images//bagong-pilipinas.png'))) }}"
-                        style="width:80px;height:80px;"
->
+                        style="width:80px;height:80px;">
                         {{-- <img src="{{ asset('images/bagong-pilipinas.png') }}" alt="Bagong Pilipinas Logo" class="ms-3" style="width: 80px; height: 80px;"> --}}
                     </div>
                 </td>
