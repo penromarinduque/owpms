@@ -115,7 +115,7 @@ Request Letter
                         <!-- Date and Recipient -->
                         <div class="recipient-block mt-0">
                             <p mt-0>{{date('F j, Y')}}</p>
-                            <p>
+                            <p> 
                                 <strong>CESAR P. ODI, <i>RPF</i></strong><br>
                                 OIC, PENR Officer<br>
                                 Boac, Marinduque
@@ -126,7 +126,7 @@ Request Letter
                         <div class="mb-4">
                             <p class="subject-line">Subject: Application for Local Transport Permit of Butterfly Species</p>
                             <p><strong>Sir:</strong></p>
-                            <p>Greetings!!</p>
+                            <p>Greetings!</p>
                             <p class="text-justify">
                                 &nbsp;&nbsp;&nbsp;&nbsp;Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,
                                 the
@@ -191,24 +191,23 @@ Request Letter
                         
                             <!-- Signature Block -->
                             <div class="signature-block">
-                                <p>Sincerely,</p>
+                                <p>Sincerely, </p>
                                 <p class="mt-2 ">
                                     <br>
-                                    {{-- @{{Sign;type=signature}} --}}
-                                    
+                                    <img src="{{ $signatureUrl }}" alt="">
                                     <br><strong >{{ strtoupper($wcp->user->personalInfo->first_name) }} {{ strtoupper(substr($wcp->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($wcp->user->personalInfo->last_name) }}</strong><br>
                                     Owner, {{ $wfp->wildlifeFarm->farm_name }}
                                 </p>
                             </div>
+                            {{-- <div class="qr-code">
+                                <img 
+                                    class="" 
+                                    src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($application->id), 'document_type' => 'request_letter']))) }}" 
+                                    alt="">
+                                <p><small>Application No.: {{ $application->application_no }}</small></p>
+                            </div> --}}
                         </div>
 
-                        <div class="qr-code">
-                            <img 
-                                class="" 
-                                src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($application->id), 'document_type' => 'request_letter']))) }}" 
-                                alt="">
-                            <p><small>Application No.: {{ $application->application_no }}</small></p>
-                        </div>
                     </div>
                 </td>
             </tr>

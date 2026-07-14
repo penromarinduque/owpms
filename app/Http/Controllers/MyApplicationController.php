@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ApplicationHelper;
 use App\Models\Province;
+use App\Models\Signature;
 use App\Models\SpecieNature;
 use App\Notifications\LtpApplicationSubmitted;
 use Illuminate\Support\Facades\Gate;
@@ -367,24 +368,16 @@ class MyApplicationController extends Controller
         $wfp = $_permittee->getPermitteeWFP($application->permittee->user_id, "wfp");
         $wcp = $_permittee->getPermitteeWCP($application->permittee->user_id, "wcp");
 
-        // return $wfp;
+        $path = "request_letters/{$application->id}.pdf";
 
-        return Pdf::view("pdfs.request-letter", [
-                "_helper" => $_helper,
-                "application" => $application,
-                "wfp" => $wfp,
-                "wcp" => $wcp
-            ])
-            ->format(Format::A4)
-            ->scale(0.9)
-            ->margins(0, 0.4, 0.5, 0.3, Unit::Inch)
-            ->waitUntilReady();
+        if (!Storage::disk('s3')->exists($path)) {
+            abort(404);
+        }
 
-        return view('pdfs.request-letter', [
-            "_helper" => $_helper,
-            "application" => $application,
-            "wfp" => $wfp,
-            "wcp" => $wcp
+        // Streams the file piece-by-piece from S3 directly to the user
+        return Storage::disk('s3')->response($path, null, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline'
         ]);
     }
 
@@ -393,14 +386,14 @@ class MyApplicationController extends Controller
         $_helper = new ApplicationHelper;
         $_permittee = new Permittee;
 
-        $validator = Validator::make($request->all(), [
-            'attach_signature_check' => 'required',
-            'document' => 'required_if_declined:attach_signature_check|mimes:pdf',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'attach_signature_check' => 'required',
+        //     'document' => 'required_if_declined:attach_signature_check|mimes:pdf',
+        // ]);
 
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
-        }
+        // if($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator, 'submitApplication')->withInput()->with('error', 'Failed to submit application.');
+        // }
 
         return DB::transaction(function () use ($id, $request, $_user, $_helper, $_permittee) {
             $ltp_application = LtpApplication::find(Crypt::decryptString($id));
@@ -424,43 +417,25 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
 
-            if($request->input('attach_signature_check') == 0) {
-                $request->file('document')->storeAs('request_letters', $ltp_application->id . '.pdf');
+            $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
+            $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
+            $signature = Signature::where("user_id", auth()->user()->id)->first();
+            if(!$signature) {
+                return redirect()->back()->with('error', 'You have not uploaded your signature!');
             }
-            else {
-                $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
-                $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");
-
-                Pdf::view("pdfs.request-letter", [
-                    "_helper" => $_helper,
-                    "application" => $ltp_application,
-                    "wfp" => $wfp,
-                    "wcp" => $wcp
-                ])
-                ->format(Format::A4)
-                ->scale(0.9)
-                ->margins(0, 0.4, 0.5, 0.3, Unit::Inch)
-                ->disk("s3")
-                ->save('request_letters/'.$ltp_application->id.'.pdf');
-                $pdfUrl = Storage::disk('s3')->temporaryUrl(
-                    'request_letters/'.$ltp_application->id.'.pdf', 
-                    now()->addMinutes(45),
-                    [
-                        'ResponseContentType' => 'application/pdf',
-                        'ResponseContentDisposition' => 'inline; filename="document.pdf"',
-                    ]
-                );
-                // $pdfUrl = Storage::disk('s3')->temporaryUrl(
-                //     'inspection-photos/1755151459_49-0.PNG', 
-                //     now()->addMinutes(45)
-                // );
-                // return redirect($pdfUrl);
-                return redirect()->route("documents.attachSignature", [
-                    'id' => Crypt::encryptString($ltp_application->id), 
-                    "webhook" => route("webhooks.requestLetterSigned"), 
-                    "pdfUrl" => $pdfUrl
-                ]);
-            }
+            Pdf::view("pdfs.request-letter", [
+                "_helper" => $_helper,
+                "application" => $ltp_application,
+                "wfp" => $wfp,
+                "wcp" => $wcp,
+                "signatureUrl" => Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30))
+            ])
+            ->waitUntilReady()
+            ->format(Format::A4)
+            ->scale(0.9)
+            ->margins(0, 0.4, 0.5, 0.3, Unit::Inch)
+            ->disk("s3")
+            ->save('request_letters/'.$ltp_application->id.'.pdf');
 
             $ltp_application->application_status = LtpApplication::STATUS_SUBMITTED;
             $ltp_application->save();

@@ -14,7 +14,9 @@ My Applications
     </ol>
 
     <div class="d-flex justify-content-end gap-2 mb-2">
-        <a class="btn btn-sm btn-outline-primary" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print Request Letter</a>
+        @if (!in_array($ltp_application->application_status, ["draft", "resubmitted"]))
+            <a class="btn btn-sm btn-outline-primary" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print Request Letter</a>
+        @endif
         <div class="dropdown">
             <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-file-alt me-1"></i> Permits

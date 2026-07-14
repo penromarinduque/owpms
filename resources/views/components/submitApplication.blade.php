@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 <p id="message"></p>
-                <input type="hidden" name="attach_signature_check" id="attach_signature_check">
+                {{-- <input type="hidden" name="attach_signature_check" id="attach_signature_check">
                 <div class="mb-2">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="attach_signature" id="attach_signature" required onchange="onAttachSignatureChanged()">
@@ -27,7 +27,7 @@
                     @error('document', 'submitApplication')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
-                </div>
+                </div> --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
