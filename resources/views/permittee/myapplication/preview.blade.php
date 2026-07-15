@@ -305,7 +305,6 @@ My Applications
     @include('components.returnApplication')
     @include('components.confirm')
     @include('components.submitApplication')
-    @include('components.uploadPaymentOrder')
     @include('components.updatePayment')
     @include('components.confirmDelete')
     @include('components.permitteeUploadReceipt')

@@ -211,44 +211,45 @@ class PaymentOrderController extends Controller
         ]);
     }
 
-    public function upload(Request $request, string $id)
-    {
-        // Validate before transaction
-        // Validate with error bag
-        $validator = Validator::make($request->all(), [
-            'document_file' => 'required|mimes:pdf|max:1024'
-        ], [], [
-            'document_file' => 'document file'
-        ]);
+    // remove for full online signing
+    // public function upload(Request $request, string $id)
+    // {
+    //     // Validate before transaction
+    //     // Validate with error bag
+    //     $validator = Validator::make($request->all(), [
+    //         'document_file' => 'required|mimes:pdf|max:1024'
+    //     ], [], [
+    //         'document_file' => 'document file'
+    //     ]);
 
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator, 'upload')->withInput()->with('error', 'Failed to upload document');
-        }
+    //     if($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator, 'upload')->withInput()->with('error', 'Failed to upload document');
+    //     }
 
-        return DB::transaction(function () use ($request, $id) {
-            $decryptedId = Crypt::decryptString($id);
-            $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
+    //     return DB::transaction(function () use ($request, $id) {
+    //         $decryptedId = Crypt::decryptString($id);
+    //         $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
 
-            $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
-            $statement_filename = 'billing_statement_' . $paymentOrder->id . '.pdf';
-            $path = $request->file('document_file')->storeAs('payment_order', $filename);
-            $path2 = $request->file('billing_statement_file')->storeAs('billing_statemenet', $statement_filename);
+    //         $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
+    //         $statement_filename = 'billing_statement_' . $paymentOrder->id . '.pdf';
+    //         $path = $request->file('document_file')->storeAs('payment_order', $filename);
+    //         $path2 = $request->file('billing_statement_file')->storeAs('billing_statemenet', $statement_filename);
 
-            $paymentOrder->update(['document' => $path]);
-            $paymentOrder->update(['billing_statement_doc' => $path2]);
+    //         $paymentOrder->update(['document' => $path]);
+    //         $paymentOrder->update(['billing_statement_doc' => $path2]);
 
-            $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
+    //         $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
 
-            LtpApplicationProgress::create([
-                "ltp_application_id" => $paymentOrder->ltp_application_id,
-                "user_id" => auth()->user()->id,
-                'description' => "Signed Order of Payment has been uploaded by " . auth()->user()->personalInfo->getFullNameAttribute(),
-                "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
-            ]);
+    //         LtpApplicationProgress::create([
+    //             "ltp_application_id" => $paymentOrder->ltp_application_id,
+    //             "user_id" => auth()->user()->id,
+    //             'description' => "Signed Order of Payment has been uploaded by " . auth()->user()->personalInfo->getFullNameAttribute(),
+    //             "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
+    //         ]);
 
-            return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
-        });
-    }
+    //         return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
+    //     });
+    // }
 
     public function download(string $id, string $type) {
         $paymentOrder = PaymentOrder::query()->with([

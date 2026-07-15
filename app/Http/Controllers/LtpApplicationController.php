@@ -221,6 +221,9 @@ class LtpApplicationController extends Controller
 
             Gate::authorize('accept', $ltp_application);
 
+            if(!$request->input('requestLetter') || $request->input('requestLetter') != "on") {
+                return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
+            }
             if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
                 return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
             }
@@ -363,15 +366,6 @@ class LtpApplicationController extends Controller
     public function releaseLtp(Request $request, string $id) {
         $ltp_application = LtpApplication::find(Crypt::decryptString($id));
 
-        $validator = Validator::make($request->all() + $request->allFiles(), [
-            'ltp' => 'required|mimetypes:application/pdf'
-        ]);
-
-        if($validator->fails()) {
-            session(['forward_url' => url()->current()]);
-            return redirect()->back()->withErrors($validator, 'releaseLtp')->withInput()->with('error', 'Failed to release LTP.');
-        }
-
         Gate::authorize('releaseLtp', $ltp_application);
 
         return DB::transaction(function () use ($ltp_application, $request) {
@@ -387,7 +381,7 @@ class LtpApplicationController extends Controller
 
             $permit = $ltp_application->permit;
 
-            $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf');
+            // $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf');
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationReleased($ltp_application));
 

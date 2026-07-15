@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                @foreach ($errors->releaseLtp as $error)
+                {{-- @foreach ($errors->releaseLtp as $error)
                     <span>{{ $error }} - </span>
                 @endforeach
                 <div class="mb-2">
@@ -16,7 +16,9 @@
                     @error('ltp', 'releaseLtp')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
-                </div>
+                </div> --}}
+                Are you sure you want to release this LTP?
+                Once released, this plan cannot be edited, and notifications will be sent to the permittee.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

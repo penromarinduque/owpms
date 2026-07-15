@@ -74,7 +74,7 @@ class PaymentOrderPolicy
 
     public function approverSign(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $user->id == $paymentOrder->approved_by && in_array($paymentOrder->approved_signed, [null, false]) ;
+        return $paymentOrder->prepared_signed != null && $user->id == $paymentOrder->approved_by && in_array($paymentOrder->approved_signed, [null]) ;
     }
 
     public function oopApproverSign(User $user, PaymentOrder $paymentOrder): bool
@@ -89,7 +89,7 @@ class PaymentOrderPolicy
 
     public function preparerSign(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $user->id == $paymentOrder->prepared_by && in_array($paymentOrder->prepared_signed, [null, false]);
+        return $user->id == $paymentOrder->prepared_by && in_array($paymentOrder->prepared_signed, [null]);
     }
 
     public function uploadDocument(User $user, PaymentOrder $paymentOrder): bool
@@ -99,7 +99,7 @@ class PaymentOrderPolicy
 
     public function updatePayment(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && $paymentOrder->oop_approved_signed && in_array('PAYMENT_ORDERS_UPDATE', $user->getUserPermissions()) && $paymentOrder->document && $paymentOrder->status != 'paid';
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && $paymentOrder->oop_approved_signed && in_array('PAYMENT_ORDERS_UPDATE', $user->getUserPermissions())  && $paymentOrder->status != 'paid';
     }
 
     public function downloadSignedOrder(User $user, PaymentOrder $paymentOrder): bool

@@ -60,9 +60,6 @@ active
                                 <li><a class="dropdown-item" href="{{ route('paymentorder.download', ['id' => Crypt::encryptString($paymentOrder->id), 'type' => 'payment_order']) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download me-1"></i>Download Order of Payment</a></li>
                                 <li><a class="dropdown-item" href="{{ route('paymentorder.download', ['id' => Crypt::encryptString($paymentOrder->id), 'type' => 'billing_statement']) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Assesment of Fees and Chardes"><i class="fas fa-file-download me-1"></i>Download Assesment of Fees and Charges</a></li>
                             @endcan
-                            @can('uploadSignedOrder', $paymentOrder)
-                                <li><a class="dropdown-item" href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment and Assement of Fees and Charges"><i class="fas fa-upload me-1"></i>Upload</a></li>
-                            @endcan
                         </ul>
                     </div>
                 </dd>
@@ -106,7 +103,6 @@ active
 @endsection
 
 @section('includes')
-    @include('components.uploadPaymentOrder')
     @include('components.updatePayment')
     @include('components.updateSerialNo')
 @endsection

@@ -60,8 +60,8 @@ class PaymentOrder extends Model implements Auditable
     public function scopePendingOopSignaturesFor($query, $userId)
     {
         return $query->where(function ($q) use ($userId) {
-            $q->where('prepared_signed', true)
-            ->where('approved_signed', true)
+            $q->whereNotNull('prepared_signed')
+            ->whereNotNull('approved_signed')
             ->whereNotNull('serial_number')
             ->where('oop_approved_by', $userId)
             ->where(function ($q)  {
@@ -87,7 +87,7 @@ class PaymentOrder extends Model implements Auditable
                  $subQ->whereNull('approved_signed')
                     ->orWhere('approved_signed', false);
             })
-            ->where('prepared_signed', true);
+            ->whereNotNull('prepared_signed');
         });
     }
 

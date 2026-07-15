@@ -18,6 +18,7 @@ use App\Models\Barangay;
 use App\Models\User;
 use App\Models\WildlifeFarm;
 use App\Helpers\ApplicationHelper;
+use Illuminate\Support\Facades\Storage;
 
 class PermitteeController extends Controller
 {
@@ -374,7 +375,8 @@ class PermitteeController extends Controller
         $permit_id = Crypt::decryptString($id);
         $permittee = Permittee::find($permit_id);
 
-        $path = storage_path('app/private/' . $permittee->document);
+        // $path = storage_path('app/private/' . $permittee->document);
+        $path = Storage::disk('s3')->temporaryUrl($permittee->document, now()->addMinutes(30));
         return response()->file($path);
     }
 }

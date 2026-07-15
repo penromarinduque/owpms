@@ -150,7 +150,7 @@ active
                 </div>
 
                 <div class="d-flex justify-content-end gap-1">
-                    <a href="{{ route('ltpapplication.printPermit', Crypt::encryptString($permit->id)) }}" target="_blank" class="btn btn-outline-primary"><i class="fas fa-print me-2"></i>Print</a>
+                    {{-- <a href="{{ route('ltpapplication.printPermit', Crypt::encryptString($permit->id)) }}" target="_blank" class="btn btn-outline-primary"><i class="fas fa-print me-2"></i>Print</a> --}}
                     <button type="submit" class="btn btn-primary btn-submit"><i class="fas fa-save me-2"></i>Save Changes</button>
                 </div>
             </form>

@@ -80,7 +80,6 @@ active
     </div>
 </div>
 
-@include('components.uploadPaymentOrder')
 @include('components.updatePayment')
 
 @endsection

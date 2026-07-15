@@ -187,7 +187,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('print-billing-statement-template/{id}', [PaymentOrderController::class, 'printBillingStatementTemplate'])->name('paymentorder.printBillingStatementTemplate')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('print-oop-template/{id}', [PaymentOrderController::class, 'printOopTemplate'])->name('paymentorder.printOopTemplate')->middleware('permission:PAYMENT_ORDERS_INDEX');
         // Route::get('print/{id}', [PaymentOrderController::class, 'print'])->name('paymentorder.print')->middleware('permission:PAYMENT_ORDERS_INDEX');
-        Route::post('upload/{id}', [PaymentOrderController::class, 'upload'])->name('paymentorder.upload')->middleware('permission:PAYMENT_ORDERS_INDEX');
+        // Route::post('upload/{id}', [PaymentOrderController::class, 'upload'])->name('paymentorder.upload')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('download/{id}/{type}', [PaymentOrderController::class, 'download'])->name('paymentorder.download')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('show/{id}', [PaymentOrderController::class, 'show'])->name('paymentorder.show')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('view/{id}', [PaymentOrderController::class, 'view'])->name('paymentorder.view');
