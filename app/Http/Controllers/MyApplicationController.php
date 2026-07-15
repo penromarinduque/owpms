@@ -337,13 +337,22 @@ class MyApplicationController extends Controller
 
         $permittee = Permittee::find($ltp_application->permittee_id);
 
+        // $systemGeneratedDocuments = [
+        //     "request_letter" => Storage::disk('s3')->exists($ltp_application->request_letter_path) ? Storage::disk('s3')->temporaryUrl("request_l", now()->addMinutes(30)) : null,
+        //     "billing_statement" => null,
+        //     "oop" => null,
+        //     "inspection_report" => null,
+        //     "permit" => null
+        // ];
+
         return view('permittee.myapplication.preview', [
             '_helper' => $_helper,
             'title' => 'LTP Application',
             'wcp' => $ltp_application->permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp"),
             'wfp' => $ltp_application->permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wfp"),
             "ltp_application" => $ltp_application,
-            "permittee" => $permittee
+            "permittee" => $permittee,
+            "systemGeneratedDocuments" => $systemGeneratedDocuments
         ]);
     }
 
