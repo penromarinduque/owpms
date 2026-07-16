@@ -294,7 +294,6 @@ My Applications
     @endif
 </div>
 
-
 <div class="modal fade" id="resubmitApplicationModal">
     <div class="modal-dialog">
         <form action="" method="POST" class="modal-content">

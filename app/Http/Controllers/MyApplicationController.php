@@ -351,8 +351,8 @@ class MyApplicationController extends Controller
             'wcp' => $ltp_application->permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp"),
             'wfp' => $ltp_application->permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wfp"),
             "ltp_application" => $ltp_application,
-            "permittee" => $permittee,
-            "systemGeneratedDocuments" => $systemGeneratedDocuments
+            "permittee" => $permittee
+            // "systemGeneratedDocuments" => $systemGeneratedDocuments
         ]);
     }
 
