@@ -148,9 +148,9 @@
             <table style="width: 100%;">
                 <tr>
                     <td width="15%"></td>
-                    <td width="35%"  class="text-center" id="prepared_by_position__td"><img src="{{ $preparedByUrl }}" alt=""></td>
+                    <td width="35%"  class="text-center" id="prepared_by_position__td"><img style="max-width: 150px" src="{{ $preparedByUrl }}" alt=""></td>
                     <td width="15%"></td>
-                    <td width="35%"  class="text-center" id="approved_by_position__td"><img src="{{ $approvedByUrl }}" alt=""></td>
+                    <td width="35%"  class="text-center" id="approved_by_position__td"><img style="max-width: 150px" src="{{ $approvedByUrl }}" alt=""></td>
                 </tr>
                 <tr>
                     <td width="15%"></td>

@@ -39,11 +39,13 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\WebhookController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
+use App\Models\PaymentOrder;
 use App\Models\User;
 use App\Notifications\LtpApplicationExpired;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelPdf\Facades\Pdf;
 
 Route::get('/', function () {
@@ -439,6 +441,20 @@ Route::prefix("tests")->group( function () {
 });
 
 Route::get("test", function () {
-    $_user = new User();
-    return $_user->getAllInspectors();
+    $payment_order = PaymentOrder::find(1);
+    $preparedBy = $payment_order->preparedBy->getSignature();
+    $preparedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $preparedBy->signature, now()->addMinutes(30));
+    $approvedBy =$payment_order->approvedBy->getSignature();
+    $approvedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $approvedBy->signature, now()->addMinutes(30));
+    return Pdf::view("pdfs.billing-statement-pdf", [
+        "payment_order" => $payment_order,
+        "ltp_application" => $payment_order->ltpApplication,
+        "ltp_fee" => $payment_order->ltpFee,
+        "preparedByUrl" => $preparedByUrl,
+        "approvedByUrl" => $approvedByUrl,
+        "prepared_by" => $payment_order->preparedBy,
+        "approved_by" => $payment_order->approvedBy
+    ])
+    ->paperSize(8.5, 13, "in")
+    ->waitUntilReady();
 });
