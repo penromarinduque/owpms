@@ -258,6 +258,10 @@ class ForSignaturesController extends Controller
             $payment_order = PaymentOrder::find($payment_order_id);
             Gate::authorize('preparerSign', $payment_order);
             $signature_title = $payment_order->id . "_prepared_by.png";
+            $signature = $payment_order->preparedBy->getSignature();
+            if(!$signature) {
+                return redirect()->back()->with('error', 'Signature not found.');
+            }
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title, 
                 Storage::disk('s3')->get("signatures/" . $payment_order->preparedBy->getSignature()->signature)
@@ -275,6 +279,10 @@ class ForSignaturesController extends Controller
             $payment_order = PaymentOrder::find($payment_order_id);
             Gate::authorize('approverSign', $payment_order);
             $signature_title = $payment_order->id . "_approved_by.png";
+            $signature = $payment_order->approvedBy->getSignature();
+            if(!$signature) {
+                return redirect()->back()->with('error', 'Signature not found.');
+            }
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title, 
                 Storage::disk('s3')->get("signatures/" . $payment_order->preparedBy->getSignature()->signature)
@@ -315,6 +323,10 @@ class ForSignaturesController extends Controller
             $payment_order = PaymentOrder::find($payment_order_id);
             Gate::authorize('oopApproverSign', $payment_order);
             $signature_title = $payment_order->id . "_oop_approved_by.png";
+            $signature = $payment_order->oopApprovedBy->getSignature();
+            if(!$signature) {
+                return redirect()->back()->with('error', 'Signature not found.');
+            }
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title, 
                 Storage::disk('s3')->get("signatures/" . $payment_order->oopApprovedBy->getSignature()->signature)
