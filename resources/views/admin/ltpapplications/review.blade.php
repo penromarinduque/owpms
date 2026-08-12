@@ -20,7 +20,7 @@ active
         {{-- @can('accept', $ltp_application)
             <button class="btn btn-sm btn-success"data-bs-toggle="modal" data-bs-target="#acceptApplicationModal"><i class="fas fa-check me-1"></i>Accept Application</button>
         @endcan --}}
-        @can('review', $ltp_application)
+        @can('reviewed', $ltp_application)
             <button class="btn btn-sm btn-success"data-bs-toggle="modal" data-bs-target="#reviewApplicationModal"><i class="fas fa-check me-1"></i>Reviewed</button>
         @endcan
         @can('return', $ltp_application)

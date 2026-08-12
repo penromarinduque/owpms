@@ -43,6 +43,7 @@ class PaymentOrderCreated extends Notification
         return (new MailMessage)
                     ->line('Good day!')
                     ->line('Your Payment Order for LTP Application '.$this->ltpApplication->application_no.' has been created and is now awaiting signature.')
+                    ->line('Please note that the amount of PHP '.number_format($this->paymentOrder->ltpFee->amount, "2", ".", ",").' is required for payment.')
                     ->action('View Application', URL::route('myapplication.preview', ['id' => Crypt::encryptString($this->ltpApplication->id)]))
                     ->line('Thank you for using our application!');
     }

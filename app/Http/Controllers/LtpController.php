@@ -22,10 +22,11 @@ class LtpController extends Controller
     }
 
     public function viewPermit($id) {
+        // return Crypt::decryptString($id);
         $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
 
         Gate::authorize('viewPermit', $ltpPermit);
-        $file = Storage::disk('private')->get('ltps/' . $ltpPermit->ltpApplication->permit->permit_number . '.pdf');
+        $file = Storage::disk('s3')->get('ltps/' . $ltpPermit->ltpApplication->permit->permit_number . '.pdf');
         return response($file)->header('Content-Type', 'application/pdf');
     }
 }

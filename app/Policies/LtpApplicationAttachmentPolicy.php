@@ -13,6 +13,10 @@ class LtpApplicationAttachmentPolicy
      */
     public function viewAny(User $user): bool
     {
+        return true;
+        if($user->usertype == 'admin' || $user->usertype == 'internal' || $ltpApplicationAttachment->ltpApplication->permittee->user_id == $user->id){ 
+            return true;
+        }
         return false;
     }
 
@@ -21,6 +25,7 @@ class LtpApplicationAttachmentPolicy
      */
     public function view(User $user, LtpApplicationAttachment $ltpApplicationAttachment): bool
     {
+        return true;
         if($user->usertype == 'admin' || $user->usertype == 'internal' || $ltpApplicationAttachment->ltpApplication->permittee->user_id == $user->id){ 
             return true;
         }

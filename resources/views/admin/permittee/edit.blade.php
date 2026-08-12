@@ -28,7 +28,7 @@ active
         </div>
         <div class="card-body">
             @if(!empty($user))
-        	<form method="POST" action="{{ route('permittees.update', [Crypt::encryptString($user_id)]) }}" onsubmit="disableSubmitButton('btn_update');">
+        	<form method="POST" action="{{ route('permittees.update', [Crypt::encryptString($user_id)]) }}" onsubmit="disableSubmitButton('btn_update');" enctype="multipart/form-data">
         	    @csrf
         	    @if ($errors->any())
         	    <div class="alert alert-danger">

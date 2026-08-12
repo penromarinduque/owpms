@@ -19,7 +19,7 @@ active
     
     <div class="card mb-4">
         <div class="card-header">
-            <div class="card-title"><i class="fas fa-money-check-alt me-2"></i>List of LTP Fees</div>
+            <h5 class="card-title mb-0"><i class="fas fa-money-check-alt me-2"></i>List of LTP Fees</h5>
         </div>
         <div class="card-body">
             <div class="d-flex justify-content-end mb-2">

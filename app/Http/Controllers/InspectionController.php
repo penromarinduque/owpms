@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Notification;
 use App\Models\User;
 use App\Notifications\InspectionReportCreated;
 use App\Notifications\SignedNotification;
+use Spatie\LaravelPdf\Enums\Format;
+use Spatie\LaravelPdf\Enums\Unit;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class InspectionController extends Controller
 {
@@ -75,7 +78,7 @@ class InspectionController extends Controller
         return DB::transaction(function () use ($request, $ltp_application, $ltp_application_id) {
             $imagesToInsert = [];
             foreach ($request->photos as $key => $value) {
-                $path = $value->storeAs('inspection-photos', time() . "_" . $ltp_application_id . '-' . $key . '.' . $value->getClientOriginalExtension(), 'private');
+                $path = $value->storeAs('inspection-photos', time() . "_" . $ltp_application_id . '-' . $key . '.' . $value->getClientOriginalExtension());
                 $imagesToInsert[] = [
                     'ltp_application_id' => $ltp_application->id,
                     'image_url' => $path,
@@ -150,11 +153,12 @@ class InspectionController extends Controller
 
         $path = $image->image_url;
 
-        if (!Storage::disk('private')->exists($path)) {
+        if (!Storage::exists($path)) {
             abort(404, 'File not found in storage');
         }
 
-        return Storage::disk('private')->response($path); // Or ->download($path)
+        return Storage::response($path);
+        // return Storage::disk('private'); // Or ->download($path)
     }
 
     public function viewVideo(string $ltp_application_id, string $id)
@@ -177,11 +181,11 @@ class InspectionController extends Controller
 
         $path = $video->video_url;
 
-        if (!Storage::disk('private')->exists($path)) {
+        if (!Storage::exists($path)) {
             abort(404, 'File not found in storage');
         }
 
-        return Storage::disk('private')->response($path); // Or ->download($path)
+        return Storage::response($path); // Or ->download($path)
     }
 
     public function downloadPhoto(string $ltp_application_id, string $id) {
@@ -202,11 +206,11 @@ class InspectionController extends Controller
 
         $path = $image->image_url;
 
-        if (!Storage::disk('private')->exists($path)) {
+        if (!Storage::exists($path)) {
             abort(404, 'File not found in storage');
         }
 
-        return Storage::disk('private')->download($path);
+        return Storage::download($path);
     }
 
     public function deletePhoto(string $ltp_application_id, string $id) {
@@ -225,8 +229,8 @@ class InspectionController extends Controller
 
         Gate::authorize('inspect', $ltp_application);
 
-        if (Storage::disk('private')->exists($image->image_url)) {
-            Storage::disk('private')->delete($image->image_url);
+        if (Storage::exists($image->image_url)) {
+            Storage::delete($image->image_url);
         }
 
         GeottaggedImage::where('id', $image->id)->delete();
@@ -348,6 +352,17 @@ class InspectionController extends Controller
 
         $inspection_report = InspectionReport::where(['ltp_application_id' => $ltp_application_id])->first();
 
+        if(
+            $inspection_report 
+            && Storage::exists('inspection_report/'.$inspection_report->id.'.pdf')
+        // && ($inspection_report->permittee_signed || $inspection_report->inspector_signed || $inspection_report->approver_signed)
+        ) {
+            return Storage::response('inspection_report/'.$inspection_report->id.'.pdf', 'Inspection Report.pdf', [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="Inspection Report.pdf"'
+            ]);
+        }
+
         if ($inspection_report) {
             return view('inspection.edit-report', [
                 'ltp_application' => $ltp_application,
@@ -445,6 +460,17 @@ class InspectionController extends Controller
         Gate::authorize('inspect', $ltp_application);
 
         $inspection_report = InspectionReport::find(Crypt::decryptString($id));
+ 
+        return Pdf::view('pdfs.inspection-report', [
+            'ltp_application' => $ltp_application,
+            'inspection_report' => $inspection_report,
+            '_helper' => $_helper,
+            "_user" => $_user,
+            "_position" => $_position
+        ])
+        ->paperSize(8.5, 13, 'in')
+        ->margins(0.3, 0, 0.3, 0, Unit::Inch)
+        ->waitUntilReady();
 
         return view('inspection.print-report', [
             'ltp_application' => $ltp_application,
@@ -472,7 +498,7 @@ class InspectionController extends Controller
         }
 
         return DB::transaction(function () use ($request, $ltp_application, $id) {
-            $request->file('document')->storeAs('inspection_report', $id . '.' . $request->file('document')->getClientOriginalExtension(), 'private');
+            $request->file('document')->storeAs('inspection_report', $id . '.' . $request->file('document')->getClientOriginalExtension());
 
             return redirect()->back()->with('success', 'Document uploaded successfully!');
         });
@@ -486,6 +512,6 @@ class InspectionController extends Controller
 
         Gate::authorize('downloadDocument', $inspectionReport);
 
-        return Storage::disk('private')->response('inspection_report/' . $id . '.' . 'pdf');
+        return Storage::response('inspection_report/' . $id . '.' . 'pdf', 'Inspection Report.pdf');
     }
 }

@@ -18,12 +18,13 @@ active
     </ol>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                
-                <a href="{{ route('users.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
-            </div>
-            <i class="fas fa-user-edit me-1"></i>
-            Edit User here
+            <h5 class="card-title mb-0">
+                <div class="float-end">
+                    <a href="{{ route('users.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
+                </div>
+                <i class="fas fa-user-edit me-1"></i>
+                Edit User here
+            </h5>
         </div>
         <div class="card-body">
         	@if(!empty($user))
@@ -89,7 +90,7 @@ active
                         <div class="input-group">
                             <input type="password" class="form-control" name="password" id="password" placeholder="Password" aria-label="Text input with checkbox" disabled>
                             <div class="input-group-text">
-                                <input class="form-check-input mt-0" type="checkbox" id="chk_show_pass" aria-label="Checkbox for following text input" onclick="showPass('chk_show_pass', 'password');" disabled>&nbsp;<label for="chk_show_pass">Show</label>
+                                <input class="form-check-input mt-0" type="checkbox" id="chk_show_pass" aria-label="Checkbox for following text input" onclick="showPass('chk_show_pass', 'password');" disabled>&nbsp;<label for="chk_show_pass" class="mb-0">Show</label>
                             </div>
                         </div>
                         @error('password')

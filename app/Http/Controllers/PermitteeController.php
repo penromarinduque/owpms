@@ -18,6 +18,7 @@ use App\Models\Barangay;
 use App\Models\User;
 use App\Models\WildlifeFarm;
 use App\Helpers\ApplicationHelper;
+use Illuminate\Support\Facades\Storage;
 
 class PermitteeController extends Controller
 {
@@ -123,7 +124,7 @@ class PermitteeController extends Controller
                 ]);
 
                 if($request->hasFile('wfp_document')) {
-                    $path = $request->file('wfp_document')->storeAs('wfp', $permittee_wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension(), 'private');
+                    $path = $request->file('wfp_document')->storeAs('wfp', $permittee_wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension());
                     $permittee_wfp->document = $path;
                     $permittee_wfp->save();
                 }
@@ -150,7 +151,7 @@ class PermitteeController extends Controller
                 ]);
 
                 if($request->hasFile('wcp_document')) {
-                    $path = $request->file('wcp_document')->storeAs('wcp', $permittee_wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension(), 'private');
+                    $path = $request->file('wcp_document')->storeAs('wcp', $permittee_wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension());
                     $permittee_wcp->document = $path;
                     $permittee_wcp->save();
                 }
@@ -298,13 +299,13 @@ class PermitteeController extends Controller
             $wcp->save();
 
             if($request->hasFile('wcp_document')) {
-                $path = $request->file('wcp_document')->storeAs('wcp', $wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension(), 'private');
+                $path = $request->file('wcp_document')->storeAs('wcp', $wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension());
                 $wcp->document = $path;
                 $wcp->save();
             }
 
             if($request->hasFile('wfp_document')) {
-                $path = $request->file('wfp_document')->storeAs('wfp', $wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension(), 'private');
+                $path = $request->file('wfp_document')->storeAs('wfp', $wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension());
                 $wfp->document = $path;
                 $wfp->save();
             }
@@ -327,7 +328,7 @@ class PermitteeController extends Controller
         $permittee = Permittee::find($permittee_id);
 
         if ($request->hasFile('permit_file')) {
-            $path = $request->file('permit_file')->storeAs('permits', $permittee->id .'.'. $request->file('permit_file')->getClientOriginalExtension(), 'private');
+            $path = $request->file('permit_file')->storeAs('permits', $permittee->id .'.'. $request->file('permit_file')->getClientOriginalExtension());
             $permittee->document = $path;
             $permittee->save();
         }
@@ -361,7 +362,6 @@ class PermitteeController extends Controller
         $wcp = $_permittee->getPermitteeWCP($user->id, 'wcp');
         $wfp = $_permittee->getPermitteeWFP($user->id, 'wfp');
 
-
         return view('components.permitteeInfoCard', [
             '_helper' => $_helper,
             'wcp' => $wcp,
@@ -371,10 +371,12 @@ class PermitteeController extends Controller
     }
 
     public function viewPermit(string $id){
-        $permittee_id = Crypt::decryptString($id);
-        $permittee = Permittee::find($permittee_id);
+        
+        $permit_id = Crypt::decryptString($id);
+        $permittee = Permittee::find($permit_id);
 
-        $path = storage_path('app/private/' . $permittee->document);
+        // $path = storage_path('app/private/' . $permittee->document);
+        $path = Storage::disk('s3')->temporaryUrl($permittee->document, now()->addMinutes(30));
         return response()->file($path);
     }
 }

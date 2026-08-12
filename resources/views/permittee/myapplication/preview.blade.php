@@ -14,7 +14,9 @@ My Applications
     </ol>
 
     <div class="d-flex justify-content-end gap-2 mb-2">
-        <a class="btn btn-sm btn-outline-primary" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print Request Letter</a>
+        @if (!in_array($ltp_application->application_status, ["draft", "resubmitted"]))
+            <a class="btn btn-sm btn-outline-primary" target="_blank" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}"><i class="fas fa-print me-1"></i>Print Request Letter</a>
+        @endif
         <div class="dropdown">
             <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-file-alt me-1"></i> Permits
@@ -57,9 +59,12 @@ My Applications
                     </li>
                     @if ($ltp_application->application_status == 'returned')
                         <li>
-                            <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
+                            {{-- <a href="#" onclick="showResubmitApplicationModal('{{ route('myapplication.resubmit', Crypt::encryptString($ltp_application->id)) }}')" class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Resubmit">
                                 <i class="fa-solid fa-cloud-arrow-up me-2"></i> Resubmit Application
-                            </a>
+                            </a> --}}
+                            <button class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Resubmit" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}', true)">
+                                <i class="fa-solid fa-cloud-arrow-up me-2"></i> Resubmit Application
+                            </button>
                         </li>
                     @endif
                     @if (in_array($ltp_application->application_status, ['paid', 'approved', 'payment-in-process']))
@@ -205,20 +210,43 @@ My Applications
 
             <h6><i class="fas fa-paperclip me-2"></i>Attachments</h6>
             
-            <div class="bg-light p-3 rounded-2">
+            <div class="bg-light p-3 rounded-2 mb-2">
                 <div class="row mb-3">
-                    @forelse($ltp_application->attachments as $attachment)
+                    @foreach($ltp_application->attachments as $attachment)
                         <div class="col-lg-3 col-sm-6">
                             <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
                             <h6><a href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($attachment->id)]) }}" target="_blank">View Attachment</a></h6>
                         </div>
-                    @empty
-                        <div class="col-lg-3 col-sm-6">
-                            <label>No Attachments Submitted</label>
-                        </div>
-                    @endforelse
+                    @endforeach
+                    {{-- <div class="col-lg-3 col-sm-6">
+                        <label>Request Letter</label>
+                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                    </div>   --}}
                 </div>
             </div>
+
+            {{-- <h6><i class="fas fa-paperclip me-2"></i>System Generated Documents</h6>
+
+            <div class="bg-light p-3 rounded-2">
+                <div class="row mb-3">
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Assessment of Fees and Charges</label>
+                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                    </div> 
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Order of Payment</label>
+                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                    </div> 
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Inspection Report</label>
+                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                    </div> 
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Local Transport Permit</label>
+                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                    </div> 
+                </div>
+            </div> --}}
 
             
         </div>
@@ -266,7 +294,6 @@ My Applications
     @endif
 </div>
 
-
 <div class="modal fade" id="resubmitApplicationModal">
     <div class="modal-dialog">
         <form action="" method="POST" class="modal-content">
@@ -300,7 +327,6 @@ My Applications
     @include('components.returnApplication')
     @include('components.confirm')
     @include('components.submitApplication')
-    @include('components.uploadPaymentOrder')
     @include('components.updatePayment')
     @include('components.confirmDelete')
     @include('components.permitteeUploadReceipt')

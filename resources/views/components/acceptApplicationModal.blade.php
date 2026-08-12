@@ -8,10 +8,18 @@
             </div>
             <div class="modal-body">
                 <p>Please double check if all the required attachments are physically submitted and complete before accepting the application. This cannot be undone.</p>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"  name="requestLetter">
+                    <a class="form-check-label" href="#">
+                        Request Letter
+                        <span class="text-danger">*</span>
+                    </a>
+                </div>
                 @foreach ($_ltp_requirement->getActiveRequirements() as $req)
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="req_{{ $req->id }}" name="req[]" value="{{ $req->id }}" >
-                        <a class="form-check-label" href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($req->id)]) }}" target="_blank" >
+                        {{-- <a class="form-check-label" href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($req->id)]) }}" target="_blank" > --}}
+                        <a class="form-check-label" href="#">
                             {{-- for="req_{{ $req->id }}" --}}
                             {{ $req->requirement_name }} 
                             @if ($req->is_mandatory)

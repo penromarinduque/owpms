@@ -21,7 +21,7 @@ active
 
     <div class="card mb-4">
         <div class="card-header">
-            <div class="card-title"><i class="fas fa-money-check-alt me-2"></i>Add Fee</div>
+            <h5 class="card-title mb-0"><i class="fas fa-money-check-alt me-2"></i>Add Fee</h5>
         </div>
         <div class="card-body">
             <form action="{{ route('ltpfees.store') }}" method="POST">

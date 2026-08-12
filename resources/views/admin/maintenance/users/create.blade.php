@@ -18,12 +18,13 @@ active
     </ol>
     <div class="card mb-4">
     	<div class="card-header">
-            <div class="float-end">
-                
-                <a href="{{ route('users.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
-            </div>
-            <i class="fas fa-user-plus me-1"></i>
-            Add New User here
+            <h5 class="card-title mb-0">
+                <div class="float-end">
+                    <a href="{{ route('users.index') }}" class="btn btn-sm btn-danger"><i class="fas fa-chevron-left"></i> Back</a>
+                </div>
+                <i class="fas fa-user-plus me-1"></i>
+                Add New User here
+            </h5>
         </div>
         <div class="card-body">
         	<form method="POST" action="{{ route('users.store') }}" onsubmit="disableSubmitButton('btn_save');">

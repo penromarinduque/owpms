@@ -124,7 +124,7 @@ class LtpApplicationPolicy
             && $inspectionReport->permittee_signed
             && $inspectionReport->inspector_signed
             && $inspectionReport->approver_signed
-            && Storage::disk('private')->exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
+            && Storage::exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
     }
 
     public function updateLtp(User $user, LtpApplication $ltpApplication) {
@@ -151,12 +151,16 @@ class LtpApplicationPolicy
 
     public function downloadLtp(User $user, LtpApplication $ltpApplication) {
         $permit = $ltpApplication->permit;
-        return (in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions()) || $user->id == $ltpApplication->permittee->user_id)
-            && ($ltpApplication->application_status == LtpApplication::STATUS_RELEASED || ($permit && $permit->penro_signed && $permit->chief_tsd_signed));
+        return (in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions()) && $user->id == $ltpApplication->permittee->user_id)
+            || ($user->id != $ltpApplication->permittee->user_id || ($permit && $permit->penro_signed && $permit->chief_tsd_signed));
     }
 
     public function review(User $user, LtpApplication $ltpApplication) {
         return in_array('LTP_APPLICATION_REVIEW', $user->getUserPermissions());
+    }
+
+    public function reviewed(User $user, LtpApplication $ltpApplication) {
+        return in_array('LTP_APPLICATION_REVIEW', $user->getUserPermissions()) && ($ltpApplication->application_status == LtpApplication::STATUS_SUBMITTED || $ltpApplication->application_status == LtpApplication::STATUS_UNDER_REVIEW);
     }
 
     public function accept(User $user, LtpApplication $ltpApplication) {

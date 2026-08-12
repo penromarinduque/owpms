@@ -65,7 +65,7 @@
                     <td width="30%"></td>
                     <td width="30%"></td>
                     <td width="15%" class="fw-bold">Bill No.</td>
-                    <td width="25%" style="border-bottom: 1px solid black" class="text-center fst-italic" >{{ $payment_order->order_no }}</td>
+                    <td width="25%" style="border-bottom: 1px solid black" class="text-center fst-italic" >{{ $payment_order->order_number }}</td>
                 </tr>
                 <tr>
                     <td ></td>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LtpApplicationAttachment;
+use App\Models\LtpRequirement;
 use BaconQrCode\Encoder\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -31,7 +32,7 @@ class LtpApplicationRequirementController extends Controller
 
             $file = $request->file('document_file');
             $fileName = 'requirement_' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('requirements', $fileName, 'private'); // store('requirements');
+            $path = $file->storeAs('requirements', $fileName); // store('requirements');
             $attachment = LtpApplicationAttachment::where('ltp_application_id', $request->application_id)->where('ltp_requirement_id', $request->requirement_id)->first();
             if($attachment) {
                 $attachment->file_path = $path;
@@ -50,11 +51,15 @@ class LtpApplicationRequirementController extends Controller
     }
 
     public function view(Request $request, string $id) {
+        $requirement = LtpRequirement::find(Crypt::decryptString($id));
         $attachment = LtpApplicationAttachment::find(Crypt::decryptString($id));
-
         Gate::authorize('view', $attachment);
 
-        $path = storage_path('app/private/' . $attachment->file_path);
-        return response()->file($path);
+        if (!Storage::disk('s3')->exists($attachment->file_path)) {
+            abort(404);
+        }
+
+        $path = Storage::disk('s3')->temporaryUrl($attachment->file_path, now()->addMinutes(30));
+        return redirect($path);
     }
 }

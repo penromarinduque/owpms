@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Spatie\LaravelPdf\Enums\Unit;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class LtpApplicationController extends Controller
 {
@@ -37,6 +39,7 @@ class LtpApplicationController extends Controller
         $_ltp_requirement = new LtpRequirement;
 
         $ltp_application_query = LtpApplication::query();
+        $ltp_application_query->with(['permittee']);
         $sort_by = $request->has('sort_by') && $request->sort_by != null ? $request->sort_by : 'created_at';
         $sort_order = $request->has('sort_order') && $request->sort_order != null ? $request->sort_order : 'desc';
 
@@ -91,7 +94,7 @@ class LtpApplicationController extends Controller
                 $ltp_application->application_status = LtpApplication::STATUS_UNDER_REVIEW;
                 $ltp_application->io_user_id = Auth::user()->id; // Set the IO user ID to the current user
                 $ltp_application->save();
-
+                
                 LtpApplicationProgress::create([
                     "ltp_application_id" => $ltp_application->id,
                     "user_id" => Auth::user()->id,
@@ -114,7 +117,6 @@ class LtpApplicationController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
         }
-        
     }
 
     public function return(Request $request) {
@@ -149,8 +151,8 @@ class LtpApplicationController extends Controller
             Notification::send($ltp_application->permittee->user, new LtpApplicationReturned($ltp_application));
     
             return redirect()->back()->with([
-                        'success' => 'Successfully returned application.'
-                    ]);
+                'success' => 'Successfully returned application.'
+            ]);
         });
 
     }
@@ -178,7 +180,7 @@ class LtpApplicationController extends Controller
 
             $ltp_application = LtpApplication::query()->with(["permittee.user"])->find($ltp_application_id);
 
-            Gate::authorize('review', $ltp_application);
+            Gate::authorize('reviewed', $ltp_application);
 
             // if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
             //     return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
@@ -219,6 +221,9 @@ class LtpApplicationController extends Controller
 
             Gate::authorize('accept', $ltp_application);
 
+            if(!$request->input('requestLetter') || $request->input('requestLetter') != "on") {
+                return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
+            }
             if(!$_ltp_requirement->checkIfMandatoryRequirementsExist($request->input('req') ?? [])) {
                 return redirect()->back()->with('error', 'Error: You forgot to physically check mandatory requirements, make sure the all mandatory attachments are submitted physically before accepting the application.');
             }
@@ -361,15 +366,6 @@ class LtpApplicationController extends Controller
     public function releaseLtp(Request $request, string $id) {
         $ltp_application = LtpApplication::find(Crypt::decryptString($id));
 
-        $validator = Validator::make($request->all() + $request->allFiles(), [
-            'ltp' => 'required|mimetypes:application/pdf'
-        ]);
-
-        if($validator->fails()) {
-            session(['forward_url' => url()->current()]);
-            return redirect()->back()->withErrors($validator, 'releaseLtp')->withInput()->with('error', 'Failed to release LTP.');
-        }
-
         Gate::authorize('releaseLtp', $ltp_application);
 
         return DB::transaction(function () use ($ltp_application, $request) {
@@ -385,7 +381,7 @@ class LtpApplicationController extends Controller
 
             $permit = $ltp_application->permit;
 
-            $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf', 'private');
+            // $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf');
 
             Notification::send($ltp_application->permittee->user, new LtpApplicationReleased($ltp_application));
 
@@ -398,11 +394,18 @@ class LtpApplicationController extends Controller
         $permit = LtpPermit::find(Crypt::decryptString($id));
         $ltp_application = LtpApplication::find($permit->ltp_application_id);
 
-        return view('admin.ltpapplications.print-permit', [
+        return Pdf::view('pdfs.permit', [
             'ltp_application' => $ltp_application,
             'permit' => $permit,
             '_user' => new User
-        ]);
+        ])
+        ->scale(1.1)
+        ->headerView('pdfs.header')
+        ->footerView('pdfs.footer')
+        ->paperSize(8.5, 13, 'in')
+        ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch)
+        ->waitUntilReady();
+
     }
 
     private function checkIndexAuthorization($category) {
@@ -426,7 +429,7 @@ class LtpApplicationController extends Controller
     public function downloadLtp(Request $request, string $id) {
         $ltp_application = LtpApplication::find(Crypt::decryptString($id));
         Gate::authorize('downloadLtp', $ltp_application);
-        $file = Storage::disk('private')->get('ltps/' . $ltp_application->permit->permit_number . '.pdf');
+        $file = Storage::get('ltps/' . $ltp_application->permit->permit_number . '.pdf');
         return response($file)->header('Content-Type', 'application/pdf');
     }
 }

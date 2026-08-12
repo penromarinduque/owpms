@@ -62,7 +62,7 @@
             text-align: center;
             width: 150px;
             display: block;
-            position: fixed;
+            /* position: fixed; */
             bottom: 20px;
             right: 20px;
             margin: 0rem auto;
@@ -83,7 +83,7 @@
             }
 
             .letterhead {
-                position: fixed;
+                /* position: fixed; */
                 top: 0;
                 width: 100%;
                 line-height: 1;
@@ -116,8 +116,8 @@
             <div class="recipient-block">
                 <p>{{date('F j, Y')}}</p>
                 <p>
-                    <strong>MS. IMELDA M. DIAZ</strong><br>
-                    PENR Officer<br>
+                    <strong>CESAR P. ODI, <i>RPF</i></strong><br>
+                    OIC, PENR Officer<br>
                     Boac, Marinduque
                 </p>
             </div>
@@ -125,7 +125,7 @@
             <!-- Subject and Greeting -->
             <div class="mb-4">
                 <p class="subject-line">Subject: Application for Local Transport Permit of Butterfly Species</p>
-                <p><strong>Madam:</strong></p>
+                <p><strong>Sir:</strong></p>
                 <p>Greetings!!</p>
                 <p class="text-justify">
                     &nbsp;&nbsp;&nbsp;&nbsp;Pursuant to the provisions provided in the WildLife Farm Permit and the WildLife Collection Permit,

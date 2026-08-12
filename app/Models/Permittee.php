@@ -162,7 +162,7 @@ class Permittee extends Model implements Auditable
     }
 
     public function getPermitteeSpeciesAttribute(){
-        return Specie::whereIn('id', function($query){
+        return Specie::query()->with('family')->whereIn('id', function($query){
             $query->select('specie_id')
                 ->from('permittee_species')
                 ->where('permittee_id', $this->id);

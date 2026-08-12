@@ -22,6 +22,7 @@ use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\IssuedOrController;
@@ -31,14 +32,21 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\PaymentOrderController;
 use App\Http\Controllers\QrController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SignatoryController;
 use App\Http\Controllers\SpecieNatureController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\WebhookController;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
+use App\Models\PaymentOrder;
+use App\Models\User;
 use App\Notifications\LtpApplicationExpired;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 Route::get('/', function () {
     return view('welcome');
@@ -181,7 +189,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('print-billing-statement-template/{id}', [PaymentOrderController::class, 'printBillingStatementTemplate'])->name('paymentorder.printBillingStatementTemplate')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('print-oop-template/{id}', [PaymentOrderController::class, 'printOopTemplate'])->name('paymentorder.printOopTemplate')->middleware('permission:PAYMENT_ORDERS_INDEX');
         // Route::get('print/{id}', [PaymentOrderController::class, 'print'])->name('paymentorder.print')->middleware('permission:PAYMENT_ORDERS_INDEX');
-        Route::post('upload/{id}', [PaymentOrderController::class, 'upload'])->name('paymentorder.upload')->middleware('permission:PAYMENT_ORDERS_INDEX');
+        // Route::post('upload/{id}', [PaymentOrderController::class, 'upload'])->name('paymentorder.upload')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('download/{id}/{type}', [PaymentOrderController::class, 'download'])->name('paymentorder.download')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('show/{id}', [PaymentOrderController::class, 'show'])->name('paymentorder.show')->middleware('permission:PAYMENT_ORDERS_INDEX');
         Route::get('view/{id}', [PaymentOrderController::class, 'view'])->name('paymentorder.view');
@@ -302,8 +310,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     });
 
     // User Access Management
-    Route::prefix('iam')->group(function () {
-        
+    Route::prefix('iam')->group(function () { 
         Route::middleware(['userType:admin'])->prefix('roles')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('iam.roles.index')->middleware('permission:ROLES_INDEX');
             Route::get('/create', [RoleController::class, 'create'])->name('iam.roles.create')->middleware('permission:ROLES_CREATE');
@@ -352,6 +359,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     Route::prefix('for-signatures')->group(function () {
        Route::get('/', [ForSignaturesController::class, 'index'])->name('for-signatures.index'); 
        Route::post('inspection-report-permittee-sign/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSign'])->name('for-signatures.inspectionReportPermitteeSign');
+       Route::post('inspection-report-permittee-sign-digital/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSignDigital'])->name('for-signatures.inspectionReportPermitteeSignDigital');
        Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
        Route::post('inspection-report-approver-sign/{id}', [ForSignaturesController::class, 'inspectionReportApproverSign'])->name('for-signatures.inspectionReportApproverSign');
        Route::post('inspection-report-rps-sign/{id}', [ForSignaturesController::class, 'inspectionReportRpsSign'])->name('for-signatures.inspectionReportRpsSign');
@@ -369,11 +377,21 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/view-permit/{id}', [LtpController::class, 'viewPermit'])->name('ltps.viewPermit');
     });
 
+    Route::prefix('documents')->group(function () {
+        Route::get('/attach-signature', [DocumentController::class, 'attachSignature'])->name('documents.attachSignature');
+    });
+
+    Route::group(["prefix" => "webhooks", "as" => "webhooks."], function () {
+        Route::post('request-letter-signed', [WebhookController::class, 'requestLetterSigned'])->name('requestLetterSigned');
+        Route::post('permitee-inspection-report-signed', [WebhookController::class, 'permiteeInspectionReportSigned'])->name('permiteeInspectionReportSigned');
+    });
 });
 
 Route::prefix('qr')->group(function () {
     Route::get('/', [QrController::class, 'index'])->name('qr.index');
 });
+
+
 
 // test routes
 Route::get('/test-email', function () {
@@ -391,6 +409,11 @@ Route::get('/test-email', function () {
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }
+});
+
+Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+    Route::get('issued-permits', [ReportController::class, 'issuedPermits'])->name('issued-permits');
+    Route::post('issued-permits', [ReportController::class, 'printIssuedPermits'])->name('print-issued-permits');
 });
 
 //  test routes
@@ -415,4 +438,23 @@ Route::get("token", function () {
 Route::prefix("tests")->group( function () {
     Route::get("/", [TestController::class, 'create'])->name("test.create");
     Route::post("/", [TestController::class, 'store'])->name("test.store");
+});
+
+Route::get("test", function () {
+    $payment_order = PaymentOrder::find(1);
+    $preparedBy = $payment_order->preparedBy->getSignature();
+    $preparedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $preparedBy->signature, now()->addMinutes(30));
+    $approvedBy =$payment_order->approvedBy->getSignature();
+    $approvedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $approvedBy->signature, now()->addMinutes(30));
+    return Pdf::view("pdfs.billing-statement-pdf", [
+        "payment_order" => $payment_order,
+        "ltp_application" => $payment_order->ltpApplication,
+        "ltp_fee" => $payment_order->ltpFee,
+        "preparedByUrl" => $preparedByUrl,
+        "approvedByUrl" => $approvedByUrl,
+        "prepared_by" => $payment_order->preparedBy,
+        "approved_by" => $payment_order->approvedBy
+    ])
+    ->paperSize(8.5, 13, "in")
+    ->waitUntilReady();
 });

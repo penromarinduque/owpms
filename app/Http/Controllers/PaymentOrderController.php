@@ -194,7 +194,7 @@ class PaymentOrderController extends Controller
             Notification::send($paymentOrder->ltpApplication->permittee->user, new PaymentOrderCreated($paymentOrder));
             Notification::send($paymentOrder->preparedBy, new SignedNotification(route('for-signatures.index', ['type' => "payment_order"]), 'Payment Order for LTP Application '. $paymentOrder->ltpApplication->application_no . ' has been created and is awaiting your signature.'));
             
-            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)])->with('success', 'Order of Payment created successfully!');
+            return redirect()->route('paymentorder.show', ['id' => Crypt::encryptString($paymentOrder->id)])->with('success', 'Order of Payment created successfully!');
         });
     }
 
@@ -211,55 +211,45 @@ class PaymentOrderController extends Controller
         ]);
     }
 
-    public function upload(Request $request, string $id)
-    {
-        // Validate before transaction
-        // Validate with error bag
-        $validator = Validator::make($request->all(), [
-            'document_file' => 'required|mimes:pdf|max:1024'
-        ], [], [
-            'document_file' => 'document file'
-        ]);
+    // remove for full online signing
+    // public function upload(Request $request, string $id)
+    // {
+    //     // Validate before transaction
+    //     // Validate with error bag
+    //     $validator = Validator::make($request->all(), [
+    //         'document_file' => 'required|mimes:pdf|max:1024'
+    //     ], [], [
+    //         'document_file' => 'document file'
+    //     ]);
 
-        if($validator->fails()) {
-            return redirect()->back()->withErrors($validator, 'upload')->withInput()->with('error', 'Failed to upload document');
-        }
+    //     if($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator, 'upload')->withInput()->with('error', 'Failed to upload document');
+    //     }
 
-        return DB::transaction(function () use ($request, $id) {
-            $decryptedId = Crypt::decryptString($id);
-            $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
+    //     return DB::transaction(function () use ($request, $id) {
+    //         $decryptedId = Crypt::decryptString($id);
+    //         $paymentOrder = PaymentOrder::findOrFail($decryptedId); // Fail if not found
 
-            $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
-            $statement_filename = 'billing_statement_' . $paymentOrder->id . '.pdf';
-            $path = $request->file('document_file')->storeAs('payment_order', $filename, 'private');
-            $path2 = $request->file('billing_statement_file')->storeAs('billing_statemenet', $statement_filename, 'private');
+    //         $filename = 'payment_order_' . $paymentOrder->id . '.pdf';
+    //         $statement_filename = 'billing_statement_' . $paymentOrder->id . '.pdf';
+    //         $path = $request->file('document_file')->storeAs('payment_order', $filename);
+    //         $path2 = $request->file('billing_statement_file')->storeAs('billing_statemenet', $statement_filename);
 
-            $paymentOrder->update(['document' => $path]);
-            $paymentOrder->update(['billing_statement_doc' => $path2]);
+    //         $paymentOrder->update(['document' => $path]);
+    //         $paymentOrder->update(['billing_statement_doc' => $path2]);
 
-            $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
+    //         $ltpApplication = LtpApplication::find($paymentOrder->ltp_application_id);
 
-            LtpApplicationProgress::create([
-                "ltp_application_id" => $paymentOrder->ltp_application_id,
-                "user_id" => auth()->user()->id,
-                'description' => "Signed Order of Payment has been uploaded by " . auth()->user()->personalInfo->getFullNameAttribute(),
-                "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
-            ]);
+    //         LtpApplicationProgress::create([
+    //             "ltp_application_id" => $paymentOrder->ltp_application_id,
+    //             "user_id" => auth()->user()->id,
+    //             'description' => "Signed Order of Payment has been uploaded by " . auth()->user()->personalInfo->getFullNameAttribute(),
+    //             "status" => LtpApplicationProgress::STATUS_PAYMENT_IN_PROCESS
+    //         ]);
 
-            if($paymentOrder->status != PaymentOrder::STATUS_PAID){
-                $cashiers = User::whereHas('userRoles', function ($query) {
-                $query->whereHas('role', function ($query) {
-                        $query->whereHas('rolePermissions', function ($query) {
-                            $query->where('permission', 'PAYMENT_ORDERS_UPDATE');
-                        });
-                    });
-                })->get();
-                Notification::send($cashiers, new \App\Notifications\OopApproved($paymentOrder));
-            }
-
-            return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
-        });
-    }
+    //         return redirect()->route('paymentorder.index')->with('success', 'Document uploaded successfully');
+    //     });
+    // }
 
     public function download(string $id, string $type) {
         $paymentOrder = PaymentOrder::query()->with([
@@ -269,12 +259,12 @@ class PaymentOrderController extends Controller
         ])->find(Crypt::decryptString($id));
 
         if($type == 'payment_order') {
-            return Storage::disk('private')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
+            return Storage::download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
         }
         if($type == 'billing_statement') {
-            return Storage::disk('private')->download($paymentOrder->billing_statement_doc, 'Billing Statement No. ' . $paymentOrder->order_number . '.pdf');
+            return Storage::download($paymentOrder->billing_statement_doc, 'Billing Statement No. ' . $paymentOrder->order_number . '.pdf');
         }
-        return Storage::disk('private')->download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
+        return Storage::download($paymentOrder->document, 'Payment Order No. ' . $paymentOrder->order_number . '.pdf');
         
     }
     
@@ -305,11 +295,11 @@ class PaymentOrderController extends Controller
             return redirect()->back()->with('error', 'You are not authorized to view this document');
         }
 
-        $path = storage_path('app/private/' . $paymentOrder->document);
         if($type == 'billing_statement') {
-            $path = storage_path('app/private/' . $paymentOrder->billing_statement_doc);
+            // $path = storage_path('app/private/' . $paymentOrder->billing_statement_doc);
+            $path = Storage::response($paymentOrder->billing_statement_doc, now()->addMinutes(30));
         }
-        return response()->file($path);
+        return Storage::response($paymentOrder->document, now()->addMinutes(30)); // storage_path('app/private/' . $paymentOrder->document);
     }
 
     public function update(Request $request, string $payment_order_id) {
@@ -336,7 +326,7 @@ class PaymentOrderController extends Controller
 
                 $filename = $paymentOrder->ltp_application_id . '.' . $file->getClientOriginalExtension();
 
-                $path = $file->storeAs('receipts', $filename, 'private');
+                $path = $file->storeAs('receipts', $filename);
 
                 $paymentOrder->update([
                     'status' => $request->status,
@@ -376,7 +366,7 @@ class PaymentOrderController extends Controller
 
             Gate::authorize('viewReceipt', $paymentOrder);
 
-            return Storage::disk('private')->response($paymentOrder->receipt_url);
+            return Storage::response($paymentOrder->receipt_url);
             
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
