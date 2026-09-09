@@ -286,20 +286,20 @@ class PaymentOrderController extends Controller
     }
 
     public function view(Request $request, string $id) {
-        $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+        $application = LtpApplication::find(Crypt::decryptString($id));
+        $paymentOrder = $application->paymentOrder;
         $type = $request->has('type') ? $request->type : 'payment_order';
-
         Gate::authorize('view', $paymentOrder);
         
-        if(!Gate::allows('view-payment-order', $paymentOrder)) {
-            return redirect()->back()->with('error', 'You are not authorized to view this document');
-        }
+        // if(!Gate::allows('view-payment-order', $paymentOrder)) {
+        //     return redirect()->back()->with('error', 'You are not authorized to view this document');
+        // }
 
-        if($type == 'billing_statement') {
-            // $path = storage_path('app/private/' . $paymentOrder->billing_statement_doc);
-            $path = Storage::response($paymentOrder->billing_statement_doc, now()->addMinutes(30));
-        }
-        return Storage::response($paymentOrder->document, now()->addMinutes(30)); // storage_path('app/private/' . $paymentOrder->document);
+        $s3Path = ($type == 'billing_statement') 
+            ? "billing_statemenet/billing_statement_{$paymentOrder->id}.pdf"
+            : "payment_order/payment_order_{$paymentOrder->id}.pdf";
+
+        return Storage::disk('s3')->download($s3Path);
     }
 
     public function update(Request $request, string $payment_order_id) {

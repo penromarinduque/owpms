@@ -160,7 +160,7 @@
                                     <tr>    
                                         <td width="50%" ></td>
                                         <td width="50%" style="border-bottom: 1px solid black; ">
-                                            <img style="max-width: 150px" src="{{ $oopApproverUrl }}" alt="">
+                                            <img style="max-width: 250px" src="{{ $oopApproverUrl }}" alt="">
                                         </td>
                                     </tr>
                                     <tr>    

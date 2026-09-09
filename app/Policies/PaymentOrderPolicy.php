@@ -13,6 +13,7 @@ class PaymentOrderPolicy
      */
     public function viewAny(User $user): bool
     {
+        return true;
         return in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
     }
 
@@ -25,11 +26,11 @@ class PaymentOrderPolicy
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the user can view the model. 
      */
     public function view(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $user->id == $paymentOrder->ltpApplication->permittee->user_id || in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
+        return $user->id == $paymentOrder->ltpApplication->permittee->user_id || $user->isInternal();
     }
 
     /**

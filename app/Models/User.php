@@ -131,4 +131,8 @@ class User extends Authenticatable
     public function getSignature(){
         return Signature::where("user_id", $this->id)->first();
     }
+
+    public function isInternal(){
+        return $this->usertype == User::TYPE_INTERNAL || $this->usertype == User::TYPE_ADMIN;
+    }
 }

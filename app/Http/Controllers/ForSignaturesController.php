@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ElectronicSigratureTrait;
 use App\Helpers\ApplicationHelper;
 use App\Http\Controllers\Controller;
 use App\Models\InspectionReport;
@@ -25,6 +26,7 @@ use Spatie\LaravelPdf\Facades\Pdf;
 
 class ForSignaturesController extends Controller
 {
+    use ElectronicSigratureTrait;
 
     //
     public function index(Request $request) {
@@ -49,9 +51,20 @@ class ForSignaturesController extends Controller
             if(!$signature) {
                 return redirect()->back()->with('error', 'Signature not found.');
             }
+            $permitteeSignature = $this->getElectronicSignature(
+                $inspection_report->permittee->personalInfo->first_name . " " . $inspection_report->permittee->personalInfo->middle_name . " " . $inspection_report->permittee->personalInfo->last_name,
+                "Permittee",
+                Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
+                "Inspection Report for LTP Application #" . $inspection_report->ltp_application->application_no,
+                "8",
+                $inspection_report->id,
+                $inspection_report->permittee->id,  
+                null
+            );
+
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title,
-                Storage::disk('s3')->get("signatures/" . $signature->signature)
+                "data:image/png;base64," . base64_encode($permitteeSignature->body())
             );
             $inspection_report->permittee_signed = $signature_title;
             $inspection_report->save();
@@ -60,7 +73,7 @@ class ForSignaturesController extends Controller
         });
     }
 
-    public function inspectionReportPermitteeSignDigital(Request $request, string $id) {
+    public function inspectionReportPermitteeSignDigital(Request $request, string $id) {w
         $inspection_report_id = Crypt::decryptString($id);
         $inspection_report = InspectionReport::find($inspection_report_id);
         Gate::authorize('permitteeSign', $inspection_report);
@@ -128,9 +141,19 @@ class ForSignaturesController extends Controller
             if(!$signature) {
                 return redirect()->back()->with('error', 'Signature not found.');
             }
+            $inspectorSignature = $this->getElectronicSignature(
+                $inspection_report->inspector->personalInfo->first_name . " " . $inspection_report->inspector->personalInfo->middle_name . " " . $inspection_report->inspector->personalInfo->last_name,
+                $inspection_report->inspector->empPosition->position,
+                Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
+                "Inspection Report for LTP Application #" . $inspection_report->ltp_application->application_no,
+                "8",
+                $inspection_report->id,
+                $inspection_report->inspector->id,  
+                null
+            );
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title,
-                Storage::disk('s3')->get("signatures/" . $signature->signature)
+                "data:image/png;base64," . base64_encode($inspectorSignature->body())
             );
             $inspection_report->inspector_signed = $signature_title;
             $inspection_report->save();
@@ -149,14 +172,33 @@ class ForSignaturesController extends Controller
             if(!$signature) {
                 return redirect()->back()->with('error', 'Signature not found.');
             }
+            $approverSignature = $this->getElectronicSignature(
+                $inspection_report->approver->personalInfo->first_name . " " . $inspection_report->approver->personalInfo->middle_name . " " . $inspection_report->approver->personalInfo->last_name,
+                $inspection_report->approver->empPosition->position,
+                Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
+                "Inspection Report for LTP Application #" . $inspection_report->ltp_application->application_no,
+                "8",
+                $inspection_report->id,
+                $inspection_report->approver->id,  
+                null
+            );
             Storage::disk('s3')->put(
                 'generated_signatures/' . $signature_title,
-                Storage::disk('s3')->get('signatures/' . $signature->signature)
+                "data:image/png;base64," . base64_encode($approverSignature->body())
             );
             $inspection_report->approver_signed = $signature_title;
             $permitteeUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->permittee_signed, now()->addMinutes(30));
             $inspectorUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->inspector_signed, now()->addMinutes(30));
             $approverUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->approver_signed, now()->addMinutes(30));
+            return Pdf::view('pdfs.inspection-report', [
+                "ltp_application" => $inspection_report->ltpApplication,
+                "inspection_report" => $inspection_report,
+                "permitteeUrl" => $permitteeUrl,
+                "inspectorUrl" => $inspectorUrl,
+                "approverUrl" => $approverUrl
+            ])
+            ->waitUntilReady();;
+
             Pdf::view('pdfs.inspection-report', [
                 "ltp_application" => $inspection_report->ltpApplication,
                 "inspection_report" => $inspection_report,
@@ -292,11 +334,34 @@ class ForSignaturesController extends Controller
             $approved_by = $payment_order->approvedBy;
             $approvedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signature_title, now()->addMinutes(30));
             $preparedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $payment_order->prepared_signed, now()->addMinutes(30));
+            
+            $approvedBySignature = $this->getElectronicSignature(
+                $approved_by->personalInfo->first_name . " " . $approved_by->personalInfo->middle_name . " " . $approved_by->personalInfo->last_name,
+                $approved_by->empPosition->position,
+                $approvedByUrl,
+                $payment_order->order_number,
+                "7",
+                $payment_order->id,
+                $payment_order->approvedBy->id,
+                null
+            );
+
+            $preparedBySignature = $this->getElectronicSignature(
+                $prepared_by->personalInfo->first_name . " " . $prepared_by->personalInfo->middle_name . " " . $prepared_by->personalInfo->last_name,
+                $prepared_by->empPosition->position,
+                $preparedByUrl,
+                $payment_order->order_number,
+                "7",
+                $payment_order->id,
+                $payment_order->preparedBy->id,
+                null
+            );
+
             Pdf::view('pdfs.billing-statement-pdf', [
                 "ltp_application" => $payment_order->ltpApplication,
                 'payment_order' => $payment_order,
-                'approvedByUrl' => $approvedByUrl,
-                'preparedByUrl' => $preparedByUrl,
+                'approvedByUrl' => 'data:image/png;base64,' . base64_encode($approvedBySignature->body()),
+                'preparedByUrl' => 'data:image/png;base64,' . base64_encode($preparedBySignature->body()),
                 "ltp_fee" => $payment_order->ltpFee,
                 "prepared_by" => $prepared_by,
                 "approved_by" => $approved_by
@@ -332,10 +397,22 @@ class ForSignaturesController extends Controller
                 Storage::disk('s3')->get("signatures/" . $payment_order->oopApprovedBy->getSignature()->signature)
             );
             $oopApproverUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signature_title, now()->addMinutes(30));
+
+            $oopApproverSignature = $this->getElectronicSignature(
+                $payment_order->oopApprovedBy->personalInfo->first_name . " " . $payment_order->oopApprovedBy->personalInfo->middle_name . " " . $payment_order->oopApprovedBy->personalInfo->last_name,
+                $payment_order->oopApprovedBy->empPosition->position,
+                $oopApproverUrl,
+                $payment_order->serial_number,
+                "6",
+                $payment_order->id,
+                $payment_order->oopApprovedBy->id,  
+                null
+            );
+
             Pdf::view('pdfs.oop-pdf', [
                 "ltp_application" => $payment_order->ltpApplication,
                 'payment_order' => $payment_order,
-                'oopApproverUrl' => $oopApproverUrl,
+                'oopApproverUrl' => 'data:image/png;base64,' . base64_encode($oopApproverSignature->body()),
                 "ltp_fee" => $payment_order->ltpFee,
                 "oop_approved_by" => $payment_order->oopApprovedBy
             ])

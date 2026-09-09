@@ -194,7 +194,7 @@ Request Letter
                                 <p>Sincerely, </p>
                                 <p class="mt-2 ">
                                     <br>
-                                    <img style="max-width: 150px" src="{{ $signatureUrl }}" alt="">
+                                    <img style="max-width: 250px" src="{{ $signatureUrl }}" alt="">
                                     <br><strong >{{ strtoupper($wcp->user->personalInfo->first_name) }} {{ strtoupper(substr($wcp->user->personalInfo->middle_name, 0, 1)) }}. {{ strtoupper($wcp->user->personalInfo->last_name) }}</strong><br>
                                     Owner, {{ $wfp->wildlifeFarm->farm_name }}
                                 </p>

@@ -105,8 +105,8 @@ active
                             <thead>
                                 <tr>
                                     <th class="text-center">No.</th>
-                                    <th class="text-center">Common Name</th>
                                     <th class="text-center">Scientific Name</th>
+                                    <th class="text-center">Common Name</th>
                                     <th class="text-center">Family Name</th>
                                     <th class="text-center">Conservation Status</th>
                                     <th class="text-center" width="8%">Quantity</th>

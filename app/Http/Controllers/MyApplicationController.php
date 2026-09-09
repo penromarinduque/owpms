@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ElectronicSigratureTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -33,6 +34,8 @@ use Spatie\LaravelPdf\Facades\Pdf;
 
 class MyApplicationController extends Controller
 {
+    use ElectronicSigratureTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -432,12 +435,26 @@ class MyApplicationController extends Controller
             if(!$signature) {
                 return redirect()->back()->with('error', 'You have not uploaded your signature!');
             }
+
+            $eSignatureResponse = $this->getElectronicSignature(
+                $ltp_application->permittee->user->personalInfo->first_name . " " . $ltp_application->permittee->user->personalInfo->middle_name . " " . $ltp_application->permittee->user->personalInfo->last_name,
+                "Permittee",
+                Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
+                $ltp_application->application_no,
+                "5",
+                $ltp_application->id,
+                auth()->user()->id,
+                null
+            );
+            
+            $signatureImage = 'data:image/png;base64,' . base64_encode($eSignatureResponse->body());
+
             Pdf::view("pdfs.request-letter", [
                 "_helper" => $_helper,
                 "application" => $ltp_application,
                 "wfp" => $wfp,
                 "wcp" => $wcp,
-                "signatureUrl" => Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30))
+                "signatureUrl" => $signatureImage
             ])
             ->waitUntilReady()
             ->format(Format::A4)
