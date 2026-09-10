@@ -12,6 +12,7 @@ use App\Models\Barangay;
 use App\Models\PersonalInfo;
 use App\Models\Position;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
@@ -53,7 +54,16 @@ class UserController extends Controller
                 'username' => 'required|min:6|max:50|unique:users',
                 'email' => 'required|max:150|unique:users',
                 'user_type' => 'required|in:admin,internal',
-                'password' => 'required',
+                'password' => [
+                        'required',
+                        'string',
+                        Password::min(8)
+                            ->letters()      
+                            ->mixedCase()    
+                            ->numbers()      
+                            ->symbols()     
+                            ->uncompromised(), 
+                    ],
                 'middlename' => 'required',
                 'lastname' => 'required',
                 'firstname' => 'required',
@@ -139,6 +149,18 @@ class UserController extends Controller
             ]);
 
             if($request->has('password') && $request->input('password') != '' && $request->has('opt_cp')) {
+                $request->validate([
+                    'password' => [
+                        'required',
+                        'string',
+                        Password::min(8)
+                            ->letters()      
+                            ->mixedCase()    
+                            ->numbers()      
+                            ->symbols()     
+                            ->uncompromised(), 
+                    ],
+                ]);
                 User::find($user_id)->update([
                     'password' => Hash::make($request->input('password')),
                 ]);

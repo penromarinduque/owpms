@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\EnsureHasUserType;
 use App\Http\Middleware\EnsureHasPermission;
 use App\Http\Middleware\EnsurePermitteeVerified;
+use App\Http\Middleware\SecureHeaders;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,11 +17,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // 
         $middleware->alias([
             'userType' => EnsureHasUserType::class,
             'permission' => EnsureHasPermission::class,
             'permitteeVerified' => EnsurePermitteeVerified::class,
+        ]);
+        $middleware->prepend([
+            SecureHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
