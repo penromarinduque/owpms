@@ -62,9 +62,15 @@ class ForSignaturesController extends Controller
                 null
             );
 
+            // Storage::disk('s3')->put(
+            //     "generated_signatures/" . $signature_title,
+            //     "data:image/png;base64," . base64_encode($permitteeSignature->body())
+            // );
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title,
-                "data:image/png;base64," . base64_encode($permitteeSignature->body())
+                // "data:image/png;base64," . base64_encode($permitteeSignature->body())
+                // Storage::disk('s3')->get("signatures/" . $signature->signature)
+                $permitteeSignature->body()
             );
             $inspection_report->permittee_signed = $signature_title;
             $inspection_report->save();
@@ -73,6 +79,7 @@ class ForSignaturesController extends Controller
         });
     }
 
+    // not in use
     public function inspectionReportPermitteeSignDigital(Request $request, string $id) {
         $inspection_report_id = Crypt::decryptString($id);
         $inspection_report = InspectionReport::find($inspection_report_id);
@@ -153,7 +160,9 @@ class ForSignaturesController extends Controller
             );
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title,
-                "data:image/png;base64," . base64_encode($inspectorSignature->body())
+                // "data:image/png;base64," . base64_encode($inspectorSignature->body())
+                // Storage::disk('s3')->get("signatures/" . $signature->signature)
+                $inspectorSignature->body()
             );
             $inspection_report->inspector_signed = $signature_title;
             $inspection_report->save();
@@ -184,7 +193,8 @@ class ForSignaturesController extends Controller
             );
             Storage::disk('s3')->put(
                 'generated_signatures/' . $signature_title,
-                "data:image/png;base64," . base64_encode($approverSignature->body())
+                // "data:image/png;base64," . base64_encode($approverSignature->body())
+                $approverSignature->body()
             );
             $inspection_report->approver_signed = $signature_title;
             $permitteeUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->permittee_signed, now()->addMinutes(30));
@@ -269,7 +279,7 @@ class ForSignaturesController extends Controller
             );
             Storage::disk('s3')->put(
                 'generated_signatures/' . $signature_title,
-                "data:image/png;base64," . base64_encode($approverSignature->body())
+                $approverSignature->body()
             );
             Pdf::view('pdfs.permit', [
                 "permit" => $ltpPermit,
