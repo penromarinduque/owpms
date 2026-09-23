@@ -55,10 +55,10 @@ class ForSignaturesController extends Controller
                 $inspection_report->permittee->personalInfo->first_name . " " . $inspection_report->permittee->personalInfo->middle_name . " " . $inspection_report->permittee->personalInfo->last_name,
                 "Permittee",
                 Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
-                "Inspection Report for LTP Application #" . $inspection_report->ltp_application->application_no,
+                "Inspection Report for LTP Application #" . $inspection_report->ltpApplication->application_no,
                 "8",
                 $inspection_report->id,
-                $inspection_report->permittee->id,  
+                $inspection_report->permittee->id,
                 null
             );
 
@@ -73,7 +73,7 @@ class ForSignaturesController extends Controller
         });
     }
 
-    public function inspectionReportPermitteeSignDigital(Request $request, string $id) {w
+    public function inspectionReportPermitteeSignDigital(Request $request, string $id) {
         $inspection_report_id = Crypt::decryptString($id);
         $inspection_report = InspectionReport::find($inspection_report_id);
         Gate::authorize('permitteeSign', $inspection_report);
@@ -145,7 +145,7 @@ class ForSignaturesController extends Controller
                 $inspection_report->inspector->personalInfo->first_name . " " . $inspection_report->inspector->personalInfo->middle_name . " " . $inspection_report->inspector->personalInfo->last_name,
                 $inspection_report->inspector->empPosition->position,
                 Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
-                "Inspection Report for LTP Application #" . $inspection_report->ltp_application->application_no,
+                "Inspection Report for LTP Application #" . $inspection_report->ltpApplication->application_no,
                 "8",
                 $inspection_report->id,
                 $inspection_report->inspector->id,  
@@ -176,7 +176,7 @@ class ForSignaturesController extends Controller
                 $inspection_report->approver->personalInfo->first_name . " " . $inspection_report->approver->personalInfo->middle_name . " " . $inspection_report->approver->personalInfo->last_name,
                 $inspection_report->approver->empPosition->position,
                 Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
-                "Inspection Report for LTP Application #" . $inspection_report->ltp_application->application_no,
+                "Inspection Report for LTP Application #" . $inspection_report->ltpApplication->application_no,
                 "8",
                 $inspection_report->id,
                 $inspection_report->approver->id,  
@@ -190,14 +190,14 @@ class ForSignaturesController extends Controller
             $permitteeUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->permittee_signed, now()->addMinutes(30));
             $inspectorUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->inspector_signed, now()->addMinutes(30));
             $approverUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->approver_signed, now()->addMinutes(30));
-            return Pdf::view('pdfs.inspection-report', [
-                "ltp_application" => $inspection_report->ltpApplication,
-                "inspection_report" => $inspection_report,
-                "permitteeUrl" => $permitteeUrl,
-                "inspectorUrl" => $inspectorUrl,
-                "approverUrl" => $approverUrl
-            ])
-            ->waitUntilReady();;
+            // Pdf::view('pdfs.inspection-report', [
+            //     "ltp_application" => $inspection_report->ltpApplication,
+            //     "inspection_report" => $inspection_report,
+            //     "permitteeUrl" => $permitteeUrl,
+            //     "inspectorUrl" => $inspectorUrl,
+            //     "approverUrl" => $approverUrl
+            // ])
+            // ->waitUntilReady();
 
             Pdf::view('pdfs.inspection-report', [
                 "ltp_application" => $inspection_report->ltpApplication,
@@ -255,7 +255,22 @@ class ForSignaturesController extends Controller
             if(!$signature) {
                 return redirect()->back()->with('error', 'Signature not found.');
             }
+            $signature_title = $ltpPermit->id . "_penro_approved_by.png";
             $signatureUrl = Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30));
+            $approverSignature = $this->getElectronicSignature(
+                $ltpPermit->approver->personalInfo->first_name . " " . $ltpPermit->approver->personalInfo->middle_name . " " . $ltpPermit->approver->personalInfo->last_name,
+                $ltpPermit->approver->empPosition->position,
+                Storage::disk('s3')->temporaryUrl("signatures/" . $signature->signature, now()->addMinutes(30)),
+                "LTP Application #" . $ltpPermit->permit_number,
+                "9",
+                $ltpPermit->id,
+                $ltpPermit->approver->id,  
+                null
+            );
+            Storage::disk('s3')->put(
+                'generated_signatures/' . $signature_title,
+                "data:image/png;base64," . base64_encode($approverSignature->body())
+            );
             Pdf::view('pdfs.permit', [
                 "permit" => $ltpPermit,
                 "ltp_application" => $ltpApplication,

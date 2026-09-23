@@ -77,7 +77,7 @@ class LtpPermitPolicy
 
     public function penroSign(User $user, LtpPermit $ltpPermit): bool
     {
-        return $ltpPermit->penro == $user->id && $ltpPermit->chief_tsd_signed == true && ($ltpPermit->penro_signed == false || $ltpPermit->penro_signed == null);
+        return $ltpPermit->penro == $user->id && $ltpPermit->chief_tsd_signed == true && (!$ltpPermit->penro_signed || $ltpPermit->penro_signed == null);
     }
 
     public function viewPermit(User $user, LtpPermit $ltpPermit): bool

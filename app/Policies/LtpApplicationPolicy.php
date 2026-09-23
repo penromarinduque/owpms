@@ -152,7 +152,7 @@ class LtpApplicationPolicy
     public function downloadLtp(User $user, LtpApplication $ltpApplication) {
         $permit = $ltpApplication->permit;
         return (in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions()) && $user->id == $ltpApplication->permittee->user_id)
-            || ($user->id != $ltpApplication->permittee->user_id || ($permit && $permit->penro_signed && $permit->chief_tsd_signed));
+            || ($user->id != $ltpApplication->permittee->user_id ) && ($permit && $permit->penro_signed && $permit->chief_tsd_signed);
     }
 
     public function review(User $user, LtpApplication $ltpApplication) {

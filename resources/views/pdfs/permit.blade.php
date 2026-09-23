@@ -122,7 +122,7 @@ Local Transport Permit
         <br>
 
         <div class="d-flex justify-content-end">
-            <div class="d-flex flex-column align-items-center   ">
+            <div class="d-flex flex-column align-items-center ">
                 <img style="max-width: 150px" src="{{ $signatureUrl }}" alt="">
                 <p class="text-center border-bottom border-dark mb-0 fw-bold " style="min-width: 200px; text-transform: uppercase">{{ $permit->approver->personalInfo->getFullNameAttribute() }}</p>
                 <p class="text-center" style="min-width: 200px">{{ $permit->approver_designation }}</p>

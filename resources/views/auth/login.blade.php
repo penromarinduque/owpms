@@ -17,7 +17,7 @@
         <form method="POST" action="{{ route('login.store') }}" onsubmit="disableSubmitBtn('btn_login');">
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control" name="username" id="username" type="text" placeholder="Username" value="{{ old('username') }}" />
+                <input class="form-control" name="username" id="username" type="text" placeholder="Username" value="{{ old('username') }}" autocomplete="off" />
                 <label for="username">Username</label>
                 @error('username')
                 <small class="text-danger">{{ $message }}</small>
