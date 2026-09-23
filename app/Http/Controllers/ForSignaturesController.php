@@ -342,7 +342,7 @@ class ForSignaturesController extends Controller
             }
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title, 
-                Storage::disk('s3')->get("signatures/" . $payment_order->preparedBy->getSignature()->signature)
+                Storage::disk('s3')->get("signatures/" . $payment_order->approvedBy->getSignature()->signature)
             );
             $payment_order->approved_signed = $signature_title;
             $prepared_by = $payment_order->preparedBy;
