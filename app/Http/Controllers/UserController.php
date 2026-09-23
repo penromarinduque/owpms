@@ -123,7 +123,7 @@ class UserController extends Controller
             'middlename' => 'required',
             'lastname' => 'required',
             'gender' => 'required',
-            'username' => 'required|min:6|max:16',
+            'username' => 'required|min:6|max:100',
             'email' => 'required|max:150',
             'password' => 'nullable|min:8',
         ]);
