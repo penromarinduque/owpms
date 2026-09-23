@@ -13,6 +13,10 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'esignature' => [
+        'url' => env('ESIGNATURE_API_URL'),
+        'api_key' => env('ESIGNATURE_API_KEY'),
+    ],
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),

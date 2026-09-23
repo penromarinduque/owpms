@@ -9,7 +9,6 @@
     <title>Document</title>
 </head>
 <body>
-    
     <style>
         .header div img {
             width: 100%;
