@@ -445,8 +445,7 @@ class ForSignaturesController extends Controller
                 $payment_order->oopApprovedBy->id,  
                 null
             );
-
-            return $oopApproverSignature;
+            
             Pdf::view('pdfs.oop-pdf', [
                 "ltp_application" => $payment_order->ltpApplication,
                 'payment_order' => $payment_order,
