@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Spatie\LaravelPdf\Enums\Unit;
 use Spatie\LaravelPdf\Facades\Pdf;
 
@@ -423,7 +424,17 @@ class ForSignaturesController extends Controller
                 Storage::disk('s3')->get("signatures/" . $payment_order->oopApprovedBy->getSignature()->signature)
             );
             $oopApproverUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signature_title, now()->addMinutes(30));
-
+            Log::info([
+                $payment_order->oopApprovedBy->personalInfo->first_name . " " . $payment_order->oopApprovedBy->personalInfo->middle_name . " " . $payment_order->oopApprovedBy->personalInfo->last_name,
+                $payment_order->oopApprovedBy->empPosition->position,
+                $oopApproverUrl,
+                $payment_order->serial_number,
+                "6",
+                $payment_order->id,
+                $payment_order->oopApprovedBy->id,  
+                null
+                ]);
+                 
             $oopApproverSignature = $this->getElectronicSignature(
                 $payment_order->oopApprovedBy->personalInfo->first_name . " " . $payment_order->oopApprovedBy->personalInfo->middle_name . " " . $payment_order->oopApprovedBy->personalInfo->last_name,
                 $payment_order->oopApprovedBy->empPosition->position,
@@ -435,6 +446,7 @@ class ForSignaturesController extends Controller
                 null
             );
 
+            return $oopApproverSignature;
             Pdf::view('pdfs.oop-pdf', [
                 "ltp_application" => $payment_order->ltpApplication,
                 'payment_order' => $payment_order,

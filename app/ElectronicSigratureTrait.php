@@ -22,7 +22,8 @@ trait ElectronicSigratureTrait
         )
     {
         try {
-            Log::info(config('services.esignature.url') . '/signatures/record');
+            Log::info(env('ESIGNATURE_API_URL'));
+            Log::info((env('ESIGNATURE_API_URL') . '/signatures/record'));
             return Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post(
