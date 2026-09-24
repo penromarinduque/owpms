@@ -11,8 +11,9 @@
 </div>
 
 <!-- JavaScript to Show Toast -->
-<script >
+<script type="text/javascript" defer>
     $(function () {
+        console.log("test");
         @if (session()->has('success'))
             showToast('success', '{{ session('success') }}');
         @elseif (session()->has('error'))
