@@ -284,7 +284,7 @@ class ForSignaturesController extends Controller
             Pdf::view('pdfs.permit', [
                 "permit" => $ltpPermit,
                 "ltp_application" => $ltpApplication,
-                "signatureUrl" => $signatureUrl
+                "signatureUrl" => 'data:image/png;base64,' . base64_encode($approverSignature->body())
             ])
             ->waitUntilReady()
             ->headerView('pdfs.header')
