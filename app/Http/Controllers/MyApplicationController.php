@@ -595,13 +595,13 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application not found!');
             }
 
-            $ltp_application->application_status = LtpApplication::STATUS_CANCELLED;
+            $ltp_application->application_status = LtpApplication::STATUS_DRAFT;
             $ltp_application->save();
             
             LtpApplicationProgress::create([
                 "ltp_application_id" => $ltp_application->id,
                 "user_id" => Auth::user()->id,
-                "status" => LtpApplicationProgress::STATUS_CANCELLED,
+                "status" => LtpApplicationProgress::STATUS_DRAFT,
                 "description" => 'Application has been cancelled'
             ]);
 

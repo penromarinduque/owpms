@@ -241,9 +241,12 @@ active
                             <tr>
                                 <td class="align-middle">{{ $ltp_application->permittee->user->personalInfo->first_name . ' ' . $ltp_application->permittee->user->personalInfo->last_name }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
-                                <td class="align-middle text-center text-secondary">{{ $ltp_application->application_date->diffForHumans() }}</td>
+                                <td class="align-middle text-center text-secondary">{{ $ltp_application->created_at->diffForHumans() }}</td>
                                 <td class="align-middle text-center text-secondary">{{ $ltp_application->updated_at->diffForHumans() }}</td>
-                                <td class="align-middle text-center">{{ $ltp_application->transport_date->format("F d, Y") }} <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span></td>
+                                <td class="align-middle text-center">
+                                    {{ $ltp_application->transport_date->format("F d, Y") }}
+                                     <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span>
+                                </td>
                                 <td class="align-middle text-center">
                                     <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
                                 </td>
