@@ -59,7 +59,7 @@ class InspectionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'photos' => 'required|array',
-            'photos.*' => 'required|mimes:jpg,jpeg,png|max:1024'
+            'photos.*' => 'required|mimes:jpg,jpeg,png|max:10240'
         ], [
             'photos.required' => 'Please upload at least one photo.',
             'photos.*.required' => 'Each photo is required.',
