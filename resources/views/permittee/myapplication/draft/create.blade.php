@@ -109,7 +109,7 @@ active
                                     <th class="text-center">Common Name</th>
                                     <th class="text-center">Family Name</th>
                                     <th class="text-center">Conservation Status</th>
-                                    <th class="text-center" width="8%">Quantity</th>
+                                    <th class="text-center" width="20%">Quantity</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
