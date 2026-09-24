@@ -341,6 +341,7 @@ class LtpApplicationController extends Controller
             // 'chief_rps.not_in' => 'Chief RPS must be different from Approver and Chief TSD.',
         ]);
 
+
         Gate::authorize('updateLtp', $ltp_application);
         
         return DB::transaction(function () use ($ltp_application, $request) {
