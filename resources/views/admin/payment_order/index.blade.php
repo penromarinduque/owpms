@@ -40,6 +40,8 @@ active
                             <th width="170px" class="text-center">Payment Method</th>
                             <th>Payment Reference</th>
                             <th>Receipt</th>
+                            <th>Serial Number</th>
+                            <th>Bill No.</th>
                             <th class="text-center" width="80px">Status</th>
                             <th class="text-center">Actions</th>
                         </tr>
@@ -53,6 +55,8 @@ active
                                 <td class="text-center">{{ strtoupper($paymentOrder->payment_method) }}</td>
                                 <td>{{ $paymentOrder->payment_reference ? $paymentOrder->payment_reference : 'N/A' }}</td>
                                 <td>{{ $paymentOrder->receipt ? $paymentOrder->receipt : 'N/A' }}</td>
+                                <td>{{ $paymentOrder->serial_number ? $paymentOrder->serial_number : 'N/A' }}</td>
+                                <td>{{ $paymentOrder->order_number ? $paymentOrder->order_number : 'N/A' }}</td>
                                 <td class="text-center">
                                     <span class="badge rounded-pill bg-{{ $paymentOrder->status === 'pending' ? 'warning' : ($paymentOrder->status === 'paid' ? 'success' : 'danger') }}">{{ ucfirst($paymentOrder->status) }}</span>
                                 </td>

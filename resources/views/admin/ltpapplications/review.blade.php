@@ -87,7 +87,6 @@ active
                     <label>Destination</label>
                     <h6>{{$ltp_application->destination}}</h6>
                 </div>
-
             </div>
 
             <hr>
