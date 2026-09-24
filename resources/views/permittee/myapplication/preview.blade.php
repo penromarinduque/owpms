@@ -191,8 +191,12 @@ My Applications
                         <h6>{{$ltp_application->application_date->format('F d, Y')}}</h6>
                     </div>
                     <div class="col-lg-3 col-sm-6">
-                        <label>Date of Validity</label>
-                        <h6>{{$ltp_application->transport_date->addMonth()->format('F d, Y')}}</h6>
+
+                        <!--<label>Date of Validity</label>-->
+                        <!--<h6>{{$ltp_application->transport_date->addMonth()->format('F d, Y')}}</h6>-->
+
+                        <label>Validity</label>
+                        <h6>{{$ltp_application->transport_date->copy()->addMonthNoOverflow()->format('M j, Y')}}</h6>
                     </div>
                     <div class="col-lg-3 col-sm-6">
                         <label>Purpose</label>
