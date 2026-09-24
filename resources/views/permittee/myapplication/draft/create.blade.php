@@ -109,7 +109,7 @@ active
                                     <th class="text-center">Common Name</th>
                                     <th class="text-center">Family Name</th>
                                     <th class="text-center">Conservation Status</th>
-                                    <th class="text-center" width="20%">Quantity</th>
+                                    <th class="text-center" width="100px">Quantity</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -246,7 +246,7 @@ active
                 <td align="center">${specie.local_name}</td>
                 <td align="center">${specie.family.family}</td>
                 <td align="center">${specie.conservation_status.toUpperCase()}</td>
-                <td align="center">
+                <td align="center" width="100px">
                     <input type="hidden" name="specie_id[]" id="specie_id" value="${specie.id}" />
                     <input type="number" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  required />
                 </td>
