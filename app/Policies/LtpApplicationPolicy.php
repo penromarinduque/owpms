@@ -151,7 +151,9 @@ class LtpApplicationPolicy
 
     public function downloadLtp(User $user, LtpApplication $ltpApplication) {
         $permit = $ltpApplication->permit;
-        return (in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions()) && $user->id == $ltpApplication->permittee->user_id)
+        return (
+            // in_array('LTP_APPLICATION_RELEASE', $user->getUserPermissions()) && 
+                $user->id == $ltpApplication->permittee->user_id && $ltpApplication->application_status == LtpApplication::STATUS_RELEASED)
             || ($user->id != $ltpApplication->permittee->user_id ) && ($permit && $permit->penro_signed && $permit->chief_tsd_signed);
     }
 
