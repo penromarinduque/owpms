@@ -102,44 +102,46 @@ active
                 </div>
                 <div class="row ">
                     <div class="col-md-10">
-                        <table id="dataTable" class="table table-sm table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No.</th>
-                                    <th class="text-center">Common Name</th>
-                                    <th class="text-center">Scientific Name</th>
-                                    <th class="text-center">Family Name</th>
-                                    <th class="text-center">Conservation Status</th>
-                                    <th class="text-center" width="100px">Quantity</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($ltp_application_species as $key => $species)
-                                    <tr id="row_{{$species->specie->id}}">
-                                        <td align="center">{{ $key+1 }}</td>
-                                        <td align="center">{{ $species->specie->local_name }}</td>
-                                        <td align="center"><i>{{ $species->specie->specie_name }}</i></td>
-                                        <td align="center">{{ $species->specie->family->family }}</td>
-                                        <td align="center" style="text-transform: capitalize">{{ $species->specie->conservation_status }}</td>
-                                        <td align="center">
-                                            <input type="hidden" name="specie_id[]" id="specie_id" value="{{ $species->specie->id }}" />
-                                            <input type="number" style="width: 100px" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  value="{{ $species->quantity }}" required />
-                                        </td>
-                                        <td align="center">
-                                            <a href="#" class="btn btn-sm mx-1" onclick="removeAdded({{ $species->specie->id }}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
-                                        </td>
+                        <div class="table-responsive">
+                            <table id="dataTable" class="table table-sm table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">No.</th>
+                                        <th class="text-center">Common Name</th>
+                                        <th class="text-center">Scientific Name</th>
+                                        <th class="text-center">Family Name</th>
+                                        <th class="text-center">Conservation Status</th>
+                                        <th class="text-center" width="100px">Quantity</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="4" align="right"><b>TOTAL</b></td>
-                                    <td align="center"><b><span id="txt_total"></span></b></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($ltp_application_species as $key => $species)
+                                        <tr id="row_{{$species->specie->id}}">
+                                            <td align="center">{{ $key+1 }}</td>
+                                            <td align="center">{{ $species->specie->local_name }}</td>
+                                            <td align="center"><i>{{ $species->specie->specie_name }}</i></td>
+                                            <td align="center">{{ $species->specie->family->family }}</td>
+                                            <td align="center" style="text-transform: capitalize">{{ $species->specie->conservation_status }}</td>
+                                            <td align="center">
+                                                <input type="hidden" name="specie_id[]" id="specie_id" value="{{ $species->specie->id }}" />
+                                                <input type="number" style="width: 100px" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  value="{{ $species->quantity }}" required />
+                                            </td>
+                                            <td align="center">
+                                                <a href="#" class="btn btn-sm mx-1" onclick="removeAdded({{ $species->specie->id }}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4" align="right"><b>TOTAL</b></td>
+                                        <td align="center"><b><span id="txt_total"></span></b></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="float-end mt-4">

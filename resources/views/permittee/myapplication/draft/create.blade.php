@@ -101,28 +101,30 @@ active
                 </div>
                 <div class="row ">
                     <div class="col-md-10">
-                        <table id="dataTable" class="table table-sm table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No.</th>
-                                    <th class="text-center">Scientific Name</th>
-                                    <th class="text-center">Common Name</th>
-                                    <th class="text-center">Family Name</th>
-                                    <th class="text-center">Conservation Status</th>
-                                    <th class="text-center" width="100px">Quantity</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="4" align="right"><b>TOTAL</b></td>
-                                    <td align="center"><b><span id="txt_total"></span></b></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="dataTable" class="table table-sm table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">No.</th>
+                                        <th class="text-center">Scientific Name</th>
+                                        <th class="text-center">Common Name</th>
+                                        <th class="text-center">Family Name</th>
+                                        <th class="text-center">Conservation Status</th>
+                                        <th class="text-center" width="100px">Quantity</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4" align="right"><b>TOTAL</b></td>
+                                        <td align="center"><b><span id="txt_total"></span></b></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="float-end mt-4">
