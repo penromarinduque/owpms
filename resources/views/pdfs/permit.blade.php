@@ -107,7 +107,7 @@ Local Transport Permit
         "> --}}
         <p>
             &nbsp;&nbsp;&nbsp;&nbsp;The above mentioned specimens shall be transported by Air/Sea express on or before 
-            <u class="fw-bold">&nbsp;&nbsp;{{$ltp_application->transport_date->format('F d, Y')}}&nbsp;&nbsp;</u>
+            <u class="fw-bold">&nbsp;&nbsp;{{$ltp_application->transport_date->addMonth()->format('F d, Y') }}&nbsp;&nbsp;</u>
             and have been inspected, verified and found in accordance with existing wildlife laws, rules and regulations.
         </p>
         <p>
