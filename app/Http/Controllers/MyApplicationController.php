@@ -24,6 +24,7 @@ use App\Models\Province;
 use App\Models\Signature;
 use App\Models\SpecieNature;
 use App\Notifications\LtpApplicationSubmitted;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -139,7 +140,7 @@ class MyApplicationController extends Controller
                 'application_no' => $application_no, 
                 'application_status' => LtpApplication::STATUS_DRAFT, 
                 'application_date' => date('Y-m-d'), 
-                'transport_date' => $request->transport_date, 
+                'transport_date' =>  $request->transport_date, 
                 'purpose' => $request->purpose, 
                 'specie_nature_id' => $request->specie_nature_id,
                 'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: auth()->user()->personalInfo->barangay->municipality->province_id), 
