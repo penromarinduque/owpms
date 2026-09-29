@@ -149,84 +149,103 @@ active
 
             <br>
 
-            <div class="d-flex gap-1 justify-content-end mb-3">
-                <div>
-                    <button class="btn btn-outline-primary" data-bs-target="#sortModal" data-bs-toggle="modal">
-                        <i class="fa-solid fa-sort mr-2"></i> Sort
-                    </button>
-                    <div class="modal fade" id="sortModal">
-                        <div class="modal-dialog">
-                            <form class="modal-content" action="" method="get" >
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="sortModalLabel">Sort</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="category" value="{{ request('category') }}">
-                                    <input type="hidden" name="application_no" value="{{ request('application_no') }}" >
-                                    <input type="hidden" name="status" value="{{ request('status') }}" >
-                                    <div class="mb-2">
-                                        <select name="sort_by" id="" placeholder="Sort By" class="form-select">
-                                            <option value="">-Select Sort By-</option>
-                                            <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : ''}}>Date Created</option>
-                                            <option value="application_no" {{ request('sort_by') == 'application_no' ? 'selected' : ''}}>Application No.</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-2">
-                                        <select class="form-select" name="sort_order" id="" placeholder="Sort Order">
-                                            <option value="">-Select Sort Order-</option>
-                                            <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : ''}}>Ascending</option>
-                                            <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : ''}}>Descending</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-primary">Sort</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div >
-                    <button class="btn btn-outline-primary" data-bs-target="#filterModal" data-bs-toggle="modal">
-                        <i class="fa-solid fa-filter mr-2"></i> Filter
-                    </button>
-                    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form class="modal-content" method="get" action="">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="category" value="{{ request('category') }}">
-                                    <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
-                                    <input type="hidden" name="sort_order" value="{{ request('sort_order') }}">
-                                    <div class="mb-2">
-                                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
-                                    </div>
-                                    <div class="mb-2">
-                                        <select class="form-select" name="status" id="">
-                                            <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
-                                            @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
-                                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-primary ">Filter</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
             <div class="table-responsive">
                 <table class="table table-hover table-bordered table-striped" >
                     <thead>
                         <tr>
+                            <td colspan="8">
+                                <div class="d-flex gap-1 justify-content-between">
+                                    <div class="d-flex gap-1">
+                                        @if (Gate::allows('bulkAccept', App\Models\LtpApplication::class) && request('category') == 'reviewed')
+                                            <button class="btn btn-sm btn-outline-primary" onclick="submitAcceptAll()">Accept All</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="submitAcceptSelected()">Accept Selected</button>
+                                        @endif
+                                    </div>
+                                    <div class=""></div>
+                                    <div class="d-flex Justify-content-end gap-1">
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-target="#sortModal" data-bs-toggle="modal">
+                                                <i class="fa-solid fa-sort mr-2"></i> Sort
+                                            </button>
+                                            <div class="modal fade" id="sortModal">
+                                                <div class="modal-dialog">
+                                                    <form class="modal-content" action="" method="get" >
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="sortModalLabel">Sort</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input type="hidden" name="category" value="{{ request('category') }}">
+                                                            <input type="hidden" name="application_no" value="{{ request('application_no') }}" >
+                                                            <input type="hidden" name="status" value="{{ request('status') }}" >
+                                                            <div class="mb-2">
+                                                                <select name="sort_by" id="" placeholder="Sort By" class="form-select">
+                                                                    <option value="">-Select Sort By-</option>
+                                                                    <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : ''}}>Date Created</option>
+                                                                    <option value="application_no" {{ request('sort_by') == 'application_no' ? 'selected' : ''}}>Application No.</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <select class="form-select" name="sort_order" id="" placeholder="Sort Order">
+                                                                    <option value="">-Select Sort Order-</option>
+                                                                    <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : ''}}>Ascending</option>
+                                                                    <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : ''}}>Descending</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-primary">Sort</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div >
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-target="#filterModal" data-bs-toggle="modal">
+                                                <i class="fa-solid fa-filter mr-2"></i> Filter
+                                            </button>
+                                            <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <form class="modal-content" method="get" action="">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input type="hidden" name="category" value="{{ request('category') }}">
+                                                            <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                                            <input type="hidden" name="sort_order" value="{{ request('sort_order') }}">
+                                                            <div class="mb-2">
+                                                                <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <select class="form-select" name="status" id="">
+                                                                    <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
+                                                                    @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
+                                                                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-primary ">Filter</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAllCheckbox" class="form-check-input" onchange="toggleSelectAll(this)">
+                            </th>
                             <th>Permittee</th>
                             <th>Application No.</th>
                             <th class="text-center">Date Created</th>
@@ -239,6 +258,9 @@ active
                     <tbody>
                         @forelse ($ltp_applications as $key => $ltp_application)
                             <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input select-row" value="{{ $ltp_application->id }}" onchange="toggleSelectRow(this)">
+                                </td>
                                 <td class="align-middle">{{ $ltp_application->permittee->user->personalInfo->first_name . ' ' . $ltp_application->permittee->user->personalInfo->last_name }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
                                 <td class="align-middle text-center text-secondary">{{ $ltp_application->created_at->diffForHumans() }}</td>
@@ -291,7 +313,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">No record found.</td>
+                                <td colspan="8" class="text-center">No record found.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -308,4 +330,55 @@ active
     @include('components.viewApplicationLogs')
     @include('components.releaseLtp')
     @include('components.acceptApplicationModal')
+@endsection
+
+@section('script-extra')
+<script>
+    function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll('.select-row');
+        checkboxes.forEach((rowCheckbox) => {
+            rowCheckbox.checked = checkbox.checked;
+        });
+    }
+
+    function toggleSelectRow(checkbox) {
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const checkboxes = document.querySelectorAll('.select-row');
+        const allChecked = Array.from(checkboxes).every((rowCheckbox) => rowCheckbox.checked);
+        selectAllCheckbox.checked = allChecked;
+        const selectedButton = document.querySelector('button[onclick="submitAcceptSelected()"]');
+    }
+
+    function submitAcceptAll() {
+        const baseUrl = "{{ route('ltpapplication.accept-all') }}";
+        showConfirmModal(
+            baseUrl,
+            "Are you sure you want to accept all applications?",
+            "Confirm Accept All",
+            "POST"
+        );
+    }
+
+    function submitAcceptSelected() {
+        const ids = Array.from(document.querySelectorAll('.select-row:checked'))
+                        .map(checkbox => checkbox.value);
+
+        if (ids.length === 0) {
+            alert("Please select at least one application to accept.");
+            return;
+        }
+
+        const baseUrl = "{{ route('ltpapplication.bulk-accept') }}";
+
+        const targetUrl = `${baseUrl}?ids=${ids.join(',')}`;
+
+        showConfirmModal(
+            targetUrl,
+            `Are you sure you want to accept the ${ids.length} selected application(s)?`,
+            "Confirm Accept Selected",
+            "POST"
+        );
+    }
+
+</script>
 @endsection

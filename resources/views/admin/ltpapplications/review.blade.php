@@ -85,22 +85,26 @@ active
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <label>Destination</label>
-                    <h6>{{$ltp_application->destination}}</h6>
+                    <h6>{{$ltp_application->transport_destination}}</h6>
                 </div>
             </div>
 
             <hr>
             <h5>Attachments</h5>
             <div class="row mb-3">
+                <div class="col-lg-3 col-sm-6">
+                    <label>Application Request Letter</label>
+                    <h6><a href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}" target="_blank">View Attachment</a></h6>
+                </div>
                 @forelse($ltp_application->attachments as $attachment)
                     <div class="col-lg-3 col-sm-6">
                         <label>{{ $attachment->ltpRequirement->requirement_name }}</label>
                         <h6><a href="{{ route('apprequirements.view', ['id' => Crypt::encryptString($attachment->id)]) }}" target="_blank">View Attachment</a></h6>
                     </div>
                 @empty
-                    <div class="col-lg-3 col-sm-6">
-                        <label>No Attachments Submitted</label>
-                    </div>
+                    {{-- <div class="col-lg-3 col-sm-6">
+                        <label>No other attachments submitted</label>
+                    </div> --}}
                 @endforelse
             </div>
         </div>

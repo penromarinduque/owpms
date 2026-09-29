@@ -432,4 +432,119 @@ class LtpApplicationController extends Controller
         $file = Storage::get('ltps/' . $ltp_application->permit->permit_number . '.pdf');
         return response($file)->header('Content-Type', 'application/pdf');
     }
+
+    public function bulkAccept(Request $request) 
+    {   
+        Gate::authorize('bulkAccept', LtpApplication::class);
+
+        $ids = explode(",", $request->input('ids'));
+
+        if (empty($ids)) { 
+            return redirect()->back()->with('error', 'No applications selected.');
+        }
+
+        $applications = LtpApplication::with('permittee.user')
+            ->whereIn('id', $ids)
+            ->get();
+
+        $currentUser = Auth::user();
+        $userName = $currentUser->personalInfo->getFullNameAttribute();
+        
+        $progressRecords = [];
+        $notificationsToQueue = [];
+
+        DB::transaction(function () use ($applications, $currentUser, $userName, $progressRecords, $notificationsToQueue) {
+            foreach ($applications as $application) {
+                
+                if (Gate::allows('accept', $application)) {
+                    
+                    $application->application_status = LtpApplication::STATUS_ACCEPTED;
+                    $application->save();
+
+                    $progressRecords[] = [
+                        'ltp_application_id' => $application->id,
+                        'user_id'            => $currentUser->id,
+                        'status'             => LtpApplicationProgress::STATUS_ACCEPTED,
+                        'description'        => "LTP Application has been accepted by {$userName}",
+                        'created_at'         => now(),
+                        'updated_at'         => now(),
+                    ];
+
+                    if ($application->permittee?->user) {
+                        $notificationsToQueue[] = [
+                            'user'        => $application->permittee->user,
+                            'application' => $application,
+                        ];
+                    }
+                }
+            }
+
+            if (!empty($progressRecords)) {
+                LtpApplicationProgress::insert($progressRecords);
+            }
+        });
+
+        foreach ($notificationsToQueue as $item) {
+            Notification::send($item['user'], new LtpApplicationAccepted($item['application']));
+        }
+
+        return redirect()->back()->with('success', 'Successfully accepted selected applications.');
+    }
+
+    public function acceptAll(Request $request) 
+    {
+        Gate::authorize('bulkAccept', LtpApplication::class);
+
+        $ltpApplications = LtpApplication::with('permittee.user')
+            ->where('application_status', LtpApplication::STATUS_REVIEWED)
+            ->get();
+
+        if ($ltpApplications->isEmpty()) {
+            return redirect()->back()->with('error', 'No reviewed applications found to accept.');
+        }
+
+        $currentUser = Auth::user();
+        $userName = $currentUser->personalInfo->getFullNameAttribute();
+
+        $acceptedIds = [];
+        $progressRecords = [];
+        $notificationsToQueue = [];
+
+        DB::transaction(function () use ($ltpApplications, $currentUser, $userName, $acceptedIds, $progressRecords, $notificationsToQueue) {
+            foreach ($ltpApplications as $application) {
+                if (Gate::allows('accept', $application)) {
+                    $acceptedIds[] = $application->id;
+
+                    $progressRecords[] = [
+                        'ltp_application_id' => $application->id,
+                        'user_id'            => $currentUser->id,
+                        'status'             => LtpApplicationProgress::STATUS_ACCEPTED,
+                        'description'        => "LTP Application has been accepted by {$userName}",
+                        'created_at'         => now(),
+                        'updated_at'         => now(),
+                    ];
+
+                    if ($application->permittee?->user) {
+                        $notificationsToQueue[] = [
+                            'user'        => $application->permittee->user,
+                            'application' => $application,
+                        ];
+                    }
+                }
+            }
+
+            if (!empty($acceptedIds)) {
+                LtpApplication::whereIn('id', $acceptedIds)
+                    ->update(['application_status' => LtpApplication::STATUS_ACCEPTED]);
+
+                LtpApplicationProgress::insert($progressRecords);
+            }
+        });
+
+        foreach ($notificationsToQueue as $item) {
+            Notification::send($item['user'], new LtpApplicationAccepted($item['application']));
+        }
+
+        return redirect()->back()->with('success', 'Successfully accepted all applications.');
+    }
 }

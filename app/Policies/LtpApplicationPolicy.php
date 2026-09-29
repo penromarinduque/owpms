@@ -169,6 +169,10 @@ class LtpApplicationPolicy
         return in_array('LTP_APPLICATION_ACCEPT', $user->getUserPermissions()) && $ltpApplication->application_status == LtpApplication::STATUS_REVIEWED;
     }
 
+    public function bulkAccept(User $user) {
+        return in_array('LTP_APPLICATION_ACCEPT', $user->getUserPermissions());
+    }
+
     public function return(User $user, LtpApplication $ltpApplication) {
         return in_array('LTP_APPLICATION_RETURN', $user->getUserPermissions()) && $ltpApplication->application_status == LtpApplication::STATUS_UNDER_REVIEW;
     }

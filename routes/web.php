@@ -169,6 +169,8 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
             Route::post('return', [LtpApplicationController::class, 'return'])->name('ltpapplication.return')->middleware('permission:LTP_APPLICATION_RETURN');
             Route::post('reviewed/{id}', [LtpApplicationController::class, 'reviewed'])->name('ltpapplication.reviewed')->middleware('permission:LTP_APPLICATION_REVIEW');
             Route::post('accept/{id}', [LtpApplicationController::class, 'accept'])->name('ltpapplication.accept')->middleware('permission:LTP_APPLICATION_ACCEPT');
+            Route::post('bulk-accept', [LtpApplicationController::class, 'bulkAccept'])->name('ltpapplication.bulk-accept')->middleware('permission:LTP_APPLICATION_ACCEPT');
+            Route::post('accept-all', [LtpApplicationController::class, 'acceptAll'])->name('ltpapplication.accept-all')->middleware('permission:LTP_APPLICATION_ACCEPT');
             Route::get('permit/{id}', [LtpApplicationController::class, 'permit'])->name('ltpapplication.permit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::post('permit/{id}', [LtpApplicationController::class, 'createPermit'])->name('ltpapplication.createPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
             Route::get('edit-permit/{id}', [LtpApplicationController::class, 'editPermit'])->name('ltpapplication.editPermit')->middleware('permission:LTP_APPLICATION_INSPECT');
