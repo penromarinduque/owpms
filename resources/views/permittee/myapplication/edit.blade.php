@@ -125,7 +125,7 @@ active
                                             <td align="center" style="text-transform: capitalize">{{ $species->specie->conservation_status }}</td>
                                             <td align="center">
                                                 <input type="hidden" name="specie_id[]" id="specie_id" value="{{ $species->specie->id }}" />
-                                                <input type="number" style="width: 100px" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  value="{{ $species->quantity }}" required />
+                                                <input type="number" style="width: 100px" name="quantity[]" min="1" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  value="{{ $species->quantity }}" required />
                                             </td>
                                             <td align="center">
                                                 <a href="#" class="btn btn-sm mx-1" onclick="removeAdded({{ $species->specie->id }}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
@@ -250,7 +250,7 @@ active
                 <td align="center">${specie.conservation_status.toUpperCase()}</td>
                 <td align="center">
                     <input type="hidden" name="specie_id[]" id="specie_id" value="${specie.id}" />
-                    <input type="number" style="width: 100px" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  required />
+                    <input type="number" style="width: 100px" min="1" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  required />
                 </td>
                 <td align="center">
                     <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${specie.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>

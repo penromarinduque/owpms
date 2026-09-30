@@ -251,7 +251,7 @@ active
                 <td align="center">${specie.conservation_status.toUpperCase()}</td>
                 <td align="center" width="100px">
                     <input type="hidden" name="specie_id[]" id="specie_id" value="${specie.id}" />
-                    <input type="number" style="width: 100px" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  required />
+                    <input type="number" style="width: 100px" min="1" name="quantity[]" id="quantity" class="form-control text-center quantity" onkeyup="updateDynamicSum('quantity', 'txt_total');" placeholder="Quantity"  required />
                 </td>
                 <td align="center">
                     <a href="#" class="btn btn-sm mx-1" onclick="removeAdded(${specie.id}, 'row_');"><i class="fas fa-trash text-danger"></i></a>
