@@ -49,38 +49,62 @@ For Signatures
             <div class="table-responsive">
                 @php $totalSpan = 4 @endphp
                 <table class="table table-bordered table-hover table-striped">
+                    @php
+                        $totalSpan = [
+                            "inspection_report" => 5,
+                            "ltp" => 6,
+                            "payment_order" => 5,
+                            "billing_statement" => 5
+                        ];
+                    @endphp
                     <thead>
                         <tr>
+                            <td colspan="{{ $totalSpan[request('type')] }}">
+                                <div class="d-flex gap-1">
+                                    @if (request('type') == 'billing_statement')
+                                        <button class="btn btn-sm btn-primary">Sign All</button>
+                                        <button class="btn btn-sm btn-primary">Sign Selected</button>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <th width="64px">
+                                <input type="checkbox" id="selectAllCheckbox" class="form-check-input"  onchange="toggleSelectAll(this)">
+                            </th>
+                            <th >Permittee</th>
                             @if (request('type') == 'inspection_report')
-                                @php $totalSpan = 3 @endphp
                                 <th>Document</th>
                                 <th>Application No.</th>
-                                <th width="500px" class="text-center">Actions</th>
+                                <th class="text-center">Actions</th>
                             @endif
                             @if (request('type') == 'ltp')
-                                @php $totalSpan = 4 @endphp
                                 <th>Document</th>
                                 <th>Permit No.</th>
                                 <th>Application No.</th>
-                                <th width="500px" class="text-center">Actions</th>
+                                <th class="text-center">Actions</th>
                             @endif
                             @if (request('type') == 'payment_order')
-                                @php $totalSpan = 4 @endphp
                                 <th>Document</th>
                                 <th>Order Number</th>
-                                <th width="500px" class="text-center">Actions</th>
+                                <th class="text-center">Actions</th>
                             @endif
                             @if (request('type') == 'billing_statement')
-                                @php $totalSpan = 4 @endphp
                                 <th>Document</th>
                                 <th>Order Number</th>
-                                <th width="500px" class="text-center">Actions</th>
+                                <th class="text-center">Actions</th>
                             @endif
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($docs as $doc)
                             <tr>
+                                <td width="64px">
+                                    <input type="checkbox" class="form-check-input select-row" value="{{ $doc->ltpApplication->id }}" onchange="toggleSelectRow(this)">
+                                </td>
+                                <td>{{ $doc->ltpApplication->permittee->user->personalInfo->fullName }}</td>
                                 @if (request('type') == 'inspection_report')   
                                     <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
                                     <td>
@@ -88,22 +112,22 @@ For Signatures
                                     </td>
                                     <td class="text-center">
                                         @can('inspectorSign', $doc)
-                                            <button class="btn btn-outline-primary"  onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportInspectorSign', Crypt::encryptString($doc->id)) }}', 'By continuing this action you are electronically signing this document. This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Sign</button>
+                                            <button class="btn btn-outline-primary btn-sm"  onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportInspectorSign', Crypt::encryptString($doc->id)) }}', 'By continuing this action you are electronically signing this document. This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Sign</button>
                                         @endcan
                                         @can('approverSign', $doc)
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approve</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approve</button>
                                         @endcan
                                         @can('permitteeSign', $doc)
                                             {{-- <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'Are you sure you want to mark this document as manually signed? Confirming this will forward the record to the next signatory.', 'Confirm Signature', 'POST')">Sign Manually</button>
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSignDigital', Crypt::encryptString($doc->id)) }}', 'Are you sure you want to digitally sign this document? This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Sign Digitally</button> --}}
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'By continuing this action you are electronically signing this document. This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'By continuing this action you are electronically signing this document. This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
                                         @endcan
                                         @can('rpsSign', $doc)
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
                                         @endcan
                                     </td>
                                 @endif
-                                @if (request('type') == 'ltp')   
+                                @if (request('type') == 'ltp')                  
                                     <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
                                     <td>
                                         {{ $doc->permit_number }}
@@ -151,7 +175,7 @@ For Signatures
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $totalSpan }}" class="text-center">No Documents found</td>
+                                <td colspan="{{ $totalSpan[request('type')] }}" class="text-center">No Documents found</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -162,6 +186,24 @@ For Signatures
     </div>
 </div>
 
+@endsection
+
+@section('script-extra')
+<script>
+    function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll('.select-row');
+        checkboxes.forEach((rowCheckbox) => {
+            rowCheckbox.checked = checkbox.checked;
+        });
+    }
+
+    function toggleSelectRow(checkbox) {
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const checkboxes = document.querySelectorAll('.select-row');
+        const allChecked = Array.from(checkboxes).every((rowCheckbox) => rowCheckbox.checked);
+        selectAllCheckbox.checked = allChecked;
+    }
+</script>
 @endsection
 
 @section('includes')

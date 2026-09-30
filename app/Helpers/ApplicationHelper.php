@@ -36,7 +36,7 @@ class ApplicationHelper
             LtpApplication::STATUS_RETURNED => 'Returned',
             LtpApplication::STATUS_RESUBMITTED => 'Resubmitted',
             LtpApplication::STATUS_ACCEPTED => 'Accepted',
-            LtpApplication::STATUS_PAYMENT_IN_PROCESS => 'Payment in Process',
+            LtpApplication::STATUS_PAYMENT_IN_PROCESS => 'Pending Payment',
             LtpApplication::STATUS_PAID => 'Paid',
             LtpApplication::STATUS_FOR_INSPECTION => 'For Inspection',
             LtpApplication::STATUS_INSPECTED => 'Inspected',
