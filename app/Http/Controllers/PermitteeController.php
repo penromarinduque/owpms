@@ -370,8 +370,8 @@ class PermitteeController extends Controller
         ]);
     }
 
-    public function viewPermit(string $id){
-        
+    public function viewPermit(string $id) {
+
         $permit_id = Crypt::decryptString($id);
         $permittee = Permittee::find($permit_id);
 

@@ -25,7 +25,7 @@ active
         </div>
         <div class="card-body">
             <dl class="row ">
-                <dt class="col-sm-3">Order Number</dt>
+                <dt class="col-sm-3">Bill Number</dt>
                 <dd class="col-sm-9">{{ $paymentOrder->order_number }}</dd>
                 <dt class="col-sm-3">Issued Date</dt>
                 <dd class="col-sm-9 ">{{ $paymentOrder->issued_date->format("F d, Y") }}</dd>

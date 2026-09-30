@@ -30,11 +30,13 @@ active
                         <select 
                             name="permittee_id" 
                             id="permittee_id" 
-                            class="form-select select2Paginate" 
+                            {{-- class="form-select select2Paginate"  --}}
+                            class="form-select select21" 
                             data-placeholder="Select Permittee" 
                             data-ajax--url="{{ route('permitteespecies.ajaxGetPermittees') }}"
                             data-allow-clear="true"
                             >
+                            <option value="">sad</option>
                         </select>
                         @error('permittee_id') <span class="text-danger">{{ $message }}</span>@enderror
                     </div>
@@ -43,7 +45,8 @@ active
                         <select 
                             name="specie_id" 
                             id="specie_id" 
-                            class="form-select select2Paginate" 
+                            {{-- class="form-select select2Paginate" --}}
+                            class="form-select select21"
                             data-placeholder="Select Species" 
                             data-ajax--url="{{ route('permitteespecies.ajaxgetspecies') }}"
                             data-allow-clear="true"
@@ -72,4 +75,59 @@ active
         $('.select2').select2();
     });
 </script> --}}
+<script>
+     $(document).ready(function() {
+         console.log("fdsf")
+        //  $(".select21").select2({});
+         $(".select21").select2({
+             ajax: {
+                 delay: 250,
+                 dataType: 'json',
+                 data : function(params){
+                     var query = {
+                         search: params.term,
+                         type: 'public',
+                         page: params.page || 1
+                     }
+                     console.log("tagfd")
+                     // Query parameters will be ?search=[term]&type=public
+                     return query;
+                 },
+                 processResults: function (data) {
+                     console.log("test search");
+                     return {
+                         results: data.data,
+                         // pagination: {
+                         //     more: (data.current_page < data.last_page)
+                         // }
+                     };
+                 },
+             }
+         });
+     })
+    // $(".select2Paginate").select2({
+    //     ajax : {
+    //         delay: 250,
+    //         data : function(params){
+    //             var query = {
+    //                 search: params.term,
+    //                 type: 'public',
+    //                 page: params.page || 1
+    //             }
+    //             console.log("tagfd  ")
+    //             // Query parameters will be ?search=[term]&type=public
+    //             return query;
+    //         },
+    //         processResults: function (data) {
+    //             console.log("sdffd");
+    //             return {
+    //                 results: data.data,
+    //                 pagination: {
+    //                     more: (data.current_page < data.last_page)
+    //                 }
+    //             };
+    //         },
+    //     }
+    // });
+</script>
 @endsection

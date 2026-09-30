@@ -20,7 +20,14 @@ class PermitteeSpecieController extends Controller
         $permittee = Permittee::find($permittee_id);
         $permittee_species = PermitteeSpecie::where("permittee_id", $permittee_id)->with([
             "specie"
-        ])->paginate(20);
+        ])
+        ->orderBy(
+            Specie::select('specie_name')
+                ->whereColumn('species.id', 'permittee_species.specie_id')
+                ->limit(1),
+            'ASC'
+        )
+        ->paginate(20);
 
         return view("admin.permittee.permitteespecies.index", [
             'permittee' => $permittee,
@@ -34,7 +41,9 @@ class PermitteeSpecieController extends Controller
     public function create()
     {
         //
-        return view("admin.permittee.permitteespecies.create", []);
+        return view("admin.permittee.permitteespecies.create", [
+            
+        ]);
     }
 
     /**

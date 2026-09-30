@@ -36,7 +36,9 @@
         <link href="{{ asset('volt-assets/css/volt.css') }}" rel="stylesheet" />
 
         <!-- Select2 -->
-        <link rel="stylesheet" href="{{ asset('assets/select2/dist/css/select2.min.css') }}">
+        {{-- <link rel="stylesheet" href="{{ asset('assets/select2/dist/css/select2.min.css') }}"> --}}
+         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet"/>
+
         <link href="{{ asset('css/customize.css') }}" rel="stylesheet" />
 
         {{-- Custom styles --}}
@@ -82,7 +84,9 @@
     <script src="{{ asset('assets/fontawesome-free-6.5.1-web/js/all.min.js') }}" crossorigin="anonymous"></script>
 
     <!-- Select2 -->
-    <script src="{{ asset('assets/select2/dist/js/select2.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/select2/dist/js/select2.min.js') }}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
     <script src="{{ asset('js/jquery.ajaxrequestlaravel.js') }}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="{{ asset('vendor/bladewind/js/helpers.js') }}"></script>
@@ -90,7 +94,7 @@
     {{-- Image Cropper --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 
-    <script type="text/javascript">
+    <script type="">
         // Fetch token from session
         var sanctumToken = '{{ session('sanctumToken') }}';
 
@@ -110,10 +114,10 @@
     <script src="{{ asset('assets/simple-datatables/simple-datatables.min.js') }}" crossorigin="anonymous"></script>
     <script src="{{ asset('js/datatables-simple-demo.js') }}"></script>
     
-    <script type="text/javascript"> 
+    <script type=""> 
         var $ = jQuery.noConflict();
-        jQuery(document).ready(function ($){
-
+        $(document).ready(function ($){
+            
             // Select2
             $(".select2Paginate").select2({
                 ajax : {
@@ -124,11 +128,12 @@
                             type: 'public',
                             page: params.page || 1
                         }
-
+                        console.log("tagfd  ")
                         // Query parameters will be ?search=[term]&type=public
                         return query;
                     },
                     processResults: function (data) {
+                        console.log("sdffd");
                         return {
                             results: data.data,
                             pagination: {
@@ -138,6 +143,37 @@
                     },
                 }
             });
+            // $('.select2Paginate').each(function() {
+            //     let $select = (this);
+            //     let ajaxUrl = $select.attr('data-ajax-url'); // Read attribute directly
+
+            //     $select.select2({
+            //         placeholder: $select.data('placeholder') || 'Select Permittee',
+            //         allowClear: $select.data('allow-clear') ?? true,
+            //         minimumInputLength: 1, // Requires typing at least 1 character before searching
+            //         ajax: {
+            //             url: ajaxUrl,
+            //             dataType: 'json',
+            //             delay: 250, // Waits 250ms after typing stops before sending request
+            //             data: function (params) {
+            //                 return {
+            //                     q: params.term, // search query term
+            //                     page: params.page || 1
+            //                 };
+            //             },
+            //             processResults: function (data, params) {
+            //                 params.page = params.page || 1;
+            //                 return {
+            //                     results: data.results,
+            //                     pagination: {
+            //                         more: (params.page * 10) < data.total_count
+            //                     }
+            //                 };
+            //             },
+            //             cache: true
+            //         }
+            //     });
+            // });
         });
     </script>
     <script>
