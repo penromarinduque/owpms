@@ -45,9 +45,10 @@ active
                 <div class="row mb-2">
                     <div class="col-md-7 mb-2">
                         <div class="form-group">
-                            <label>Date of Application [on or before] <span class="text-danger">*</span>:</label>
-                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('transport_date', 'validity_result');" value="{{ old('transport_date') }}" max="{{ date('Y-m-d') }}" required>
-                            <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5>
+                            <label>Date of Application <span class="text-danger">*</span>:</label>
+                            <input disabled type="datetime" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('transport_date', 'validity_result');" value="{{ old('transport_date', now()->format('Y-m-d H:i a')) }}" max="{{ date('Y-m-d') }}" required>
+                            {{-- <h5 class="mt-2" id="validity"><span id="validity_label">Validity: </span> <span id="validity_result"></span></h5> --}}
+                            <h5 class="mt-2" ><span >Validity: </span> {{ now()->addMonth()->format('F d, Y') }} </h5>
                         </div>
                     </div>
                     <div class="col-md-7">

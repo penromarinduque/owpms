@@ -248,9 +248,8 @@ active
                             </th>
                             <th>Permittee</th>
                             <th>Application No.</th>
-                            <th class="text-center">Date Created</th>
-                            <th class="text-center">Last Modified</th>
                             <th width="300px" class="text-center">Date of Application</th>
+                            <th class="text-center">Last Modified</th>
                             <th class="text-center">Status</th>
                             <th width="200px" class="text-center">Actions</th>
                         </tr>
@@ -263,12 +262,12 @@ active
                                 </td>
                                 <td class="align-middle">{{ $ltp_application->permittee->user->personalInfo->first_name . ' ' . $ltp_application->permittee->user->personalInfo->last_name }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
-                                <td class="align-middle text-center text-secondary">{{ $ltp_application->created_at->diffForHumans() }}</td>
-                                <td class="align-middle text-center text-secondary">{{ $ltp_application->updated_at->diffForHumans() }}</td>
                                 <td class="align-middle text-center">
                                     {{ $ltp_application->transport_date->format("F d, Y") }}
                                      <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span>
                                 </td>
+                                {{-- <td class="align-middle text-center text-secondary">{{ $ltp_application->created_at->diffForHumans() }}</td> --}}
+                                <td class="align-middle text-center text-secondary">{{ $ltp_application->updated_at->diffForHumans() }}</td>
                                 <td class="align-middle text-center">
                                     <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
                                 </td>
@@ -313,7 +312,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">No record found.</td>
+                                <td colspan="7" class="text-center">No record found.</td>
                             </tr>
                         @endforelse
                     </tbody>

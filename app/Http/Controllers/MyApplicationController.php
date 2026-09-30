@@ -107,7 +107,7 @@ class MyApplicationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "transport_date" => "required|date",
+            // "transport_date" => "required|date",
             "destination" => "nullable|exists:provinces,id",
             "purpose" => "required|string",
             "specie_id" => "required|array",
@@ -139,8 +139,8 @@ class MyApplicationController extends Controller
                 'permittee_id' => Auth::user()->wcp()->id, 
                 'application_no' => $application_no, 
                 'application_status' => LtpApplication::STATUS_DRAFT, 
-                'application_date' => date('Y-m-d'), 
-                'transport_date' =>  $request->transport_date, 
+                'application_date' => now(), 
+                'transport_date' =>  now(), 
                 'purpose' => $request->purpose, 
                 'specie_nature_id' => $request->specie_nature_id,
                 'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: auth()->user()->personalInfo->barangay->municipality->province_id), 
@@ -240,7 +240,7 @@ class MyApplicationController extends Controller
         //
         return DB::transaction(function () use ($request, $id) {
             $request->validate([
-                "transport_date" => "required|date",
+                // "transport_date" => "required|date",
                 "purpose" => "required|string",
                 "specie_id" => "required|array",
                 "quantity" => "required|array",
@@ -260,7 +260,7 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application not found!');
             }
 
-            $ltp_application->transport_date = $request->transport_date;
+            $ltp_application->transport_date = now();
             $ltp_application->purpose = $request->purpose;
             $ltp_application->application_status = LtpApplication::STATUS_DRAFT;
             $ltp_application->destination = $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null);
