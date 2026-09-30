@@ -216,6 +216,6 @@ class LtpApplicationPolicy
     }
 
     public function cancelApplication(User $user, LtpApplication $ltpApplication) {
-        return ($user->id == $ltpApplication->permittee->user_id) && in_array($ltpApplication->application_status, [LtpApplication::STATUS_RESUBMITTED, LtpApplication::STATUS_SUBMITTED]);
+        return ($user->id == $ltpApplication->permittee->user_id) && in_array($ltpApplication->application_status, [LtpApplication::STATUS_RESUBMITTED, LtpApplication::STATUS_SUBMITTED, LtpApplication::STATUS_UNDER_REVIEW]);
     }
 }
