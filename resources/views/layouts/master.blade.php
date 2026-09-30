@@ -116,8 +116,7 @@
     
     <script type=""> 
         var $ = jQuery.noConflict();
-        $(document).ready(function ($){
-            
+        $(document).ready(function(){
             // Select2
             $(".select2Paginate").select2({
                 ajax : {
@@ -143,37 +142,6 @@
                     },
                 }
             });
-            // $('.select2Paginate').each(function() {
-            //     let $select = (this);
-            //     let ajaxUrl = $select.attr('data-ajax-url'); // Read attribute directly
-
-            //     $select.select2({
-            //         placeholder: $select.data('placeholder') || 'Select Permittee',
-            //         allowClear: $select.data('allow-clear') ?? true,
-            //         minimumInputLength: 1, // Requires typing at least 1 character before searching
-            //         ajax: {
-            //             url: ajaxUrl,
-            //             dataType: 'json',
-            //             delay: 250, // Waits 250ms after typing stops before sending request
-            //             data: function (params) {
-            //                 return {
-            //                     q: params.term, // search query term
-            //                     page: params.page || 1
-            //                 };
-            //             },
-            //             processResults: function (data, params) {
-            //                 params.page = params.page || 1;
-            //                 return {
-            //                     results: data.results,
-            //                     pagination: {
-            //                         more: (params.page * 10) < data.total_count
-            //                     }
-            //                 };
-            //             },
-            //             cache: true
-            //         }
-            //     });
-            // });
         });
     </script>
     <script>

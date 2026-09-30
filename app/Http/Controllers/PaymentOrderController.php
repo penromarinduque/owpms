@@ -403,4 +403,10 @@ class PaymentOrderController extends Controller
             return redirect()->back()->with('success', 'Serial Number encoded successfully');
         });
     }
+
+    public function viewBillingStatement(Request $request, $id) {
+        $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+
+        // $preparedBySignature = 
+    }
 }

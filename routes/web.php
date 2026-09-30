@@ -198,6 +198,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('view-receipt/{id}', [PaymentOrderController::class, 'viewReceipt'])->name('paymentorder.viewreceipt');
         Route::post('encode-serial-no/{id}', [PaymentOrderController::class, 'encodeSerialNo'])->name('paymentorder.encodeSerialNo');
         Route::get('test', [PaymentOrderController::class, 'test']);
+        Route::get("view-billing-statement/{id}", [PaymentOrderController::class, 'viewBillingStatement'])->name("paymentorder.viewBillingStatement");
     });
 
     // Issued OR

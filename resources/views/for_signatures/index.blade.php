@@ -51,10 +51,10 @@ For Signatures
                 <table class="table table-bordered table-hover table-striped">
                     @php
                         $totalSpan = [
-                            "inspection_report" => 5,
-                            "ltp" => 6,
-                            "payment_order" => 5,
-                            "billing_statement" => 5
+                            "inspection_report" => 6,
+                            "ltp" => 7,
+                            "payment_order" => 6,
+                            "billing_statement" => 6
                         ];
                     @endphp
                     <thead>
@@ -78,22 +78,26 @@ For Signatures
                             @if (request('type') == 'inspection_report')
                                 <th>Document</th>
                                 <th>Application No.</th>
+                                <th>Documents</th>
                                 <th class="text-center">Actions</th>
                             @endif
                             @if (request('type') == 'ltp')
                                 <th>Document</th>
                                 <th>Permit No.</th>
                                 <th>Application No.</th>
+                                <th>Documents</th>
                                 <th class="text-center">Actions</th>
                             @endif
                             @if (request('type') == 'payment_order')
                                 <th>Document</th>
                                 <th>Order Number</th>
+                                <th>Documents</th>
                                 <th class="text-center">Actions</th>
                             @endif
                             @if (request('type') == 'billing_statement')
                                 <th>Document</th>
                                 <th>Order Number</th>
+                                <th>Documents</th>
                                 <th class="text-center">Actions</th>
                             @endif
                         </tr>
@@ -109,6 +113,9 @@ For Signatures
                                     <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
                                     <td>
                                         {{ $doc->ltpApplication->application_no }}
+                                    </td>
+                                    <td>
+
                                     </td>
                                     <td class="text-center">
                                         @can('inspectorSign', $doc)
@@ -132,8 +139,11 @@ For Signatures
                                     <td>
                                         {{ $doc->permit_number }}
                                     </td>
-                                    <td>
+                                    <td>    
                                         {{ $doc->ltpApplication->application_no }}
+                                    </td>
+                                    <td>
+
                                     </td>
                                     <td class="text-center">
                                         {{-- @can('chiefRpsSign', $doc)
@@ -152,12 +162,15 @@ For Signatures
                                     <td>
                                         {{ $doc->order_number }}
                                     </td>
+                                    <td>
+                                        <a href="{{ route('paymentorder.viewBillingStatement', Crypt::encryptString($doc->id)) }}" class="btn btn-sm btn-outline-primary">View Billing Statement</a>
+                                    </td>
                                     <td class="text-center">
                                         @can('preparerSign', $doc)
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderPreparerSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderPreparerSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Sign</button>
                                         @endcan
                                         @can('approverSign', $doc)
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approved</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approve</button>
                                         @endcan
                                     </td>
                                 @endif
@@ -165,6 +178,9 @@ For Signatures
                                     <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
                                     <td>
                                         {{ $doc->order_number }}
+                                    </td>
+                                    <td>
+
                                     </td>
                                     <td class="text-center">
                                         @can('oopApproverSign', $doc)
