@@ -456,7 +456,7 @@ class PaymentOrderController extends Controller
         
         $approvedBySignatureUrl = null;
         if($paymentOrder->approved_signed) {
-            $approved_by = $paymentOrder->preparedBy;
+            $approved_by = $paymentOrder->approvedBy;
             $approvedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $approved_by->getSignature()->signature, now()->addMinutes(30));
             $approvedBySignature = $this->getElectronicSignature(
                 $approved_by->personalInfo->first_name . " " . $approved_by->personalInfo->middle_name . " " . $approved_by->personalInfo->last_name,
