@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\ApplicationHelper;
+use App\Models\Counter;
 use App\Models\User;
 use App\Notifications\LtpApplicationIOPaid;
 use App\Notifications\LtpApplicationPaid;
@@ -156,7 +157,7 @@ class PaymentOrderController extends Controller
 
             $year = date('Y');  
             $latest = PaymentOrder::where('year', $year)->orderBy('no', 'DESC')->first();
-            $no = $latest ? $latest->no + 1 : 1;
+            $no = $latest ? $latest->no + 1 : Counter::where("year", $year)->first()->billing_statement;
             $bill_no = $year."-".date('m-').str_pad($no, 5, '0', STR_PAD_LEFT);
 
             $paymentOrder = PaymentOrder::create([
