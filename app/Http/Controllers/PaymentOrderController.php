@@ -22,6 +22,7 @@ use App\Notifications\LtpApplicationIOPaid;
 use App\Notifications\LtpApplicationPaid;
 use App\Notifications\PaymentOrderCreated;
 use App\Notifications\SignedNotification;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Spatie\LaravelPdf\Facades\Pdf;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Support\Facades\Notification;
@@ -92,7 +93,7 @@ class PaymentOrderController extends Controller
         $query = PaymentOrder::query()
         ->where('id', $id);
         $paymentOrder = $query->first();
-        $view = Pdf::loadView('admin.payment_order.billing-statement-pdf', [
+        $view = FacadePdf::loadView('admin.payment_order.billing-statement-pdf', [
             'payment_order' => $paymentOrder,
             "ltp_application" => $paymentOrder->ltpApplication,
             "ltp_fee" => $paymentOrder->ltpFee,
@@ -124,7 +125,7 @@ class PaymentOrderController extends Controller
             
         // ]);
         // return "asd";
-        $view = Pdf::loadView('admin.payment_order.oop-pdf', [
+        $view = FacadePdf::loadView('admin.payment_order.oop-pdf', [
             'payment_order' => $paymentOrder,
             "ltp_application" => $paymentOrder->ltpApplication,
             "ltp_fee" => $paymentOrder->ltpFee,
