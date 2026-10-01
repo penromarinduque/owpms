@@ -89,7 +89,7 @@ active
                         dated <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->paymentOrder->issued_date->format('F d, Y') }}&nbsp;&nbsp;</u>.
                     </p>
                     <p>
-                        &nbsp;&nbsp;This permit is not valid without the dry seal of the signing officer or if it contains erasure or alteration.
+                        &nbsp;&nbsp;This permit is not valid without the QR code of the signing officer or if it contains erasure or alteration.
                     </p>
 
                     <div class="d-flex justify-content-end">
