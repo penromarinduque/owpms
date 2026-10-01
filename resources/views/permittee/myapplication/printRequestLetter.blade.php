@@ -117,8 +117,9 @@
                 <p>{{date('F j, Y')}}</p>
                 <p>
                     <strong>CESAR P. ODI, <i>RPF</i></strong><br>
-                    OIC, PENR Officer<br>
-                    Boac, Marinduque
+                    PENR Officer<br>
+                    DENR-PENRO Marinduque<br>
+                    Bangbangalon, Boac, Marinduque
                 </p>
             </div>
 
