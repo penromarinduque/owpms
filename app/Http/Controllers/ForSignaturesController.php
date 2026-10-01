@@ -329,6 +329,7 @@ class ForSignaturesController extends Controller
             if(!$signature) {
                 return redirect()->back()->with('error', 'Signature not found.');
             }
+            
             Storage::disk('s3')->put(
                 "generated_signatures/" . $signature_title, 
                 Storage::disk('s3')->get("signatures/" . $payment_order->preparedBy->getSignature()->signature)

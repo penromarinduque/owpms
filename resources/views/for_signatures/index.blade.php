@@ -163,7 +163,7 @@ For Signatures
                                         {{ $doc->order_number }}
                                     </td>
                                     <td>
-                                        <a href="{{ route('paymentorder.viewBillingStatement', Crypt::encryptString($doc->id)) }}" class="btn btn-sm btn-outline-primary">View Billing Statement</a>
+                                        <a href="{{ route('paymentorder.viewBillingStatement', Crypt::encryptString($doc->id)) }}" class="btn btn-sm btn-outline-primary" target="_blank">View Billing Statement</a>
                                     </td>
                                     <td class="text-center">
                                         @can('preparerSign', $doc)

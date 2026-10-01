@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ElectronicSigratureTrait;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LtpApplication;
@@ -21,12 +22,14 @@ use App\Notifications\LtpApplicationIOPaid;
 use App\Notifications\LtpApplicationPaid;
 use App\Notifications\PaymentOrderCreated;
 use App\Notifications\SignedNotification;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Spatie\LaravelPdf\Facades\Pdf;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Support\Facades\Notification;
 
 class PaymentOrderController extends Controller
 {
+    use ElectronicSigratureTrait;
+    
     public function index(Request $request) {
         Gate::authorize('viewAny', PaymentOrder::class);
 
@@ -407,6 +410,35 @@ class PaymentOrderController extends Controller
     public function viewBillingStatement(Request $request, $id) {
         $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
 
-        // $preparedBySignature = 
+        $preparedBySignatureUrl = null;
+        if($paymentOrder->prepared_sipaymentOrdergned) {
+            $prepared_by = $paymentOrder->preparedBy;
+            $preparedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $prepared_by->getSignature()->signature, now()->addMinutes(30));
+            $preparedBySignature = $this->getElectronicSignature(
+                $prepared_by->personalInfo->first_name . " " . $prepared_by->personalInfo->middle_name . " " . $prepared_by->personalInfo->last_name,
+                $prepared_by->empPosition->position,
+                $preparedByUrl,
+                $paymentOrder->order_number,
+                "7",
+                $paymentOrder->id,
+                $paymentOrder->preparedBy->id,
+                null
+            );
+            $preparedBySignatureUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/{$paymentOrder->prepared_signed}", now()->addMinutes(30));
+        }
+        //  = Storage::disk('s3')->exists("generated_signatures/{$paymentOrder->prepared_signed}") ? Storage::disk('s3')->temporaryUrl("generated_signatures/{$paymentOrder->prepared_signed}", now()->addMinutes(30)) : null;
+        // if($paymentOrder->)
+        $approvedBySignatureUrl = null;
+        // Storage::disk('s3')->exists("generated_signatures/{$paymentOrder->approved_signed}") ? Storage::disk('s3')->temporaryUrl("generated_signatures/{$paymentOrder->approved_signed}", now()->addMinutes(30)) : null;
+        return Pdf::view('pdfs.billing-statement-pdf', [
+            "ltp_application" => $paymentOrder->ltpApplication,
+            'payment_order' => $paymentOrder,
+            'preparedByUrl' => $preparedBySignatureUrl,
+            'approvedByUrl' => $approvedBySignatureUrl,
+            "ltp_fee" => $paymentOrder->ltpFee,
+            "prepared_by" => $paymentOrder->preparedBy,
+            "approved_by" => $paymentOrder->approvedBy
+        ])
+        ->waitUntilReady();
     }
 }
