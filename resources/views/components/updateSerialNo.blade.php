@@ -9,7 +9,7 @@
                 @csrf
                 <div class="mb-3">
                     <label class="form-label">Serial No.</label>
-                    <input type="text" class="form-control @error('serial_no',  'updateSerialNo') is-invalid @enderror" name="serial_no" placeholder="Serial No." value="{{ old('serial_no')  }}">
+                    <input type="text" class="form-control @error('serial_no',  'updateSerialNo') is-invalid @enderror" name="serial_no" placeholder="Serial No." value="{{ $paymentOrder->serial_number ? $paymentOrder->serial_number : $nextSerialNumber  }}">
                     @error('serial_no', 'updateSerialNo')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>

@@ -199,6 +199,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::post('encode-serial-no/{id}', [PaymentOrderController::class, 'encodeSerialNo'])->name('paymentorder.encodeSerialNo');
         Route::get('test', [PaymentOrderController::class, 'test']);
         Route::get("view-billing-statement/{id}", [PaymentOrderController::class, 'viewBillingStatement'])->name("paymentorder.viewBillingStatement");
+        Route::get("view-payment-order/{id}", [PaymentOrderController::class, 'viewPaymentOrder'])->name("paymentorder.viewPaymentOrder");
     });
 
     // Issued OR
@@ -356,6 +357,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/print/{id}', [InspectionController::class, 'print'])->name('inspection.print');
         Route::post('/upload-document/{id}', [InspectionController::class, 'uploadDocument'])->name('inspection.uploadDocument');
         Route::get('/download-document/{id}', [InspectionController::class, 'downloadDocument'])->name('inspection.downloadDocument');
+        Route::get("/view/{id}", [InspectionController::class, 'viewInspectionReport'])->name("inspection.viewInspectionReport");
     });
 
     // For Signatures
@@ -378,6 +380,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
     Route::prefix('ltps')->group(function () {
         Route::get('/', [LtpController::class, 'index'])->name('ltps.index');
         Route::get('/view-permit/{id}', [LtpController::class, 'viewPermit'])->name('ltps.viewPermit');
+        Route::get('/view-signed-permit/{id}', [LtpController::class, 'viewSignedPermit'])->name('ltps.viewSignedPermit');
     });
 
     Route::prefix('documents')->group(function () {
@@ -444,20 +447,23 @@ Route::prefix("tests")->group( function () {
 });
 
 Route::get("test", function () {
-    $payment_order = PaymentOrder::find(1);
-    $preparedBy = $payment_order->preparedBy->getSignature();
-    $preparedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $preparedBy->signature, now()->addMinutes(30));
-    $approvedBy =$payment_order->approvedBy->getSignature();
-    $approvedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $approvedBy->signature, now()->addMinutes(30));
-    return Pdf::view("pdfs.billing-statement-pdf", [
-        "payment_order" => $payment_order,
-        "ltp_application" => $payment_order->ltpApplication,
-        "ltp_fee" => $payment_order->ltpFee,
-        "preparedByUrl" => $preparedByUrl,
-        "approvedByUrl" => $approvedByUrl,
-        "prepared_by" => $payment_order->preparedBy,
-        "approved_by" => $payment_order->approvedBy
-    ])
-    ->paperSize(8.5, 13, "in")
-    ->waitUntilReady();
+    $prefix = now()->format('Y-m'); // "2026-10"
+
+    $latestSerialNumber =  PaymentOrder::query()
+            ->where('serial_number', 'like', now()->format('Y-m') . '-%')
+            ->latest('serial_number')
+            ->value('serial_number');
+
+    if ($latestSerialNumber) {
+        // Extract the last part after the final hyphen and increment by 1
+        $lastNumber = (int) substr($latestSerialNumber, strrpos($latestSerialNumber, '-') + 1);
+        $nextNumber = $lastNumber + 1;
+    } else {
+        // First record of the month
+        $nextNumber = 1;
+    }
+
+    // Pads the number with leading zeros up to 4 digits (e.g., 2026-10-0002)
+    $nextSerialNumber = sprintf('%s-%04d', $prefix, $nextNumber);
+    return $nextSerialNumber;
 });

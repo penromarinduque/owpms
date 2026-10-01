@@ -7,6 +7,7 @@ use App\Models\Permittee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use App\Helpers\ApplicationHelper;
+use App\Models\Counter;
 use App\Models\LtpApplicationProgress;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -291,7 +292,7 @@ class LtpApplicationController extends Controller
         return DB::transaction(function () use ($ltp_application, $request) {
             $year = date('Y');  
             $latest = LtpPermit::whereYear('created_at', $year)->orderBy('no', 'DESC')->first();
-            $no = $latest ? $latest->no + 1 : 1;
+            $no = $latest ? $latest->no + 1 : Counter::where("year", $year)->first()->ltp;
             $permit_no = $year."-".str_pad($no, 5, '0', STR_PAD_LEFT);
             LtpPermit::create([
                 'ltp_application_id' => $ltp_application->id,

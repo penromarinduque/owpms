@@ -115,7 +115,7 @@ For Signatures
                                         {{ $doc->ltpApplication->application_no }}
                                     </td>
                                     <td>
-
+                                        <a href="{{ route('inspection.viewInspectionReport', [ 'id' => Crypt::encryptString($doc->id), 'ltp_application_id' => $doc->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary" target="_blank">View Inspection Report</a>
                                     </td>
                                     <td class="text-center">
                                         @can('inspectorSign', $doc)
@@ -143,7 +143,8 @@ For Signatures
                                         {{ $doc->ltpApplication->application_no }}
                                     </td>
                                     <td>
-
+                                        <a href="{{ route('inspection.viewInspectionReport', [ 'id' => Crypt::encryptString($doc->ltpApplication->inspectionReport->id), 'ltp_application_id' => $doc->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary" target="_blank">View Inspection Report</a>
+                                        <a href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($doc->id), 'ltp_application_id' => $doc->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary" target="_blank">View Local Transport Permit</a>
                                     </td>
                                     <td class="text-center">
                                         {{-- @can('chiefRpsSign', $doc)
@@ -180,11 +181,12 @@ For Signatures
                                         {{ $doc->order_number }}
                                     </td>
                                     <td>
-
+                                        <a href="{{ route('paymentorder.viewBillingStatement', Crypt::encryptString($doc->id)) }}" class="btn btn-sm btn-outline-primary" target="_blank">View Billing Statement</a>
+                                        <a href="{{ route('paymentorder.viewPaymentOrder', Crypt::encryptString($doc->id)) }}" class="btn btn-sm btn-outline-primary" target="_blank">View Payment Order</a>
                                     </td>
                                     <td class="text-center">
                                         @can('oopApproverSign', $doc)
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderOopApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approved</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderOopApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approved</button>
                                         @endcan
                                     </td>
                                 @endif

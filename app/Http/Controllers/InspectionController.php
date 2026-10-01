@@ -514,4 +514,30 @@ class InspectionController extends Controller
 
         return Storage::response('inspection_report/' . $id . '.' . 'pdf', 'Inspection Report.pdf');
     }
+
+    public function viewInspectionReport(Request $request, $ltp_application_id, $id) {
+        $inspection_report = InspectionReport::find(Crypt::decryptString($id));
+        $permitteeSignUrl = null;
+        $inspectorSignUrl = null;
+        $approverSignUrl = null;
+
+        if($inspection_report->permittee_signed) {
+            $permitteeSignUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->permittee_signed, now()->addMinutes(30));
+        }
+        if($inspection_report->inspector_signed) {
+            $inspectorSignUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->inspector_signed, now()->addMinutes(30));
+        }
+        if($inspection_report->approver_signed) {
+            $approverSignUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->approver_signed, now()->addMinutes(30));
+        }
+        return Pdf::view('pdfs.inspection-report', [
+                "ltp_application" => $inspection_report->ltpApplication,
+                "inspection_report" => $inspection_report,
+                "permitteeUrl" => $permitteeSignUrl,
+                "inspectorUrl" => $inspectorSignUrl,
+                "approverUrl" => $approverSignUrl
+            ])
+            ->waitUntilReady()
+            ->margins(0.3, 0, 0.3, 0, Unit::Inch);
+    }
 }

@@ -99,13 +99,13 @@ Inspection Report
 
                             <div class="row fs-reg">
                                 <div class="col-6 px-5 py-4">
-                                    <img style="max-width: 150px" src="{{ $permitteeUrl }}" alt="">
+                                    <img style="max-width: 200px; display: block; margin: 0px auto;" src="{{ $permitteeUrl }}" alt="">
                                     <p class="text-center mb-0 fw-bold">{{ $ltp_application->permittee->user->personalInfo->getFullNameAttribute() }}</p>
                                     <hr class="my-0 border-black text-dark">
                                     <p class="text-center">(Signature of Witness)</p>
                                 </div>
                                 <div class="col-6 px-5 py-4">
-                                    <img style="max-width: 150px" src="{{ $inspectorUrl }}" alt="">
+                                    <img style="max-width: 200px; display: block; margin: 0px auto;" src="{{ $inspectorUrl }}" alt="">
                                     <p class="text-center mb-0 fw-bold">{{ $inspection_report->inspector->personalInfo->getFullNameAttribute() }}</p>
                                     <hr class="my-0 border-black">
                                     <p class="text-center">(Inspecting Officer)</p>
@@ -139,7 +139,7 @@ Inspection Report
                                 <br><br>
                                 <div class="d-flex align-content-end justify-content-end">
                                     <div class="" style="min-width: 200px">
-                                        <img style="max-width: 150px" src="{{ $approverUrl }}" alt="">
+                                        <img style="max-width: 200px; display: block; margin: 0px auto;" src="{{ $approverUrl }}" alt="">
                                         <p class="text-center mb-0 mb-1 fw-bold">
                                             {{ strtoupper($inspection_report->approver->personalInfo->getFullNameAttribute()) }}
                                         </p>

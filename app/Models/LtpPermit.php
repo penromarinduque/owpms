@@ -16,8 +16,7 @@ class LtpPermit extends Model implements Auditable
     protected $guarded = [];
 
 
-    public function scopePendingSignaturesFor($query, $userId)
-    {
+    public function scopePendingSignaturesFor($query, $userId) {
         return $query->where(function ($q) use ($userId) {
             $q->where(function($sub) use ($userId) {
                 $sub->where('chief_tsd', $userId)

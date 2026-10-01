@@ -25,6 +25,7 @@ use App\Notifications\SignedNotification;
 use Spatie\LaravelPdf\Facades\Pdf;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\Rule;
 
 class PaymentOrderController extends Controller
 {
@@ -282,8 +283,28 @@ class PaymentOrderController extends Controller
             'ltpFee'
         ])->find(Crypt::decryptString($id));
 
+        $prefix = now()->format('Y-m'); // "2026-10"
+
+        $latestSerialNumber =  PaymentOrder::query()
+                ->where('serial_number', 'like', now()->format('Y-m') . '-%')
+                ->latest('serial_number')
+                ->value('serial_number');
+
+        if ($latestSerialNumber) {
+            // Extract the last part after the final hyphen and increment by 1
+            $lastNumber = (int) substr($latestSerialNumber, strrpos($latestSerialNumber, '-') + 1);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            // First record of the month
+            $nextNumber = 1;
+        }
+
+        // Pads the number with leading zeros up to 4 digits (e.g., 2026-10-0002)
+        $nextSerialNumber = sprintf('%s-%04d', $prefix, $nextNumber);
+
         return view('admin.payment_order.show', [
             'paymentOrder' => $paymentOrder,
+            'nextSerialNumber' => $nextSerialNumber,
             '_helper' => $_helper
         ]);
     }
@@ -382,7 +403,11 @@ class PaymentOrderController extends Controller
         Gate::authorize('encodeSerialNo', $paymentOrder);
 
         $validation = Validator::make($request->all(), [
-            'serial_no' => 'required|max:255'
+            'serial_no' => [
+                'required',
+                'max:255',
+                Rule::unique('payment_orders', 'serial_number')->ignore($paymentOrder->id),
+            ]
         ]);
 
         if($validation->fails()) {
@@ -411,7 +436,7 @@ class PaymentOrderController extends Controller
         $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
 
         $preparedBySignatureUrl = null;
-        if($paymentOrder->prepared_sipaymentOrdergned) {
+        if($paymentOrder->prepared_signed) {
             $prepared_by = $paymentOrder->preparedBy;
             $preparedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $prepared_by->getSignature()->signature, now()->addMinutes(30));
             $preparedBySignature = $this->getElectronicSignature(
@@ -424,11 +449,26 @@ class PaymentOrderController extends Controller
                 $paymentOrder->preparedBy->id,
                 null
             );
-            $preparedBySignatureUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/{$paymentOrder->prepared_signed}", now()->addMinutes(30));
+            $preparedBySignatureUrl = 'data:image/png;base64,' . base64_encode($preparedBySignature->body());
         }
-        //  = Storage::disk('s3')->exists("generated_signatures/{$paymentOrder->prepared_signed}") ? Storage::disk('s3')->temporaryUrl("generated_signatures/{$paymentOrder->prepared_signed}", now()->addMinutes(30)) : null;
-        // if($paymentOrder->)
+        
         $approvedBySignatureUrl = null;
+        if($paymentOrder->approved_signed) {
+            $approved_by = $paymentOrder->preparedBy;
+            $approvedByUrl = Storage::disk('s3')->temporaryUrl('signatures/' . $approved_by->getSignature()->signature, now()->addMinutes(30));
+            $approvedBySignature = $this->getElectronicSignature(
+                $approved_by->personalInfo->first_name . " " . $approved_by->personalInfo->middle_name . " " . $approved_by->personalInfo->last_name,
+                $approved_by->empPosition->position,
+                $approvedByUrl,
+                $paymentOrder->order_number,
+                "7",
+                $paymentOrder->id,
+                $paymentOrder->approvedBy->id,
+                null
+            );
+            $approvedBySignatureUrl = 'data:image/png;base64,' . base64_encode($approvedBySignature->body());
+        }
+
         // Storage::disk('s3')->exists("generated_signatures/{$paymentOrder->approved_signed}") ? Storage::disk('s3')->temporaryUrl("generated_signatures/{$paymentOrder->approved_signed}", now()->addMinutes(30)) : null;
         return Pdf::view('pdfs.billing-statement-pdf', [
             "ltp_application" => $paymentOrder->ltpApplication,
@@ -440,5 +480,38 @@ class PaymentOrderController extends Controller
             "approved_by" => $paymentOrder->approvedBy
         ])
         ->waitUntilReady();
+    }
+
+    public function viewPaymentOrder(Request $request, $id) {
+        $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
+        
+        $approvedBySignatureUrl = null;
+        if($paymentOrder->oop_approved_signed) {
+            $oop_approved_by = $paymentOrder->oopApprovedBy;
+            $oopApproverUrl = Storage::disk('s3')->temporaryUrl("signatures/" . $paymentOrder->oopApprovedBy->getSignature()->signature, now()->addMinutes(30));
+            
+            $oopApproverSignature = $this->getElectronicSignature(
+                $paymentOrder->oopApprovedBy->personalInfo->first_name . " " . $paymentOrder->oopApprovedBy->personalInfo->middle_name . " " . $paymentOrder->oopApprovedBy->personalInfo->last_name,
+                $paymentOrder->oopApprovedBy->empPosition->position,
+                $oopApproverUrl,
+                $paymentOrder->serial_number,
+                "6",
+                $paymentOrder->id,
+                $paymentOrder->oopApprovedBy->id,
+                null
+            );
+            $approvedBySignatureUrl = 'data:image/png;base64,' . base64_encode($oopApproverSignature->body());
+        }
+
+        return Pdf::view('pdfs.oop-pdf', [
+                "ltp_application" => $paymentOrder->ltpApplication,
+                'payment_order' => $paymentOrder,
+                'oopApproverUrl' => $approvedBySignatureUrl,
+                "ltp_fee" => $paymentOrder->ltpFee,
+                "oop_approved_by" => $paymentOrder->oopApprovedBy
+            ])
+            ->paperSize(8.5, 13, 'in')
+            ->landscape()
+            ->waitUntilReady();
     }
 }
