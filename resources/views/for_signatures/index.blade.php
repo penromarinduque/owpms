@@ -127,10 +127,10 @@ For Signatures
                                         @can('permitteeSign', $doc)
                                             {{-- <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'Are you sure you want to mark this document as manually signed? Confirming this will forward the record to the next signatory.', 'Confirm Signature', 'POST')">Sign Manually</button>
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSignDigital', Crypt::encryptString($doc->id)) }}', 'Are you sure you want to digitally sign this document? This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Sign Digitally</button> --}}
-                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'By continuing this action you are electronically signing this document. This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportPermitteeSign', Crypt::encryptString($doc->id)) }}', 'By continuing this action you are electronically signing this document. This action is legally binding and will securely forward the report to the next designated signatory.', 'Confirm Signature', 'POST')">Sign</button>
                                         @endcan
                                         @can('rpsSign', $doc)
-                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.inspectionReportRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Sign</button>
                                         @endcan
                                     </td>
                                 @endif
@@ -151,10 +151,10 @@ For Signatures
                                             <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpChiefRpsSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
                                         @endcan --}}
                                         @can('chiefTsdSign', $doc)
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpChiefTsdSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpChiefTsdSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Sign</button>
                                         @endcan
                                         @can('penroSign', $doc)
-                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpPenroSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Signed</button>
+                                            <button class="btn btn-outline-primary" onclick="showConfirmModal ('{{ route('for-signatures.ltpPenroSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Sign</button>
                                         @endcan
                                     </td>
                                 @endif
