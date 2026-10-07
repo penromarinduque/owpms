@@ -25,8 +25,8 @@
                     				<img src="{{ asset('images/bagong-pilipinas.png') }}" width="60" align="center">
                                     <br>
                                     <br>
-	                    			<h4>Department of Enviroment and Natural Resources</h4>
-									<h4>Provincial Enviroment and Natural Resources Office</h4>
+	                    			<h4>Department of Environment and Natural Resources</h4>
+									<h4>Provincial Environment and Natural Resources Office</h4>
                                     <br>
                     			</div>
                     		</div>

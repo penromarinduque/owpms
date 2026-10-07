@@ -9,6 +9,7 @@ use App\Models\LtpPermit;
 use App\Models\PaymentOrder;
 use App\Models\Permittee;
 use Docuseal\Docuseal;
+use Hashids\Hashids;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -243,7 +244,11 @@ class ApplicationHelper
      * @return string
      */
     public function generateQrCode($url){
-        return 'https://api.qrcode-monkey.com/qr/custom?size=1000&data='. $url .'&config={"eye" : "frame0","eyeBall" : "ball0","logo" : "http://owpms.penromarinduque.gov.ph/images/logo-small.png","logoMode" : "clean"}';
+        Log::info("Generating QR code for URL: " . $url);
+        // $qrCode = 'https://api.qrcode-monkey.com/qr/custom?size=1000&data='. $url .'&config={"eye" : "frame0","eyeBall" : "ball0","logo" : "http://owpms.penromarinduque.gov.ph/images/logo-small.png","logoMode" : "clean"}';
+        $qrCode = 'https://api.qrcode-monkey.com/qr/custom?size=1000&data='. $url;
+        Log::info("Generated QR code: " . $qrCode);
+        return $qrCode;
     }
 
     public function formatTimelineDescription(LtpApplicationProgress $log) {
@@ -319,4 +324,19 @@ class ApplicationHelper
             ]);
     }
 
+    public function encodeHashId($id) {
+        $hashids = new Hashids(config('services.hashids.salt'), config('services.hashids.length'));
+
+        $encoded = $hashids->encode($id);
+
+        return $encoded;
+    }
+
+    public function decodeHashId(string $hash) {
+        $hashids = new Hashids(config('services.hashids.salt'), config('services.hashids.length'));
+
+        $decoded = $hashids->decode($hash);
+
+        return $decoded[0];
+    }
 }

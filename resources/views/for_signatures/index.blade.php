@@ -186,7 +186,7 @@ For Signatures
                                     </td>
                                     <td class="text-center">
                                         @can('oopApproverSign', $doc)
-                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderOopApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approved</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showConfirmModal ('{{ route('for-signatures.paymentOrderOopApproverSign', Crypt::encryptString($doc->id)) }}', 'Do you want to proceed with marking this document as signed? This will automatically forward it to the next designated signatory.', 'Confirm Signature', 'POST')">Approve</button>
                                         @endcan
                                     </td>
                                 @endif

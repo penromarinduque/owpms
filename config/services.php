@@ -39,4 +39,9 @@ return [
         ],
     ],
 
+    "hashids" => [
+        'salt' => env('HASHIDS_SALT', 'default-salt'),
+        'length' => 10,
+    ],
+
 ];

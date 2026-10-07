@@ -287,22 +287,26 @@ class PaymentOrderController extends Controller
 
         $prefix = now()->format('Y-m'); // "2026-10"
 
-        $latestSerialNumber =  PaymentOrder::query()
-                ->where('serial_number', 'like', now()->format('Y-m') . '-%')
-                ->latest('serial_number')
-                ->value('serial_number');
+        $year = now()->format('Y'); // e.g., "2026"
+        $month = now()->format('m'); // e.g., "10"
+
+        // Find the last serial number generated in the current year
+        $latestSerialNumber = PaymentOrder::query()
+            ->where('serial_number', 'like', $year . '-%')
+            ->latest('id') // Always sort by ID to get the chronologically latest record
+            ->value('serial_number');
 
         if ($latestSerialNumber) {
-            // Extract the last part after the final hyphen and increment by 1
+            // Extract the sequence digits after the final hyphen
             $lastNumber = (int) substr($latestSerialNumber, strrpos($latestSerialNumber, '-') + 1);
             $nextNumber = $lastNumber + 1;
         } else {
-            // First record of the month
-            $nextNumber = 1;
+            // First record of the year
+            $nextNumber = Counter::where('year', $year)->first()->payment_order;
         }
 
-        // Pads the number with leading zeros up to 4 digits (e.g., 2026-10-0002)
-        $nextSerialNumber = sprintf('%s-%04d', $prefix, $nextNumber);
+        // Result format: 2026-10-0001 (Year - Current Month - Year-to-date Sequence)
+        $nextSerialNumber = sprintf('%s-%s-%04d', $year, $month, $nextNumber);
 
         return view('admin.payment_order.show', [
             'paymentOrder' => $paymentOrder,

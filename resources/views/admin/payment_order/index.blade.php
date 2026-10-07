@@ -22,17 +22,21 @@ active
             Order of Payments List
         </div>
         <div class="card-body">
-            <div class="d-flex justify-content-end">
-                <form action="" method="get">
-                    <div class="input-group mb-3">
-                        <input type="text" name="search" class="form-control" placeholder="Search by Order Number or Permittee Name" value="{{ request('search') }}">
-                        <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
-                    </div>
-                </form>
-            </div>
             <div class="table-responsive">
                 <table class="table table-hover table-bordered table-striped">
                     <thead>
+                        <tr>
+                            <td colspan="10">
+                                <div class="d-flex justify-content-end mb-0">
+                                    <form action="" method="get">
+                                        <div class="input-group">
+                                            <input type="text" name="search" class="form-control" placeholder="Search by Order Number or Permittee Name" value="{{ request('search') }}">
+                                            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                         <tr>
                             <th width="250px">Order Number</th>
                             <th class="text-center" width="160px">Date Issued</th>
@@ -73,7 +77,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">No records found.</td>
+                                <td colspan="10" class="text-center">No records found.</td>
                             </tr>
                         @endforelse
                     </tbody>

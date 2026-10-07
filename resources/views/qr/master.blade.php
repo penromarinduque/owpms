@@ -22,8 +22,12 @@
     -- is required for the animation of notifications and slide out panels
     -- you can ignore this step if you already have this file in your project
     --------------------------------------------------------------------------->
-    <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" />
+    {{-- <link href="{{ asset('vendor/bladewind/css/animate.min.css') }}" rel="stylesheet" /> --}}
+    {{-- <link href="{{ asset('vendor/bladewind/css/bladewind-ui.min.css') }}" rel="stylesheet" /> --}}
+
+    {{-- volt --}}
+    {{-- <link href="{{ asset('volt-assets/css/all.min.css') }}" rel="stylesheet" /> --}}
+    <link href="{{ asset('volt-assets/css/volt.css') }}" rel="stylesheet" />
 
     {{-- Custom stypes --}}
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">

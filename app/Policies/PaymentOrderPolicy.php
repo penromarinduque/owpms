@@ -105,7 +105,17 @@ class PaymentOrderPolicy
 
     public function downloadSignedOrder(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions()) && $paymentOrder->document;
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
+    }
+
+    public function viewSignedBillingStatement(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
+    }
+
+    public function viewSignedOop(User $user, PaymentOrder $paymentOrder): bool
+    {
+        return $paymentOrder->prepared_signed && $paymentOrder->approved_signed && $paymentOrder->oop_approved_signed && in_array('PAYMENT_ORDERS_INDEX', $user->getUserPermissions());
     }
 
     public function uploadSignedOrder(User $user, PaymentOrder $paymentOrder): bool

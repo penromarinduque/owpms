@@ -17,11 +17,13 @@ Local Transport Permit
         padding-top: 0px !important;
     }
     .qr-code {
+        width: fit-content;
         position: fixed;
-        bottom: 20px;
+        /* bottom: 20px; */
+        top: 0px;
         right: 20px;
-        width: 150px;
-        height: 150px;
+        /* width: 150px;
+        height: 150px; */
         /* border: 1px solid black; */
     }
     .qr-code img {
@@ -30,9 +32,16 @@ Local Transport Permit
     }
 </style>
 
-
+<div class="qr-code">
+    {{-- <img 
+        class="" 
+        src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => $_helper->encodeHashId($ltp_application->id), 'document_type' => 'ltp']))) }}" 
+        alt=""> --}}
+    {!! QrCode::size(100)->generate(route('qr.index', ['id' => $_helper->encodeHashId($permit->id), 'document_type' => 'ltp'])) !!}
+    <p class="text-center"><small>{{ $permit->permit_number }}</small></p>
+</div>
 <div class="row px-4 align-content-center justify-content-center" >
-    <div class="p-4 bg-white mb-4">
+    <div class="p-4 bg-white mb-4 mt-4">
         <p class="mb-0">Wildlife Transport</p>
         <p class="mb-2">Permit No. <u>{{ $permit->permit_number }}</u> </p>
         <h5 class="text-center">LOCAL TRANSPORT PERMIT</h5><br>
@@ -132,11 +141,5 @@ Local Transport Permit
 </div>
 
 
-{{-- <div class="qr-code">
-    <img 
-        class="" 
-        src="{{ $_helper->generateQrCode(urlencode(route('qr.index', ['id' => Crypt::encryptString($ltp_application->id), 'document_type' => 'ltp']))) }}" 
-        alt="">
-        <p class="text-center"><small>{{ $permit->permit_number }}</small></p>
-</div> --}}
+
 @endsection

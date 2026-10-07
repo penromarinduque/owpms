@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ElectronicSigratureTrait;
+use App\Helpers\ApplicationHelper;
 use App\Http\Controllers\Controller;
 use App\Models\LtpPermit;
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ class LtpController extends Controller
     }
 
     public function viewSignedPermit(Request $request, $id){
+        // return "trdt";
         $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
         $ltpApplication = $ltpPermit->ltpApplication;
         $approverSignatureUrl = null;
@@ -51,6 +53,11 @@ class LtpController extends Controller
             );
             $approverSignatureUrl = 'data:image/png;base64,' . base64_encode($approverSignature->body());
         }
+        // return view('pdfs.permit', [
+        //         "permit" => $ltpPermit,
+        //         "ltp_application" => $ltpApplication,
+        //         "signatureUrl" => $approverSignatureUrl
+        //     ]);
         return Pdf::view('pdfs.permit', [
                 "permit" => $ltpPermit,
                 "ltp_application" => $ltpApplication,
