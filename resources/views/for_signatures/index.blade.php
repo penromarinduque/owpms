@@ -62,8 +62,20 @@ For Signatures
                             <td colspan="{{ $totalSpan[request('type')] }}">
                                 <div class="d-flex gap-1">
                                     @if (request('type') == 'billing_statement')
-                                        <button class="btn btn-sm btn-primary">Sign All</button>
-                                        <button class="btn btn-sm btn-primary">Sign Selected</button>
+                                        <button class="btn btn-sm btn-primary" onclick="signAll('{{ route('for-signatures.billingStatementSignAll') }}', 'Are you sure you want to sign all billing statements?')">Sign All</button>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="signSelected('{{route('for-signatures.billingStatementSignSelected')}}', 'Are you sure you want to sign selected billing statements?')">Sign Selected</button>
+                                    @endif
+                                    @if (request('type') == 'payment_order')
+                                        <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all payment orders?')">Sign All</button>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected payment orders?')">Sign Selected</button>
+                                    @endif
+                                    @if (request('type') == 'inspection_report')
+                                        <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all inspection reports?')">Sign All</button>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected inspection reports?')">Sign Selected</button>
+                                    @endif
+                                    @if (request('type') == 'ltp')
+                                        <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all local transport permits?')">Sign All</button>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected local transport permits?')">Sign Selected</button>
                                     @endif
                                 </div>
                             </td>
@@ -206,6 +218,8 @@ For Signatures
 
 @endsection
 
+@include('components.confirm')
+
 @section('script-extra')
 <script>
     function toggleSelectAll(checkbox) {
@@ -220,6 +234,35 @@ For Signatures
         const checkboxes = document.querySelectorAll('.select-row');
         const allChecked = Array.from(checkboxes).every((rowCheckbox) => rowCheckbox.checked);
         selectAllCheckbox.checked = allChecked;
+    }
+
+    function signAll(url, message) {
+        showConfirmModal(
+            url,
+            message,
+            "Continue",
+            "POST"
+        );
+    }
+
+    function signSelected(url, message) {
+        const ids = Array.from(document.querySelectorAll('.select-row:checked'))
+                        .map(checkbox => checkbox.value);
+
+        if (ids.length === 0) {
+            alert("Please select at least one document to approve/sign.");
+            return;
+        }
+
+        console.log(ids.join(','));
+        const targetUrl = `${url}?ids=${ids.join(',')}`;
+
+        showConfirmModal(
+            targetUrl,
+            message,
+            "Continue",
+            "POST"
+        );
     }
 </script>
 @endsection

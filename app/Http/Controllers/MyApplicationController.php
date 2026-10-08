@@ -20,6 +20,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ApplicationHelper;
+use App\Models\City;
 use App\Models\Province;
 use App\Models\Signature;
 use App\Models\SpecieNature;
@@ -93,11 +94,13 @@ class MyApplicationController extends Controller
             'region'
         ])->get();
         $permittee = auth()->user()->wcp();
+        $countries = City::query()->select('country')->distinct()->get();
         return view('permittee.myapplication.draft.create', [
             'title' => 'Create New Application',
             "provinces" => $provinces,
             "specie_natures" => SpecieNature::all(),
-            "species" => $permittee->permittee_species
+            "species" => $permittee->permittee_species,
+            "countries" => $countries
         ]);
     }
 
@@ -107,16 +110,17 @@ class MyApplicationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // "transport_date" => "required|date",
+            "transport_date" => "required|date|after_or_equal:today",
             "destination" => "nullable|exists:provinces,id",
             "purpose" => "required|string",
             "specie_id" => "required|array",
             "quantity" => "required|array",
-            "specie_nature_id" => "required|exists:specie_natures,id"
+            "specie_nature_id" => "required|exists:specie_natures,id",
+            "destination_city" => "required_if:purpose,export|exists:cities,id"
         ], [
 
         ], [
-            "transport_date" => "Date of Application",
+            "transport_date" => "Date of Transport",
             "specie_nature_id" => "Nature of Species"
         ]);
 
@@ -140,7 +144,8 @@ class MyApplicationController extends Controller
                 'application_no' => $application_no, 
                 'application_status' => LtpApplication::STATUS_DRAFT, 
                 'application_date' => now(), 
-                'transport_date' =>  now(), 
+                'transport_date' =>  $request->transport_date, 
+                'export_destination' => $request->purpose == 'export' ? $request->destination_city : null,
                 'purpose' => $request->purpose, 
                 'specie_nature_id' => $request->specie_nature_id,
                 'destination' => $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: auth()->user()->personalInfo->barangay->municipality->province_id), 
@@ -194,6 +199,7 @@ class MyApplicationController extends Controller
     {
         $id = Crypt::decryptString($id);
 
+        $countries = City::query()->select('country')->distinct()->get();
         $provinces = Province::query()->with([
             'region'
         ])->get();
@@ -227,6 +233,7 @@ class MyApplicationController extends Controller
             "ltp_application" => $ltp_application,
             "ltp_application_species" => $ltp_application_species,
             "provinces" => $provinces,
+            "countries" => $countries,
             "specie_natures" => SpecieNature::all(),
             "species" => $permittee->permittee_species
         ]);
@@ -244,7 +251,7 @@ class MyApplicationController extends Controller
                 "purpose" => "required|string",
                 "specie_id" => "required|array",
                 "quantity" => "required|array",
-                "specie_nature_id" => "required|exists:specie_natures,id"
+                "specie_nature_id" => "required|exists:specie_natures,id",
             ],[
 
             ],[
@@ -265,6 +272,7 @@ class MyApplicationController extends Controller
             $ltp_application->application_status = LtpApplication::STATUS_DRAFT;
             $ltp_application->destination = $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null);
             $ltp_application->specie_nature_id = $request->specie_nature_id;
+            $ltp_application->export_destination = $request->purpose == 'export' ? $request->destination_city : null;
             $ltp_application->save();
 
             LtpApplicationSpecie::where("ltp_application_id", $ltp_application->id)->delete();

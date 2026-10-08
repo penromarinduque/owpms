@@ -337,8 +337,9 @@ class PaymentOrderController extends Controller
         //
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:cancelled,paid',
-            'or_no' => 'required_if:status,paid',
+            'or_no' => 'required_if:status,paid|unique:payment_orders,payment_reference,',
             'receipt' => 'required_if:status,paid',
+            'payment_date' => 'required|date|after_or_equal:today',
             // 'serial_no' => 'required_if:status,paid|max:255'
         ]);
 
@@ -362,10 +363,10 @@ class PaymentOrderController extends Controller
                     'status' => $request->status,
                     'payment_reference' => $request->or_no,
                     'receipt_url' => $path,
+                    'payment_date' => $request->payment_date,
                     // 'serial_number' => $request->serial_no
                 ]);
                 
-
                 // update application progress
                 if($request->status == PaymentOrder::STATUS_PAID) {
                     $ltpApplication = $paymentOrder->ltpApplication;

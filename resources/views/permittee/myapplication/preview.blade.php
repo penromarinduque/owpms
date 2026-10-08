@@ -127,7 +127,7 @@ My Applications
         </div>
         <div class="card-body">
 
-            @if (auth()->user()->usertype == "permittee")
+            {{-- @if (auth()->user()->usertype == "permittee")
                 <div class="alert alert-info" role="alert">
                     <h6 class="d-flex align-items-center"><i class="fas fa-sticky-note me-2"></i> <strong>Important Notes:</strong> <span class="fw-normal ms-1">Applications can be fulfilled in two ways: a Hybrid Application and a Full Online Application.</span></h6>
                     <h6>For Full Online</h6>
@@ -140,7 +140,7 @@ My Applications
                         <li>Please submit two original copies of the application letter, WCP, WFP, and scanned requirements attached to your application for official acceptance.</li>
                     </ul>
                 </div>
-            @endif
+            @endif --}}
 
             
             <h6><i class="fas fa-id-card me-1"></i> Permittee Details</h6>

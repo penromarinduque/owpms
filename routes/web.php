@@ -22,6 +22,7 @@ use App\Http\Controllers\LtpFeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CityController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
@@ -374,6 +375,8 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
        Route::post('payment-order-preparer-signed/{id}', [ForSignaturesController::class, 'paymentOrderPreparerSign'])->name('for-signatures.paymentOrderPreparerSign');
        Route::post('payment-order-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderApproverSign'])->name('for-signatures.paymentOrderApproverSign');
        Route::post('payment-order-oop-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderOopApproverSign'])->name('for-signatures.paymentOrderOopApproverSign');
+       Route::post('billing-statement-sign-selected', [ForSignaturesController::class, 'billingStatementSignSelected'])->name('for-signatures.billingStatementSignSelected');
+       Route::post('billing-statement-sign-all', [ForSignaturesController::class, 'billingStatementSignAll'])->name('for-signatures.billingStatementSignAll');
     });
 
     // LTP's
@@ -396,7 +399,6 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
 Route::prefix('qr')->group(function () {
     Route::get('/', [QrController::class, 'index'])->name('qr.index');
 });
-
 
 
 // test routes
@@ -438,6 +440,10 @@ Route::get("/generate-password", function (Request $request) {
 
 Route::get("token", function () {
     return csrf_token();
+});
+
+Route::group(["prefix" => "city", "as" => "city."], function () {
+    Route::get("ajaxGetByCountry", [CityController::class, 'ajaxGetByCountry'])->name("ajaxGetByCountry");
 });
 
 

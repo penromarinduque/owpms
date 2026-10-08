@@ -29,7 +29,8 @@ class PaymentOrder extends Model implements Auditable
     const STATUS_CANCELLED = 'cancelled';
 
     protected $casts = [
-        'issued_date' => 'datetime'
+        'issued_date' => 'datetime',
+        'payment_date' => 'datetime',
     ];
 
 

@@ -33,9 +33,15 @@ active
                     <div class="col-md-7">
                         <div class="form-group mb-2">
                             <label>Date of Application [on or before] <span class="text-danger">*</span>:</label>
-                            <input disabled type="datetime" name="transport_date" id="transport_date" class="form-control" value="{{ old('transport_date', now()->format('Y-m-d H:i a')) }}"  onchange="addOneMonth('transport_date', 'validity_result');" required>
+                            <input disabled type="datetime" name="application_date" id="application_date" class="form-control" value="{{ old('application_date', now()->format('Y-m-d H:i a')) }}"  onchange="addOneMonth('application_date', 'validity_result');" required>
                             {{-- <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5> --}}
                             <h5 class="mt-2" ><span >Validity: </span> {{ now()->addMonth()->format('F d, Y') }} </h5>
+                        </div>
+                    </div>
+                    <div class="col-md-7 mb-2">
+                        <div class="form-group">
+                            <label>Date of Transport <span class="text-danger">*</span>:</label>
+                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}"  value="{{ old('transport_date', $ltp_application->transport_date->format('Y-m-d')) }}" required>
                         </div>
                     </div>
                     {{-- <div class="col-md-7">
@@ -73,14 +79,35 @@ active
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-7" id="destination_div">
+                    <div class="col-md-7 mb-2" id="destination_div">
                         <label>Destination <span class="text-danger">*</span>:</label>
-                        <select name="destination" id="destination" class="form-select mb-2 select-2" >
+                        <select  name="destination" id="destination" class="form-select mb-2 select2" >
                             <option value="" selected disabled>Select Destination</option>
                             @foreach($provinces as $province)
                                 <option value="{{ $province->id }}" {{ old('destination') && old('destination') == $province->id ? 'selected' : ($ltp_application->destination == $province->id ? 'selected' : '')}}>{{ $province->province_name }}, {{ $province->region->region_name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="col-md-7" id="export_destination_div">
+                        <label>Export Destination <span class="text-danger">*</span>:</label>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <select name="destination_country" id="export_destination_country" class="form-select mb-2 select2">
+                                    <option value="" selected disabled>Select Country</option>
+                                    @foreach($countries as $country)
+                                        <option value="{{ $country->country }}">{{ $country->country }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <select name="destination_city" id="export_destination_city" class="form-select mb-2">
+                                    <option value="" selected disabled>Select City</option>
+                                </select>
+                            </div>
+                        </div>
+                        @error('destination_city')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -199,16 +226,37 @@ active
             }
         });
 
+        $("#export_destination_city").select2({
+            placeholder: "Select City",
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: "{{ route('city.ajaxGetByCountry') }}", // Adjust to your base route name
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        search: params.term, // User search term
+                        country: $("#export_destination_country").val() // Dynamic JavaScript value sent on request
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
         $("#purpose").change();
         updateDynamicSum('quantity', 'txt_total');
         addOneMonth('transport_date', 'validity_result');
-        $("#transport_date").change(function() {
-            if(!$("#transport_date").val()) {
+        $("#application_date").change(function() {
+            if(!$("#application_date").val()) {
                 $("#validity").hide();
                 return;
             }
             $("#validity").show();
-            addOneMonth('transport_date', 'validity_result');
+            addOneMonth('application_date', 'validity_result');
         });
 
         $("#destination").select2();
@@ -287,9 +335,15 @@ active
         if(['local sale', 'export'].includes(purpose)) {
             $("#destination_div").show();
             $("#destination").val(purpose == 'local sale' ? '' : '1').trigger('change');
+            if(purpose == 'export') {
+                $("#export_destination_div").show();
+                $("#export_destination_country").val(purpose == 'local sale' ? '' : '1').trigger('change');
+            }
         }
         else {
             $("#destination_div").hide();
+            $("#export_destination_div").hide();
+            $("#export_destination_country").attr('disabled', false);
         }
     }
 

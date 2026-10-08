@@ -167,7 +167,7 @@ active
                             <tr>
                                 <td class="align-middle">{{ $key + 1 }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
-                                <td class="align-middle">{{ $ltp_application->transport_date->format('F d, Y') }}</td>
+                                <td class="align-middle">{{ $ltp_application->application_date->format('F d, Y') }}</td>
                                 <td class="align-middle">{{ $ltp_application->created_at->format('F d, Y') }}</td>
                                 <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
                                 <td class="align-middle text-center">

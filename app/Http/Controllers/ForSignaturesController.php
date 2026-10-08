@@ -492,4 +492,384 @@ class ForSignaturesController extends Controller
         return [];
         
     }
+
+    // public function billingStatementSignSelected(Request $request) {
+    //     return DB::transaction(function() use ($request) {
+    //         $ids = explode(",", $request->input('ids'));
+    //         $ltpApplications = LtpApplication::whereIn('id', $ids)->get();
+    //         $billingStatements = PaymentOrder::whereIn('ltp_application_id', $ids)->get();
+    //         foreach($billingStatements as $billingStatement) {
+    //             $payment_order = $billingStatement;
+    //             if($billingStatement->prepared_by == auth()->user()->id) {
+    //                 Gate::authorize('preparerSign', $payment_order);
+    //                 $signature_title = $payment_order->id . "_prepared_by.png";
+    //                 $signature = $payment_order->preparedBy->getSignature();
+    //                 if(!$signature) {
+    //                     return redirect()->back()->with('error', 'Signature not found.');
+    //                 }
+                    
+    //                 Storage::disk('s3')->put(
+    //                     "generated_signatures/" . $signature_title, 
+    //                     Storage::disk('s3')->get("signatures/" . $payment_order->preparedBy->getSignature()->signature)
+    //                 );
+    //                 $payment_order->prepared_signed = $signature_title;
+    //                 $payment_order->save();
+    //                 Notification::send($payment_order->approvedBy, new SignedNotification(route('for-signatures.index', ['type' => 'billing_statement']), 'An Assessment of Fees and Charges has been signed by the preparer and is now ready for your approval.'));
+    //             }
+    
+    //             if($billingStatement->approved_by == auth()->user()->id) {
+    //                 Gate::authorize('approverSign', $payment_order);
+    //                 $signature_title = $payment_order->id . "_approved_by.png";
+    //                 $signature = $payment_order->approvedBy->getSignature();
+    //                 if(!$signature) {
+    //                     return redirect()->back()->with('error', 'Signature not found.');
+    //                 }
+    //                 Storage::disk('s3')->put(
+    //                     "generated_signatures/" . $signature_title, 
+    //                     Storage::disk('s3')->get("signatures/" . $payment_order->approvedBy->getSignature()->signature)
+    //                 );
+    //                 $payment_order->approved_signed = $signature_title;
+    //                 $prepared_by = $payment_order->preparedBy;
+    //                 $approved_by = $payment_order->approvedBy;
+    //                 $approvedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signature_title, now()->addMinutes(30));
+    //                 $preparedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $payment_order->prepared_signed, now()->addMinutes(30));
+                    
+    //                 $approvedBySignature = $this->getElectronicSignature(
+    //                     $approved_by->personalInfo->first_name . " " . $approved_by->personalInfo->middle_name . " " . $approved_by->personalInfo->last_name,
+    //                     $approved_by->empPosition->position,
+    //                     $approvedByUrl,
+    //                     $payment_order->order_number,
+    //                     "7",
+    //                     $payment_order->id,
+    //                     $payment_order->approvedBy->id,
+    //                     null
+    //                 );
+
+    //                 $preparedBySignature = $this->getElectronicSignature(
+    //                     $prepared_by->personalInfo->first_name . " " . $prepared_by->personalInfo->middle_name . " " . $prepared_by->personalInfo->last_name,
+    //                     $prepared_by->empPosition->position,
+    //                     $preparedByUrl,
+    //                     $payment_order->order_number,
+    //                     "7",
+    //                     $payment_order->id,
+    //                     $payment_order->preparedBy->id,
+    //                     null
+    //                 );
+
+    //                 Pdf::view('pdfs.billing-statement-pdf', [
+    //                     "ltp_application" => $payment_order->ltpApplication,
+    //                     'payment_order' => $payment_order,
+    //                     'approvedByUrl' => 'data:image/png;base64,' . base64_encode($approvedBySignature->body()),
+    //                     'preparedByUrl' => 'data:image/png;base64,' . base64_encode($preparedBySignature->body()),
+    //                     "ltp_fee" => $payment_order->ltpFee,
+    //                     "prepared_by" => $prepared_by,
+    //                     "approved_by" => $approved_by
+    //                 ])
+    //                 ->waitUntilReady()
+    //                 ->disk('s3')
+    //                 ->save("billing_statemenet/billing_statement_" . $payment_order->id . ".pdf");
+    //                 $payment_order->save();
+    //                 $serialNoEncoders = User::whereHas('userRoles', function ($query) {
+    //                     $query->whereHas('role', function ($query) {
+    //                         $query->whereHas('rolePermissions', function ($query) {
+    //                             $query->where('permission', 'PAYMENT_ORDERS_ENCODE_SERIAL_NO');
+    //                         });
+    //                     });
+    //                 })->get();
+    //                 Notification::send($serialNoEncoders, new SignedNotification(route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)]), 'An Assessment of Fees and Charges has been approved by the approver and is now ready for serial number encoding.'));
+    //             }
+    //         }
+    //         return redirect()->route('for-signatures.index', ['type' => 'billing_statement'])->with('success', 'Billing statements signed successfully!');
+    //     });
+    // }
+
+    public function billingStatementSignSelected(Request $request)
+    {
+        $ids = explode(",", $request->input('ids'));
+
+        // 1. Eager load all required relationships at once (Fixes N+1 queries)
+        $billingStatements = PaymentOrder::with([
+            'preparedBy.personalInfo',
+            'preparedBy.empPosition',
+            'approvedBy.personalInfo',
+            'approvedBy.empPosition',
+            'ltpApplication',
+            'ltpFee'
+        ])->whereIn('ltp_application_id', $ids)->get();
+
+        // 2. Query encoders once outside the loop
+        $serialNoEncoders = User::whereHas('userRoles.role.rolePermissions', function ($query) {
+            $query->where('permission', 'PAYMENT_ORDERS_ENCODE_SERIAL_NO');
+        })->get();
+
+        $userId = auth()->id();
+
+        foreach ($billingStatements as $paymentOrder) {
+            // PREPARER FLOW
+            if ($paymentOrder->prepared_by == $userId) {
+                Gate::authorize('preparerSign', $paymentOrder);
+
+                $signature = $paymentOrder->preparedBy?->getSignature();
+                if (!$signature || !$signature->signature) {
+                    return redirect()->back()->with('error', 'Signature not found for order #' . $paymentOrder->id);
+                }
+
+                $signatureTitle = $paymentOrder->id . "_prepared_by.png";
+
+                // S3 Transfer
+                Storage::disk('s3')->put(
+                    "generated_signatures/" . $signatureTitle,
+                    Storage::disk('s3')->get("signatures/" . $signature->signature)
+                );
+
+                // DB Update inside isolated transaction
+                DB::transaction(function () use ($paymentOrder, $signatureTitle) {
+                    $paymentOrder->prepared_signed = $signatureTitle;
+                    $paymentOrder->save();
+                });
+
+                // Send notification outside transaction
+                if ($paymentOrder->approvedBy) {
+                    Notification::send($paymentOrder->approvedBy, new SignedNotification(
+                        route('for-signatures.index', ['type' => 'billing_statement']),
+                        'An Assessment of Fees and Charges has been signed by the preparer and is now ready for your approval.'
+                    ));
+                }
+            }
+
+            // APPROVER FLOW
+            if ($paymentOrder->approved_by == $userId) {
+                Gate::authorize('approverSign', $paymentOrder);
+
+                $signature = $paymentOrder->approvedBy?->getSignature();
+                if (!$signature || !$signature->signature) {
+                    return redirect()->back()->with('error', 'Signature not found for order #' . $paymentOrder->id);
+                }
+
+                $signatureTitle = $paymentOrder->id . "_approved_by.png";
+
+                Storage::disk('s3')->put(
+                    "generated_signatures/" . $signatureTitle,
+                    Storage::disk('s3')->get("signatures/" . $signature->signature)
+                );
+
+                $preparedBy = $paymentOrder->preparedBy;
+                $approvedBy = $paymentOrder->approvedBy;
+
+                $approvedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signatureTitle, now()->addMinutes(30));
+                $preparedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $paymentOrder->prepared_signed, now()->addMinutes(30));
+
+                $approvedBySignature = $this->getElectronicSignature(
+                    "{$approvedBy->personalInfo->first_name} {$approvedBy->personalInfo->middle_name} {$approvedBy->personalInfo->last_name}",
+                    $approvedBy->empPosition->position ?? '',
+                    $approvedByUrl,
+                    $paymentOrder->order_number,
+                    "7",
+                    $paymentOrder->id,
+                    $approvedBy->id,
+                    null
+                );
+
+                $preparedBySignature = $this->getElectronicSignature(
+                    "{$preparedBy->personalInfo->first_name} {$preparedBy->personalInfo->middle_name} {$preparedBy->personalInfo->last_name}",
+                    $preparedBy->empPosition->position ?? '',
+                    $preparedByUrl,
+                    $paymentOrder->order_number,
+                    "7",
+                    $paymentOrder->id,
+                    $preparedBy->id,
+                    null
+                );
+
+                Pdf::view('pdfs.billing-statement-pdf', [
+                    "ltp_application" => $paymentOrder->ltpApplication,
+                    'payment_order'   => $paymentOrder,
+                    'approvedByUrl'   => 'data:image/png;base64,' . base64_encode($approvedBySignature->body()),
+                    'preparedByUrl'   => 'data:image/png;base64,' . base64_encode($preparedBySignature->body()),
+                    "ltp_fee"         => $paymentOrder->ltpFee,
+                    "prepared_by"     => $preparedBy,
+                    "approved_by"     => $approvedBy
+                ])
+                ->waitUntilReady()
+                ->disk('s3')
+                ->save("billing_statemenet/billing_statement_" . $paymentOrder->id . ".pdf");
+
+                // DB Update
+                DB::transaction(function () use ($paymentOrder, $signatureTitle) {
+                    $paymentOrder->approved_signed = $signatureTitle;
+                    $paymentOrder->save();
+                });
+
+                // Send batch notification outside transaction
+                if ($serialNoEncoders->isNotEmpty()) {
+                    Notification::send($serialNoEncoders, new SignedNotification(
+                        route('paymentorder.show', ['id' => Crypt::encryptString($paymentOrder->id)]),
+                        'An Assessment of Fees and Charges has been approved by the approver and is now ready for serial number encoding.'
+                    ));
+                }
+            }
+        }
+
+        return redirect()->route('for-signatures.index', ['type' => 'billing_statement'])
+            ->with('success', 'Billing statements signed successfully!');
+    }
+
+    public function billingStatementSignAll(Request $request)
+    {
+        $userId = auth()->user()->id;
+
+        // 1. Properly group conditions to avoid global orWhere leaks
+        // and filter out already-signed records
+        $billingStatements = PaymentOrder::with([
+            'preparedBy.personalInfo',
+            'preparedBy.empPosition',
+            'approvedBy.personalInfo',
+            'approvedBy.empPosition',
+            'ltpApplication',
+            'ltpFee'
+        ])
+        ->where(function ($query) use ($userId) {
+            $query->where(function ($q) use ($userId) {
+                $q->where('prepared_by', $userId)
+                ->whereNull('prepared_signed');
+            })->orWhere(function ($q) use ($userId) {
+                $q->where('approved_by', $userId)
+                ->whereNull('approved_signed');
+            });
+        })
+        ->get();
+
+        if ($billingStatements->isEmpty()) {
+            return redirect()->back()->with('info', 'No pending billing statements found to sign.');
+        }
+
+        // 2. Query encoders once outside loop
+        $serialNoEncoders = User::whereHas('userRoles.role.rolePermissions', function ($query) {
+            $query->where('permission', 'PAYMENT_ORDERS_ENCODE_SERIAL_NO');
+        })->get();
+
+        $processedCount = 0;
+        $errors = [];
+
+        foreach ($billingStatements as $paymentOrder) {
+            // PREPARER FLOW
+            if ($paymentOrder->prepared_by == $userId && !$paymentOrder->prepared_signed) {
+                Gate::authorize('preparerSign', $paymentOrder);
+
+                $signature = $paymentOrder->preparedBy?->getSignature();
+                if (!$signature || !$signature->signature) {
+                    $errors[] = "Signature not found for Order #{$paymentOrder->order_number}";
+                    continue;
+                }
+
+                $signatureTitle = $paymentOrder->id . "_prepared_by.png";
+
+                Storage::disk('s3')->put(
+                    "generated_signatures/" . $signatureTitle,
+                    Storage::disk('s3')->get("signatures/" . $signature->signature)
+                );
+
+                DB::transaction(function () use ($paymentOrder, $signatureTitle) {
+                    $paymentOrder->prepared_signed = $signatureTitle;
+                    $paymentOrder->save();
+                });
+
+                if ($paymentOrder->approvedBy) {
+                    Notification::send($paymentOrder->approvedBy, new SignedNotification(
+                        route('for-signatures.index', ['type' => 'billing_statement']),
+                        'An Assessment of Fees and Charges has been signed by the preparer and is now ready for your approval.'
+                    ));
+                }
+
+                $processedCount++;
+            }
+
+            // APPROVER FLOW
+            if ($paymentOrder->approved_by == $userId && !$paymentOrder->approved_signed) {
+                Gate::authorize('approverSign', $paymentOrder);
+
+                // Ensure preparer signature exists before approving
+                if (!$paymentOrder->prepared_signed) {
+                    $errors[] = "Cannot approve Order #{$paymentOrder->order_number}: Missing preparer signature.";
+                    continue;
+                }
+
+                $signature = $paymentOrder->approvedBy?->getSignature();
+                if (!$signature || !$signature->signature) {
+                    $errors[] = "Signature not found for Order #{$paymentOrder->order_number}";
+                    continue;
+                }
+
+                $signatureTitle = $paymentOrder->id . "_approved_by.png";
+
+                Storage::disk('s3')->put(
+                    "generated_signatures/" . $signatureTitle,
+                    Storage::disk('s3')->get("signatures/" . $signature->signature)
+                );
+
+                $preparedBy = $paymentOrder->preparedBy;
+                $approvedBy = $paymentOrder->approvedBy;
+
+                $approvedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signatureTitle, now()->addMinutes(30));
+                $preparedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $paymentOrder->prepared_signed, now()->addMinutes(30));
+
+                $approvedBySignature = $this->getElectronicSignature(
+                    "{$approvedBy->personalInfo->first_name} {$approvedBy->personalInfo->middle_name} {$approvedBy->personalInfo->last_name}",
+                    $approvedBy->empPosition->position ?? '',
+                    $approvedByUrl,
+                    $paymentOrder->order_number,
+                    "7",
+                    $paymentOrder->id,
+                    $approvedBy->id,
+                    null
+                );
+
+                $preparedBySignature = $this->getElectronicSignature(
+                    "{$preparedBy->personalInfo->first_name} {$preparedBy->personalInfo->middle_name} {$preparedBy->personalInfo->last_name}",
+                    $preparedBy->empPosition->position ?? '',
+                    $preparedByUrl,
+                    $paymentOrder->order_number,
+                    "7",
+                    $paymentOrder->id,
+                    $preparedBy->id,
+                    null
+                );
+
+                Pdf::view('pdfs.billing-statement-pdf', [
+                    "ltp_application" => $paymentOrder->ltpApplication,
+                    'payment_order'   => $paymentOrder,
+                    'approvedByUrl'   => 'data:image/png;base64,' . base64_encode($approvedBySignature->body()),
+                    'preparedByUrl'   => 'data:image/png;base64,' . base64_encode($preparedBySignature->body()),
+                    "ltp_fee"         => $paymentOrder->ltpFee,
+                    "prepared_by"     => $preparedBy,
+                    "approved_by"     => $approvedBy
+                ])
+                ->waitUntilReady()
+                ->disk('s3')
+                ->save("billing_statemenet/billing_statement_" . $paymentOrder->id . ".pdf");
+
+                DB::transaction(function () use ($paymentOrder, $signatureTitle) {
+                    $paymentOrder->approved_signed = $signatureTitle;
+                    $paymentOrder->save();
+                });
+
+                if ($serialNoEncoders->isNotEmpty()) {
+                    Notification::send($serialNoEncoders, new SignedNotification(
+                        route('paymentorder.show', ['id' => Crypt::encryptString($paymentOrder->id)]),
+                        'An Assessment of Fees and Charges has been approved by the approver and is now ready for serial number encoding.'
+                    ));
+                }
+
+                $processedCount++;
+            }
+        }
+
+        $response = redirect()->route('for-signatures.index', ['type' => 'billing_statement']);
+
+        if (!empty($errors)) {
+            return $response->with('warning', "Signed {$processedCount} statements with warnings: " . implode(' ', $errors));
+        }
+
+        return $response->with('success', "Successfully signed {$processedCount} billing statements!");
+    }
 }

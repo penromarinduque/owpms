@@ -130,6 +130,10 @@ class LtpApplication extends Model implements Auditable
         return $this->where('application_status', $status)->count();
     }
 
+    public function exportDestination() {
+        return $this->belongsTo(City::class, 'export_destination', 'id');
+    }
+
     public function inspectionReport() {
         return $this->hasOne(InspectionReport::class, 'ltp_application_id', 'id');
     }

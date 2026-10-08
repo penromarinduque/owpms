@@ -40,6 +40,7 @@
          <div class="loader"><img src="{{ asset('/home_temp/images/loading.gif') }}" alt="#" /></div>
       </div> --}}
       @include('components.fullLoader')
+      @include('components.advisory')
       <!-- end loader -->
       <!-- header -->
       <header>
@@ -66,11 +67,14 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navbarsExample04">
                            <ul class="navbar-nav mr-auto">
+                              @if (auth()->check())
                               <li class="nav-item active">
-                                 @if (auth()->check())
                                     <a class="nav-link" href="{{ route('dashboard.index') }}">Dashboard</a>
-                                 @endif
                               </li>
+                              <li class="nav-item ">
+                                    <a class="nav-link" href="{{ asset('users_manual.pdf') }}" target="_blank">Users Manual</a>
+                              </li>
+                              @endif
                               <li class="nav-item ">
                                  @if (!auth()->check())
                                     <a class="nav-link" href="{{ route('login') }}">Login</a>
