@@ -116,7 +116,7 @@ class MyApplicationController extends Controller
             "specie_id" => "required|array",
             "quantity" => "required|array",
             "specie_nature_id" => "required|exists:specie_natures,id",
-            "destination_city" => "required_if:purpose,export|exists:cities,id"
+            "destination_city" => "nullable|required_if:purpose,export|exists:cities,id"
         ], [
 
         ], [
@@ -247,7 +247,9 @@ class MyApplicationController extends Controller
         //
         return DB::transaction(function () use ($request, $id) {
             $request->validate([
-                // "transport_date" => "required|date",
+                "transport_date" => "required|date|after_or_equal:today",
+                "destination" => "nullable|required_if:purpose,local sale|exists:provinces,id",
+                "destination_city" => "nullable|required_if:purpose,export|exists:cities,id",
                 "purpose" => "required|string",
                 "specie_id" => "required|array",
                 "quantity" => "required|array",
@@ -255,7 +257,7 @@ class MyApplicationController extends Controller
             ],[
 
             ],[
-                "transport_date" => "Application Date",
+                "transport_date" => "Date of Transport",
                 "specie_nature_id" => "Nature of Species"
             ]);
 
@@ -267,7 +269,7 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application not found!');
             }
 
-            $ltp_application->transport_date = now();
+            $ltp_application->transport_date = $request->transport_date;
             $ltp_application->purpose = $request->purpose;
             $ltp_application->application_status = LtpApplication::STATUS_DRAFT;
             $ltp_application->destination = $request->purpose == 'local sale' ? $request->destination : ($request->purpose == 'export' ? 1: null);
@@ -425,6 +427,12 @@ class MyApplicationController extends Controller
                 return redirect()->back()->with('error', 'Application not found!');
             }
 
+            // Stop before signatures/PDF generation for legacy drafts without a saved city.
+            if ($ltp_application->purpose === 'export' && !$ltp_application->exportDestination) {
+                return redirect()->route('myapplication.edit', Crypt::encryptString($ltp_application->id))
+                    ->with('error', 'Please select and save an export destination city before submitting this application.');
+            }
+
             // Compliance Checks
             if(!LtpApplication::validateSpecies($ltp_application->id)) {
                 return redirect()->back()->with('error', 'Application cannot have both endangered and non-endangered species! Endagered species must be submitted separately.');
@@ -522,6 +530,12 @@ class MyApplicationController extends Controller
 
             if(!$ltp_application) {
                 return redirect()->back()->with('error', 'Application not found!');
+            }
+
+            // Stop before signatures/PDF generation for legacy drafts without a saved city.
+            if ($ltp_application->purpose === 'export' && !$ltp_application->exportDestination) {
+                return redirect()->route('myapplication.edit', Crypt::encryptString($ltp_application->id))
+                    ->with('error', 'Please select and save an export destination city before submitting this application.');
             }
 
             // Compliance Checks

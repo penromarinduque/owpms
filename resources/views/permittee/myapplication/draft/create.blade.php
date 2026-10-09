@@ -26,6 +26,15 @@ active
             Create New Application
         </div>
         <div class="card-body">
+            @if(session('error'))
+                <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="alert alert-danger" role="alert"><ul class="mb-0">
+                    @foreach($errors->all() as $message)<li>{{ $message }}</li>@endforeach
+                </ul></div>
+            @endif
+
             @if(session('failed'))
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -46,9 +55,10 @@ active
                     <div class="col-md-7 mb-2">
                         <div class="form-group">
                             <label>Date of Application <span class="text-danger">*</span>:</label>
-                            <input disabled type="datetime" name="application_date" id="application_date" class="form-control" min="{{ date('Y-m-d') }}" onchange="addOneMonth('application_date', 'validity_result');" value="{{ old('application_date', now()->format('Y-m-d H:i a')) }}" max="{{ date('Y-m-d') }}" required>
+                            <input type="text" id="application_date" class="form-control" value="{{ now()->format('M j, Y') }}" readonly aria-describedby="application_date_help">
+                            <small id="application_date_help" class="text-muted">The filing date is recorded automatically. Choose your transport date below.</small>
                             {{-- <h5 class="mt-2" id="validity"><span id="validity_label">Validity: </span> <span id="validity_result"></span></h5> --}}
-                            <h5 class="mt-2" ><span >Validity: </span> {{ now()->addMonth()->format('F d, Y') }} </h5>
+                            <h5 class="mt-2" id="validity">Validity: <span id="validity_result">Select a transport date</span></h5>
                         </div>
                     </div>
                     <div class="col-md-7 mb-2">
@@ -68,7 +78,7 @@ active
                     </div>
                     <div class="col-md-7">
                         <label>Nature of Species <span class="text-danger">*</span>:</label>
-                        <select name="specie_nature_id" id="purpose" class="form-select mb-2" required >
+                        <select name="specie_nature_id" id="specie_nature_id" class="form-select mb-2" required >
                             <option value="" selected disabled>Select Nature of Species</option>
                             @foreach($specie_natures as $nature)
                                 <option value="{{ $nature->id }}">{{ $nature->name }}</option>
@@ -165,6 +175,7 @@ active
 @endsection
 
 @section('script-extra')
+@include('components.application-validity-script')
 <script >
     let rowNumber = 1;
     $(document).ready(function() {
@@ -232,15 +243,9 @@ active
             }
         });
 
-        $("#destination_div").hide();
-        $("#validity").hide();
-        $("#application_date").change(function() {
-            if(!$("#application_date").val()) {
-                $("#validity").hide();
-                return;
-            }
-            $("#validity").show();
-            addOneMonth('transport_date', 'validity_result');
+        onPurposeChange({target: document.getElementById('purpose')});
+        $("#export_destination_country").on('change', function () {
+            $("#export_destination_city").val(null).trigger('change');
         });
 
         // Initialize the select2 plugin for the destination dropdown
@@ -285,21 +290,13 @@ active
 
     function onPurposeChange(e) {
         const purpose = e.target.value;
-        if(['local sale', 'export'].includes(purpose)) {
-            $("#destination_div").show();
-            $("#destination").val(purpose == 'local sale' ? '' : '1').trigger('change');
-            $("#destination").attr('disabled', purpose == 'export' ? true : false);
-            if(purpose == 'export') {
-                $("#export_destination_div").show();
-                $("#export_destination_country").val(purpose == 'local sale' ? '' : '1').trigger('change');
-            }
-        }
-        else {
-            $("#destination_div").hide();
-            $("#destination").attr('disabled', false);
-            $("#export_destination_div").hide();
-            $("#export_destination_country").attr('disabled', false);
-        }
+        const isExport = purpose === 'export';
+        const isLocal = purpose === 'local sale';
+        $("#destination_div").toggle(isLocal);
+        $("#destination").prop('disabled', !isLocal).prop('required', isLocal);
+        $("#export_destination_div").toggle(isExport);
+        $("#export_destination_country, #export_destination_city")
+            .prop('disabled', !isExport).prop('required', isExport);
     }
 
     function onSpecieChange(e) {

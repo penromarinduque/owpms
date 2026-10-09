@@ -26,22 +26,33 @@ active
             Edit Application
         </div>
         <div class="card-body">
+            @if(session('error'))
+                <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="alert alert-danger" role="alert"><ul class="mb-0">
+                    @foreach($errors->all() as $message)<li>{{ $message }}</li>@endforeach
+                </ul></div>
+            @endif
+
             <form action="{{ route('myapplication.update', $ltp_application->id) }}" method="POST" id="editForm">
                 @csrf
                 @method('PATCH')
                 <div class="row mb-2">
                     <div class="col-md-7">
                         <div class="form-group mb-2">
-                            <label>Date of Application [on or before] <span class="text-danger">*</span>:</label>
-                            <input disabled type="datetime" name="application_date" id="application_date" class="form-control" value="{{ old('application_date', $ltp_application->application_date->format('Y-m-d H:i a')) }}"  onchange="addOneMonth('application_date', 'validity_result');" required>
+
+                            <label>Date of Application <span class="text-danger">*</span>:</label>
+                            <input type="text" id="application_date" class="form-control" value="{{ $ltp_application->application_date?->format('M j, Y') ?? 'Not specified' }}" readonly aria-describedby="application_date_help">
+                            <small id="application_date_help" class="text-muted">The filing date is recorded automatically. Choose your transport date below.</small>
                             {{-- <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5> --}}
-                            <h5 class="mt-2" ><span >Validity: </span> {{ $ltp_application->application_date->addMonth()->format('F d, Y') }} </h5>
+                            <h5 class="mt-2" id="validity">Validity: <span id="validity_result">{{ $ltp_application->transport_date?->copy()->addMonthNoOverflow()->format('M j, Y') ?? 'Select a transport date' }}</span></h5>
                         </div>
                     </div>
                     <div class="col-md-7 mb-2">
                         <div class="form-group">
                             <label>Date of Transport <span class="text-danger">*</span>:</label>
-                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}"  value="{{ old('transport_date', $ltp_application->transport_date->format('Y-m-d')) }}" required>
+                            <input type="date" name="transport_date" id="transport_date" class="form-control" min="{{ date('Y-m-d') }}"  value="{{ old('transport_date', $ltp_application->transport_date?->format('Y-m-d')) }}" required>
                         </div>
                     </div>
                     {{-- <div class="col-md-7">
@@ -69,7 +80,7 @@ active
                     </div>
                     <div class="col-md-7">
                         <label>Nature of Species <span class="text-danger">*</span>:</label>
-                        <select name="specie_nature_id" id="purpose" class="form-select mb-2" required >
+                        <select name="specie_nature_id" id="specie_nature_id" class="form-select mb-2" required >
                             <option value="" selected disabled>Select Nature of Species</option>
                             @foreach($specie_natures as $nature)
                                 <option value="{{ $nature->id }}" {{ old('specie_nature_id') && old('specie_nature_id') == $nature->id ? 'selected' : ($ltp_application->specie_nature_id == $nature->id ? 'selected' : '')}}>{{ $nature->name }}</option>
@@ -89,35 +100,26 @@ active
                         </select>
                     </div>
                     <div class="col-md-7" id="export_destination_div">
+                        @php
+                            $selectedExportCity = \App\Models\City::find(old('destination_city', $ltp_application->export_destination));
+                            $selectedExportCountry = old('destination_country', $selectedExportCity?->country);
+                        @endphp
                         <label>Export Destination <span class="text-danger">*</span>:</label>
                         <div class="row">
-                            <div class="col-6 mb-2">    
-                                @php
-                                    $selectedCountry = optional($ltp_application->exportDestination)->country;
-                                @endphp
-
-                                <select name="destination_country" 
-                                        id="export_destination_country" 
-                                        class="form-select mb-2 select2" 
-                                        data-placeholder="Select Country">
-                                    
-                                    {{-- Select2 placeholder option MUST have an empty value --}}
-                                    <option value=""></option>
-
-                                    @if($selectedCountry)
-                                        <option value="{{ $selectedCountry }}" selected="selected">{{ $selectedCountry }}</option>
-                                    @endif
-
-                                    @foreach(collect($countries)->reject(fn($c) => ($c->country ?? $c) === $selectedCountry)->sortBy('country') as $country)
-                                        @php $countryName = $country->country ?? $country; @endphp
-                                        <option value="{{ $countryName }}">{{ $countryName }}</option>
+                            <div class="col-6 mb-2">
+                                <select name="destination_country" id="export_destination_country" class="form-select mb-2 select2">
+                                    <option value="" selected disabled>Select Country</option>
+                                    @foreach($countries as $country)
+                                        <option value="{{ $country->country }}" @selected($selectedExportCountry === $country->country)>{{ $country->country }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-6 mb-2">
                                 <select name="destination_city" id="export_destination_city" class="form-select mb-2">
-                                    <option value="" disabled>Select City</option>
-                                    <option value="{{ $ltp_application->exportDestination->id }}" selected>{{ $ltp_application->exportDestination->city }}, {{ $ltp_application->exportDestination->admin_name }}</option>
+                                    <option value="" disabled @selected(!$selectedExportCity)>Select City</option>
+                                    @if($selectedExportCity)
+                                        <option value="{{ $selectedExportCity->id }}" selected>{{ $selectedExportCity->city }}, {{ $selectedExportCity->admin_name }}</option>
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -198,6 +200,7 @@ active
 @endsection
 
 @section('script-extra')
+@include('components.application-validity-script')
 <script type="text/javascript">
     // Function to calculate and update the sum
     let rowNumber = 1;
@@ -266,16 +269,10 @@ active
             }
         });
 
-        $("#purpose").change();
+        onPurposeChange({target: document.getElementById('purpose')});
         updateDynamicSum('quantity', 'txt_total');
-        addOneMonth('transport_date', 'validity_result');
-        $("#application_date").change(function() {
-            if(!$("#application_date").val()) {
-                $("#validity").hide();
-                return;
-            }
-            $("#validity").show();
-            addOneMonth('application_date', 'validity_result');
+        $("#export_destination_country").on('change', function () {
+            $("#export_destination_city").val(null).trigger('change');
         });
 
         $("#destination").select2();
@@ -351,19 +348,13 @@ active
 
     function onPurposeChange(e) {
         const purpose = e.target.value;
-        if(['local sale', 'export'].includes(purpose)) {
-            $("#destination_div").show();
-            $("#destination").val(purpose == 'local sale' ? '' : '1').trigger('change');
-            if(purpose == 'export') {
-                $("#export_destination_div").show();
-                $("#export_destination_country").val(purpose == 'local sale' ? '' : '1').trigger('change');
-            }
-        }
-        else {
-            $("#destination_div").hide();
-            $("#export_destination_div").hide();
-            $("#export_destination_country").attr('disabled', false);
-        }
+        const isExport = purpose === 'export';
+        const isLocal = purpose === 'local sale';
+        $("#destination_div").toggle(isLocal);
+        $("#destination").prop('disabled', !isLocal).prop('required', isLocal);
+        $("#export_destination_div").toggle(isExport);
+        $("#export_destination_country, #export_destination_city")
+            .prop('disabled', !isExport).prop('required', isExport);
     }
 
 </script>

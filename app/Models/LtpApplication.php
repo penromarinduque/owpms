@@ -13,7 +13,7 @@ class LtpApplication extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature', 'year', 'no', 'io_user_id', 'specie_nature_id'];
+    protected $fillable = ['permittee_id', 'application_no', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'export_destination', 'digital_signature', 'year', 'no', 'io_user_id', 'specie_nature_id'];
 
     protected $casts = [
         'application_date' => 'datetime',
@@ -41,7 +41,7 @@ class LtpApplication extends Model implements Auditable
 
     // public function getLTPApplications($user_id)
     // {
-    //     return $this->select('permittee_id', 'application_id', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'digital_signature')
+    //     return $this->select('permittee_id', 'application_id', 'application_status', 'application_date', 'transport_date', 'purpose', 'destination', 'export_destination', 'digital_signature')
     //         ->where('')
     // }
 
