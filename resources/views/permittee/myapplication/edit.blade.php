@@ -33,9 +33,9 @@ active
                     <div class="col-md-7">
                         <div class="form-group mb-2">
                             <label>Date of Application [on or before] <span class="text-danger">*</span>:</label>
-                            <input disabled type="datetime" name="application_date" id="application_date" class="form-control" value="{{ old('application_date', now()->format('Y-m-d H:i a')) }}"  onchange="addOneMonth('application_date', 'validity_result');" required>
+                            <input disabled type="datetime" name="application_date" id="application_date" class="form-control" value="{{ old('application_date', $ltp_application->application_date->format('Y-m-d H:i a')) }}"  onchange="addOneMonth('application_date', 'validity_result');" required>
                             {{-- <h5 class="mt-2" id="validity"><span id="validity_label">Validity:</span> <span id="validity_result"></span></h5> --}}
-                            <h5 class="mt-2" ><span >Validity: </span> {{ now()->addMonth()->format('F d, Y') }} </h5>
+                            <h5 class="mt-2" ><span >Validity: </span> {{ $ltp_application->application_date->addMonth()->format('F d, Y') }} </h5>
                         </div>
                     </div>
                     <div class="col-md-7 mb-2">
