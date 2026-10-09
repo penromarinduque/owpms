@@ -1,3 +1,4 @@
+@if(isset($paymentOrder))
 <div class="modal fade" id="updatePaymentModal">
     <div class="modal-dialog">
         <form method="POST" action="{{ route('paymentorder.update', Crypt::encryptString($paymentOrder->id)) }}" class="modal-content" enctype="multipart/form-data">
@@ -76,3 +77,4 @@
         $('#updatePaymentModal').modal("show");
     }
 </script>
+@endif
