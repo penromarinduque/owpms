@@ -91,17 +91,33 @@ active
                     <div class="col-md-7" id="export_destination_div">
                         <label>Export Destination <span class="text-danger">*</span>:</label>
                         <div class="row">
-                            <div class="col-6 mb-2">
-                                <select name="destination_country" id="export_destination_country" class="form-select mb-2 select2">
-                                    <option value="" selected disabled>Select Country</option>
-                                    @foreach($countries as $country)
-                                        <option value="{{ $country->country }}">{{ $country->country }}</option>
+                            <div class="col-6 mb-2">    
+                                @php
+                                    $selectedCountry = optional($ltp_application->exportDestination)->country;
+                                @endphp
+
+                                <select name="destination_country" 
+                                        id="export_destination_country" 
+                                        class="form-select mb-2 select2" 
+                                        data-placeholder="Select Country">
+                                    
+                                    {{-- Select2 placeholder option MUST have an empty value --}}
+                                    <option value=""></option>
+
+                                    @if($selectedCountry)
+                                        <option value="{{ $selectedCountry }}" selected="selected">{{ $selectedCountry }}</option>
+                                    @endif
+
+                                    @foreach(collect($countries)->reject(fn($c) => ($c->country ?? $c) === $selectedCountry)->sortBy('country') as $country)
+                                        @php $countryName = $country->country ?? $country; @endphp
+                                        <option value="{{ $countryName }}">{{ $countryName }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-6 mb-2">
                                 <select name="destination_city" id="export_destination_city" class="form-select mb-2">
-                                    <option value="" selected disabled>Select City</option>
+                                    <option value="" disabled>Select City</option>
+                                    <option value="{{ $ltp_application->exportDestination->id }}" selected>{{ $ltp_application->exportDestination->city }}, {{ $ltp_application->exportDestination->admin_name }}</option>
                                 </select>
                             </div>
                         </div>
@@ -186,6 +202,7 @@ active
     // Function to calculate and update the sum
     let rowNumber = 1;
     $(document).ready(function() {
+        $("#export_destination_country").select2();
         $(".specieSelect").select2({
             templateResult : function(data) {
                 const specie = $(data.element).data('object');
@@ -225,6 +242,8 @@ active
                 return null;
             }
         });
+
+        $("#export_destination_country").select2();
 
         $("#export_destination_city").select2({
             placeholder: "Select City",
