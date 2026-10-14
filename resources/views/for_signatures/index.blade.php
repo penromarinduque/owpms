@@ -10,7 +10,7 @@ For Signatures
 
 
 @section('content') 
-<div class="container-fluid px-4">
+<div class="container-fluid px-0">
     <h2 class="mt-4">For Signatures</h2>
     {{-- <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item">Applications</li>
@@ -22,7 +22,7 @@ For Signatures
             <i class="fas fa-table me-1"></i>
             List of {{ $_helper->setForSignatoriesDocumentName(request('type')) }} for signature.
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
 
             {{-- <ul class="nav nav-tabs">
                 <li class="nav-item">

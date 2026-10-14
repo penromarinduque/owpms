@@ -13,7 +13,7 @@ active
 @endphp
 
 @section('content') 
-<div class="container-fluid px-4">
+<div class="container-fluid px-0">
     <h1 class="mt-4">{{$title}}</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item">Applications</li>
@@ -27,7 +27,7 @@ active
             <i class="fas fa-list me-1"></i>
             LTP Applications
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             @if(session('failed'))
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -115,37 +115,39 @@ active
               </li>
             </ul> --}}
 
-            <ul class="nav nav-tabs">
-                @can('viewSubmittedTab', App\Models\LtpApplication::class)
+            <div class="p-2">
+                <ul class="nav nav-tabs">
+                    @can('viewSubmittedTab', App\Models\LtpApplication::class)
+                        <li class="nav-item">
+                            <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
+                        </li>
+                    @endcan
+                    @can('viewReviewedTab', App\Models\LtpApplication::class)
+                        <li class="nav-item">
+                            <a href="?status=all&category=reviewed" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-eye me-1"></i>Reviewed</a>
+                        </li>
+                    @endcan
                     <li class="nav-item">
-                        <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
+                        <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
                     </li>
-                @endcan
-                @can('viewReviewedTab', App\Models\LtpApplication::class)
+                    @can('viewAcceptedTab', App\Models\LtpApplication::class)
+                        <li class="nav-item">
+                            <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
+                        </li>
+                    @endcan
                     <li class="nav-item">
-                        <a href="?status=all&category=reviewed" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-eye me-1"></i>Reviewed</a>
+                        <a href="?status=all&category=rejected" class="nav-link {{ request('category') == 'rejected' ? 'active' : ''}}"><i class="fas fa-times-circle me-1"></i>Rejected</a>
                     </li>
-                @endcan
-                <li class="nav-item">
-                    <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
-                </li>
-                @can('viewAcceptedTab', App\Models\LtpApplication::class)
+                    @can('viewApprovedTab', App\Models\LtpApplication::class)
+                        <li class="nav-item">
+                            <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
+                        </li>
+                    @endcan
                     <li class="nav-item">
-                        <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
+                        <a href="?status=expired&category=expired" class="nav-link {{ request('category') == 'expired' ? 'active' : ''}}"><i class="fas fa-calendar-times me-1"></i>Expired</a>
                     </li>
-                @endcan
-                <li class="nav-item">
-                    <a href="?status=all&category=rejected" class="nav-link {{ request('category') == 'rejected' ? 'active' : ''}}"><i class="fas fa-times-circle me-1"></i>Rejected</a>
-                </li>
-                @can('viewApprovedTab', App\Models\LtpApplication::class)
-                    <li class="nav-item">
-                        <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
-                    </li>
-                @endcan
-                <li class="nav-item">
-                    <a href="?status=expired&category=expired" class="nav-link {{ request('category') == 'expired' ? 'active' : ''}}"><i class="fas fa-calendar-times me-1"></i>Expired</a>
-                </li>
-            </ul>
+                </ul>
+            </div>
 
             <br>
 

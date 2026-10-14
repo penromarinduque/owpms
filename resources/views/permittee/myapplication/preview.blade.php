@@ -37,6 +37,17 @@ My Applications
                 @can('downloadLtp', $ltp_application)
                     <li><a class="dropdown-item" href="{{ route('ltpapplication.downloadLtp', Crypt::encryptString($ltp_application->id)) }}" target="_blank"><i class="fas fa-download me-1"></i> Download Local Transport Permit</a></li>
                 @endcan
+                @php
+                    $inspectionReport = $ltp_application->inspectionReport;
+                @endphp
+                @if ($inspectionReport && $inspectionReport->permittee_signed && $inspectionReport->inspector_signed && $inspectionReport->rps_signed && $inspectionReport->approver_signed)
+                    <li>
+                        <a href="{{ route('inspection.viewInspectionReport', [ 'id' => Crypt::encryptString($inspectionReport->id), 'ltp_application_id' => $ltp_application->id ]) }}" class="dropdown-item" target="_blank">
+                            <i class="fas fa-eye me-1"></i> View Inspection Report
+                        </a>
+                    </li>
+                @endif
+                {{-- <a href="{{ route('inspection.viewInspectionReport', [ 'id' => Crypt::encryptString($doc->id), 'ltp_application_id' => $doc->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary" target="_blank">View Inspection Report</a> --}}
                 @if (auth()->user()->usertype == 'permittee')     
                     @if ($ltp_application->application_status == 'draft')       
                         <li>

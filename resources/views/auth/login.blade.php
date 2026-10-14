@@ -36,7 +36,6 @@
             </div>
             <a class="" href="{{ route('password.request') }}">Forgot Password?</a><br>
             <div class="d-flex align-items-center justify-content-between mt-1 mb-0">
-                {{--<a class="text-success" href="{{route('register')}}"><b>Create Account</b></a>--}}
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="termsCheck" required
                         oninvalid="this.setCustomValidity('Please read and agree to the Terms and Conditions to proceed.')"

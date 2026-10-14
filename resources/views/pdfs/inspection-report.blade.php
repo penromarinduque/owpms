@@ -57,7 +57,7 @@ Inspection Report
                             </p>
 
                             <div class="px-5 py-2 fs-reg">
-                                <table class="table border-0">
+                                <table class="table table-sm border-0">
                                     <thead class="border-0">
                                         <tr class="border-0">
                                             <th scope="col" class="border-0">Kind of Species</th>
@@ -75,9 +75,9 @@ Inspection Report
                                                     $total += $ltp_specie->quantity;
                                                 @endphp
                                                 <tr>
-                                                    <td class="border-0 pb-0"><i>{{ $ltp_specie->specie->specie_name }}</i></td>
-                                                    <td class="border-0 pb-0"></td>
-                                                    <td class="text-end border-0 pb-0">{{ number_format($ltp_specie->quantity, 0, '.', ',') }}</td>
+                                                    <td class="border-0 p-0"><i>{{ $ltp_specie->specie->specie_name }}</i></td>
+                                                    <td class="border-0 p-0"></td>
+                                                    <td class="text-end border-0 p-0">{{ number_format($ltp_specie->quantity, 0, '.', ',') }}</td>
                                                 </tr>
                                             @endforeach
                                         @endif

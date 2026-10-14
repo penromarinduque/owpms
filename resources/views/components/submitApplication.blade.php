@@ -28,6 +28,21 @@
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </div> --}}
+                {{-- <p>
+                    By checking the box below and proceeding with the application, I acknowledge that I have read, understood, and agree to comply with the foregoing Terms and Conditions of Use of the OWPMS. I certify that the information and documents submitted through the system are true, complete, accurate, and authentic, and that I understand that the submission of an application does not constitute approval or issuance of a Local Transport Permit.
+                </p>
+                <div class="d-flex align-items-center justify-content-between mt-1 mb-0">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                        <label class="form-check-label" for="termsCheck">
+                            I HAVE READ, UNDERSTOOD, AND AGREE TO .
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="text-decoration-none fw-semibold">
+                                THE TERMS AND CONDITIONS
+                            </a>
+                            OF USE OF THE OWPMS
+                        </label>
+                    </div>
+                </div> --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
