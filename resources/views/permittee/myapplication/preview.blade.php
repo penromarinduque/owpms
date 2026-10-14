@@ -5,7 +5,7 @@ My Applications
 @endsection
 
 @section('content') 
-<div class="container-fluid px-4">
+<div class="container-fluid px-0">
     <h1 class="mt-4">{{$title}}</h1>
 
     <ol class="breadcrumb mb-4">
@@ -129,7 +129,6 @@ My Applications
                 @endcan
             </ul>
         </div>
-        
     </div>
 
     <div class="card mb-4">

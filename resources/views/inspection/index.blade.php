@@ -17,7 +17,7 @@ Inspections
 
     }
 </style>
-<div class="container-fluid px-4">
+<div class="container-fluid px-0">
     <h1 class="mt-4">Inspection</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('ltpapplication.index') }}">LTP Applications</a></li>
@@ -32,25 +32,27 @@ Inspections
                     Application Details
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-sm">
-                        <tbody>
-                            <tr>
-                                <th>Application No.:</th><td>{{ $ltp_application->application_no }}</td>
-                            </tr>
-                            <tr>
-                                <th>Purpose:</th><td>{{ $ltp_application->purpose }}</td>
-                            </tr>
-                            <tr>
-                                <th>Destination:</th><td>{{ $ltp_application->destination }}</td>
-                            </tr>
-                            <tr>
-                                <th>Transport Date.:</th><td>{{ $ltp_application->transport_date->format("F d, Y") }} <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span></td>
-                            </tr>
-                            <tr>
-                                <th>Status:</th><td><span class="badge  bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <tbody>
+                                <tr>
+                                    <th>Application No.:</th><td>{{ $ltp_application->application_no }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Purpose:</th><td>{{ $ltp_application->purpose }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Destination:</th><td>{{ $ltp_application->destination }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Transport Date.:</th><td>{{ $ltp_application->transport_date->format("F d, Y") }} <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span></td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th><td><span class="badge  bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,30 +67,32 @@ Inspections
                     Permittee Details
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-sm">
-                        <tbody>
-                            <tr>
-                                <th width="50%">Permittee Name:</th>
-                                <td width="50%">{{ $permittee->user->personalInfo->first_name . ' ' . $permittee->user->personalInfo->last_name }}</td>
-                            </tr>
-                            <tr>
-                                <th width="50%">Farm Name:</th>
-                                <td width="50%">{{ $farm->farm_name }}</td>
-                            </tr>
-                            <tr>
-                                <th width="50%">Location:</th>
-                                <td width="50%">{{ $farm->barangay->barangay_name . ', ' . $farm->barangay->municipality->municipality_name . ', ' . $farm->barangay->municipality->province->province_name }}</td>
-                            </tr>
-                            <tr>
-                                <th width="50%">Email:</th>
-                                <td width="50%">{{ $permittee->user->personalInfo->email }}</td>
-                            </tr>
-                            <tr>
-                                <th width="50%">Contact No.:</th>
-                                <td width="50%">{{ $permittee->user->personalInfo->contact_no }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <tbody>
+                                <tr>
+                                    <th width="50%">Permittee Name:</th>
+                                    <td width="50%">{{ $permittee->user->personalInfo->first_name . ' ' . $permittee->user->personalInfo->last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th width="50%">Farm Name:</th>
+                                    <td width="50%">{{ $farm->farm_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th width="50%">Location:</th>
+                                    <td width="50%">{{ $farm->barangay->barangay_name . ', ' . $farm->barangay->municipality->municipality_name . ', ' . $farm->barangay->municipality->province->province_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th width="50%">Email:</th>
+                                    <td width="50%">{{ $permittee->user->personalInfo->email }}</td>
+                                </tr>
+                                <tr>
+                                    <th width="50%">Contact No.:</th>
+                                    <td width="50%">{{ $permittee->user->personalInfo->contact_no }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

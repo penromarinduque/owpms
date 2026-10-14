@@ -14,7 +14,7 @@ active
 @endphp
 
 @section('content')
-<div class="container-fluid px-4">
+<div class="container-fluid px-0">
     <h1 class="mt-4">{{$title}}</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
@@ -28,7 +28,7 @@ active
             <i class="fas fa-list me-1"></i>
             List of My Applications
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             @if(session('failed'))
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -43,120 +43,125 @@ active
             </div>
             @endif
 
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link {{ request('category') == 'draft' ? 'active' : '' }}" aria-current="page" href="?status=draft&category=draft">
-                        <i class="fas fa-file-alt me-1"></i>
-                        Draft 
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=all&category=reviewed" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-file-export me-1"></i>Reviewed</a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=all&category=rejected" class="nav-link {{ request('category') == 'rejected' ? 'active' : ''}}"><i class="fas fa-times-circle me-1"></i>Rejected</a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
-                </li>
-                <li class="nav-item">
-                    <a href="?status=expired&category=expired" class="nav-link {{ request('category') == 'expired' ? 'active' : ''}}"><i class="fas fa-calendar-times me-1"></i>Expired</a>
-                </li>
-            </ul>
-
-            <br>
-
-            <div class="d-flex gap-1 justify-content-end mb-3">
-                <div >
-                    <button class="btn btn-outline-primary" data-bs-target="#sortModal" data-bs-toggle="modal">
-                        <i class="fa-solid fa-sort mr-2"></i> Sort
-                    </button>
-                    <div class="modal fade" id="sortModal">
-                        <div class="modal-dialog">
-                            <form class="modal-content" action="" method="get" >
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="sortModalLabel">Sort</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="category" value="{{ request('category') }}">
-                                    <input type="hidden" name="application_no" value="{{ request('application_no') }}" >
-                                    <input type="hidden" name="status" value="{{ request('status') }}" >
-                                    <div class="mb-3">
-                                        <select name="sort_by" id="" placeholder="Sort By" class="form-select">
-                                            <option value="">-Select Sort By-</option>
-                                            <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : ''}}>Date Created</option>
-                                            <option value="application_no" {{ request('sort_by') == 'application_no' ? 'selected' : ''}}>Application No.</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <select class="form-select" name="sort_order" id="" placeholder="Sort Order">
-                                            <option value="">-Select Sort Order-</option>
-                                            <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : ''}}>Ascending</option>
-                                            <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : ''}}>Descending</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-primary">Sort</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div >
-                    <button class="btn btn-outline-primary" data-bs-target="#filterModal" data-bs-toggle="modal">
-                        <i class="fa-solid fa-filter mr-2"></i> Filter
-                    </button>
-                    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form class="modal-content" method="get" action="">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="category" value="{{ request('category') }}">
-                                    <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
-                                    <input type="hidden" name="sort_order" value="{{ request('sort_order') }}">
-                                    <div class="mb-2">
-                                        <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
-                                    </div>
-                                    <div class="mb-2">
-                                        <select class="form-select" name="status" id="">
-                                            <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
-                                            @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
-                                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-primary ">Filter</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+            <div class="p-2">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request('category') == 'draft' ? 'active' : '' }}" aria-current="page" href="?status=draft&category=draft">
+                            <i class="fas fa-file-alt me-1"></i>
+                            Draft 
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?status=all&category=submitted" class="nav-link {{ request('category') == 'submitted' ? 'active' : ''}}"><i class="fas fa-file-import me-1"></i>Submitted</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?status=all&category=reviewed" class="nav-link {{ request('category') == 'reviewed' ? 'active' : ''}}"><i class="fas fa-file-export me-1"></i>Reviewed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?status=returned&category=returned" class="nav-link {{ request('category') == 'returned' ? 'active' : ''}}"><i class="fas fa-undo me-1"></i>Returned</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?status=all&category=accepted" class="nav-link {{ request('category') == 'accepted' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Accepted</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?status=all&category=rejected" class="nav-link {{ request('category') == 'rejected' ? 'active' : ''}}"><i class="fas fa-times-circle me-1"></i>Rejected</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?status=approved&category=approved" class="nav-link {{ request('category') == 'approved' ? 'active' : ''}}"><i class="fas fa-check-circle me-1"></i>Approved</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?status=expired&category=expired" class="nav-link {{ request('category') == 'expired' ? 'active' : ''}}"><i class="fas fa-calendar-times me-1"></i>Expired</a>
+                    </li>
+                </ul>
             </div>
-
+            <br>
             <div class="table-responsive">
                 <table class="table table-hover table-striped table-bordered" >
+                    <thead>
+                        <tr>
+                            <td colspan="7" class="text-end">
+                                <div class="d-flex gap-1 justify-content-end ">
+                                    <div >
+                                        <button class="btn btn-outline-primary" data-bs-target="#sortModal" data-bs-toggle="modal">
+                                            <i class="fa-solid fa-sort mr-2"></i> Sort
+                                        </button>
+                                        <div class="modal fade" id="sortModal">
+                                            <div class="modal-dialog">
+                                                <form class="modal-content" action="" method="get" >
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="sortModalLabel">Sort</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="category" value="{{ request('category') }}">
+                                                        <input type="hidden" name="application_no" value="{{ request('application_no') }}" >
+                                                        <input type="hidden" name="status" value="{{ request('status') }}" >
+                                                        <div class="mb-3">
+                                                            <select name="sort_by" id="" placeholder="Sort By" class="form-select">
+                                                                <option value="">-Select Sort By-</option>
+                                                                <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : ''}}>Date Created</option>
+                                                                <option value="application_no" {{ request('sort_by') == 'application_no' ? 'selected' : ''}}>Application No.</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <select class="form-select" name="sort_order" id="" placeholder="Sort Order">
+                                                                <option value="">-Select Sort Order-</option>
+                                                                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : ''}}>Ascending</option>
+                                                                <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : ''}}>Descending</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-primary">Sort</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div >
+                                        <button class="btn btn-outline-primary" data-bs-target="#filterModal" data-bs-toggle="modal">
+                                            <i class="fa-solid fa-filter mr-2"></i> Filter
+                                        </button>
+                                        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <form class="modal-content" method="get" action="">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="category" value="{{ request('category') }}">
+                                                        <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                                        <input type="hidden" name="sort_order" value="{{ request('sort_order') }}">
+                                                        <div class="mb-2">
+                                                            <input type="text" name="application_no" value="{{ request('application_no') }}" placeholder="Application No." class="form-control">
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <select class="form-select" name="status" id="">
+                                                                <option value="all" {{ request('status') == 'all' ? 'selected' : ''}}>All</option>
+                                                                @foreach ($_helper->identifyApplicationStatusesByCategory(request('category')) as $status)
+                                                                    <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : ''}}>{{ $_ltp_application->getApplicationCountsByStatus($status, null) }} - {{ $_helper->formatApplicationStatus($status) }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-primary ">Filter</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Application No.</th>
                             <th>Date of Application</th>
-                            <th>Date Created</th>
+                            <th>Date of Transport</th>
                             <th>Last Modified</th>
                             <th class="text-center">Status</th>
                             <th width="200px" class="text-center">Actions</th>
@@ -168,7 +173,7 @@ active
                                 <td class="align-middle">{{ $key + 1 }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
                                 <td class="align-middle">{{ $ltp_application->application_date->format('F d, Y') }}</td>
-                                <td class="align-middle">{{ $ltp_application->created_at->format('F d, Y') }}</td>
+                                <td class="align-middle">{{ $ltp_application->transport_date->format('F d, Y') }}</td>
                                 <td class="align-middle">{{ $ltp_application->updated_at->format('F d, Y') }}</td>
                                 <td class="align-middle text-center">
                                     <span class="badge rounded-pill bg-{{ $_helper->setApplicationStatusBgColor($ltp_application->application_status) }}">{{ $_helper->formatApplicationStatus($ltp_application->application_status) }}</span>
