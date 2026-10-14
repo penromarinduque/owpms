@@ -40,8 +40,8 @@ Inspection Report
         <tbody>
             <tr>
                 <td>
-                    <div class="px-4">
-                        <div class=" bg-white py-4 px-5">
+                    <div class="">
+                        <div class=" bg-white py-4 px-3">
 
                             <h5 class="text-center">INSPECTION REPORT OF WILDLIFE</h5><br>
 
