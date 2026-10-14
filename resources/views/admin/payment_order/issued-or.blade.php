@@ -25,6 +25,9 @@ active
                 <table class="table table-hover table-bordered table-striped">
                     <thead>
                         <th>OR Number</th>
+                        <th>Application No.</th>
+                        <th>Permittee</th>
+                        <th>Payment Date</th>
                         <th>Payment Method</th>
                         <th>Actions</th>
                     </thead>
@@ -32,6 +35,9 @@ active
                         @forelse ($payment_orders as $po)
                             <tr>
                                 <td>{{ $po->payment_reference }}</td>
+                                <td>{{ $po->ltpApplication->application_no }}</td>
+                                <td>{{ $po->ltpApplication->permittee->user->personalInfo->first_name . ' ' . $po->ltpApplication->permittee->user->personalInfo->last_name }}</td>
+                                <td>{{ $po->payment_date->format('F d, Y') }}</td>
                                 <td><span class="badge rounded-pill bg-{{ $po->payment_method === 'cash' ? 'success' : 'info' }}">{{ strtoupper($po->payment_method) }}</span></td>
                                 <td>
                                     <a href="{{ route('paymentorder.viewreceipt', Crypt::encryptString($po->id)) }}" target="_blank" class="btn btn-sm btn-info">View</a>
@@ -39,7 +45,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center">No records found</td>
+                                <td colspan="6" class="text-center">No records found</td>
                             </tr>
                         @endforelse
                     </tbody>

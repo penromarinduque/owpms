@@ -38,6 +38,7 @@ active
                             </td>
                         </tr>
                         <tr>
+                            <th width="250px">Application No.</th>
                             <th width="250px">Order Number</th>
                             <th class="text-center" width="160px">Date Issued</th>
                             <th>Permittee</th>
@@ -53,6 +54,7 @@ active
                     <tbody>
                         @forelse ($paymentOrders as $paymentOrder)
                             <tr>
+                                <td>{{ $paymentOrder->ltpApplication->application_no }}</td>
                                 <td>{{ $paymentOrder->order_number }}</td>
                                 <td class="text-center">{{ $paymentOrder->issued_date->format("F d, Y") }}</td>
                                 <td>{{ $paymentOrder->ltpApplication->permittee->user->personalInfo->first_name . ' ' . $paymentOrder->ltpApplication->permittee->user->personalInfo->last_name }}</td>
@@ -77,7 +79,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center">No records found.</td>
+                                <td colspan="11" class="text-center">No records found.</td>
                             </tr>
                         @endforelse
                     </tbody>
