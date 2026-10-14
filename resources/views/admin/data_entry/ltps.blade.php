@@ -22,6 +22,7 @@ Local Transport Permit
                     <thead>
                         <tr>
                             <th>Permit No.</th>
+                            <th>Application No.</th>
                             <th>Permittee</th>
                             <th>Expiration/Transport Date</th>
                             <th class="text-center">Status</th>
@@ -32,6 +33,7 @@ Local Transport Permit
                         @forelse ($ltps as $ltp)
                             <tr>
                                 <td>{{ $ltp->permit_number }}</td>
+                                <td>{{ $ltp->ltpApplication->application_no }}</td>
                                 <td>{{ $ltp->ltpApplication->permittee->user->personalInfo->fullName }}</td>
                                 <td>{{ $ltp->ltpApplication->transport_date->format('F d, Y') }}</td>
                                 <td class="text-center">{!! $ltp->status !!}</td>

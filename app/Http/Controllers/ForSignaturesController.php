@@ -75,6 +75,12 @@ class ForSignaturesController extends Controller
             );
             $inspection_report->permittee_signed = $signature_title;
             $inspection_report->save();
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $inspection_report->ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_INSPECTED,
+                'remarks' => "Inspection report has been signed by the Permittee: " . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
             Notification::send($inspection_report->inspector, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been signed by the permittee and is now ready for your signature.'));
             return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
         });
@@ -167,6 +173,12 @@ class ForSignaturesController extends Controller
             );
             $inspection_report->inspector_signed = $signature_title;
             $inspection_report->save();
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $inspection_report->ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_INSPECTED,
+                'remarks' => "Inspection report has been signed by the Inspector: " . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
             Notification::send($inspection_report->rpsInitial, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been signed by the Inspecting Officer and is now ready for your initial.'));
             return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
         });
@@ -222,6 +234,12 @@ class ForSignaturesController extends Controller
             ->disk("s3")
             ->save("inspection_report/" . $inspection_report->id . ".pdf");
             $inspection_report->save();
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $inspection_report->ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_INSPECTED,
+                'remarks' => "Inspection report has been approved by " . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
             Notification::send($inspection_report->ltpApplication->ioUser, new SignedNotification(route('ltpapplication.index', ['status' => LtpApplication::STATUS_INSPECTED, 'category' => 'accepted']), 'An inspection report has been signed by the Approver and is now ready for LTP creation.'));
             return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
         });
@@ -233,6 +251,12 @@ class ForSignaturesController extends Controller
         Gate::authorize('rpsSign', $inspection_report);
         $inspection_report->rps_signed = true;
         $inspection_report->save();
+        LtpApplicationProgress::create([
+            'ltp_application_id' => $inspection_report->ltp_application_id,
+            'user_id' => auth()->user()->id,
+            'status' => LtpApplication::STATUS_INSPECTED,
+            'remarks' => "Inspection report has been signed by the RPS In Charge/Chief: " . auth()->user()->personalInfo->getFullNameAttribute()
+        ]);
         Notification::send($inspection_report->approver, new SignedNotification(route('for-signatures.index', ['type' => 'inspection_report']), 'An inspection report has been reviewed by the RPS In Charge and is now ready for your approval.'));
         return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])->with('success', 'Inspection report signed successfully!');
     }
@@ -337,6 +361,12 @@ class ForSignaturesController extends Controller
             );
             $payment_order->prepared_signed = $signature_title;
             $payment_order->save();
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $payment_order->ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS,
+                'remarks' => "Assessment of Fees and Charges has been signed by the RPS In Charge/Chief: " . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
             Notification::send($payment_order->approvedBy, new SignedNotification(route('for-signatures.index', ['type' => 'billing_statement']), 'An Assessment of Fees and Charges has been signed by the preparer and is now ready for your approval.'));
             return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
         });
@@ -404,6 +434,13 @@ class ForSignaturesController extends Controller
                     });
                 });
             })->get();
+            
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $payment_order->ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS,
+                'remarks' => "Assessment of Fees and Charges has been signed by the TSD In Charge/Chief: " . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
             Notification::send($serialNoEncoders, new SignedNotification(route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)]), 'An Assessment of Fees and Charges has been approved by the approver and is now ready for serial number encoding.'));
             return redirect()->route('for-signatures.index', ['type' => 'payment_order'])->with('success', 'Payment order signed successfully!');
         });
@@ -424,16 +461,6 @@ class ForSignaturesController extends Controller
                 Storage::disk('s3')->get("signatures/" . $payment_order->oopApprovedBy->getSignature()->signature)
             );
             $oopApproverUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signature_title, now()->addMinutes(30));
-            Log::info([
-                $payment_order->oopApprovedBy->personalInfo->first_name . " " . $payment_order->oopApprovedBy->personalInfo->middle_name . " " . $payment_order->oopApprovedBy->personalInfo->last_name,
-                $payment_order->oopApprovedBy->empPosition->position,
-                $oopApproverUrl,
-                $payment_order->serial_number,
-                "6",
-                $payment_order->id,
-                $payment_order->oopApprovedBy->id,  
-                null
-                ]);
                  
             $oopApproverSignature = $this->getElectronicSignature(
                 $payment_order->oopApprovedBy->personalInfo->first_name . " " . $payment_order->oopApprovedBy->personalInfo->middle_name . " " . $payment_order->oopApprovedBy->personalInfo->last_name,
@@ -460,7 +487,12 @@ class ForSignaturesController extends Controller
             ->save("payment_order/payment_order_" . $payment_order->id . ".pdf");
             $payment_order->oop_approved_signed = $signature_title;
             $payment_order->save();
-            
+            LtpApplicationProgress::create([
+                'ltp_application_id' => $payment_order->ltp_application_id,
+                'user_id' => auth()->user()->id,
+                'status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS,
+                'remarks' => "Order of Payment has been signed by the Accountant: " . auth()->user()->personalInfo->getFullNameAttribute()
+            ]);
             // notify
             $inspectors = User::whereHas('userRoles', function ($query) {
                 $query->whereHas('role', function ($query) {
