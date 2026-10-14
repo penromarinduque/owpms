@@ -58,7 +58,7 @@ class LtpController extends Controller
         //         "ltp_application" => $ltpApplication,
         //         "signatureUrl" => $approverSignatureUrl
         //     ]);
-        return Pdf::view('pdfs.permit', [
+        $res = Pdf::view('pdfs.permit', [
                 "permit" => $ltpPermit,
                 "ltp_application" => $ltpApplication,
                 "signatureUrl" => $approverSignatureUrl
@@ -67,5 +67,10 @@ class LtpController extends Controller
             ->headerView('pdfs.header')
             ->footerView('pdfs.footer')
             ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch);
+
+        $res->disk("s3")
+            ->save("ltps/" . $ltpPermit->permit_number . ".pdf");
+
+        return $res;
     }
 }
