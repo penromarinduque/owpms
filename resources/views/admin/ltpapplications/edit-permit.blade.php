@@ -80,13 +80,13 @@ active
                         ">
                     <p>
                         &nbsp;&nbsp;The above mentioned specimens shall be transported by Air/Sea express on or before 
-                        <input style="width: 150px;" type="date" name="transport_date" value="{{ old('transport_date', $ltp_application->transport_date->format('Y-m-d')) }}" class="form-control d-inline">
+                        <input style="width: 150px;" type="date" name="transport_date" value="{{ old('transport_date', $ltp_application->paymentOrder->payment_date->addMonth()->format('Y-m-d')) }}" class="form-control d-inline">
                         and have been inspected, verified and found in accordance with existing wildlife laws, rules and regulations.
                     </p>
                     <p>
                         &nbsp;&nbsp;Local Transport fee in the amount of <u class="fw-bold">&nbsp;&nbsp; &#x20B1; {{ number_format($ltp_application->paymentOrder->ltpFee->amount, 2, '.', ',') }}&nbsp;&nbsp;</u>
                         was paid under the DENR PENRO Official Receipt No. <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->paymentOrder->payment_reference }}&nbsp;&nbsp;</u>
-                        dated <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->paymentOrder->issued_date->format('F d, Y') }}&nbsp;&nbsp;</u>.
+                        dated <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->paymentOrder->payment_date->format('F d, Y') }}&nbsp;&nbsp;</u>.
                     </p>
                     <p>
                         &nbsp;&nbsp;This permit is not valid without the QR code of the signing officer or if it contains erasure or alteration.

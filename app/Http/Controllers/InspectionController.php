@@ -532,7 +532,7 @@ class InspectionController extends Controller
         if($inspection_report->approver_signed) {
             $approverSignUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->approver_signed, now()->addMinutes(30));
         }
-        return Pdf::view('pdfs.inspection-report', [
+        $pdf = Pdf::view('pdfs.inspection-report', [
                 "ltp_application" => $inspection_report->ltpApplication,
                 "inspection_report" => $inspection_report,
                 "permitteeUrl" => $permitteeSignUrl,
@@ -545,5 +545,10 @@ class InspectionController extends Controller
             ->headerView('pdfs.header')
             ->footerView('pdfs.footer')
             ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch);
+
+        $pdf->disk("s3")
+            ->save("inspection_report/" . $inspection_report->id . ".pdf");
+
+        return $pdf;
     }
 }

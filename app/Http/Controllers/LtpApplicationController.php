@@ -304,9 +304,9 @@ class LtpApplicationController extends Controller
                 'approver_designation' => $request->input('approver_designation')
             ]);
 
-            $ltp_application->transport_date = $request->input('transport_date');
-            $ltp_application->save();
-    
+            // $ltp_application->transport_date = $request->input('transport_date');
+            // $ltp_application->save();
+
             Notification::send($ltp_application->permittee->user, new LtpPermitCreated($ltp_application));
 
             return redirect()->back()->with('success', 'Successfully created permit.');
@@ -356,8 +356,8 @@ class LtpApplicationController extends Controller
                 'approver_designation' => $request->input('approver_designation')
             ]);
 
-            $ltp_application->transport_date = $request->input('transport_date');
-            $ltp_application->save();   
+            // $ltp_application->transport_date = $request->input('transport_date');
+            // $ltp_application->save();   
     
             // Notification::send($ltp_application->permittee->user, new LtpPermitCreated($ltp_application));
 
