@@ -39,7 +39,8 @@ Local Transport Permit
                                 <td class="text-center">{!! $ltp->status !!}</td>
                                 <td class="text-center">
                                     @can('viewPermit', $ltp)
-                                        <a href="{{ route('ltps.viewPermit', Crypt::encryptString($ltp->id))}}" class="btn btn-sm btn-outline-primary">View</a>
+                                        {{-- <a href="{{ route('ltps.viewPermit', Crypt::encryptString($ltp->id))}}" class="btn btn-sm btn-outline-primary">View</a> --}}
+                                        <a href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($ltp->id), 'ltp_application_id' => $ltp->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary">View</a>
                                     @endcan
                                 </td>
                             </tr>
