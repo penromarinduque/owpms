@@ -18,7 +18,7 @@ Local Transport Permit
     }
     .qr-code {
         width: fit-content;
-        position: fixed;
+        position: absolute;
         /* bottom: 20px; */
         top: 0px;
         right: 20px;
@@ -40,6 +40,7 @@ Local Transport Permit
     {!! QrCode::size(100)->generate(route('qr.index', ['id' => $_helper->encodeHashId($permit->id), 'document_type' => 'ltp'])) !!}
     <p class="text-center"><small>{{ $permit->permit_number }}</small></p>
 </div>
+
 <div class="row px-4 align-content-center justify-content-center" >
     <div class="p-4 bg-white mb-4 mt-4">
         <p class="mb-0">Wildlife Transport</p>
@@ -124,17 +125,19 @@ Local Transport Permit
             was paid under the DENR PENRO Official Receipt No. <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->paymentOrder->payment_reference }}&nbsp;&nbsp;</u>
             dated <u class="fw-bold">&nbsp;&nbsp;{{ $ltp_application->paymentOrder->payment_date->format('F d, Y') }}&nbsp;&nbsp;</u>.
         </p>
-        <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;This permit is not valid without the QR code of the signing officer or if it contains erasure or alteration.
-        </p>
-
-        <br>
-
-        <div class="d-flex justify-content-end">
-            <div class="d-flex flex-column align-items-center ">
-                <img style="max-width: 200px; margin: 0px auto;" src="{{ $signatureUrl }}" alt="">
-                <p class="text-center border-bottom border-dark mb-0 fw-bold " style="min-width: 200px; text-transform: uppercase">{{ $permit->approver->personalInfo->getFullNameAttribute() }}</p>
-                <p class="text-center" style="min-width: 200px">{{ $permit->approver_designation }}</p>
+        <div class="" style="page-break-inside: avoid">
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp;This permit is not valid without the QR code of the signing officer or if it contains erasure or alteration.
+            </p>
+    
+            <br>
+    
+            <div class="d-flex justify-content-end">
+                <div class="d-flex flex-column align-items-center ">
+                    <img style="max-width: 200px; margin: 0px auto;" src="{{ $signatureUrl }}" alt="">
+                    <p class="text-center border-bottom border-dark mb-0 fw-bold " style="min-width: 200px; text-transform: uppercase">{{ $permit->approver->personalInfo->getFullNameAttribute() }}</p>
+                    <p class="text-center" style="min-width: 200px">{{ $permit->approver_designation }}</p>
+                </div>
             </div>
         </div>
     </div>

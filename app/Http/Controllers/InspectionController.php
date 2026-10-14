@@ -538,6 +538,10 @@ class InspectionController extends Controller
                 "approverUrl" => $approverSignUrl
             ])
             ->waitUntilReady()
-            ->margins(0.3, 0, 0.3, 0, Unit::Inch);
+            ->paperSize(8.5, 13, 'in')
+            // ->header
+            ->headerView('pdfs.header')
+            ->footerView('pdfs.footer')
+            ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch);
     }
 }

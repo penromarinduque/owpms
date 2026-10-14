@@ -35,7 +35,8 @@ My Applications
                     <li><a class="dropdown-item me-2 @cannot('submit', $ltp_application) disabled @endcannot"  href="#" onclick="showSubmitApplicationModal('{{ route('myapplication.submit', Crypt::encryptString($ltp_application->id)) }}')"><i class="fas fa-upload me-1"></i> Submit Application</a></li>
                 @endif
                 @can('downloadLtp', $ltp_application)
-                    <li><a class="dropdown-item" href="{{ route('ltpapplication.downloadLtp', Crypt::encryptString($ltp_application->id)) }}" target="_blank"><i class="fas fa-download me-1"></i> Download Local Transport Permit</a></li>
+                    {{-- <li><a class="dropdown-item" href="{{ route('ltpapplication.downloadLtp', Crypt::encryptString($ltp_application->id)) }}" target="_blank"><i class="fas fa-download me-1"></i> Download Local Transport Permit</a></li> --}}
+                    <li><a class="dropdown-item" href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($ltp_application->permit->id), 'ltp_application_id' => $ltp_application->id ]) }}" target="_blank"><i class="fas fa-eye me-1"></i> View Local Transport Permit</a></li>
                 @endcan
                 @php
                     $inspectionReport = $ltp_application->inspectionReport;

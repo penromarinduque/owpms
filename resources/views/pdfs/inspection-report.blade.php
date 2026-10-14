@@ -16,11 +16,10 @@ Inspection Report
     }
 </style>
     <table class="w-100">
-        <thead>
+        {{-- <thead>
             <tr>
                 <td class="">
                     <div class="header d-flex justify-content-center align-items-center mb-3 mx-auto w-fit">
-                        {{-- <img src="{{ asset('images/denr_logo.png') }}" alt="DENR Logo" class="me-3" style="width: 80px; height: 80px;"> --}}
                         <img
                         src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/denr_logo.png'))) }}"
                         style="width:80px;height:80px;" >
@@ -34,11 +33,10 @@ Inspection Report
                         <img
                         src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images//bagong-pilipinas.png'))) }}"
                         style="width:80px;height:80px;">
-                        {{-- <img src="{{ asset('images/bagong-pilipinas.png') }}" alt="Bagong Pilipinas Logo" class="ms-3" style="width: 80px; height: 80px;"> --}}
                     </div>
                 </td>
             </tr>
-        </thead>
+        </thead> --}}
         <tbody>
             <tr>
                 <td>
