@@ -352,15 +352,17 @@ class InspectionController extends Controller
 
         $inspection_report = InspectionReport::where(['ltp_application_id' => $ltp_application_id])->first();
 
-        if(
-            $inspection_report 
-            && Storage::exists('inspection_report/'.$inspection_report->id.'.pdf')
+        if($inspection_report && $inspection_report->permittee_signed && $inspection_report->inspector_signed && $inspection_report->approver_signed
         // && ($inspection_report->permittee_signed || $inspection_report->inspector_signed || $inspection_report->approver_signed)
         ) {
-            return Storage::response('inspection_report/'.$inspection_report->id.'.pdf', 'Inspection Report.pdf', [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="Inspection Report.pdf"'
-            ]);
+            // return Storage::response('inspection_report/'.$inspection_report->id.'.pdf', 'Inspection Report.pdf', [
+            //     'Content-Type' => 'application/pdf',
+            //     'Content-Disposition' => 'inline; filename="Inspection Report.pdf"'
+            // ]);
+            return redirect(route("inspection.viewInspectionReport", [
+                'ltp_application_id' => Crypt::encryptString($ltp_application_id),
+                'id' => Crypt::encryptString($inspection_report->id)
+            ]));
         }
 
         if ($inspection_report) {
