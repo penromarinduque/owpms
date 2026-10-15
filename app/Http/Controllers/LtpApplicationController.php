@@ -293,7 +293,7 @@ class LtpApplicationController extends Controller
             $year = date('Y');  
             $latest = LtpPermit::whereYear('created_at', $year)->orderBy('no', 'DESC')->first();
             $no = $latest ? $latest->no + 1 : Counter::where("year", $year)->first()->ltp;
-            $permit_no = $year."-".str_pad($no, 5, '0', STR_PAD_LEFT);
+            $permit_no = $year."-".str_pad($no, 4, '0', STR_PAD_LEFT);
             LtpPermit::create([
                 'ltp_application_id' => $ltp_application->id,
                 'permit_number' => $permit_no,
