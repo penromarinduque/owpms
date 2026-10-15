@@ -298,17 +298,28 @@ class PermitteeController extends Controller
             $wcp->date_of_issue = $request->input('date_of_issue_wcp');
             $wcp->save();
 
-            if($request->hasFile('wcp_document')) {
-                $path = $request->file('wcp_document')->storeAs('wcp', $wcp->id .'.'. $request->file('wcp_document')->getClientOriginalExtension());
-                $wcp->document = $path;
-                $wcp->save();
-            }
+            if ($request->hasFile('wcp_document')) {
+            // Specify 's3' as the disk and optionally set visibility to 'public' or 'private'
+            $path = $request->file('wcp_document')->storeAs(
+                'wcp', 
+                $wcp->id . '.' . $request->file('wcp_document')->getClientOriginalExtension(), 
+                's3'
+            );
+            
+            $wcp->document = $path;
+            $wcp->save();
+        }
 
-            if($request->hasFile('wfp_document')) {
-                $path = $request->file('wfp_document')->storeAs('wfp', $wfp->id .'.'. $request->file('wfp_document')->getClientOriginalExtension());
-                $wfp->document = $path;
-                $wfp->save();
-            }
+        if ($request->hasFile('wfp_document')) {
+            $path = $request->file('wfp_document')->storeAs(
+                'wfp', 
+                $wfp->id . '.' . $request->file('wfp_document')->getClientOriginalExtension(), 
+                's3'
+            );
+            
+            $wfp->document = $path;
+            $wfp->save();
+        }
 
             return Redirect::route('permittees.index')->with('success', 'Successfully saved!');
         });

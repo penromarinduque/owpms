@@ -64,7 +64,8 @@
                                     </tr>
                                     <tr>
                                         <td width="50%" class=" fw-bold">Fund Cluster : <u>151</u></td>
-                                        <td width="50%" class="text-end fw-bold">Date: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center">{{ $ltp_application->paymentOrder->issued_date->format('d-M-y') }}</p></div></td>
+                                        <td width="50%" class="text-end fw-bold">Date: <div class="" style="display: inline-block; border-bottom: 1px solid black; width: 100px" ><p class="mb-0 text-center">{{ $ltp_application->paymentOrder->issued_date->format('d-M-y'
+                                        ) }}</p></div></td>
                                     </tr>
                                 </table>
                                 <br>
