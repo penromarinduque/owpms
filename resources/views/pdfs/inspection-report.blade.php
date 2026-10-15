@@ -126,7 +126,7 @@ Inspection Report
     
                                 <p class="text-justify">
                                     &nbsp;&nbsp;&nbsp;&nbsp;This is to certify that the inspection report of 
-                                        <span class="fw-bold"><u>&nbsp;&nbsp;{{ auth()->user()->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></span>
+                                        <span class="fw-bold"><u>&nbsp;&nbsp;{{ $inspection_report->inspector->personalInfo->getFullNameAttribute() }}&nbsp;&nbsp;</u></span>
                                         of PENRO Marinduque, Region <span class="fw-bold"><u>&nbsp;&nbsp;IV-MIMAROPA&nbsp;&nbsp;</u></span>
                                         is/are true and correct and has been done this 
                                         <span id="inspection_date_text"><span class="fw-bold"><u>&nbsp;&nbsp;{{ old('inspection_date') ? \Carbon\Carbon::parse(old('inspection_date'))->format('jS') : $inspection_report->inspection_date->format('jS') }}&nbsp;&nbsp;</u></span>
