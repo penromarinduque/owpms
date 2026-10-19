@@ -295,13 +295,19 @@ active
                                         <a href="{{ route('ltpapplication.review', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-primary mb-2"  data-bs-toggle="tooltip" data-bs-title="Review"><i class="fa-solid fa-magnifying-glass"></i></a>
                                     @endif
                                     @can('generatePaymentOrder', $ltp_application)
-                                        <a href="{{ route('paymentorder.create', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Generate Payment Order and Assesment of Fees and Charges"><i class="fas fa-file-invoice-dollar"></i></a>
+                                        <a href="{{ route('paymentorder.create', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Generate Payment Order and Assesment of Fees and Charges">
+                                            {{-- <i class="fas fa-file-invoice-dollar"></i> --}}
+                                            Create Payment
+                                        </a>
                                     @endcan
                                     @if (in_array($ltp_application->application_status, ['payment-in-process']))   
                                         <a href="{{ route('paymentorder.show', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
                                     @can('inspect', $ltp_application)  
-                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection">
+                                            {{-- <i class="fas fa-eye"></i> --}}
+                                            Inspect
+                                        </a>
                                         @if (in_array($ltp_application->application_status, ['inspected']))   
                                             @can('generateLtp', $ltp_application)
                                                 <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit"><i class="fas fa-file-pdf"></i></a>
@@ -323,8 +329,15 @@ active
                             </tr>
                         @endforelse
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="8" class="text-center">
+                                {{ $ltp_applications->appends(request()->query())->links() }}
+                            </th>
+                        </tr>
+                    </tfoot>
                 </table>
-                {{ $ltp_applications->appends(request()->query())->links() }}
+                {{-- {{ $ltp_applications->appends(request()->query())->links() }} --}}
             </div>
         </div>
     </div>

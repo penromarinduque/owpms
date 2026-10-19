@@ -65,4 +65,23 @@ class InspectionReport extends Model implements Auditable
                     ->whereNull('permittee_signed');
             });
     }
+
+    public function scopeSignedDocsFor($query, $userId) {
+        return $query->where(function ($query) use ($userId) {
+                $query->where('inspector_id', $userId)
+                    ->whereNotNull('inspector_signed');
+            })
+            ->orWhere(function ($query)  use ($userId)  {
+                $query->where('approver_id', $userId)
+                    ->whereNotNull('approver_signed');
+            })
+            ->orWhere(function ($query)  use ($userId)  {
+                $query->where('rps_initial_id', $userId)
+                    ->where('rps_signed', true);
+            })
+            ->orWhere(function ($query)  use ($userId)  {
+                $query->where('user_id', $userId)
+                    ->whereNotNull('permittee_signed');
+            });
+    }
 }

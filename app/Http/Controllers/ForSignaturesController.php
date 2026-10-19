@@ -30,14 +30,17 @@ class ForSignaturesController extends Controller
     use ElectronicSigratureTrait;
 
     //
-    public function index(Request $request) {
+    public function index(Request $request, string $type) {
         $_helper = new ApplicationHelper;
-        $type = $request->input('type');
+        // $type = $request->input('type');
         
         $docs = $this->getDocuments($type);
+
+        $signed = $this->getSignedDocs($type);
         
         return view('for_signatures.index', [
             'docs' => $docs,
+            'signed' => $signed,
             "_helper" => $_helper
         ]);
     }
@@ -518,22 +521,42 @@ class ForSignaturesController extends Controller
 
     private function getDocuments($type) {
         if($type == 'inspection_report') {
-            return InspectionReport::pendingSignaturesFor(auth()->user()->id)->paginate(50);
+            return InspectionReport::pendingSignaturesFor(auth()->user()->id)->paginate(20);
         }
 
         if($type == "ltp") {
-            return LtpPermit::pendingSignaturesFor(auth()->user()->id)->paginate(50);
+            return LtpPermit::pendingSignaturesFor(auth()->user()->id)->paginate(20);
         }
 
         if($type == "billing_statement") {
-            return PaymentOrder::pendingBillingStatementSignaturesFor(auth()->user()->id)->paginate(50);
+            return PaymentOrder::pendingBillingStatementSignaturesFor(auth()->user()->id)->paginate(20);
         }
+
         if($type == "payment_order") {
-            return PaymentOrder::pendingOopSignaturesFor(auth()->user()->id)->paginate(50);
+            return PaymentOrder::pendingOopSignaturesFor(auth()->user()->id)->paginate(20);
         }
 
         return [];
-        
+    }
+
+    private function getSignedDocs($type) {
+        if($type == 'inspection_report') {
+            return InspectionReport::signedDocsFor(auth()->user()->id)->paginate(10);
+        }
+
+        if($type == "ltp") {
+            return LtpPermit::signedDocsFor(auth()->user()->id)->paginate(10);
+        }
+
+        if($type == "billing_statement") {
+            return PaymentOrder::signedBillingStatementFor(auth()->user()->id)->paginate(10);
+        }
+
+        if($type == "payment_order") {
+            return PaymentOrder::signedPaymentOrderFor(auth()->user()->id)->paginate(10);
+        }
+
+        return [];
     }
 
     // public function billingStatementSignSelected(Request $request) {

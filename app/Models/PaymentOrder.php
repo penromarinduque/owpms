@@ -72,6 +72,20 @@ class PaymentOrder extends Model implements Auditable
         });
     }
 
+    public function scopeSignedPaymentOrderFor($query, $userId)
+    {
+        return $query->where(function ($q) use ($userId) {
+            $q->whereNotNull('prepared_signed')
+            ->whereNotNull('approved_signed')
+            ->whereNotNull('serial_number')
+            ->where('oop_approved_by', $userId)
+            ->where(function ($q)  {
+                $q->where('oop_approved_signed', true);
+            });
+        });
+    }
+
+
     public function scopePendingBillingStatementSignaturesFor($query, $userId)
     {
         return $query->where(function ($q) use ($userId) {
@@ -87,6 +101,24 @@ class PaymentOrder extends Model implements Auditable
             ->where(function ($subQ) {
                  $subQ->whereNull('approved_signed')
                     ->orWhere('approved_signed', false);
+            })
+            ->whereNotNull('prepared_signed');
+        });
+    }
+
+    public function scopeSignedBillingStatementFor($query, $userId)
+    {
+        return $query->where(function ($q) use ($userId) {
+            // Preparer: Has signed (true)
+            $q->where('prepared_by', $userId)
+            ->where(function ($subQ) {
+                $subQ->whereNotNull('prepared_signed');
+            });
+        })->orWhere(function ($q) use ($userId) {
+            // Approver: Only if preparer has signed (true), but approver hasn't signed yet
+            $q->where('approved_by', $userId)
+            ->where(function ($subQ) {
+                 $subQ->whereNotNull('approved_signed');
             })
             ->whereNotNull('prepared_signed');
         });

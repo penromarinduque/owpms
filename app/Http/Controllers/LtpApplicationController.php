@@ -75,7 +75,7 @@ class LtpApplicationController extends Controller
             '_helper' => $_helper,
             '_ltp_application' => new LtpApplication,
             'title' => 'LTP Applications',
-            "ltp_applications" => $ltp_applications->orderBy($sort_by, $sort_order)->paginate(50),
+            "ltp_applications" => $ltp_applications->orderBy($sort_by, $sort_order)->paginate(20),
             "_ltp_requirement" => $_ltp_requirement
         ]);
     }

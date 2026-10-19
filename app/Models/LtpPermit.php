@@ -36,6 +36,23 @@ class LtpPermit extends Model implements Auditable
         });
     }
 
+    public function scopeSignedDocsFor($query, $userId) {
+        return $query->where(function ($q) use ($userId) {
+            $q->where(function($sub) use ($userId) {
+                $sub->where('chief_tsd', $userId)
+                    ->where(function ($q) {
+                        $q->where('chief_tsd_signed', true);
+                    });
+            })
+            ->orWhere(function($sub) use ($userId) {
+                $sub->where('penro', $userId)
+                    ->where(function ($q) {
+                        $q->where('penro_signed', true);
+                    });
+            });
+        });
+    }
+
     public function ltpApplication(){
         return $this->belongsTo(LtpApplication::class, 'ltp_application_id', 'id');
     }

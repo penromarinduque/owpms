@@ -363,7 +363,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
 
     // For Signatures
     Route::prefix('for-signatures')->group(function () {
-       Route::get('/', [ForSignaturesController::class, 'index'])->name('for-signatures.index'); 
+       
        Route::post('inspection-report-permittee-sign/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSign'])->name('for-signatures.inspectionReportPermitteeSign');
        Route::post('inspection-report-permittee-sign-digital/{id}', [ForSignaturesController::class, 'inspectionReportPermitteeSignDigital'])->name('for-signatures.inspectionReportPermitteeSignDigital');
        Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
@@ -377,6 +377,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
        Route::post('payment-order-oop-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderOopApproverSign'])->name('for-signatures.paymentOrderOopApproverSign');
        Route::post('billing-statement-sign-selected', [ForSignaturesController::class, 'billingStatementSignSelected'])->name('for-signatures.billingStatementSignSelected');
        Route::post('billing-statement-sign-all', [ForSignaturesController::class, 'billingStatementSignAll'])->name('for-signatures.billingStatementSignAll');
+       Route::get('/{type}', [ForSignaturesController::class, 'index'])->name('for-signatures.index'); 
     });
 
     // LTP's
