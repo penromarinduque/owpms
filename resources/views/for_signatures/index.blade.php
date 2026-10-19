@@ -263,8 +263,30 @@ For Signatures
                                 "billing_statement" => 4
                             ];
                         @endphp
-                        <thead>
-                        </thead>
+                        {{-- <thead>
+                            <tr>
+                                <td colspan="{{ $totalSpan[request('type')] }}">
+                                    <div class="d-flex gap-1">
+                                        @if (request('type') == 'billing_statement')
+                                            <button class="btn btn-sm btn-primary" onclick="signAll('{{ route('for-signatures.billingStatementSignAll') }}', 'Are you sure you want to sign all billing statements?')">Sign All</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('{{route('for-signatures.billingStatementSignSelected')}}', 'Are you sure you want to sign selected billing statements?')">Sign Selected</button>
+                                        @endif
+                                        @if (request('type') == 'payment_order')
+                                            <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all payment orders?')">Sign All</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected payment orders?')">Sign Selected</button>
+                                        @endif
+                                        @if (request('type') == 'inspection_report')
+                                            <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all inspection reports?')">Sign All</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected inspection reports?')">Sign Selected</button>
+                                        @endif
+                                        @if (request('type') == 'ltp')
+                                            <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all local transport permits?')">Sign All</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected local transport permits?')">Sign Selected</button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead> --}}
                         <thead>
                             <tr>
                                 {{-- <th width="64px">
@@ -301,9 +323,9 @@ For Signatures
                         <tbody>
                             @forelse ($signed as $doc)
                                 <tr>
-                                    <td width="64px">
+                                    {{-- <td width="64px">
                                         <input type="checkbox" class="form-check-input select-row" value="{{ $doc->ltpApplication->id }}" onchange="toggleSelectRow(this)">
-                                    </td>
+                                    </td> --}}
                                     <td>{{ $doc->ltpApplication->permittee->user->personalInfo->fullName }}</td>
                                     @if (request('type') == 'inspection_report')   
                                         <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
