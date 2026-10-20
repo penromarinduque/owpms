@@ -369,6 +369,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
        Route::post('inspection-report-inspector-sign/{id}', [ForSignaturesController::class, 'inspectionReportInspectorSign'])->name('for-signatures.inspectionReportInspectorSign');
        Route::post('inspection-report-approver-sign/{id}', [ForSignaturesController::class, 'inspectionReportApproverSign'])->name('for-signatures.inspectionReportApproverSign');
        Route::post('inspection-report-rps-sign/{id}', [ForSignaturesController::class, 'inspectionReportRpsSign'])->name('for-signatures.inspectionReportRpsSign');
+       Route::post('inspection-report-sign-selected', [ForSignaturesController::class, 'inspectionReportSignSelected'])->name('for-signatures.inspectionReportSignSelected');
        // Route::post('ltp-chief-rps-sign/{id}', [ForSignaturesController::class, 'ltpChiefRpsSign'])->name('for-signatures.ltpChiefRpsSign');
        Route::post('ltp-chief-tsd-sign/{id}', [ForSignaturesController::class, 'ltpChiefTsdSign'])->name('for-signatures.ltpChiefTsdSign');
        Route::post('ltp-penro-sign/{id}', [ForSignaturesController::class, 'ltpPenroSign'])->name('for-signatures.ltpPenroSign');
@@ -377,6 +378,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
        Route::post('payment-order-oop-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderOopApproverSign'])->name('for-signatures.paymentOrderOopApproverSign');
        Route::post('billing-statement-sign-selected', [ForSignaturesController::class, 'billingStatementSignSelected'])->name('for-signatures.billingStatementSignSelected');
        Route::post('billing-statement-sign-all', [ForSignaturesController::class, 'billingStatementSignAll'])->name('for-signatures.billingStatementSignAll');
+       Route::post('payment-order-sign-selected', [ForSignaturesController::class, 'paymentOrderSignSelected'])->name('for-signatures.paymentOrderSignSelected'); 
        Route::get('/{type}', [ForSignaturesController::class, 'index'])->name('for-signatures.index'); 
     });
 

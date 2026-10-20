@@ -60,19 +60,19 @@ For Signatures
                                 <td colspan="{{ $totalSpan[request('type')] }}">
                                     <div class="d-flex gap-1">
                                         @if (request('type') == 'billing_statement')
-                                            <button class="btn btn-sm btn-primary" onclick="signAll('{{ route('for-signatures.billingStatementSignAll') }}', 'Are you sure you want to sign all billing statements?')">Sign All</button>
+                                            {{-- <button class="btn btn-sm btn-primary" onclick="signAll('{{ route('for-signatures.billingStatementSignAll') }}', 'Are you sure you want to sign all billing statements?')">Sign All</button> --}}
                                             <button class="btn btn-sm btn-outline-primary" onclick="signSelected('{{route('for-signatures.billingStatementSignSelected')}}', 'Are you sure you want to sign selected billing statements?')">Sign Selected</button>
                                         @endif
                                         @if (request('type') == 'payment_order')
-                                            <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all payment orders?')">Sign All</button>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected payment orders?')">Sign Selected</button>
+                                            {{-- <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all payment orders?')">Sign All</button> --}}
+                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('{{route('for-signatures.paymentOrderSignSelected')}}', 'Are you sure you want to sign selected payment orders?')">Sign Selected</button>
                                         @endif
                                         @if (request('type') == 'inspection_report')
-                                            <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all inspection reports?')">Sign All</button>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected inspection reports?')">Sign Selected</button>
+                                            {{-- <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all inspection reports?')">Sign All</button> --}}
+                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('{{route('for-signatures.inspectionReportSignSelected')}}', 'Are you sure you want to sign selected inspection reports?')">Sign Selected</button>
                                         @endif
                                         @if (request('type') == 'ltp')
-                                            <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all local transport permits?')">Sign All</button>
+                                            {{-- <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all local transport permits?')">Sign All</button> --}}
                                             <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected local transport permits?')">Sign Selected</button>
                                         @endif
                                     </div>
@@ -219,6 +219,7 @@ For Signatures
             </div>
         </div>
     </div>
+
     <div class="">
         <h2 class="mt-4">Signed Documents</h2>
         <br>
@@ -388,7 +389,6 @@ For Signatures
         </div>
     </div>
 </div>
-
 @endsection
 
 @include('components.confirm')

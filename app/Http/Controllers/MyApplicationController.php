@@ -65,7 +65,7 @@ class MyApplicationController extends Controller
             ])
             ->whereIn('application_status', $_helper->identifyApplicationStatusesByCategory($category))
             ->orderBy($sort_by, $sort_order)
-            ->paginate(50);
+            ->paginate(20);
         }
         else {
             $ltp_applications = $query->where([
@@ -73,7 +73,7 @@ class MyApplicationController extends Controller
                 'application_status' => $status
             ])
             ->orderBy($sort_by, $sort_order)
-            ->paginate(50);
+            ->paginate(20);
         }
 
         return view('permittee.myapplication.index', [

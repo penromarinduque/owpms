@@ -267,11 +267,9 @@ active
                                 <td class="align-middle">{{ $ltp_application->application_no }}</td>
                                 <td class="align-middle text-center">
                                     {{ $ltp_application->application_date->format("F d, Y") }}
-                                     <span class="text-secondary">({{ $ltp_application->application_date->diffForHumans() }})</span>
                                 </td>
                                 <td class="align-middle text-center">
                                     {{ $ltp_application->transport_date->format("F d, Y") }}
-                                     <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span>
                                 </td>
                                 {{-- <td class="align-middle text-center text-secondary">{{ $ltp_application->created_at->diffForHumans() }}</td> --}}
                                 <td class="align-middle text-center text-secondary">{{ $ltp_application->updated_at->diffForHumans() }}</td>
@@ -303,16 +301,21 @@ active
                                     @if (in_array($ltp_application->application_status, ['payment-in-process']))   
                                         <a href="{{ route('paymentorder.show', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Payment Order"><i class="fas fa-file-invoice-dollar"></i></a>
                                     @endif
-                                    @can('inspect', $ltp_application)  
+                                    @can('inspect', $ltp_application) 
+                                        @if ($ltp_application->application_status == 'paid')
                                         <a href="{{ route('inspection.index', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="View Inspection">
                                             {{-- <i class="fas fa-eye"></i> --}}
                                             Inspect
                                         </a>
+                                        @endif
                                         @if (in_array($ltp_application->application_status, ['inspected']))   
                                             @can('generateLtp', $ltp_application)
                                                 <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit"><i class="fas fa-file-pdf"></i></a>
                                             @endcan
-                                            <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report"><i class="fas fa-file-pdf"></i></a>
+                                            <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report">
+                                                <i class="fas fa-file-pdf"></i>
+                                                Edit Inspection Report
+                                            </a>
                                         @endif
                                     @endcan
 

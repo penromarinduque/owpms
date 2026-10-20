@@ -42,7 +42,7 @@ Inspections
                                     <th>Purpose:</th><td>{{ $ltp_application->purpose }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Destination:</th><td>{{ $ltp_application->destination }}</td>
+                                    <th>Destination:</th><td>{{ $ltp_application->transport_destination }}</td>
                                 </tr>
                                 <tr>
                                     <th>Transport Date.:</th><td>{{ $ltp_application->transport_date->format("F d, Y") }} <span class="text-secondary">({{ $ltp_application->transport_date->diffForHumans() }})</span></td>
@@ -126,7 +126,7 @@ Inspections
                     </div>
                     <div class="row justify-content-start align-items-stretch p-2 gap-1">
                         @foreach ($images as $image)
-                            <div class="col-5 col-sm-4 col-md-3 col-lg-2">
+                            <div class="col col-md-6 col-lg-4">
                                 <div class="card border-1 shadow-sm h-100 image-proof-con p-2">
                                     <img 
                                         src="{{ route('inspection.viewPhoto', [

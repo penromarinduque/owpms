@@ -239,6 +239,13 @@ active
                             </tr>
                         @endforelse
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="7" class="text-end">
+                                {{ $ltp_applications->links() }}
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

@@ -79,9 +79,7 @@ class PaymentOrder extends Model implements Auditable
             ->whereNotNull('approved_signed')
             ->whereNotNull('serial_number')
             ->where('oop_approved_by', $userId)
-            ->where(function ($q)  {
-                $q->where('oop_approved_signed', true);
-            });
+            ->whereNotNull('oop_approved_signed');
         });
     }
 

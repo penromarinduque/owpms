@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ElectronicSigratureTrait;
 use App\Helpers\ApplicationHelper;
 use App\Models\LtpApplication;
 use App\Models\LtpApplicationProgress;
@@ -26,6 +27,8 @@ use Spatie\LaravelPdf\Facades\Pdf;
 
 class InspectionController extends Controller
 {
+    use ElectronicSigratureTrait;
+
     public function index(string $ltp_application_id) {
         $_helper = new ApplicationHelper();
         $ltp_application = LtpApplication::find(Crypt::decryptString($ltp_application_id));
@@ -524,20 +527,47 @@ class InspectionController extends Controller
         $approverSignUrl = null;
 
         if($inspection_report->permittee_signed) {
-            $permitteeSignUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->permittee_signed, now()->addMinutes(30));
+            $permitteeSignUrl = $this->getElectronicSignature(
+                $inspection_report->permittee->personalInfo->first_name . " " . $inspection_report->permittee->personalInfo->middle_name . " " . $inspection_report->permittee->personalInfo->last_name,
+                "Permittee",
+                Storage::disk('s3')->temporaryUrl("signatures/" . $inspection_report->permittee->getSignature()->signature, now()->addMinutes(30)),
+                "Inspection Report for LTP Application #" . $inspection_report->ltpApplication->application_no,
+                "8",
+                $inspection_report->id,
+                $inspection_report->permittee->id,
+                null
+            );
         }
         if($inspection_report->inspector_signed) {
-            $inspectorSignUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->inspector_signed, now()->addMinutes(30));
+            $inspectorSignUrl = $this->getElectronicSignature(
+                $inspection_report->inspector->personalInfo->first_name . " " . $inspection_report->inspector->personalInfo->middle_name . " " . $inspection_report->inspector->personalInfo->last_name,
+                $inspection_report->inspector->empPosition->position,
+                Storage::disk('s3')->temporaryUrl("signatures/" . $inspection_report->inspector->getSignature()->signature, now()->addMinutes(30)),
+                "Inspection Report for LTP Application #" . $inspection_report->ltpApplication->application_no,
+                "8",
+                $inspection_report->id,
+                $inspection_report->inspector->id,  
+                null
+            );
         }
         if($inspection_report->approver_signed) {
-            $approverSignUrl = Storage::disk('s3')->temporaryUrl("generated_signatures/" . $inspection_report->approver_signed, now()->addMinutes(30));
+            $approverSignUrl = $this->getElectronicSignature(
+                $inspection_report->approver->personalInfo->first_name . " " . $inspection_report->approver->personalInfo->middle_name . " " . $inspection_report->approver->personalInfo->last_name,
+                $inspection_report->approver->empPosition->position,
+                Storage::disk('s3')->temporaryUrl("signatures/" . $inspection_report->approver->getSignature()->signature, now()->addMinutes(30)),
+                "Inspection Report for LTP Application #" . $inspection_report->ltpApplication->application_no,
+                "8",
+                $inspection_report->id,
+                $inspection_report->approver->id,
+                null
+            );
         }
         $pdf = Pdf::view('pdfs.inspection-report', [
                 "ltp_application" => $inspection_report->ltpApplication,
                 "inspection_report" => $inspection_report,
-                "permitteeUrl" => $permitteeSignUrl,
-                "inspectorUrl" => $inspectorSignUrl,
-                "approverUrl" => $approverSignUrl
+                "permitteeUrl" => "data:image/png;base64," . base64_encode($permitteeSignUrl->body()),
+                "inspectorUrl" => "data:image/png;base64," . base64_encode($inspectorSignUrl->body()),
+                "approverUrl" => "data:image/png;base64," . base64_encode($approverSignUrl->body())
             ])
             ->waitUntilReady()
             ->paperSize(8.5, 13, 'in')

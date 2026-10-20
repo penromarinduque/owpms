@@ -50,8 +50,14 @@ Local Transport Permit
                             </tr>
                         @endforelse
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" class="text-end">
+                                {{ $ltps->links() }}
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
-                {{ $ltps->links() }}
             </div>
         </div>
     </div>

@@ -493,24 +493,24 @@ class PaymentOrderController extends Controller
         $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
         
         $approvedBySignatureUrl = null;
-        if($paymentOrder->oop_approved_signed) {
-            $oop_approved_by = $paymentOrder->oopApprovedBy;
-            $oopApproverUrl = Storage::disk('s3')->temporaryUrl("signatures/" . $paymentOrder->oopApprovedBy->getSignature()->signature, now()->addMinutes(30));
-            
-            $oopApproverSignature = $this->getElectronicSignature(
-                $paymentOrder->oopApprovedBy->personalInfo->first_name . " " . $paymentOrder->oopApprovedBy->personalInfo->middle_name . " " . $paymentOrder->oopApprovedBy->personalInfo->last_name,
-                $paymentOrder->oopApprovedBy->empPosition->position,
-                $oopApproverUrl,
-                $paymentOrder->serial_number,
-                "6",
-                $paymentOrder->id,
-                $paymentOrder->oopApprovedBy->id,
-                null
-            );
-            $approvedBySignatureUrl = 'data:image/png;base64,' . base64_encode($oopApproverSignature->body());
+        if(!$paymentOrder->oop_approved_signed){
+            return redirect()->back()->with('error', 'OOP Approver has not signed the payment order yet.');
         }
-
-        return Pdf::view('pdfs.oop-pdf', [
+        $oop_approved_by = $paymentOrder->oopApprovedBy;
+        $oopApproverUrl = Storage::disk('s3')->temporaryUrl("signatures/" . $paymentOrder->oopApprovedBy->getSignature()->signature, now()->addMinutes(30));
+        $oopApproverSignature = $this->getElectronicSignature(
+            $paymentOrder->oopApprovedBy->personalInfo->first_name . " " . $paymentOrder->oopApprovedBy->personalInfo->middle_name . " " . $paymentOrder->oopApprovedBy->personalInfo->last_name,
+            $paymentOrder->oopApprovedBy->empPosition->position,
+            $oopApproverUrl,
+            $paymentOrder->serial_number,
+            "6",
+            $paymentOrder->id,
+            $paymentOrder->oopApprovedBy->id,
+            null
+        );
+        $approvedBySignatureUrl = 'data:image/png;base64,' . base64_encode($oopApproverSignature->body());
+        
+        $pdf = Pdf::view('pdfs.oop-pdf', [
                 "ltp_application" => $paymentOrder->ltpApplication,
                 'payment_order' => $paymentOrder,
                 'oopApproverUrl' => $approvedBySignatureUrl,
@@ -520,5 +520,8 @@ class PaymentOrderController extends Controller
             ->paperSize(8.5, 13, 'in')
             ->landscape()
             ->waitUntilReady();
+        $pdf->disk('s3')->save("payment_order/payment_order_" . $paymentOrder->id . ".pdf");
+
+        return $pdf;
     }
 }

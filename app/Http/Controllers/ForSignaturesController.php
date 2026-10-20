@@ -13,6 +13,7 @@ use App\Models\PaymentOrder;
 use App\Models\Position;
 use App\Models\User;
 use App\Notifications\LtpPermitApproved;
+use App\Notifications\OopApproved;
 use App\Notifications\PermitteeBillNotification;
 use App\Notifications\SignedNotification;
 use Illuminate\Http\Request;
@@ -43,6 +44,101 @@ class ForSignaturesController extends Controller
             'signed' => $signed,
             "_helper" => $_helper
         ]);
+    }
+
+    public function inspectionReportSignSelected(Request $request)
+    {
+        $user = auth()->user();
+        $userId = $user->id;
+        
+        // Clean and validate IDs input
+        $ids = array_filter(explode(",", $request->input('ids')));
+
+        if (empty($ids)) {
+            return redirect()->back()->with('info', 'No inspection reports found to sign.');
+        }
+
+        // Eager load relationships to prevent N+1 queries
+        $inspectionReports = InspectionReport::with([
+                'permittee.signature', 
+                'inspector.signature', 
+                'approver.signature'
+            ])
+            ->whereIn('ltp_application_id', $ids)
+            ->get();
+
+        if ($inspectionReports->isEmpty()) {
+            return redirect()->back()->with('info', 'No inspection reports found to sign.');
+        }
+
+        $userName = optional($user->personalInfo)->getFullNameAttribute() ?? $user->name;
+        $s3 = Storage::disk('s3');
+
+        return DB::transaction(function () use ($inspectionReports, $userId, $userName, $s3) {
+            foreach ($inspectionReports as $inspectionReport) {
+                $isUpdated = false;
+
+                // Helper closure to process role signatures
+                $signRole = function ($roleName, $userField, $relationKey, $fileSuffix) use ($inspectionReport, $userId, $userName, $s3, &$isUpdated) {
+                    if ($inspectionReport->{$userField} == $userId) {
+                        $signatureObj = optional($inspectionReport->{$relationKey})->getSignature();
+                        
+                        if ($signatureObj && $signatureObj->signature) {
+                            $sourcePath = "signatures/" . $signatureObj->signature;
+                            $destinationPath = "generated_signatures/" . $inspectionReport->id . $fileSuffix;
+
+                            // Use S3 native copy if possible, fallback to get/put if cross-bucket/driver limitations exist
+                            if ($s3->exists($sourcePath)) {
+                                $s3->put($destinationPath, $s3->get($sourcePath));
+                            }
+
+                            $fieldSignedName = str_replace('generated_signatures/', '', $destinationPath);
+                            
+                            if ($roleName === 'RPS In Charge/Chief') {
+                                $inspectionReport->rps_signed = true;
+                            } else {
+                                $inspectionReport->{lcfirst($roleName) . '_signed'} = $fieldSignedName; // matches permittee_signed / inspector_signed / approver_signed
+                            }
+
+                            $isUpdated = true;
+
+                            LtpApplicationProgress::create([
+                                'ltp_application_id' => $inspectionReport->ltp_application_id,
+                                'user_id' => $userId,
+                                'status' => LtpApplication::STATUS_INSPECTED,
+                                'remarks' => "Inspection report has been signed by the {$roleName}: " . $userName
+                            ]);
+                        }
+                    }
+                };
+
+                // Process roles
+                $signRole('Permittee', 'user_id', 'permittee', '_ir_permittee.png');
+                $signRole('Inspector', 'inspector_id', 'inspector', '_ir_inspector.png');
+                $signRole('Approver', 'approver_id', 'approver', '_ir_approver.png');
+
+                // RPS Initial check (doesn't use signature files)
+                if ($inspectionReport->rps_initial_id == $userId && !$inspectionReport->rps_signed) {
+                    $inspectionReport->rps_signed = true;
+                    $isUpdated = true;
+
+                    LtpApplicationProgress::create([
+                        'ltp_application_id' => $inspectionReport->ltp_application_id,
+                        'user_id' => $userId,
+                        'status' => LtpApplication::STATUS_INSPECTED,
+                        'remarks' => "Inspection report has been signed by the RPS In Charge/Chief: " . $userName
+                    ]);
+                }
+
+                // Save model only once per report if changes occurred
+                if ($isUpdated) {
+                    $inspectionReport->save();
+                }
+            }
+
+            return redirect()->route('for-signatures.index', ['type' => 'inspection_report'])
+                ->with('success', 'Selected inspection reports signed successfully!');
+        });
     }
 
     public function inspectionReportPermitteeSign(Request $request, string $id) {
@@ -496,14 +592,6 @@ class ForSignaturesController extends Controller
                 'status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS,
                 'remarks' => "Order of Payment has been signed by the Accountant: " . auth()->user()->personalInfo->getFullNameAttribute()
             ]);
-            // notify
-            $inspectors = User::whereHas('userRoles', function ($query) {
-                $query->whereHas('role', function ($query) {
-                    $query->whereHas('rolePermissions', function ($query) {
-                        $query->where('permission', 'PAYMENT_ORDERS_CREATE');
-                    });
-                });
-            })->get();
             $cashiers = User::whereHas('userRoles', function ($query) {
                 $query->whereHas('role', function ($query) {
                         $query->whereHas('rolePermissions', function ($query) {
@@ -559,96 +647,7 @@ class ForSignaturesController extends Controller
         return [];
     }
 
-    // public function billingStatementSignSelected(Request $request) {
-    //     return DB::transaction(function() use ($request) {
-    //         $ids = explode(",", $request->input('ids'));
-    //         $ltpApplications = LtpApplication::whereIn('id', $ids)->get();
-    //         $billingStatements = PaymentOrder::whereIn('ltp_application_id', $ids)->get();
-    //         foreach($billingStatements as $billingStatement) {
-    //             $payment_order = $billingStatement;
-    //             if($billingStatement->prepared_by == auth()->user()->id) {
-    //                 Gate::authorize('preparerSign', $payment_order);
-    //                 $signature_title = $payment_order->id . "_prepared_by.png";
-    //                 $signature = $payment_order->preparedBy->getSignature();
-    //                 if(!$signature) {
-    //                     return redirect()->back()->with('error', 'Signature not found.');
-    //                 }
-                    
-    //                 Storage::disk('s3')->put(
-    //                     "generated_signatures/" . $signature_title, 
-    //                     Storage::disk('s3')->get("signatures/" . $payment_order->preparedBy->getSignature()->signature)
-    //                 );
-    //                 $payment_order->prepared_signed = $signature_title;
-    //                 $payment_order->save();
-    //                 Notification::send($payment_order->approvedBy, new SignedNotification(route('for-signatures.index', ['type' => 'billing_statement']), 'An Assessment of Fees and Charges has been signed by the preparer and is now ready for your approval.'));
-    //             }
-    
-    //             if($billingStatement->approved_by == auth()->user()->id) {
-    //                 Gate::authorize('approverSign', $payment_order);
-    //                 $signature_title = $payment_order->id . "_approved_by.png";
-    //                 $signature = $payment_order->approvedBy->getSignature();
-    //                 if(!$signature) {
-    //                     return redirect()->back()->with('error', 'Signature not found.');
-    //                 }
-    //                 Storage::disk('s3')->put(
-    //                     "generated_signatures/" . $signature_title, 
-    //                     Storage::disk('s3')->get("signatures/" . $payment_order->approvedBy->getSignature()->signature)
-    //                 );
-    //                 $payment_order->approved_signed = $signature_title;
-    //                 $prepared_by = $payment_order->preparedBy;
-    //                 $approved_by = $payment_order->approvedBy;
-    //                 $approvedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $signature_title, now()->addMinutes(30));
-    //                 $preparedByUrl = Storage::disk('s3')->temporaryUrl('generated_signatures/' . $payment_order->prepared_signed, now()->addMinutes(30));
-                    
-    //                 $approvedBySignature = $this->getElectronicSignature(
-    //                     $approved_by->personalInfo->first_name . " " . $approved_by->personalInfo->middle_name . " " . $approved_by->personalInfo->last_name,
-    //                     $approved_by->empPosition->position,
-    //                     $approvedByUrl,
-    //                     $payment_order->order_number,
-    //                     "7",
-    //                     $payment_order->id,
-    //                     $payment_order->approvedBy->id,
-    //                     null
-    //                 );
-
-    //                 $preparedBySignature = $this->getElectronicSignature(
-    //                     $prepared_by->personalInfo->first_name . " " . $prepared_by->personalInfo->middle_name . " " . $prepared_by->personalInfo->last_name,
-    //                     $prepared_by->empPosition->position,
-    //                     $preparedByUrl,
-    //                     $payment_order->order_number,
-    //                     "7",
-    //                     $payment_order->id,
-    //                     $payment_order->preparedBy->id,
-    //                     null
-    //                 );
-
-    //                 Pdf::view('pdfs.billing-statement-pdf', [
-    //                     "ltp_application" => $payment_order->ltpApplication,
-    //                     'payment_order' => $payment_order,
-    //                     'approvedByUrl' => 'data:image/png;base64,' . base64_encode($approvedBySignature->body()),
-    //                     'preparedByUrl' => 'data:image/png;base64,' . base64_encode($preparedBySignature->body()),
-    //                     "ltp_fee" => $payment_order->ltpFee,
-    //                     "prepared_by" => $prepared_by,
-    //                     "approved_by" => $approved_by
-    //                 ])
-    //                 ->waitUntilReady()
-    //                 ->disk('s3')
-    //                 ->save("billing_statemenet/billing_statement_" . $payment_order->id . ".pdf");
-    //                 $payment_order->save();
-    //                 $serialNoEncoders = User::whereHas('userRoles', function ($query) {
-    //                     $query->whereHas('role', function ($query) {
-    //                         $query->whereHas('rolePermissions', function ($query) {
-    //                             $query->where('permission', 'PAYMENT_ORDERS_ENCODE_SERIAL_NO');
-    //                         });
-    //                     });
-    //                 })->get();
-    //                 Notification::send($serialNoEncoders, new SignedNotification(route('paymentorder.show', ['id' => Crypt::encryptString($payment_order->id)]), 'An Assessment of Fees and Charges has been approved by the approver and is now ready for serial number encoding.'));
-    //             }
-    //         }
-    //         return redirect()->route('for-signatures.index', ['type' => 'billing_statement'])->with('success', 'Billing statements signed successfully!');
-    //     });
-    // }
-
+  
     public function billingStatementSignSelected(Request $request)
     {
         $ids = explode(",", $request->input('ids'));
@@ -780,6 +779,7 @@ class ForSignaturesController extends Controller
             ->with('success', 'Billing statements signed successfully!');
     }
 
+    // not in use
     public function billingStatementSignAll(Request $request)
     {
         $userId = auth()->user()->id;
@@ -937,5 +937,70 @@ class ForSignaturesController extends Controller
         }
 
         return $response->with('success', "Successfully signed {$processedCount} billing statements!");
+    }
+
+    public function paymentOrderSignSelected(Request $request)
+    {
+        $user = auth()->user();
+        $userId = $user->id;
+        $ids = explode(",", $request->input('ids'));
+
+        // Fetch pending payment orders matching criteria
+        $paymentOrders = PaymentOrder::with([
+            'preparedBy.personalInfo',
+            'preparedBy.empPosition',
+            'approvedBy.personalInfo',
+            'approvedBy.empPosition',
+            'oopApprovedBy', // Ensure relationship exists to fetch signature efficiently
+            'ltpApplication',
+            'ltpFee'
+        ])
+        ->whereIn('ltp_application_id', $ids)
+        ->where('oop_approved_by', $userId)
+        ->whereNull('oop_approved_signed')
+        ->get();
+
+        if ($paymentOrders->isEmpty()) {
+            return redirect()->back()->with('info', 'No pending payment orders found to sign.');
+        }
+
+        // Fetch cashiers with permissions and notify them
+        $cashiers = User::whereHas('userRoles.role.rolePermissions', function ($query) {
+            $query->where('permission', 'PAYMENT_ORDERS_UPDATE');
+        })->get();
+
+        try {
+            DB::transaction(function () use ($paymentOrders, $user, $userId, $cashiers) {
+                foreach ($paymentOrders as $paymentOrder) {
+                    Gate::authorize('oopApproverSign', $paymentOrder);
+
+                    $signature = $paymentOrder->oopApprovedBy?->getSignature();
+                    if (!$signature || !$signature->signature) {
+                        throw new \Exception('Signature not found for order #' . $paymentOrder->id);
+                    }
+
+                    $signatureTitle = $paymentOrder->id . "_oop_approved_by.png";
+                    Storage::disk('s3')->put('generated_signatures/' . $signatureTitle, $signature->signature);
+
+                    $paymentOrder->update([
+                        'oop_approved_signed' => $signatureTitle,
+                    ]);
+
+                    LtpApplicationProgress::create([
+                        'ltp_application_id' => $paymentOrder->ltp_application_id,
+                        'user_id' => $userId,
+                        'status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS,
+                        'remarks' => "Order of Payment has been signed by the Accountant: " . $user->personalInfo->getFullNameAttribute(),
+                    ]);
+
+                    Notification::send($cashiers, new OopApproved($paymentOrder));
+                }
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('for-signatures.index', ['type' => 'payment_order'])
+                        ->with('success', 'Successfully signed selected payment orders!');
     }
 }

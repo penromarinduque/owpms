@@ -76,8 +76,8 @@ active
                     <h6>{{$ltp_application->application_date->format('F d, Y')}}</h6>
                 </div>
                 <div class="col-lg-3 col-sm-6">
-                    <label>Validity</label>
-                    <h6>{{$ltp_application->transport_date->addMonth()->format('F d, Y')}}</h6>
+                    <label>Date of Transport</label>
+                    <h6>{{$ltp_application->transport_date->format('F d, Y')}}</h6>
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <label>Purpose</label>
