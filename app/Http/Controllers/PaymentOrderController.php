@@ -493,9 +493,9 @@ class PaymentOrderController extends Controller
         $paymentOrder = PaymentOrder::find(Crypt::decryptString($id));
         
         $approvedBySignatureUrl = null;
-        if(!$paymentOrder->oop_approved_signed){
-            return redirect()->back()->with('error', 'OOP Approver has not signed the payment order yet.');
-        }
+        // if(!$paymentOrder->oop_approved_signed){
+        //     return redirect()->back()->with('error', 'OOP Approver has not signed the payment order yet.');
+        // }
         $oop_approved_by = $paymentOrder->oopApprovedBy;
         $oopApproverUrl = Storage::disk('s3')->temporaryUrl("signatures/" . $paymentOrder->oopApprovedBy->getSignature()->signature, now()->addMinutes(30));
         $oopApproverSignature = $this->getElectronicSignature(
