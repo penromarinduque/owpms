@@ -1039,14 +1039,13 @@ class ForSignaturesController extends Controller
 
             foreach ($ltpApplications as $ltpApplication) {
                 $ltpPermit = $ltpApplication->permit;
-
+                
                 if (!$ltpPermit) {
                     continue;
                 }
 
                 // Handle Chief TSD Signing
-                if ($ltpApplication->chief_tsd == $userId) {
-                    Gate::authorize('chiefTsdSign', $ltpApplication);
+                if ($ltpPermit->chief_tsd == $userId) {
                     
                     $ltpPermit->chief_tsd_signed = true;
                     $ltpPermit->save();
@@ -1060,8 +1059,7 @@ class ForSignaturesController extends Controller
                 } 
                 
                 // Handle PENRO Approver Signing
-                if ($ltpApplication->penro == $userId) {
-                    Gate::authorize('approverSign', $ltpApplication);
+                if ($ltpPermit->penro == $userId) {
                     
                     $ltpApplication->application_status = LtpApplication::STATUS_APPROVED;
                     $ltpPermit->penro_signed = true;
