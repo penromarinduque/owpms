@@ -278,7 +278,10 @@ active
                                 </td>
                                 <td class="text-center align-middle">
                                     @can('view', $ltp_application)
-                                        <a href="{{ route('ltpapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details"><i class="fas fa-file-alt"></i></a>
+                                        <a href="{{ route('ltpapplication.preview', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-info mb-2"  data-bs-toggle="tooltip" data-bs-title="Details">
+                                            <i class="fas fa-file-alt"></i>
+                                            Details
+                                        </a>
                                     @endcan
                                     @can('accept', $ltp_application)
                                         <a href="#" onclick="showAcceptApplicationModal('{{ route('ltpapplication.accept', Crypt::encryptString($ltp_application->id)) }}')"  class="btn btn-sm btn-outline-success mb-2"  data-bs-toggle="tooltip" data-bs-title="Accept/Receive"><i class="fas fa-check"></i></a>
@@ -310,12 +313,17 @@ active
                                         @endif
                                         @if (in_array($ltp_application->application_status, ['inspected']))   
                                             @can('generateLtp', $ltp_application)
-                                                <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit"><i class="fas fa-file-pdf"></i></a>
+                                                <a href="{{ route('ltpapplication.permit', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Local Transport Permit">
+                                                    <i class="fas fa-file-pdf"></i> 
+                                                    {{ $ltp_application->permit ? "Edit LTP" : "Create LTP" }}
+                                                </a>
                                             @endcan
-                                            <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report">
-                                                <i class="fas fa-file-pdf"></i>
-                                                Edit Inspection Report
-                                            </a>
+                                            @if (!$ltp_application->inspectionReport->permittee_signed || !$ltp_application->inspectionReport->inspector_signed || !$ltp_application->inspectionReport->approver_signed)
+                                                <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                    Edit Inspection Report
+                                                </a>
+                                            @endif
                                         @endif
                                     @endcan
 

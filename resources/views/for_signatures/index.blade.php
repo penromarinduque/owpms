@@ -73,7 +73,7 @@ For Signatures
                                         @endif
                                         @if (request('type') == 'ltp')
                                             {{-- <button class="btn btn-sm btn-primary" onclick="signAll('', 'Are you sure you want to sign all local transport permits?')">Sign All</button> --}}
-                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('', 'Are you sure you want to sign selected local transport permits?')">Sign Selected</button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="signSelected('{{route('for-signatures.ltpSignSelected')}}', 'Are you sure you want to sign selected local transport permits?')">Sign Selected</button>
                                         @endif
                                     </div>
                                 </td>

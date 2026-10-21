@@ -691,6 +691,13 @@ class ForSignaturesController extends Controller
                 DB::transaction(function () use ($paymentOrder, $signatureTitle) {
                     $paymentOrder->prepared_signed = $signatureTitle;
                     $paymentOrder->save();
+
+                    LtpApplicationProgress::create([
+                        'ltp_application_id' => $paymentOrder->ltp_application_id,
+                        'user_id' => auth()->user()->id,
+                        'status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS,
+                        'remarks' => "Assessment of Fees and Charges has been signed by the RPS In Charge/Chief: " . auth()->user()->personalInfo->getFullNameAttribute()
+                    ]);
                 });
 
                 // Send notification outside transaction
@@ -763,6 +770,13 @@ class ForSignaturesController extends Controller
                 DB::transaction(function () use ($paymentOrder, $signatureTitle) {
                     $paymentOrder->approved_signed = $signatureTitle;
                     $paymentOrder->save();
+
+                    LtpApplicationProgress::create([
+                        'ltp_application_id' => $paymentOrder->ltp_application_id,
+                        'user_id' => auth()->user()->id,
+                        'status' => LtpApplication::STATUS_PAYMENT_IN_PROCESS,
+                        'remarks' => "Assessment of Fees and Charges has been signed by the TSD In Charge/Chief: " . auth()->user()->personalInfo->getFullNameAttribute()
+                    ]);
                 });
 
                 // Send batch notification outside transaction
@@ -1002,5 +1016,70 @@ class ForSignaturesController extends Controller
 
         return redirect()->route('for-signatures.index', ['type' => 'payment_order'])
                         ->with('success', 'Successfully signed selected payment orders!');
+    }
+
+    public function ltpSignSelected(Request $request)
+    {
+        $user = auth()->user();
+        $userId = $user->id;
+        $userName = $user->personalInfo?->getFullNameAttribute() ?? $user->name;
+        
+        // Convert comma-separated string to an array safely
+        $ids = array_filter(explode(",", $request->input('ids', '')));
+
+        if (empty($ids)) {
+            return back()->with('error', 'No permits selected for signing.');
+        }
+
+        return DB::transaction(function () use ($user, $userId, $userName, $ids) {
+            // Fetch only the necessary records along with their permits
+            $ltpApplications = LtpApplication::with('permit')
+                ->whereIn('id', $ids)
+                ->get();
+
+            foreach ($ltpApplications as $ltpApplication) {
+                $ltpPermit = $ltpApplication->permit;
+
+                if (!$ltpPermit) {
+                    continue;
+                }
+
+                // Handle Chief TSD Signing
+                if ($ltpApplication->chief_tsd == $userId) {
+                    Gate::authorize('chiefTsdSign', $ltpApplication);
+                    
+                    $ltpPermit->chief_tsd_signed = true;
+                    $ltpPermit->save();
+
+                    LtpApplicationProgress::create([
+                        'ltp_application_id' => $ltpApplication->id,
+                        'user_id'            => $userId,
+                        'status'             => $ltpApplication->application_status,
+                        'description'        => 'Local Transport Permit has been reviewed and initialed by Chief TSD ' . $userName
+                    ]);
+                } 
+                
+                // Handle PENRO Approver Signing
+                if ($ltpApplication->penro == $userId) {
+                    Gate::authorize('approverSign', $ltpApplication);
+                    
+                    $ltpApplication->application_status = LtpApplication::STATUS_APPROVED;
+                    $ltpPermit->penro_signed = true;
+                    
+                    $ltpPermit->save();
+                    $ltpApplication->save();
+
+                    LtpApplicationProgress::create([
+                        'ltp_application_id' => $ltpApplication->id,
+                        'user_id'            => $userId,
+                        'status'             => LtpApplication::STATUS_APPROVED,
+                        'remarks'            => 'Local Transport Permit has been approved by PENRO ' . $userName
+                    ]);
+                }
+            }
+            return redirect()->route('for-signatures.index', ['type' => 'ltp'])
+                            ->with('success', 'Selected LTP permits were signed successfully!');
+        });
+
     }
 }

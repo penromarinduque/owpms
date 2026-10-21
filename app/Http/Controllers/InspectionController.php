@@ -565,9 +565,9 @@ class InspectionController extends Controller
         $pdf = Pdf::view('pdfs.inspection-report', [
                 "ltp_application" => $inspection_report->ltpApplication,
                 "inspection_report" => $inspection_report,
-                "permitteeUrl" => "data:image/png;base64," . base64_encode($permitteeSignUrl->body()),
-                "inspectorUrl" => "data:image/png;base64," . base64_encode($inspectorSignUrl->body()),
-                "approverUrl" => "data:image/png;base64," . base64_encode($approverSignUrl->body())
+                "permitteeUrl" => $permitteeSignUrl ? "data:image/png;base64," . base64_encode($permitteeSignUrl->body()) : null,
+                "inspectorUrl" => $inspectorSignUrl ? "data:image/png;base64," . base64_encode($inspectorSignUrl->body()) : null,
+                "approverUrl" =>  $approverSignUrl ? "data:image/png;base64," . base64_encode($approverSignUrl->body()) : null
             ])
             ->waitUntilReady()
             ->paperSize(8.5, 13, 'in')

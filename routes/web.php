@@ -373,6 +373,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
        // Route::post('ltp-chief-rps-sign/{id}', [ForSignaturesController::class, 'ltpChiefRpsSign'])->name('for-signatures.ltpChiefRpsSign');
        Route::post('ltp-chief-tsd-sign/{id}', [ForSignaturesController::class, 'ltpChiefTsdSign'])->name('for-signatures.ltpChiefTsdSign');
        Route::post('ltp-penro-sign/{id}', [ForSignaturesController::class, 'ltpPenroSign'])->name('for-signatures.ltpPenroSign');
+       Route::post('ltp-sign-selected', [ForSignaturesController::class, 'ltpSignSelected'])->name('for-signatures.ltpSignSelected');
        Route::post('payment-order-preparer-signed/{id}', [ForSignaturesController::class, 'paymentOrderPreparerSign'])->name('for-signatures.paymentOrderPreparerSign');
        Route::post('payment-order-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderApproverSign'])->name('for-signatures.paymentOrderApproverSign');
        Route::post('payment-order-oop-approver-signed/{id}', [ForSignaturesController::class, 'paymentOrderOopApproverSign'])->name('for-signatures.paymentOrderOopApproverSign');
