@@ -8,7 +8,9 @@
             </div>
             <div class="modal-body">
                 <div id="bladewind_styles"></div>
-                <div id="content"></div>
+                <div class="" style="overflow-x: scroll">
+                    <div id="content"></div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

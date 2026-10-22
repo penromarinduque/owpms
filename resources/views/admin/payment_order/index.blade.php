@@ -27,19 +27,55 @@ active
                     <thead>
                         <tr>
                             <td colspan="10">
-                                <div class="d-flex justify-content-end mb-0">
+                                <div class="d-flex  mb-0">
                                     <form action="" method="get">
-                                        <div class="input-group">
-                                            <input type="text" name="search" class="form-control" placeholder="Search by Order Number or Permittee Name" value="{{ request('search') }}">
-                                            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+                                        <div class="d-flex">
+                                            <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Search by Order Number or Permittee Name" value="{{ request('search') }}">
+                                            <button class="btn btn-primary btn-sm me-2" type="submit"><i class="fas fa-search"></i> Search</button>
                                         </div>
                                     </form>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary me-2" data-bs-target="#sortModal" data-bs-toggle="modal">
+                                            <i class="fa-solid fa-sort mr-2"></i> Sort
+                                        </button>
+                                        <div class="modal fade" id="sortModal">
+                                            <div class="modal-dialog">
+                                                <form class="modal-content" action="" method="get" >
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="sortModalLabel">Sort</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="search" value="{{ request('search') }}" >
+                                                        <div class="mb-2">
+                                                            <select name="sort_by" id="" placeholder="Sort By" class="form-select">
+                                                                <option value="">-Select Sort By-</option>
+                                                                <option value="order_number" {{ request('sort_by') == 'order_number' ? 'selected' : ''}}>Bill Number</option>
+                                                                <option value="serial_number" {{ request('sort_by') == 'serial_number' ? 'selected' : ''}}>Serial Number</option>
+                                                                <option value="ltpApplication.application_no" {{ request('sort_by') == 'ltpApplication.application_no' ? 'selected' : ''}}>Application Number</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <select class="form-select" name="sort_order" id="" placeholder="Sort Order">
+                                                                <option value="">-Select Sort Order-</option>
+                                                                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : ''}}>Ascending</option>
+                                                                <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : ''}}>Descending</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-primary">Sort</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <th width="250px">Application No.</th>
-                            <th width="250px">Order Number</th>
+                            {{-- <th width="250px">Order Number</th> --}}
                             <th class="text-center" width="160px">Date Issued</th>
                             <th>Permittee</th>
                             <th width="170px" class="text-center">Payment Method</th>
@@ -55,7 +91,7 @@ active
                         @forelse ($paymentOrders as $paymentOrder)
                             <tr>
                                 <td>{{ $paymentOrder->ltpApplication->application_no }}</td>
-                                <td>{{ $paymentOrder->order_number }}</td>
+                                {{-- <td>{{ $paymentOrder->order_number }}</td> --}}
                                 <td class="text-center">{{ $paymentOrder->issued_date->format("F d, Y") }}</td>
                                 <td>{{ $paymentOrder->ltpApplication->permittee->user->personalInfo->first_name . ' ' . $paymentOrder->ltpApplication->permittee->user->personalInfo->last_name }}</td>
                                 <td class="text-center">{{ strtoupper($paymentOrder->payment_method) }}</td>
@@ -79,7 +115,7 @@ active
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="11" class="text-center">No records found.</td>
+                                <td colspan="10" class="text-center">No records found.</td>
                             </tr>
                         @endforelse
                     </tbody>

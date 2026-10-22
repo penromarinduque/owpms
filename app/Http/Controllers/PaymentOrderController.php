@@ -36,6 +36,9 @@ class PaymentOrderController extends Controller
     public function index(Request $request) {
         Gate::authorize('viewAny', PaymentOrder::class);
 
+        $sortBy = $request->input("sort_by") ? $request->input("sort_by") : "order_number";
+        $sortOrder = $request->input("sort_order") ? $request->input("sort_order") : "asc";
+
         $query = PaymentOrder::query()->with([
             'details'
         ]);
@@ -45,7 +48,8 @@ class PaymentOrderController extends Controller
             $query->where('order_number', 'like', '%' . $search . '%');
         }
 
-        $paymentOrders = $query->orderBy('created_at', 'desc')->paginate(20);
+
+        $paymentOrders = $query->orderBy($sortBy, $sortOrder)->paginate(20);
 
         return view('admin.payment_order.index', [
             'paymentOrders' => $paymentOrders
