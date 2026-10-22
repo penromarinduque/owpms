@@ -318,7 +318,7 @@ active
                                                     {{ $ltp_application->permit ? "Edit LTP" : "Create LTP" }}
                                                 </a>
                                             @endcan
-                                            @if (!$ltp_application->inspectionReport->permittee_signed || !$ltp_application->inspectionReport->inspector_signed || !$ltp_application->inspectionReport->approver_signed)
+                                            @if ($ltp_application->inspectionReport &&!$ltp_application->inspectionReport->permittee_signed || !$ltp_application->inspectionReport->inspector_signed || !$ltp_application->inspectionReport->approver_signed)
                                                 <a href="{{ route('inspection.createReport', Crypt::encryptString($ltp_application->id)) }}" target="_blank" class="btn btn-sm btn-outline-secondary mb-2"  data-bs-toggle="tooltip" data-bs-title="Inspection Report">
                                                     <i class="fas fa-file-pdf"></i>
                                                     Edit Inspection Report
