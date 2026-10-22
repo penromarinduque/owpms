@@ -44,7 +44,7 @@ class LtpController extends Controller
             $approverSignature = $this->getElectronicSignature(
                 $ltpPermit->approver->personalInfo->first_name . " " . $ltpPermit->approver->personalInfo->middle_name . " " . $ltpPermit->approver->personalInfo->last_name,
                 $ltpPermit->approver->empPosition->position,
-                Storage::disk('s3')->temporaryUrl("signatures/" . $ltpPermit->approver->getSignature(), now()->addMinutes(30)),
+                Storage::disk('s3')->temporaryUrl("signatures/" . $ltpPermit->approver->getSignature()->signature, now()->addMinutes(30)),
                 "LTP Application #" . $ltpPermit->permit_number,
                 "9",
                 $ltpPermit->id,
