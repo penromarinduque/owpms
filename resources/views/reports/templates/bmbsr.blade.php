@@ -17,17 +17,10 @@
             return getOrdinalFallback($number);
         }
     @endphp
-    <h5 class="text-center">
-        {{-- Issuance of Wildlife Local Transport Permit for the 
-        @if($frequency == 1)
-            Month of {{ $selectedMonthsConfig->first()->fullName }} {{ $year }}
-        @elseif($frequency == 2)
-            {{ getOrdinal($quarter) }} Quarter C.Y. {{ $year }}
-        @elseif($frequency == 3)
-            {{ getOrdinal($semester) }} Semester C.Y. {{ $year }}
-        @else 
-            C.Y. {{ $year }}
-        @endif --}}
+    <h5 class="fw-bold">
+        CENRO: <br>
+        PENRO: MARINDUQUE <br>
+        REGION: 4B 
     </h5>
     <table class="table table-bordered">
         <thead>
@@ -39,7 +32,16 @@
                 <th class="text-center align-content-center fw-bold" scope="col" colspan="6">
                     BIODIVERSITY MANAGEMENT BUREAU <br>
                     Statistical Report <br>
-                    For the month of  OCTOBER  CY  2026 
+                    For the
+                    @if($frequency == 1)
+                        month of {{ date('F', strtotime($month)) }} {{ $year }}
+                    @elseif($frequency == 2)
+                        {{ getOrdinal($quarter) }} Quarter C.Y. {{ $year }}
+                    @elseif($frequency == 3)
+                        {{ getOrdinal($semester) }} Semester C.Y. {{ $year }}
+                    @else 
+                        C.Y. {{ $year }}
+                    @endif
                 </th>
                 <th class="text-center align-content-center fw-bold" scope="col" colspan="5">
                     DENR Statistical Form 5 <br>
@@ -56,23 +58,23 @@
                 <th rowspan="2" class="text-center align-content-center">No.</th>
                 <th colspan="3" class="text-center align-content-center">Date</th>
                 <th rowspan="2" class="text-center align-content-center">Species Name</th>
-                <th rowspan="2" class="text-center align-content-center">Description(identifying marks/ age/sex/live/ dead/ herbarium specimen)</th>
+                <th rowspan="2" class="text-center align-content-center" width="120px">Description(identifying marks/ age/sex/live/ dead/ herbarium specimen)</th>
                 <th rowspan="2" class="text-center align-content-center">Quantity</th>
                 <th rowspan="2" class="text-center align-content-center">Unit of Measure</th>
                 <th rowspan="2" class="text-center align-content-center">Origin</th>
                 <th rowspan="2" class="text-center align-content-center">Destination</th>
             </tr>
             <tr>
-                <th >Name</th>
-                <th >Address</th>
-                <th >Issuance</th>
-                <th >Expiry</th>
-                <th >Fees Collected</th>
-                <th >Export/ Indicate Country of Export</th>
-                <th >Local Sale</th>
-                <th >Research</th>
-                <th >Pet/ Personal</th>
-                <th >Others, pls. specify</th>
+                <th class="text-center align-content-center">Name</th>
+                <th class="text-center align-content-center">Address</th>
+                <th class="text-center align-content-center">Issuance</th>
+                <th class="text-center align-content-center">Expiry</th>
+                <th class="text-center align-content-center">Fees Collected</th>
+                <th width="50px" class="text-center align-content-center">Export/ Indicate Country of Export</th>
+                <th width="50px" class="text-center align-content-center">Local Sale</th>
+                <th width="50px" class="text-center align-content-center">Research</th>
+                <th width="50px" class="text-center align-content-center">Pet/ Personal</th>
+                <th width="50px" class="text-center align-content-center">Others, pls. specify</th>
             </tr>
         </thead>
         <tbody>
@@ -90,25 +92,64 @@
                     <td class="text-center">{{ number_format($d->transported_species, 0, '.', ',') }}</td>
                 </tr>
             @endforeach --}}
+            @php
+                $prevName = null;
+                $prevAddress = null;
+                $prevPermitNumber = null;
+            @endphp
             @foreach ($data as $i => $d)
                 <tr>
-                    <td>{{ $d->first_name }} {{ $d->middle_name }} {{ $d->last_name }}</td>
-                    <td>{{ $d->barangay_name }}</td>
-                    <td>{{ $d->permit_number }}</td>
-                    <td>{{ date_format($d->issuance_date, 'F dd Y') }}</td> 
-                    <td>{{ date_format($d->expiration_date) }}</td>
-                    <td>100.00</td>
+                    @php 
+                        $name =  $d->first_name . " " . $d->middle_name . " " . $d->last_name; 
+                        $specieCountPerPermit = $data->where('permit_number', $d->permit_number)->count();
+                    @endphp
+                    @if ($prevPermitNumber != $d->permit_number)
+                        <td rowspan="{{ $specieCountPerPermit }}">
+                            @if ($prevPermitNumber != $d->permit_number)
+                                {{ $name }}
+                            @endif
+                        </td>
+                        <td rowspan="{{ $specieCountPerPermit }}">
+                            @if ($prevPermitNumber != $d->permit_number)
+                                {{ $d->barangay_name }}, {{ $d->municipality_name }}, {{ $d->province_name }}
+                            @endif
+                        </td>
+                        <td rowspan="{{ $specieCountPerPermit }}" >
+                            @if ($prevPermitNumber != $d->permit_number)
+                                {{ $d->permit_number }}
+                            @endif
+                        </td>
+                        <td rowspan="{{ $specieCountPerPermit }}">
+                            @if ($prevPermitNumber != $d->permit_number)
+                                {{ \Carbon\Carbon::parse($d->issuance_date)->format('F d, Y') }}
+                            @endif
+                        </td>
+                        <td rowspan="{{ $specieCountPerPermit }}">
+                            @if ($prevPermitNumber != $d->permit_number)
+                                {{ \Carbon\Carbon::parse($d->expiration_date)->format('F d, Y') }}
+                            @endif
+                        </td>
+                        <td rowspan="{{ $specieCountPerPermit }}">
+                            @if ($prevPermitNumber != $d->permit_number)
+                                100.00
+                            @endif
+                        </td>
+                    @endif
                     <td><span class="fw-bold">{{ $d->local_name }}</span>(<span class="italic">{{ $d->specie_name }}</span>)</td>
-                    <td>{{ $d->specie_nature_name }}</td>
+                    <td class="text-center">{{ $d->specie_nature_name }}</td>
                     <td>{{ $d->total_species }}</td>
                     <td>pieces</td>
                     <td>Marinduque</td>
                     <td>{{ $d->province_name }}</td>
-                    <td>@if($d->purpose == 'export') ✓ @endif </td>
-                    <td>@if($d->purpose == 'local sale') ✓ @endif </td>
-                    <td>@if($d->purpose == 'research') ✓ @endif </td>
+                    <td class="text-center">@if($d->purpose == 'export') ✓ @endif </td>
+                    <td class="text-center">@if($d->purpose == 'local sale') ✓ @endif </td>
+                    <td class="text-center">@if($d->purpose == 'research') ✓ @endif </td>
                     <td></td>
                     <td></td>
+                    @php 
+                        $prevName = $name;
+                        $prevPermitNumber = $d->permit_number;
+                    @endphp
                 </tr>
             @endforeach
         </tbody>
