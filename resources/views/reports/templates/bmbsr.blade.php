@@ -1,0 +1,146 @@
+@extends('layouts.pdf')
+
+@section('title')
+    Issuance of Wildlife Local Transport Permit
+@endsection
+
+@section('content')
+    @php
+        function getOrdinal($number) {
+            // Ensure the intl extension is installed
+            if (class_exists('NumberFormatter')) {
+                $formatter = new NumberFormatter('en_US', NumberFormatter::ORDINAL);
+                return $formatter->format($number);
+            }
+            
+            // Fallback to manual method if extension is missing
+            return getOrdinalFallback($number);
+        }
+    @endphp
+    <h5 class="text-center">
+        {{-- Issuance of Wildlife Local Transport Permit for the 
+        @if($frequency == 1)
+            Month of {{ $selectedMonthsConfig->first()->fullName }} {{ $year }}
+        @elseif($frequency == 2)
+            {{ getOrdinal($quarter) }} Quarter C.Y. {{ $year }}
+        @elseif($frequency == 3)
+            {{ getOrdinal($semester) }} Semester C.Y. {{ $year }}
+        @else 
+            C.Y. {{ $year }}
+        @endif --}}
+    </h5>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class=" align-content-center fw-bold" scope="col" colspan="6" >
+                    Function: Management of Wildlife Resources <br>
+                    Activity: Issuance of Wildlife Local Transport Permit
+                </th>
+                <th class="text-center align-content-center fw-bold" scope="col" colspan="6">
+                    BIODIVERSITY MANAGEMENT BUREAU <br>
+                    Statistical Report <br>
+                    For the month of  OCTOBER  CY  2026 
+                </th>
+                <th class="text-center align-content-center fw-bold" scope="col" colspan="5">
+                    DENR Statistical Form 5 <br>
+                    BMB Statistical Form 3
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2" rowspan="2" class="text-center align-content-center">Permit Holder</th>
+                <th colspan="4" class="text-center align-content-center">Permit</th>
+                <th colspan="6" class="text-center align-content-center">Species Transported</th>
+                <th colspan="5" rowspan="2" class="text-center align-content-center">Purpose (Pls Check)</th>
+            </tr>
+            <tr>
+                <th rowspan="2" class="text-center align-content-center">No.</th>
+                <th colspan="3" class="text-center align-content-center">Date</th>
+                <th rowspan="2" class="text-center align-content-center">Species Name</th>
+                <th rowspan="2" class="text-center align-content-center">Description(identifying marks/ age/sex/live/ dead/ herbarium specimen)</th>
+                <th rowspan="2" class="text-center align-content-center">Quantity</th>
+                <th rowspan="2" class="text-center align-content-center">Unit of Measure</th>
+                <th rowspan="2" class="text-center align-content-center">Origin</th>
+                <th rowspan="2" class="text-center align-content-center">Destination</th>
+            </tr>
+            <tr>
+                <th >Name</th>
+                <th >Address</th>
+                <th >Issuance</th>
+                <th >Expiry</th>
+                <th >Fees Collected</th>
+                <th >Export/ Indicate Country of Export</th>
+                <th >Local Sale</th>
+                <th >Research</th>
+                <th >Pet/ Personal</th>
+                <th >Others, pls. specify</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{-- @foreach ($data->where('permit_type', 'wcp') as $i => $d)
+                <tr>
+                    <td>{{ $i }}</td>
+                    <td>{{ $d->first_name }} {{ $d->last_name }}</td>
+                    <td>{{ $d->barangay_name }}, {{ $d->municipality_name }}, {{ $d->province_name }}</td>
+                    <td>{{ $data->where('permit_type', 'wfp')->where('id', $d->id)->first()->farm_name }}</td>
+                    @foreach($selectedMonthsConfig as $monthConfig)
+                        <td class="text-center">{{ $d->{'m' . $monthConfig->id} > 0 ? $d->{'m' . $monthConfig->id} : '-' }}</td>
+                    @endforeach
+                    <td class="text-center">{{ array_sum(array_map(function($monthConfig) use ($d){ return $d->{'m' . $monthConfig->id}; }, $selectedMonthsConfig->toArray())) }}</td>
+                    <td class="text-center">{{ number_format($d->collected_fees, 2) }}</td>
+                    <td class="text-center">{{ number_format($d->transported_species, 0, '.', ',') }}</td>
+                </tr>
+            @endforeach --}}
+            @foreach ($data as $i => $d)
+                <tr>
+                    <td>{{ $d->first_name }} {{ $d->middle_name }} {{ $d->last_name }}</td>
+                    <td>{{ $d->barangay_name }}</td>
+                    <td>{{ $d->permit_number }}</td>
+                    <td>{{ date_format($d->issuance_date, 'F dd Y') }}</td> 
+                    <td>{{ date_format($d->expiration_date) }}</td>
+                    <td>100.00</td>
+                    <td><span class="fw-bold">{{ $d->local_name }}</span>(<span class="italic">{{ $d->specie_name }}</span>)</td>
+                    <td>{{ $d->specie_nature_name }}</td>
+                    <td>{{ $d->total_species }}</td>
+                    <td>pieces</td>
+                    <td>Marinduque</td>
+                    <td>{{ $d->province_name }}</td>
+                    <td>@if($d->purpose == 'export') ✓ @endif </td>
+                    <td>@if($d->purpose == 'local sale') ✓ @endif </td>
+                    <td>@if($d->purpose == 'research') ✓ @endif </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <br>
+    <table class="w-100">
+        <tbody>
+            <tr>
+                <td>Prepared/Collated by:</td>
+                <td>Reviewed and Attested by:</td>
+                <td>Approved by:</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="text-center"><h6 style="font-weight: bold; text-transform: uppercase">{{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->last_name }}</h6></td>
+                <td class="text-center"><h6>CELSO B. ALMAZAN, RPF</h6></td>
+                <td class="text-center"><h6>CESAR P. ODI, RPF</h6></td>
+            </tr>
+            <tr>
+                <td class="text-center">{{ auth()->user()->empPosition->position }}</td>
+                <td class="text-center">OIC Chief, Technical Services Division</td>
+                <td class="text-center">PENR Officer</td>
+            </tr>
+        </tbody>
+    </table>
+@endsection
