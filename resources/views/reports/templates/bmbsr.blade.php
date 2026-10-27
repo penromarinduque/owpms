@@ -34,7 +34,7 @@
                     Statistical Report <br>
                     For the
                     @if($frequency == 1)
-                        month of {{ date('F', strtotime($month)) }} {{ $year }}
+                        month of {{ date('F', mktime(0, 0, 0, $month, 1)) }} {{ $year }} 
                     @elseif($frequency == 2)
                         {{ getOrdinal($quarter) }} Quarter C.Y. {{ $year }}
                     @elseif($frequency == 3)
