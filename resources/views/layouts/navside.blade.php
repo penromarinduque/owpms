@@ -386,10 +386,6 @@
         </li>
     @endif
     @if(Auth::user()->usertype == 'admin')
-        
-
-        {{--  --}}
-
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
                 <span class="sidebar-text fw-bold text-uppercase small">User Access</span>

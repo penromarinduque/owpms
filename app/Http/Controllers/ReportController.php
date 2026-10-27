@@ -300,7 +300,67 @@ class ReportController extends Controller
                 ->footerView('pdfs.footer');
         }
         else if($request->type == 3){
-            
+            $data = DB::table('ltp_applications as la')
+            ->select([
+                'la.id',
+                'la.permittee_id',
+                'la.application_date',
+                'permits.permit_number',
+                'la.purpose',
+                'pi.first_name as first_name',
+                'pi.middle_name as middle_name',
+                "st.specie_type",
+                "sf.family",
+                "sc.specie_class",
+                'pi.last_name as last_name',
+                'po.payment_date as issuance_date',
+                DB::raw('permits.approved_at + INTERVAL 1 MONTH as expiration_date'),
+                'provinces.province_name',
+                'las.quantity as total_species', // Individual quantity for this specific species row
+                'lf.amount',
+                'species.local_name as local_name',           // Individual species name for this row
+                'species.specie_name as specie_name',
+                "sn.name as specie_nature_name",
+                "b.barangay_name as barangay_name", 
+                "m.municipality_name as municipality_name",
+            ])
+            ->leftJoin('permittees as p', 'p.id', '=', 'la.permittee_id')
+            ->leftJoin('personal_infos as pi', 'pi.user_id', '=', 'p.user_id')
+            ->leftJoin('ltp_permits as permits', 'permits.ltp_application_id', '=', 'la.id')
+            ->leftJoin('payment_orders as po', 'po.ltp_application_id', '=', 'la.id')
+            ->leftJoin('ltp_fees as lf', 'lf.id', '=', 'po.ltp_fee_id')
+            ->leftJoin('provinces', 'provinces.id', '=', 'la.destination')
+            ->leftJoin('barangays as b', 'b.id', '=', 'pi.barangay_id')
+            ->leftJoin('municipalities as m', 'm.id', '=', 'b.municipality_id')
+            ->join('ltp_application_species as las', 'las.ltp_application_id', '=', 'la.id')
+            ->leftJoin('species', 'species.id', '=', 'las.specie_id')
+            ->leftJoin("specie_types as st", 'st.id', '=', 'species.specie_type_id')
+            ->leftJoin("specie_classes as sc", 'sc.id', '=', 'species.specie_class_id')
+            ->leftJoin("specie_families as sf", 'sf.id', '=', 'species.specie_family_id')
+            ->leftJoin("specie_natures as sn", 'sn.id', '=', 'la.specie_nature_id')
+            ->whereIn('la.application_status', ['expired', 'approved', 'released'])
+            ->whereBetween('la.application_date', [$startDate, $endDate])
+            ->orderBy('la.permittee_id', 'asc')
+            ->orderBy('la.application_date', 'asc')
+            ->get();
+
+            // return $data;
+
+            return Pdf::view('reports.templates.pawczms', [
+                    "data" => $data,
+                    "frequency" => $request->frequency,
+                    "quarter" => $request->quarter,
+                    "semester" => $request->semester,
+                    "year" => $request->year,
+                    "month" => $request->month
+                ])
+                ->waitUntilReady()
+                ->margins(30, 10, 20, 10)
+                ->scale(0.5)
+                ->format($this->identifyReportFormat($request->paper))
+                ->orientation($this->identifyReportOrientation($request->orientation))
+                ->headerView('pdfs.header')
+                ->footerView('pdfs.footer');
         }
         else if($request->type == 4){
             $data = DB::table('ltp_applications as la')
