@@ -135,4 +135,8 @@ class User extends Authenticatable
     public function isInternal(){
         return $this->usertype == User::TYPE_INTERNAL || $this->usertype == User::TYPE_ADMIN;
     }
+
+    public function canViewReports(){
+        return $this->usertype == User::TYPE_ADMIN || ($this->usertype == User::TYPE_INTERNAL && in_array('LTP_APPLICATION_INSPECT', $this->getUserPermissions()));
+    }
 }

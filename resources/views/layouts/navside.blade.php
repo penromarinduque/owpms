@@ -18,6 +18,7 @@
     $canViewPaymentOrders = auth()->user()->can('viewAny', App\Models\PaymentOrder::class);
     $canViewIssuedOfficialReceipts = auth()->user()->can('viewIssuedOr', App\Models\PaymentOrder::class);
     $canViewPaymentsNav = $canViewPaymentOrders || $canViewIssuedOfficialReceipts;
+    $canViewReports = auth()->user()->canViewReports();
 @endphp
 <nav id="sidebarMenu" class="sidebar d-lg-block bg-gray-800 text-white collapse" data-simplebar style="min-width: 300px;">
   <div class="sidebar-inner px-2 pt-3">
@@ -352,7 +353,7 @@
 
     @endif
 
-    @if(Auth::user()->usertype == 'admin')
+    @if(Auth::user()->usertype == 'admin' || (Auth::user()->usertype == 'internal' && $canViewReports))
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
                 <span class="sidebar-text fw-bold text-uppercase small">Reports</span>
