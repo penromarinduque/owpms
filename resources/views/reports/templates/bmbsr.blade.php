@@ -174,12 +174,12 @@
             </tr>
             <tr>
                 <td class="text-center"><h6 style="font-weight: bold; text-transform: uppercase">{{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->last_name }}</h6></td>
-                <td class="text-center"><h6>CELSO B. ALMAZAN, RPF</h6></td>
-                <td class="text-center"><h6>CESAR P. ODI, RPF</h6></td>
+                <td class="text-center fw-bold"><h6 class="fw-bold">CELSO B. ALMAZAN, RPF</h6></td>
+                <td class="text-center fw-bold"><h6 class="fw-bold">CESAR P. ODI, RPF</h6></td>
             </tr>
             <tr>
                 <td class="text-center">{{ auth()->user()->empPosition->position }}</td>
-                <td class="text-center">OIC Chief, Technical Services Division</td>
+                <td class="text-center ">OIC Chief, Technical Services Division</td>
                 <td class="text-center">PENR Officer</td>
             </tr>
         </tbody>
