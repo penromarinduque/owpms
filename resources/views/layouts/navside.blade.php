@@ -359,7 +359,6 @@
                 <span class="sidebar-text fw-bold text-uppercase small">Reports</span>
             </span>
         </li>
-
         <li class="nav-item">
             <span class="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#submenu-my-reports" aria-expanded="true">
                 <span>
@@ -385,6 +384,9 @@
                 </ul>
             </div>
         </li>
+    @endif
+    @if(Auth::user()->usertype == 'admin')
+        
 
         {{--  --}}
 
