@@ -343,7 +343,7 @@ class PaymentOrderController extends Controller
             'status' => 'required|in:cancelled,paid',
             'or_no' => 'required_if:status,paid|unique:payment_orders,payment_reference,',
             'receipt' => 'required_if:status,paid',
-            'payment_date' => 'required|date|after_or_equal:today',
+            'payment_date' => 'required|date',
             // 'serial_no' => 'required_if:status,paid|max:255'
         ]);
 
