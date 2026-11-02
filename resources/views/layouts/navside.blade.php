@@ -406,6 +406,20 @@
             </a>
         </li>
     @endif
+
+        <li class="nav-item">
+            <span class="nav-link d-flex justify-content-between align-items-center opacity-50 pe-none">
+                <span class="sidebar-text fw-bold text-uppercase small">Support</span>
+            </span>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ asset('assets/OWMPS User Manual.pdf')  }}" class="nav-link">
+                <span class="sidebar-icon"><i class="fas fa-book me-2"></i></span>
+                <span class="sidebar-text">User's Manual</span>
+            </a>
+        </li>
+
     </ul>
   </div>
 </nav>

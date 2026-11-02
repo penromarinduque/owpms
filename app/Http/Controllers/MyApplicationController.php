@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ApplicationHelper;
 use App\Models\City;
+use App\Models\PrivacyAgreement;
 use App\Models\Province;
 use App\Models\Signature;
 use App\Models\SpecieNature;
@@ -445,6 +446,14 @@ class MyApplicationController extends Controller
             if(!LtpApplication::validateRequirements($ltp_application->id)) {
                 return redirect()->back()->with('error', 'Application does not have all required attachments!');
             }
+
+            PrivacyAgreement::create([
+                "user_id" => $ltp_application->permittee->user_id,
+                "ltp_application_id" => $ltp_application->id,
+                "status" => "ACKNOWLEDGED",
+                "name" => $ltp_application->permittee->user->personalInfo->first_name . " " . $ltp_application->permittee->user->personalInfo->middle_name . " " . $ltp_application->permittee->user->personalInfo->last_name,
+                "version" => 1
+            ]);
 
             $wfp = $_permittee->getPermitteeWFP($ltp_application->permittee->user_id, "wfp");
             $wcp = $_permittee->getPermitteeWCP($ltp_application->permittee->user_id, "wcp");

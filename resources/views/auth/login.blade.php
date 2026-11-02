@@ -51,6 +51,7 @@
             <button type="submit" name="btn_login" id="btn_login" class="btn btn-primary"><i class="fas fa-sign-in"></i> Login</button>
         </form>
     </div>
+    
     <div class="card-footer text-center py-3">
         <div class="small">Online Wildlife Permitting and Management System</div>
     </div>
