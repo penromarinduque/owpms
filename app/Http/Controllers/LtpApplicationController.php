@@ -381,6 +381,9 @@ class LtpApplicationController extends Controller
                 'description' => 'LTP has been released by ' . Auth::user()->personalInfo->getFullNameAttribute()
             ]);
 
+            $ltp_application->permit->released_date = now();
+            $ltp_application->permit->save();
+
             $permit = $ltp_application->permit;
 
             // $request->file('ltp')->storeAs('ltps', $permit->permit_number . '.pdf');

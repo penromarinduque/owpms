@@ -34,7 +34,7 @@
         font-weight: bold;
     }
 </style>
-<div class="header d-flex justify-content-center align-items-center mb-3 border-bottom pb-3 border-2">
+<div class="header d-flex justify-content-center align-items-center mb-3  pb-3 border-0">
     @php
         $denrLogo = public_path('images/denr_logo.png');
         $bpLogo = public_path('images/bagong-pilipinas.png');

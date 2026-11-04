@@ -15,6 +15,11 @@ class LtpPermit extends Model implements Auditable
 
     protected $guarded = [];
 
+    protected $casts = [
+        'released_date' => 'datetime',
+        'approved_at' => 'datetime',
+    ];
+
 
     public function scopePendingSignaturesFor($query, $userId) {
         return $query->where(function ($q) use ($userId) {

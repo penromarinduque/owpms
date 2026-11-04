@@ -34,7 +34,7 @@
             font-weight: bold;
         }
     </style>
-    <div class="header d-flex justify-content-center align-items-center mb-3 border-bottom pb-3 border-2">
+    <div class="header d-flex justify-content-center align-items-center mb-3  pb-3 border-0">
         @php
             $isoLogo = public_path('images/iso-stamp.jpg');
             $socotecLogo = public_path('images/socotec-stamp.jpg');

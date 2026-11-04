@@ -26,6 +26,7 @@ active
                             <option value="2">Issued LTP By Permittee</option>
                             <option value="3">PAWCZMS Form 4a</option>
                             <option value="4">BMB Statistical Form 3 - Statistical Report</option>
+                            <option value="5">LTP Consolidated Report</option>
                         </select>
                     </div>
                     <div class="col col-lg-4 mb-3">
@@ -101,6 +102,17 @@ active
 
         $('#quarterWrapper, #semesterWrapper').hide();
 
+        $("#type").on('change', function () {
+
+            var type = parseInt($(this).val());
+
+            if ([5].includes(type)) {
+                $('#frequency').hide();
+                $('#quarterWrapper, #semesterWrapper').hide();
+                $('#monthWrapper').show();
+            }
+        });
+
         $('#frequency').on('change', function () {
 
             var type = parseInt($(this).val());
@@ -121,7 +133,6 @@ active
                 $('#semesterWrapper').show();
 
             }
-
         });
 
     });

@@ -223,7 +223,7 @@ class ReportController extends Controller
                     'wf.farm_name'
                 ])
                 ->get();
-            return Pdf::view('reports.templates.issued-ltp', [
+            return view('reports.templates.issued-ltp', [
                 "data" => $data,
                 "frequency" => $request->frequency,
                 "quarter" => $request->quarter,
@@ -231,14 +231,23 @@ class ReportController extends Controller
                 "year" => $request->year,
                 "month" => $request->month,
                 "selectedMonthsConfig" => $selectedMonthsConfig
-            ])
-            ->waitUntilReady()
-            ->margins(30, 10, 30, 10)
+            ]);
+            // return Pdf::view('reports.templates.issued-ltp', [
+            //     "data" => $data,
+            //     "frequency" => $request->frequency,
+            //     "quarter" => $request->quarter,
+            //     "semester" => $request->semester,
+            //     "year" => $request->year,
+            //     "month" => $request->month,
+            //     "selectedMonthsConfig" => $selectedMonthsConfig
+            // ])
+            // ->waitUntilReady()
+            // ->margins(30, 10, 30, 10)
             
-            ->format($this->identifyReportFormat($request->paper))
-            ->orientation($this->identifyReportOrientation($request->orientation))
-            ->headerView('pdfs.header')
-            ->footerView('pdfs.footer');
+            // ->format($this->identifyReportFormat($request->paper))
+            // ->orientation($this->identifyReportOrientation($request->orientation))
+            // ->headerView('pdfs.header')
+            // ->footerView('pdfs.footer');
         }
         else if($request->type == 2){
             $data  = DB::table('ltp_applications as la')
@@ -284,21 +293,29 @@ class ReportController extends Controller
                 ->orderBy('la.application_date', 'asc')
                 ->get();
                 // return $data;
-                return Pdf::view('reports.templates.issued-ltp-by-permittee', [
+                return view('reports.templates.issued-ltp-by-permittee', [
                     "data" => $data,
                     "frequency" => $request->frequency,
                     "quarter" => $request->quarter,
                     "semester" => $request->semester,
                     "year" => $request->year,
                     "month" => $request->month
-                ])
-                ->waitUntilReady()
-                ->margins(30, 10, 30, 10)
-                ->scale(0.75)
-                ->format($this->identifyReportFormat($request->paper))
-                ->orientation($this->identifyReportOrientation($request->orientation))
-                ->headerView('pdfs.header')
-                ->footerView('pdfs.footer');
+                ]);
+                // return Pdf::view('reports.templates.issued-ltp-by-permittee', [
+                //     "data" => $data,
+                //     "frequency" => $request->frequency,
+                //     "quarter" => $request->quarter,
+                //     "semester" => $request->semester,
+                //     "year" => $request->year,
+                //     "month" => $request->month
+                // ])
+                // ->waitUntilReady()
+                // ->margins(30, 10, 30, 10)
+                // ->scale(0.75)
+                // ->format($this->identifyReportFormat($request->paper))
+                // ->orientation($this->identifyReportOrientation($request->orientation))
+                // ->headerView('pdfs.header')
+                // ->footerView('pdfs.footer');
         }
         else if($request->type == 3){
             $data = DB::table('ltp_applications as la')
@@ -347,21 +364,29 @@ class ReportController extends Controller
 
             // return $data;
 
-            return Pdf::view('reports.templates.pawczms', [
+            return view('reports.templates.pawczms', [
                     "data" => $data,
                     "frequency" => $request->frequency,
                     "quarter" => $request->quarter,
                     "semester" => $request->semester,
                     "year" => $request->year,
                     "month" => $request->month
-                ])
-                ->waitUntilReady()
-                ->margins(30, 10, 20, 10)
-                ->scale(0.5)
-                ->format($this->identifyReportFormat($request->paper))
-                ->orientation($this->identifyReportOrientation($request->orientation))
-                ->headerView('pdfs.header')
-                ->footerView('pdfs.footer');
+                ]);
+            // return Pdf::view('reports.templates.pawczms', [
+            //         "data" => $data,
+            //         "frequency" => $request->frequency,
+            //         "quarter" => $request->quarter,
+            //         "semester" => $request->semester,
+            //         "year" => $request->year,
+            //         "month" => $request->month
+            //     ])
+            //     ->waitUntilReady()
+            //     ->margins(30, 10, 20, 10)
+            //     ->scale(0.5)
+            //     ->format($this->identifyReportFormat($request->paper))
+            //     ->orientation($this->identifyReportOrientation($request->orientation))
+            //     ->headerView('pdfs.header')
+            //     ->footerView('pdfs.footer');
         }
         else if($request->type == 4){
             $data = DB::table('ltp_applications as la')
@@ -403,21 +428,73 @@ class ReportController extends Controller
 
             // return $data;
 
-            return Pdf::view('reports.templates.bmbsr', [
+            return view('reports.templates.bmbsr', [
                     "data" => $data,
                     "frequency" => $request->frequency,
                     "quarter" => $request->quarter,
                     "semester" => $request->semester,
                     "year" => $request->year,
                     "month" => $request->month
-                ])
-                ->waitUntilReady()
-                ->margins(30, 10, 20, 10)
-                ->scale(0.5)
-                ->format($this->identifyReportFormat($request->paper))
-                ->orientation($this->identifyReportOrientation($request->orientation))
-                ->headerView('pdfs.header')
-                ->footerView('pdfs.footer');
+                ]);
+            // return Pdf::view('reports.templates.bmbsr', [
+            //         "data" => $data,
+            //         "frequency" => $request->frequency,
+            //         "quarter" => $request->quarter,
+            //         "semester" => $request->semester,
+            //         "year" => $request->year,
+            //         "month" => $request->month
+            //     ])
+            //     ->waitUntilReady()
+            //     ->margins(30, 10, 20, 10)
+            //     ->scale(0.5)
+            //     ->format($this->identifyReportFormat($request->paper))
+            //     ->orientation($this->identifyReportOrientation($request->orientation))
+            //     ->headerView('pdfs.header')
+            //     ->footerView('pdfs.footer');
+        }
+        else if($request->type == 5){
+            $data = DB::table('ltp_applications as la')
+            ->select([
+                'la.id',
+                'la.permittee_id',
+                'la.application_date',
+                'permits.permit_number',
+                'la.purpose',
+                'pi.first_name as first_name',
+                'pi.middle_name as middle_name',
+                'pi.last_name as last_name',
+                'permits.approved_at as issuance_date',
+                'permits.released_date as released_date',
+                DB::raw('permits.approved_at + INTERVAL 1 MONTH as expiration_date'),
+                'provinces.province_name',
+                'lf.amount',
+                "b.barangay_name as barangay_name", 
+                "m.municipality_name as municipality_name",
+            ])
+            ->leftJoin('permittees as p', 'p.id', '=', 'la.permittee_id')
+            ->leftJoin('personal_infos as pi', 'pi.user_id', '=', 'p.user_id')
+            ->leftJoin('ltp_permits as permits', 'permits.ltp_application_id', '=', 'la.id')
+            ->leftJoin('payment_orders as po', 'po.ltp_application_id', '=', 'la.id')
+            ->leftJoin('ltp_fees as lf', 'lf.id', '=', 'po.ltp_fee_id')
+            ->leftJoin('provinces', 'provinces.id', '=', 'la.destination')
+            ->leftJoin('barangays as b', 'b.id', '=', 'pi.barangay_id')
+            ->leftJoin('municipalities as m', 'm.id', '=', 'b.municipality_id')
+            ->whereIn('la.application_status', ['expired', 'approved', 'released'])
+            ->whereBetween('la.application_date', [$startDate, $endDate])
+            ->orderBy('permits.permit_number', 'asc')
+            ->orderBy('la.application_date', 'asc')
+            ->get();
+
+            // return $data;
+
+            return view('reports.templates.ltp-matrix', [
+                    "data" => $data,
+                    "frequency" => $request->frequency,
+                    "quarter" => $request->quarter,
+                    "semester" => $request->semester,
+                    "year" => $request->year,
+                    "month" => $request->month
+                ]);
         }
         
     }
