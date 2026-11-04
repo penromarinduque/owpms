@@ -250,7 +250,7 @@ class ReportController extends Controller
                     'pi.first_name',
                     'pi.middle_name',
                     'pi.last_name',
-                    'payment_orders.payment_date as issuance_date',
+                    'po.payment_date as issuance_date',
                     DB::raw('permits.approved_at + INTERVAL 1 MONTH as expiration_date'),
                     'provinces.province_name',
                     DB::raw('SUM(las.quantity) as total_species'),
@@ -277,7 +277,8 @@ class ReportController extends Controller
                     'provinces.province_name',
                     'lf.amount',
                     'la.permittee_id',      // Included because it's used in ORDER BY
-                    'la.application_date'   // Included because it's used in ORDER BY
+                    'la.application_date',   // Included because it's used in ORDER BY
+                    'po.payment_date'
                 ])
                 ->orderBy('la.permittee_id', 'asc')
                 ->orderBy('la.application_date', 'asc')

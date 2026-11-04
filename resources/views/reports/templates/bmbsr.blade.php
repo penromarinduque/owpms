@@ -96,14 +96,20 @@
                 $prevName = null;
                 $prevAddress = null;
                 $prevPermitNumber = null;
+                $totalRevenue = 0;
+                $totalSpecies = 0;
             @endphp
             @foreach ($data as $i => $d)
                 <tr>
                     @php 
                         $name =  $d->first_name . " " . $d->middle_name . " " . $d->last_name; 
                         $specieCountPerPermit = $data->where('permit_number', $d->permit_number)->count();
+                        $totalSpecies += $d->total_species;
                     @endphp
                     @if ($prevPermitNumber != $d->permit_number)
+                        @php
+                            $totalRevenue += 100;
+                        @endphp
                         <td rowspan="{{ $specieCountPerPermit }}">
                             @if ($prevPermitNumber != $d->permit_number)
                                 {{ $name }}
@@ -152,6 +158,17 @@
                     @endphp
                 </tr>
             @endforeach
+            <tr>
+                <td colspan="5" class="text-end fw-bold">TOTAL</td>
+                <td class="fw-bold">
+                    {{ number_format($totalRevenue, 2) }}
+                </td>
+                <td colspan="2" class="text-end fw-bold">TOTAL</td>
+                <td class="fw-bold">
+                    {{ number_format($totalSpecies, 0, '.', ',') }}
+                </td>
+                <td colspan="8"></td>
+            </tr>
         </tbody>
     </table>
     <br>
@@ -173,9 +190,16 @@
                 <td>&nbsp;</td>
             </tr>
             <tr>
-                <td class="text-center"><h6 style="font-weight: bold; text-transform: uppercase">{{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->last_name }}</h6></td>
-                <td class="text-center fw-bold"><h6 class="fw-bold">CELSO B. ALMAZAN, RPF</h6></td>
-                <td class="text-center fw-bold"><h6 class="fw-bold">CESAR P. ODI, RPF</h6></td>
+                <td class="text-center">
+                    <h6 style="font-weight: bold; text-transform: uppercase">
+                        {{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->middle_initial }} {{ auth()->user()->personalInfo->last_name }} 
+                        @if (auth()->user()->personalInfo->title)
+                            , {{ auth()->user()->personalInfo->title }}
+                        @endif
+                    </h6>
+                </td>
+                <td class="text-center fw-bold"><h6 class="fw-bold" style="font-weight: bold;">CELSO B. ALMAZAN, RPF</h6></td>
+                <td class="text-center fw-bold"><h6 class="fw-bold" style="font-weight: bold;">CESAR P. ODI, RPF</h6></td>
             </tr>
             <tr>
                 <td class="text-center">{{ auth()->user()->empPosition->position }}</td>

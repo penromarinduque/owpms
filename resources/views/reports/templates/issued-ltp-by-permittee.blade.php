@@ -124,7 +124,14 @@
                 <td>&nbsp;</td>
             </tr>
             <tr>
-                <td class="text-center"><h6 style="font-weight: bold; text-transform: uppercase">{{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->last_name }}</h6></td>
+                <td class="text-center">
+                    <h6 style="font-weight: bold; text-transform: uppercase">
+                        {{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->middle_initial }} {{ auth()->user()->personalInfo->last_name }} 
+                        @if (auth()->user()->personalInfo->title)
+                            , {{ auth()->user()->personalInfo->title }}
+                        @endif
+                    </h6>
+                </td>
                 <td class="text-center"><h6 style="font-weight: bold; text-transform: uppercase">CELSO B. ALMAZAN, RPF</h6></td>
                 <td class="text-center"><h6 style="font-weight: bold; text-transform: uppercase">CESAR P. ODI, RPF</h6></td>
             </tr>

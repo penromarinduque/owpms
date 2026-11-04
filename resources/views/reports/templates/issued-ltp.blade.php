@@ -48,20 +48,94 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $totalPermits = 0;
+                $totalFees = [];
+                $totalTransported = 0;
+                $iteration = 1;
+            @endphp
+            @php
+                // Initialize an array to track totals for each month dynamically
+                $totalPermitsPerMonth = [];
+                foreach($selectedMonthsConfig as $monthConfig) {
+                    $totalPermitsPerMonth[$monthConfig->id] = 0;
+                }
+                $totalPermits = 0;
+                $totalTransported = 0;
+                $totalCollectedFees = 0;
+            @endphp
+
             @foreach ($data->where('permit_type', 'wcp') as $i => $d)
-                <tr>
-                    <td>{{ $i }}</td>
-                    <td>{{ $d->first_name }} {{ $d->last_name }}</td>
-                    <td>{{ $d->barangay_name }}, {{ $d->municipality_name }}, {{ $d->province_name }}</td>
-                    <td>{{ $data->where('permit_type', 'wfp')->where('id', $d->id)->first()->farm_name }}</td>
-                    @foreach($selectedMonthsConfig as $monthConfig)
-                        <td class="text-center">{{ $d->{'m' . $monthConfig->id} > 0 ? $d->{'m' . $monthConfig->id} : '-' }}</td>
-                    @endforeach
-                    <td class="text-center">{{ array_sum(array_map(function($monthConfig) use ($d){ return $d->{'m' . $monthConfig->id}; }, $selectedMonthsConfig->toArray())) }}</td>
-                    <td class="text-center">{{ number_format($d->collected_fees, 2) }}</td>
-                    <td class="text-center">{{ number_format($d->transported_species, 0, '.', ',') }}</td>
-                </tr>
+                @php
+                    // Calculate the row permits total
+                    $rowTotalPermits = array_sum(array_map(function($monthConfig) use ($d){ 
+                        return $d->{'m' . $monthConfig->id} ?? 0; 
+                    }, $selectedMonthsConfig->toArray()));
+
+                    $farm = $data->where('permit_type', 'wfp')->where('id', $d->id)->first();
+                @endphp
+
+                @if($rowTotalPermits > 0) 
+                    <tr>
+                        <td>{{ $iteration++ }}</td>
+                        <td>{{ $d->first_name }} {{ $d->last_name }}</td>
+                        <td>{{ $d->barangay_name }}, {{ $d->municipality_name }}, {{ $d->province_name }}</td>
+                        <td>{{ $farm ? $farm->farm_name : '-' }}</td>
+
+                        {{-- Monthly Permit Counts --}}
+                        @foreach($selectedMonthsConfig as $monthConfig)
+                            @php
+                                $monthlyCount = $d->{'m' . $monthConfig->id} ?? 0;
+                                // Accumulate per-month permit totals for the footer
+                                $totalPermitsPerMonth[$monthConfig->id] += $monthlyCount;
+                            @endphp
+                            <td class="text-center">{{ $monthlyCount > 0 ? $monthlyCount : '-' }}</td>
+                        @endforeach
+
+                        {{-- Grand Total of Permits for this row --}}
+                        <td class="text-center fw-bold">{{ $rowTotalPermits > 0 ? $rowTotalPermits : '-' }}</td>
+                        
+                        {{-- Fees Collected --}}
+                        <td class="text-center">{{ number_format($d->collected_fees ?? 0, 2) }}</td>
+                        
+                        {{-- Total Transported --}}
+                        <td class="text-center">{{ number_format($d->transported_species ?? 0, 0, '.', ',') }}</td>
+                        
+                        @php
+                            // Accumulate grand totals
+                            $totalPermits += $rowTotalPermits;
+                            $totalTransported += $d->transported_species ?? 0;
+                            $totalCollectedFees += $d->collected_fees ?? 0;
+                        @endphp
+                    </tr>
+                @endif
             @endforeach
+
+            {{-- TOTAL ROW --}}
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-center fw-bold">TOTAL</td>
+
+                {{-- Sum of permits for each month --}}
+                @foreach($selectedMonthsConfig as $monthConfig)
+                    <td class="text-center fw-bold">
+                        {{ number_format($totalPermitsPerMonth[$monthConfig->id], 0, '.', ',') }}
+                    </td>
+                @endforeach
+
+                {{-- Grand Total Permits --}}
+                <td class="text-center fw-bold">{{ number_format($totalPermits, 0, '.', ',') }}</td>
+                
+                {{-- Grand Total Fees Collected --}}
+                <td class="text-center fw-bold">
+                    {{ number_format($totalCollectedFees, 2, '.', ',') }}
+                </td>
+                
+                {{-- Grand Total Transported --}}
+                <td class="text-center fw-bold">{{ number_format($totalTransported, 0, '.', ',') }}</td>
+            </tr>
         </tbody>
     </table>
     <br>
@@ -83,9 +157,16 @@
                 <td>&nbsp;</td>
             </tr>
             <tr>
-                <td class="text-center"><h6 style="font-weight: bold; text-transform: uppercase">{{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->last_name }}</h6></td>
-                <td class="text-center"><h6>CELSO B. ALMAZAN, RPF</h6></td>
-                <td class="text-center"><h6>CESAR P. ODI, RPF</h6></td>
+                <td class="text-center">
+                    <h6 style="font-weight: bold; text-transform: uppercase">
+                        {{ auth()->user()->personalInfo->first_name }} {{ auth()->user()->personalInfo->middle_initial }} {{ auth()->user()->personalInfo->last_name }} 
+                        @if (auth()->user()->personalInfo->title)
+                            , {{ auth()->user()->personalInfo->title }}
+                        @endif
+                    </h6>
+                </td>
+                <td class="text-center fw-bold" style="font-weight: bold;"><h6 style="font-weight: bold;">CELSO B. ALMAZAN, RPF</h6></td>
+                <td class="text-center fw-bold" style="font-weight: bold;"><h6 style="font-weight: bold;">CESAR P. ODI, RPF</h6></td>
             </tr>
             <tr>
                 <td class="text-center">{{ auth()->user()->empPosition->position }}</td>

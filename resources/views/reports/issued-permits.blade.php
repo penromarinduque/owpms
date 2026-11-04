@@ -99,14 +99,14 @@ active
 <script>
     $(document).ready(function () {
 
-        $('#monthWrapper, #quarterWrapper, #semesterWrapper').hide();
+        $('#quarterWrapper, #semesterWrapper').hide();
 
         $('#frequency').on('change', function () {
 
             var type = parseInt($(this).val());
 
             // Hide all wrappers
-            $('#monthWrapper, #quarterWrapper, #semesterWrapper').hide();
+            $('#quarterWrapper, #semesterWrapper').hide();
 
             if ([1].includes(type)) {
 

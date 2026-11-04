@@ -123,8 +123,8 @@ class LtpApplicationPolicy
             && in_array('LTP_APPLICATION_INSPECT', $user->getUserPermissions())
             && $inspectionReport->permittee_signed
             && $inspectionReport->inspector_signed
-            && $inspectionReport->approver_signed
-            && Storage::exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
+            && $inspectionReport->approver_signed;
+            // && Storage::exists('inspection_report/'.$ltpApplication->inspectionReport->id.'.pdf');
     }
 
     public function updateLtp(User $user, LtpApplication $ltpApplication) {
