@@ -17,6 +17,14 @@ Local Transport Permit
             Local Transport Permit
         </div>
         <div class="card-body">
+            <form action="" method="GET" class="d-flex align-items-end gap-2 mb-3">
+                <div class="flex-grow-1">
+                    <input type="text" class="form-control" name="search" id="search" placeholder="Search by Permit No. or Application No." value="{{ request('search') }}">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped">
                     <thead>

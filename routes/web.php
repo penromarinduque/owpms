@@ -483,24 +483,24 @@ Route::get("test", function () {
     return $nextSerialNumber;
 });
 
-Route::group(["prefix" => "migration", "as" => "migration."], function () {
+Route::group(["prefix" => "migration", "as" => "migration.", "middleware" => ["userType:admin", "auth"]], function () {
     Route::get("import-ltp", [MigrationController::class, 'importLtp'])->name("import-ltp");
     Route::post("save-ltp", [MigrationController::class, 'saveLtp'])->name("save-ltp");
 });
 
 
 // temporary routes for migration
-Route::get("migrate-release", function () {
-    $ltpApplications = LtpApplication::whereIn("application_status", ["released"])->get();
-    foreach ($ltpApplications as $ltpApplication) {
-        $log = LtpApplicationProgress::where("ltp_application_id", $ltpApplication->id)
-            ->where("status", "released")
-            ->first();
-        $ltpApplication->permit->released_date = $log->created_at;
-        $ltpApplication->permit->save();
-    }
-    return "done";
-});
+// Route::get("migrate-release", function () {
+//     $ltpApplications = LtpApplication::whereIn("application_status", ["released"])->get();
+//     foreach ($ltpApplications as $ltpApplication) {
+//         $log = LtpApplicationProgress::where("ltp_application_id", $ltpApplication->id)
+//             ->where("status", "released")
+//             ->first();
+//         $ltpApplication->permit->released_date = $log->created_at;
+//         $ltpApplication->permit->save();
+//     }
+//     return "done";
+// });
 
 Route::get("migrate-old-permits/{application_no}", function (Request $request, $application_no) {
 

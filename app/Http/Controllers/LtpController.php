@@ -17,9 +17,19 @@ class LtpController extends Controller
 {
     use ElectronicSigratureTrait;
     //
-    public function index()
+    public function index(Request $request)
     {
         $ltps_query = LtpPermit::query()->with('ltpApplication.permittee');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $ltps_query->where(function ($query) use ($search) {
+                $query->where('permit_number', 'like', "%$search%")
+                      ->orWhereHas('ltpApplication', function ($subquery) use ($search) {
+                          $subquery->where('application_no', 'like', "%$search%");
+                      });
+            });
+        }
 
         return view('admin.data_entry.ltps', [
             'ltps' => $ltps_query->paginate(20)
