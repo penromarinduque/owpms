@@ -66,7 +66,11 @@
                                 <td class="text-center">{{ $d->permit_number }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($d->application_date)->format('F d, Y') }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($d->issuance_date)->format('F d, Y') }}</td>
-                                <td class="text-center">{{ \Carbon\Carbon::parse($d->released_date)->format('F d, Y') }}</td>
+                                <td class="text-center">
+                                    @if($d->released_date)
+                                        {{ \Carbon\Carbon::parse($d->released_date)->format('F d, Y') }}
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

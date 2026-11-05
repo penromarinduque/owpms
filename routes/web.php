@@ -477,3 +477,16 @@ Route::get("test", function () {
     $nextSerialNumber = sprintf('%s-%04d', $prefix, $nextNumber);
     return $nextSerialNumber;
 });
+
+
+Route::get("migrate-release", function () {
+    $ltpApplications = LtpApplication::whereIn("application_status", ["released"])->get();
+    foreach ($ltpApplications as $ltpApplication) {
+        $log = LtpApplicationProgress::where("ltp_application_id", $ltpApplication->id)
+            ->where("status", "released")
+            ->first();
+        $ltpApplication->permit->released_date = $log->created_at;
+        $ltpApplication->permit->save();
+    }
+    return "done";
+});

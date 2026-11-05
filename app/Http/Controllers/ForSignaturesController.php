@@ -1063,6 +1063,7 @@ class ForSignaturesController extends Controller
                     
                     $ltpApplication->application_status = LtpApplication::STATUS_APPROVED;
                     $ltpPermit->penro_signed = true;
+                    $ltpPermit->approved_at = now();
                     
                     $ltpPermit->save();
                     $ltpApplication->save();
