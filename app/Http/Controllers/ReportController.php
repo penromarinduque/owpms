@@ -480,7 +480,7 @@ class ReportController extends Controller
             ->leftJoin('barangays as b', 'b.id', '=', 'pi.barangay_id')
             ->leftJoin('municipalities as m', 'm.id', '=', 'b.municipality_id')
             ->whereIn('la.application_status', ['expired', 'approved', 'released'])
-            ->whereBetween('la.application_date', [$startDate, $endDate])
+            ->whereBetween('permits.approved_at', [$startDate, $endDate])
             ->orderBy('permits.permit_number', 'asc')
             ->orderBy('la.application_date', 'asc')
             ->get();
