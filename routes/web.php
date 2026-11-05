@@ -44,6 +44,7 @@ use App\Models\PaymentOrder;
 use App\Models\User;
 use App\Notifications\LtpApplicationExpired;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -479,6 +480,7 @@ Route::get("test", function () {
 });
 
 
+// temporary routes for migration
 Route::get("migrate-release", function () {
     $ltpApplications = LtpApplication::whereIn("application_status", ["released"])->get();
     foreach ($ltpApplications as $ltpApplication) {
@@ -489,4 +491,12 @@ Route::get("migrate-release", function () {
         $ltpApplication->permit->save();
     }
     return "done";
+});
+
+Route::get("migrate-old-permits/{application_no}", function (Request $request, $application_no) {
+    return DB::transaction(function () use ($request, $application_no) {
+        $ltpApplication = LtpApplication::where("application_no", $application_no)->first();
+        
+    });
+
 });
