@@ -28,6 +28,7 @@ use App\Http\Controllers\ForSignaturesController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\IssuedOrController;
 use App\Http\Controllers\LtpController;
+use App\Http\Controllers\MigrationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserRoleController;
@@ -482,6 +483,11 @@ Route::get("test", function () {
     return $nextSerialNumber;
 });
 
+Route::group(["prefix" => "migration", "as" => "migration."], function () {
+    Route::get("import-ltp", [MigrationController::class, 'importLtp'])->name("import-ltp");
+    Route::post("save-ltp", [MigrationController::class, 'saveLtp'])->name("save-ltp");
+});
+
 
 // temporary routes for migration
 Route::get("migrate-release", function () {
@@ -498,63 +504,6 @@ Route::get("migrate-release", function () {
 
 Route::get("migrate-old-permits/{application_no}", function (Request $request, $application_no) {
 
-    return DB::transaction(function () use ($request, $application_no) {
-        $ltpApplication = LtpApplication::where("application_no", $application_no)->first();
-        $orderNo = $request->order_no;
-        $serialNo = $request->serial_no;
-        $no = $request->no;
-        $paymentReference = $request->payment_reference;
-        $receiptDate = $request->receipt_date;
-        $permitNumber = $request->permit_number;
-        $permitNoNo = $request->permit_no_no;
-        $dateApproved = $request->date_approved;
-        $dateReleased = $request->date_released;
-        $paymentOrder = PaymentOrder::create([
-            "ltp_application_id" => $ltpApplication->id,
-            "ltp_fee_id" => 1,
-            "order_number" => $orderNo,
-            "serial_number" => $serialNo,
-            "no" => $no,
-            "year" => $request->year,
-            "status" => "paid",
-            "payment_method" => "cash",
-            "payment_reference" => $paymentReference,
-            "prepared_by" => 8,
-            "approved_by" => 12,
-            "oop_approved_by" => 17,
-            "issued_date" => $receiptDate,
-            "payment_date" => $receiptDate
-        ]);
-
-        $paymentOrderDetails = PaymentOrderDetail::create([
-            "payment_order_id" => $paymentOrder->id, 
-            "item_description" => "Local Transport Permit",
-            "legal_basis" => "DAO-5504"
-        ]);
-
-        $inspectionReport = InspectionReport::create([
-            "ltp_application_id" => $ltpApplication->id,
-            "user_id" => $ltpApplication->permittee->user_id,
-            "inspector_id" => 16,
-            "approver_id" => 12,
-            "inspection_date" => $receiptDate,
-            "approver_position" => "OIC-Chief, TSD",
-            "rps_initial_id" => 8,
-            "rps_signed" => 1
-        ]);
-
-        $ltp = LtpPermit::create([
-           "ltp_application_id" => $ltpApplication->id,
-           "permit_number" => $permitNumber,
-            "no" => $permitNoNo,
-            "penro" => 11,
-            "approver_designation" => "PENR Officer",
-            "chief_tsd" => 12,
-            "chief_tsd_signed" => 1,
-            "penro_signed" => 1,
-            "approved_at" => $dateApproved,
-            "released_at" => $dateReleased
-        ]);
-    });
+    
 
 });

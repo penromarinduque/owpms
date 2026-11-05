@@ -101,6 +101,15 @@
                             </a>
                         </li>
                         @endcan
+                        @if (Auth::user()->usertype == 'admin')
+                        <li class="nav-item {{ request()->routeIs('migration.import-ltp') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('migration.import-ltp') }}">
+                                <span class="sidebar-text">
+                                    Import LTP
+                                </span>
+                            </a>
+                        </li>
+                        @endif
                     </ul>
                 </div>
             </li>
