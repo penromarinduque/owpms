@@ -153,4 +153,8 @@ class LtpApplication extends Model implements Auditable
     public function specieNature() {
         return $this->belongsTo(SpecieNature::class, 'specie_nature_id', 'id');
     }
+
+    public function geoTaggedImages() {
+        return $this->hasMany(GeottaggedImage::class, 'ltp_application_id', 'id');
+    }
 }
