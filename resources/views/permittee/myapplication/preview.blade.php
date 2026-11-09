@@ -90,12 +90,12 @@ My Applications
                             </a>
                         </li>
                     @endif
-                    @if (in_array($ltp_application->application_status, ['paid', 'approved']))
-                        <li>
+                    @if (in_array($ltp_application->application_status, ['paid', 'approved', 'released']))
+                        {{-- <li>
                             <a href="#" onclick="showUploadReceiptModal('{{ route('myapplication.uploadreceipt', Crypt::encryptString($ltp_application->id)) }}')"class="dropdown-item"  data-bs-toggle="tooltip" data-bs-title="Upload Receipt">
                                 <i class="fa-solid fa-receipt me-2"></i> Upload Receipt
                             </a>
-                        </li>
+                        </li> --}}
                         @php
                             $paymentOrder = $ltp_application->paymentOrder;
                         @endphp
