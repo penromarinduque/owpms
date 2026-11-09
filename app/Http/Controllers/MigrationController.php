@@ -63,7 +63,7 @@ class MigrationController extends Controller
                 "approved_by" => 12,
                 "oop_approved_by" => 17,
                 "prepared_by_position" => "OIC-Chief, RPS",
-                "approved_by_position" => "OIC-Chief, TSD",
+                "approved_by_position" => "Chief, TSD",
                 "oop_approved_by_position" => "Accountant III",
                 "issued_date" => $receiptDate,
                 "payment_date" => $receiptDate
@@ -81,7 +81,7 @@ class MigrationController extends Controller
                 "inspector_id" => 16,
                 "approver_id" => 12,
                 "inspection_date" => $receiptDate,
-                "approver_position" => "OIC-Chief, TSD",
+                "approver_position" => "Chief, TSD",
                 "rps_initial_id" => 8,
                 "rps_signed" => 1
             ]);

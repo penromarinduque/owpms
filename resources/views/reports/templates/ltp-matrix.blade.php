@@ -107,7 +107,7 @@
                         </tr>
                         <tr>
                             <td class="text-center">{{ auth()->user()->empPosition->position }}</td>
-                            <td class="text-center ">OIC Chief, Technical Services Division</td>
+                            <td class="text-center ">Chief, Technical Services Division</td>
                             <td class="text-center">PENR Officer</td>
                         </tr>
                     </tbody>
