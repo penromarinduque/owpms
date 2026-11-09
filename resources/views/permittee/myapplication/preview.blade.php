@@ -240,33 +240,45 @@ My Applications
                 </div>
             </div>
 
-            {{-- <h6><i class="fas fa-paperclip me-2"></i>System Generated Documents</h6>
-
+            <h6><i class="fas fa-paperclip me-2"></i>System Generated & Other Documents</h6>
             <div class="bg-light p-3 rounded-2">
                 <div class="row mb-3">
                     <div class="col-lg-3 col-sm-6">
+                        <label>Request Letter</label>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="#" target="_blank">View Attachment</a></h6>
+                    </div> 
+                    @if (in_array($ltp_application->application_status, ['paid', 'approved', 'released', 'payment-in-process', 'inspected']))
+                    <div class="col-lg-3 col-sm-6">
                         <label>Assessment of Fees and Charges</label>
-                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('paymentorder.viewBillingStatement', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" target="_blank">View Attachment</a></h6>
                     </div> 
                     <div class="col-lg-3 col-sm-6">
                         <label>Order of Payment</label>
-                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('paymentorder.viewPaymentOrder', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" target="_blank">View Attachment</a></h6>
                     </div> 
+                    <div class="col-lg-3 col-sm-6">
+                        <label>Official Receipt</label>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('paymentorder.viewreceipt', Crypt::encryptString($paymentOrder->id)) }}" target="_blank">View Attachment</a></h6>
+                    </div> 
+                    @endif
+                    @if (in_array($ltp_application->application_status, ['approved', 'released', 'inspected']))
                     <div class="col-lg-3 col-sm-6">
                         <label>Inspection Report</label>
-                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('inspection.viewInspectionReport', [ 'id' => Crypt::encryptString($inspectionReport->id), 'ltp_application_id' => $ltp_application->id ]) }}" target="_blank">View Attachment</a></h6>
                     </div> 
+                    @endif
+                    @can('downloadLtp', $ltp_application)
                     <div class="col-lg-3 col-sm-6">
                         <label>Local Transport Permit</label>
-                        <h6><a href="#" target="_blank">View Attachment</a></h6>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($ltp_application->permit->id), 'ltp_application_id' => $ltp_application->id ]) }}" target="_blank">View Attachment</a></h6>
                     </div> 
+                    @endcan
                 </div>
-            </div> --}}
+            </div>
 
-            
         </div>
     </div>
-    @if (in_array($ltp_application->application_status, ['paid', 'approved', 'payment-in-process', 'inspected']))
+    @if (in_array($ltp_application->application_status, ['paid', 'payment-in-process']))
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-money-bill me-1"></i>
@@ -291,7 +303,7 @@ My Applications
                             @endif
                         </h6>
                     </div>
-                    <div class="col-lg-3 col-sm-6">
+                    {{-- <div class="col-lg-3 col-sm-6">
                         <label>Actions</label>
                         <div class="d-flex gap-1">
                             <a href="{{ route('paymentorder.view', Crypt::encryptString($ltp_application->id)) }}" class="btn btn-outline-primary" target="_blank">
@@ -301,7 +313,7 @@ My Applications
                                 <i class="fas fa-print me-1"></i> Assessment of Fees and Charges
                             </a>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

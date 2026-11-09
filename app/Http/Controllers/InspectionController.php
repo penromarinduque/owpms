@@ -526,6 +526,12 @@ class InspectionController extends Controller
         $inspectorSignUrl = null;
         $approverSignUrl = null;
 
+        $geoTaggedImages = $inspection_report->ltpApplication->geoTaggedImages;
+        $imageUrls = $geoTaggedImages->isNotEmpty() ? $geoTaggedImages->map(function ($image) {
+            return Storage::disk('s3')->temporaryUrl($image->image_url, now()->addMinutes(30));
+        })->toArray() : [];
+
+
         if($inspection_report->permittee_signed) {
             $permitteeSignUrl = $this->getElectronicSignature(
                 $inspection_report->permittee->personalInfo->first_name . " " . $inspection_report->permittee->personalInfo->middle_name . " " . $inspection_report->permittee->personalInfo->last_name,
@@ -567,7 +573,8 @@ class InspectionController extends Controller
                 "inspection_report" => $inspection_report,
                 "permitteeUrl" => $permitteeSignUrl ? "data:image/png;base64," . base64_encode($permitteeSignUrl->body()) : null,
                 "inspectorUrl" => $inspectorSignUrl ? "data:image/png;base64," . base64_encode($inspectorSignUrl->body()) : null,
-                "approverUrl" =>  $approverSignUrl ? "data:image/png;base64," . base64_encode($approverSignUrl->body()) : null
+                "approverUrl" =>  $approverSignUrl ? "data:image/png;base64," . base64_encode($approverSignUrl->body()) : null,
+                "imageUrls" => $imageUrls
             ])
             ->waitUntilReady()
             ->paperSize(8.5, 13, 'in')
@@ -575,7 +582,7 @@ class InspectionController extends Controller
             ->headerView('pdfs.header')
             ->footerView('pdfs.footer')
             ->margins(1.3, 0.5, 1.3, 0.5, Unit::Inch);
-
+ 
         $pdf->disk("s3")
             ->save("inspection_report/" . $inspection_report->id . ".pdf");
 
