@@ -156,11 +156,11 @@ Inspection Report
     </tbody>
 </table>
 
-<div class="" style="page-break-before: always">
+{{-- <div class="" style="page-break-before: always">
     @foreach ($imageUrls as $url)
         <div class="mb-3">
             <img src="{{ $url }}" alt="Geo-tagged Image" style="width: 100%; max-width: 600px; display: block; margin: 0 auto;">
         </div>
     @endforeach
-</div>
+</div> --}}
 @endsection
