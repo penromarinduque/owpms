@@ -130,7 +130,7 @@ Inspection Report
                                     of PENRO Marinduque, Region <span class="fw-bold"><u>&nbsp;&nbsp;IV-MIMAROPA&nbsp;&nbsp;</u></span>
                                     is/are true and correct and has been done this 
                                     <span id="inspection_date_text"><span class="fw-bold"><u>&nbsp;&nbsp;{{ old('inspection_date') ? \Carbon\Carbon::parse(old('inspection_date'))->format('jS') : $inspection_report->inspection_date->format('jS') }}&nbsp;&nbsp;</u></span>
-                                    day of <span class="fw-bold" ><u>&nbsp;&nbsp;{{ now()->format('F Y') }}&nbsp;&nbsp;</u></span></span>. 
+                                    day of <span class="fw-bold" ><u>&nbsp;&nbsp;{{ $inspection_report->inspection_date->format('F') }}&nbsp;&nbsp;</u></span></span>. 
                             </p>
 
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;This is to certify further that this statement was given to me voluntarily and with neither coercion nor promise of reward from the personnel of the Department of Environment and Natural Resources.</p>
