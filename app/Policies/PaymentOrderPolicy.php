@@ -75,7 +75,7 @@ class PaymentOrderPolicy
 
     public function approverSign(User $user, PaymentOrder $paymentOrder): bool
     {
-        return $paymentOrder->prepared_signed != null && $user->id == $paymentOrder->approved_by && in_array($paymentOrder->approved_signed, [null]) ;
+        return !in_array($paymentOrder->prepared_signed, [null, false]) && $user->id == $paymentOrder->approved_by && in_array($paymentOrder->approved_signed, [null, false]) ;
     }
 
     public function oopApproverSign(User $user, PaymentOrder $paymentOrder): bool

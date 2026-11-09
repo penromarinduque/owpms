@@ -617,6 +617,7 @@ class ForSignaturesController extends Controller
         }
 
         if($type == "billing_statement") {
+            // dd(PaymentOrder::pendingBillingStatementSignaturesFor(auth()->user()->id)->toSql(), PaymentOrder::pendingBillingStatementSignaturesFor(auth()->user()->id)->getBindings());
             return PaymentOrder::pendingBillingStatementSignaturesFor(auth()->user()->id)->paginate(20);
         }
 

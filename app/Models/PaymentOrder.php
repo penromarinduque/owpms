@@ -86,22 +86,39 @@ class PaymentOrder extends Model implements Auditable
 
     public function scopePendingBillingStatementSignaturesFor($query, $userId)
     {
+
         return $query->where(function ($q) use ($userId) {
-            // Preparer: Hasn't signed yet (null or false)
-            $q->where('prepared_by', $userId)
-            ->where(function ($subQ) {
-                $subQ->whereNull('prepared_signed')
-                    ->orWhere('prepared_signed', false);
-            });
-        })->orWhere(function ($q) use ($userId) {
-            // Approver: Only if preparer has signed (true), but approver hasn't signed yet
             $q->where('approved_by', $userId)
-            ->where(function ($subQ) {
-                 $subQ->whereNull('approved_signed')
-                    ->orWhere('approved_signed', false);
-            })
-            ->whereNotNull('prepared_signed');
+            ->whereNotNull('prepared_signed')
+            ->whereNull('approved_signed');
+        })
+        ->orWhere(function ($q) use ($userId) {
+            $q->where('prepared_by', $userId)
+            ->whereNull('prepared_signed');
         });
+
+        // $query->where(function ($q) use ($userId) {
+        //     $q->where('approved_by', $userId)
+        //     ->whereNotNull('prepared_signed')
+        //     ->whereNull('approved_signed');
+        // });
+
+        // return $query->where(function ($q) use ($userId) {
+        //     // Preparer: Hasn't signed yet (null or false)
+        //     $q->where('prepared_by', $userId)
+        //     ->where(function ($subQ) {
+        //         $subQ->whereNull('prepared_signed')
+        //             ->orWhere('prepared_signed', false);
+        //     });
+        // })->orWhere(function ($q) use ($userId) {
+        //     // Approver: Only if preparer has signed (true), but approver hasn't signed yet
+        //     $q->where('approved_by', $userId)
+        //     ->where(function ($subQ) {
+        //          $subQ->whereNull('approved_signed')
+        //             ->orWhere('approved_signed', false);
+        //     })
+        //     ->whereNotNull('prepared_signed');
+        // });
     }
 
     public function scopeSignedBillingStatementFor($query, $userId)
