@@ -245,7 +245,7 @@ My Applications
                 <div class="row mb-3">
                     <div class="col-lg-3 col-sm-6">
                         <label>Request Letter</label>
-                        <h6><a class="btn btn-outline-secondary btn-sm" href="#" target="_blank">View Attachment</a></h6>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('myapplication.printRequestLetter', Crypt::encryptString($ltp_application->id)) }}" target="_blank">View Attachment</a></h6>
                     </div> 
                     @if (in_array($ltp_application->application_status, ['paid', 'approved', 'released', 'payment-in-process', 'inspected']))
                     <div class="col-lg-3 col-sm-6">
