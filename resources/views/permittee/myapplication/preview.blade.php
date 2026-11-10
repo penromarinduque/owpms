@@ -275,7 +275,6 @@ My Applications
                     @endcan
                 </div>
             </div>
-
         </div>
     </div>
     @if (in_array($ltp_application->application_status, ['paid', 'payment-in-process']))

@@ -393,6 +393,7 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/', [LtpController::class, 'index'])->name('ltps.index');
         Route::get('/view-permit/{id}', [LtpController::class, 'viewPermit'])->name('ltps.viewPermit');
         Route::get('/view-signed-permit/{id}', [LtpController::class, 'viewSignedPermit'])->name('ltps.viewSignedPermit');
+        Route::get('/view-complete-permit/{id}', [LtpController::class, 'viewCompletePermit'])->name('ltps.viewCompletePermit');
     });
 
     Route::prefix('documents')->group(function () {

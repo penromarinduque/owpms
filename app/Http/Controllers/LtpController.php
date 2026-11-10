@@ -83,4 +83,28 @@ class LtpController extends Controller
 
         return $res;
     }
+
+    public function viewCompletePermit(Request $request, $id){
+        // $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
+        // $ltpApplication = $ltpPermit->ltpApplication;
+        // $approverSignatureUrl = null;
+        // if($ltpPermit->penro_signed) {
+        //     $approverSignature = $this->getElectronicSignature(
+        //         $ltpPermit->approver->personalInfo->first_name . " " . $ltpPermit->approver->personalInfo->middle_name . " " . $ltpPermit->approver->personalInfo->last_name,
+        //         $ltpPermit->approver->empPosition->position,
+        //         Storage::disk('s3')->temporaryUrl("signatures/" . $ltpPermit->approver->getSignature()->signature, now()->addMinutes(30)),
+        //         "LTP Application #" . $ltpPermit->permit_number,
+        //         "9",
+        //         $ltpPermit->id,
+        //         $ltpPermit->approver->id,  
+        //         null
+        //     );
+        //     $approverSignatureUrl = 'data:image/png;base64,' . base64_encode($approverSignature->body());
+        // }
+        // return view('pdfs.permit', [
+        //         "permit" => $ltpPermit,
+        //         "ltp_application" => $ltpApplication,
+        //         "signatureUrl" => $approverSignatureUrl
+        //     ]);
+    }
 }
