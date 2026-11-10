@@ -532,7 +532,7 @@ class InspectionController extends Controller
         })->toArray() : [];
 
 
-    if($inspection_report->permittee_signed) {
+        if($inspection_report->permittee_signed) {
             $permitteeSignUrl = $this->getElectronicSignature(
                 $inspection_report->permittee->personalInfo->first_name . " " . $inspection_report->permittee->personalInfo->middle_name . " " . $inspection_report->permittee->personalInfo->last_name,
                 "Permittee",
