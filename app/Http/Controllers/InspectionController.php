@@ -527,10 +527,9 @@ class InspectionController extends Controller
         $approverSignUrl = null;
 
         $geoTaggedImages = $inspection_report->ltpApplication->geoTaggedImages;
-        $imageUrls = [];
-        // $geoTaggedImages->isNotEmpty() ? $geoTaggedImages->map(function ($image) {
-        //     return Storage::disk('s3')->temporaryUrl($image->image_url, now()->addMinutes(30));
-        // })->toArray() : [];
+        $imageUrls = $geoTaggedImages->isNotEmpty() ? $geoTaggedImages->map(function ($image) {
+            return Storage::disk('s3')->temporaryUrl($image->image_url, now()->addMinutes(30));
+        })->toArray() : [];
 
 
     if($inspection_report->permittee_signed) {
