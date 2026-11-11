@@ -110,25 +110,55 @@ trait SystemGeneratedDocTrait
         return $pdf;
     }
 
-    public function convertToCompatiblePdf(string $inputPath): string
+    // public function convertToCompatiblePdf(string $inputPath): string
+    // {
+    //     $outputPath = tempnam(sys_get_temp_dir(), 'pdf_compat_') . '.pdf';
+
+    //     // Using Ghostscript (gs)
+    //     $cmd = sprintf(
+    //         'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s %s',
+    //         escapeshellarg($outputPath),
+    //         escapeshellarg($inputPath)
+    //     );
+
+    //     exec($cmd, $output, $returnCode);
+
+    //     if ($returnCode === 0 && file_exists($outputPath)) {
+    //         return $outputPath;
+    //     }
+
+    //     // Fallback to original path if conversion fails
+    //     return $inputPath;
+    // }
+
+    private function convertToCompatiblePdf(string $pdfPath): string
     {
-        $outputPath = tempnam(sys_get_temp_dir(), 'pdf_compat_') . '.pdf';
-
-        // Using Ghostscript (gs)
-        $cmd = sprintf(
-            'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s %s',
-            escapeshellarg($outputPath),
-            escapeshellarg($inputPath)
-        );
-
-        exec($cmd, $output, $returnCode);
-
-        if ($returnCode === 0 && file_exists($outputPath)) {
-            return $outputPath;
+        if (!class_exists('Imagick')) {
+            return $pdfPath;
         }
 
-        // Fallback to original path if conversion fails
-        return $inputPath;
+        $imagick = new \Imagick();
+        $imagick->setResolution(150, 150);
+        $imagick->readImage($pdfPath);
+
+        $pdf = new \setasign\Fpdi\Fpdi();
+
+        foreach ($imagick as $i => $page) {
+            $page->setImageFormat('jpeg');
+            $tempImg = tempnam(sys_get_temp_dir(), 'pdf_pg_') . '.jpg';
+            $page->writeImage($tempImg);
+
+            $pdf->AddPage();
+            $pdf->Image($tempImg, 0, 0, 210, 297); // Standard A4 dimensions in mm
+            @unlink($tempImg);
+        }
+
+        $outputPath = tempnam(sys_get_temp_dir(), 'compat_pdf_') . '.pdf';
+        $pdf->Output('F', $outputPath);
+        $imagick->clear();
+        $imagick->destroy();
+
+        return $outputPath;
     }
 
 }

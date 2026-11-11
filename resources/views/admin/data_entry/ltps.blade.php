@@ -46,11 +46,13 @@ Local Transport Permit
                                 <td>{{ $ltp->ltpApplication->transport_date->format('F d, Y') }}</td>
                                 <td class="text-center">{!! $ltp->status !!}</td>
                                 <td class="text-center">
-                                    @can('viewPermit', $ltp)
-                                        {{-- <a href="{{ route('ltps.viewPermit', Crypt::encryptString($ltp->id))}}" class="btn btn-sm btn-outline-primary">View</a> --}}
-                                        <a target="_blank" href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($ltp->id), 'ltp_application_id' => $ltp->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary">View</a>
-                                        <a target="_blank" href="{{ route('ltps.viewCompletePermit', [ 'id' => Crypt::encryptString($ltp->id), 'ltp_application_id' => $ltp->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary">View LTP w/ Attachments</a>
-                                    @endcan
+                                    <div class="d-flex gap-1" >
+                                        @can('viewPermit', $ltp)
+                                            {{-- <a href="{{ route('ltps.viewPermit', Crypt::encryptString($ltp->id))}}" class="btn btn-sm btn-outline-primary">View</a> --}}
+                                            <a target="_blank" href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($ltp->id), 'ltp_application_id' => $ltp->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                            @include('components.downloadCompleteLtp', ['ltp' => $ltp])
+                                        @endcan
+                                    </div>
                                 </td>
                             </tr>
                         @empty

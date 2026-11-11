@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Nette\FileNotFoundException;
 use setasign\Fpdi\Fpdi;
@@ -82,6 +83,63 @@ class LtpController extends Controller
         //     ->save("ltps/" . $ltpPermit->permit_number . ".pdf");
 
         // return $res;
+    }
+
+    public function ajaxGetAttachments(Request $request, $id)
+    {
+        Gate::authorize('viewPermit', LtpPermit::find(Crypt::decryptString($id)));
+        $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
+        $ltpApplication = $ltpPermit->ltpApplication;
+
+        if (!$ltpPermit) {
+            throw new FileNotFoundException("LTP Permit not found.");
+        }
+
+        $files = [];
+
+        /** START GET LTP */
+        if (!Storage::disk('s3')->exists("ltps/" . $ltpPermit->permit_number . ".pdf")) {
+            $this->sgdGenerateLtp($ltpPermit);
+        }
+        $files[] = Storage::disk('s3')->temporaryUrl("ltps/" . $ltpPermit->permit_number . ".pdf", now()->addMinutes(30));
+        /** END GET LTP */
+
+        /** START GET INSPECTION REPORT */
+        if ($ltpApplication->inspectionReport) {
+            if (!Storage::disk('s3')->exists("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf")) {
+                $this->sgdGenerateInspectionReport($ltpApplication->inspectionReport);
+            }
+            $files[] = Storage::disk('s3')->temporaryUrl("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf", now()->addMinutes(30));
+        }
+        /** END GET INSPECTION REPORT */
+
+        /** START GET REQUEST LETTER */
+        $files[] = Storage::disk('s3')->temporaryUrl("request_letters/" . $ltpApplication->id . ".pdf", now()->addMinutes(30));
+        /** END GET REQUEST LETTER */
+
+        /** START OTHER REQUIREMENTS */
+        foreach ($ltpApplication->attachments as $attachment) {
+            $s3Path = $attachment->file_path;
+            $files[] = Storage::disk('s3')->temporaryUrl($s3Path, now()->addMinutes(30));
+        }
+        /** END OTHER REQUIREMENTS */
+
+        /** START RECEIPT */
+        if ($ltpApplication->paymentOrder && $ltpApplication->paymentOrder->receipt_url) {
+            $receiptPath = $ltpApplication->paymentOrder->receipt_url;
+            $files[] = Storage::disk('s3')->temporaryUrl($receiptPath, now()->addMinutes(30));
+        }
+        /** END RECEIPT */
+
+        /** START WFP AND WCP */
+        $wfp = $ltpApplication->permittee->user->wfp();
+        $files[] = Storage::disk('s3')->temporaryUrl($wfp->document, now()->addMinutes(30));
+
+        $wcp = $ltpApplication->permittee->user->wcp();
+        $files[] = Storage::disk('s3')->temporaryUrl($wcp->document, now()->addMinutes(30));
+        /** END WFP AND WCP */
+
+        return response()->json(['attachments' => $files]);
     }
 
     public function viewCompletePermit(Request $request, $id)
@@ -206,7 +264,7 @@ class LtpController extends Controller
             if (!file_exists($file)) {
                 continue;
             }
-
+            // Log
             $pageCount = $pdf->setSourceFile($file);
 
             for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {

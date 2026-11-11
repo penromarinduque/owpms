@@ -394,6 +394,13 @@ Route::middleware(['auth', 'permitteeVerified'])->group(function (){
         Route::get('/view-permit/{id}', [LtpController::class, 'viewPermit'])->name('ltps.viewPermit');
         Route::get('/view-signed-permit/{id}', [LtpController::class, 'viewSignedPermit'])->name('ltps.viewSignedPermit');
         Route::get('/view-complete-permit/{id}', [LtpController::class, 'viewCompletePermit'])->name('ltps.viewCompletePermit');
+        /** 
+         * AJAX route for fetching attachments 
+         * @method GET
+         * @route ltps/ajax-get-attachments 
+         * @return JSON response with urls of attachments for the given LTP ID
+         **/
+        Route::get('/ajax-get-attachments/{id}', [LtpController::class, 'ajaxGetAttachments'])->name('ltps.ajaxGetAttachments');
     });
 
     Route::prefix('documents')->group(function () {
