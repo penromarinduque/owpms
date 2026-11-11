@@ -1,5 +1,8 @@
 <div class="">
-    <button id="downloadCompleteLtpBtn{{ $ltp->id }}" class="btn btn-outline-primary btn-sm" onclick="downloadCompleteLtp('{{ Crypt::encryptString($ltp->id) }}', '{{ $ltp->id }}', '{{ $ltp->permit_number }}')">Download LTP w/ Attachments</button>
+    <button id="downloadCompleteLtpBtn{{ $ltp->id }}" class="btn btn-outline-primary btn-sm" onclick="downloadCompleteLtp('{{ Crypt::encryptString($ltp->id) }}', '{{ $ltp->id }}', '{{ $ltp->permit_number }}')">
+        Download LTP w/ Attachments
+    </button>
+    <span class="text-danger" id="downloadCompleteLtpError{{ $ltp->id }}"></span>
 </div>
 <script src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
 <script>
@@ -10,7 +13,7 @@
             url: '/ltps/ajax-get-attachments/' + ltpId,
             method: 'GET',
             success: function(response) {
-                console.log(response);
+                // console.log(response);
                 if(!response.attachments){
                     alert('No attachments found for this LTP.');
                     deactivateLoader(id);
@@ -29,7 +32,8 @@
     }
 
     function activateLoader(ltpId){
-        $("#downloadCompleteLtpBtn" + ltpId).prop("disabled", true).text("Downloading...");
+        $("#downloadCompleteLtpError" + ltpId).text('');
+        $("#downloadCompleteLtpBtn" + ltpId).prop("disabled", true).html(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>Downloading...`);
     }
 
     function deactivateLoader(ltpId){
@@ -91,6 +95,7 @@
             URL.revokeObjectURL(blobUrl);
 
         } catch (error) {
+            $("#downloadCompleteLtpError" + id).text("Error merging files");
             console.error("Error merging files:", error);
         }
     }
