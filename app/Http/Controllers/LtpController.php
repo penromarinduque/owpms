@@ -106,9 +106,9 @@ class LtpController extends Controller
 
         /** START GET INSPECTION REPORT */
         if ($ltpApplication->inspectionReport) {
-            if (!Storage::disk('s3')->exists("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf")) {
-                $this->sgdGenerateInspectionReport($ltpApplication->inspectionReport);
-            }
+            $this->sgdGenerateInspectionReport($ltpApplication->inspectionReport);
+            // if (!Storage::disk('s3')->exists("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf")) {
+            // }
             $files[] = Storage::disk('s3')->temporaryUrl("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf", now()->addMinutes(30));
         }
         /** END GET INSPECTION REPORT */
@@ -297,33 +297,33 @@ class LtpController extends Controller
     /**
      * Helper function to convert an image to a temporary PDF so FPDI can read it.
      */
-    private function convertImageToPdf($imagePath, $extension)
-    {
-        // Create a temporary PDF file path
-        $pdfTempPath = sys_get_temp_dir() . '/' . uniqid('img_pdf_', true) . '.pdf';
+    // private function convertImageToPdf($imagePath, $extension)
+    // {
+    //     // Create a temporary PDF file path
+    //     $pdfTempPath = sys_get_temp_dir() . '/' . uniqid('img_pdf_', true) . '.pdf';
 
-        // Initialize FPDF/FPDI to create a single-page PDF containing the image
-        $pdf = new Fpdi();
+    //     // Initialize FPDF/FPDI to create a single-page PDF containing the image
+    //     $pdf = new Fpdi();
         
-        // Get image dimensions
-        list($width, $height) = getimagesize($imagePath);
+    //     // Get image dimensions
+    //     list($width, $height) = getimagesize($imagePath);
         
-        // Determine orientation based on dimensions
-        $orientation = ($width > $height) ? 'L' : 'P';
+    //     // Determine orientation based on dimensions
+    //     $orientation = ($width > $height) ? 'L' : 'P';
 
-        // Add a page matching the image proportions or standard sizes
-        $pdf->AddPage($orientation);
+    //     // Add a page matching the image proportions or standard sizes
+    //     $pdf->AddPage($orientation);
         
-        // Fit the image onto the page (adjust coordinates/sizes as needed)
-        // Here we place it at x=10, y=10 with a width of 190mm (standard A4 margins)
-        if ($orientation === 'P') {
-            $pdf->Image($imagePath, 10, 10, 190);
-        } else {
-            $pdf->Image($imagePath, 10, 10, 277); // Landscape width fit
-        }
+    //     // Fit the image onto the page (adjust coordinates/sizes as needed)
+    //     // Here we place it at x=10, y=10 with a width of 190mm (standard A4 margins)
+    //     if ($orientation === 'P') {
+    //         $pdf->Image($imagePath, 10, 10, 190);
+    //     } else {
+    //         $pdf->Image($imagePath, 10, 10, 277); // Landscape width fit
+    //     }
 
-        $pdf->Output('F', $pdfTempPath);
+    //     $pdf->Output('F', $pdfTempPath);
 
-        return $pdfTempPath;
-    }
+    //     return $pdfTempPath;
+    // }
 }
