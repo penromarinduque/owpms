@@ -118,7 +118,8 @@ For Signatures
                                     <td width="64px">
                                         <input type="checkbox" class="form-check-input select-row" value="{{ $doc->ltpApplication->id }}" onchange="toggleSelectRow(this)">
                                     </td>
-                                    <td>{{ $doc->ltpApplication->permittee->user->personalInfo->fullName }}</td>
+                                    {{-- <td>{{ $doc->ltpApplication->permittee->user->personalInfo->fullName }}</td> --}}
+                                    <td>{{ $doc->ltpApplication->permittee && $doc->ltpApplication->permittee->user->personalInfo ? $doc->ltpApplication->permittee->user->personalInfo->fullName : 'N/A' }}</td>
                                     @if (request('type') == 'inspection_report')   
                                         <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
                                         <td>
@@ -327,7 +328,7 @@ For Signatures
                                     {{-- <td width="64px">
                                         <input type="checkbox" class="form-check-input select-row" value="{{ $doc->ltpApplication->id }}" onchange="toggleSelectRow(this)">
                                     </td> --}}
-                                    <td>{{ $doc->ltpApplication->permittee->user->personalInfo->fullName }}</td>
+                                    <td>{{ $doc->ltpApplication->permittee && $doc->ltpApplication->permittee->user->personalInfo ? $doc->ltpApplication->permittee->user->personalInfo->fullName : 'N/A' }}</td>
                                     @if (request('type') == 'inspection_report')   
                                         <td>{{ $_helper->setForSignatoriesDocumentName(request('type')) }}</td>
                                         <td>
