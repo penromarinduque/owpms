@@ -111,6 +111,12 @@ active
                                         <a href="#" onclick="showUploadDocumentModal('{{ Crypt::encryptString($paymentOrder->id) }}')" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Update Signed Order of Payment"><i class="fas fa-upload "></i></a>
                                         <a href="{{ route('paymentorder.view', Crypt::encryptString($paymentOrder->id)) }}" target="_blank"  class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="View Signed Order of Payment"><i class="fas fa-eye "></i></a>
                                     </div> --}}
+                                    @can('viewSignedBillingStatement', $paymentOrder)
+                                        <a class="btn btn-sm btn-outline-primary" target="_blank" href="{{ route('paymentorder.viewBillingStatement', ['id' => Crypt::encryptString($paymentOrder->id)]) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download me-1"></i>View Assessment of Fees and Charges</a>
+                                    @endcan
+                                    @can('viewSignedOop', $paymentOrder)
+                                        <a class="btn btn-sm btn-outline-primary" target="_blank" href="{{ route('paymentorder.viewPaymentOrder', ['id' => Crypt::encryptString($paymentOrder->id)]) }}" {{ $paymentOrder->document ? '' : 'disabled' }} data-bs-toggle="tooltip" data-bs-title="Download Signed Order of Payment"><i class="fas fa-file-download me-1"></i>View Order of Payment</a>
+                                    @endcan
                                 </td>
                             </tr>
                         @empty

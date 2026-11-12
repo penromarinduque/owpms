@@ -258,7 +258,7 @@ My Applications
                     </div> 
                     <div class="col-lg-3 col-sm-6">
                         <label>Official Receipt</label>
-                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('paymentorder.viewreceipt', Crypt::encryptString($paymentOrder->id)) }}" target="_blank">View Attachment</a></h6>
+                        <h6><a class="btn btn-outline-secondary btn-sm" href="{{ route('paymentorder.viewreceipt', Crypt::encryptString($ltp_application->paymentOrder->id)) }}" target="_blank">View Attachment</a></h6>
                     </div> 
                     @endif
                     @if (in_array($ltp_application->application_status, ['approved', 'released', 'inspected']))

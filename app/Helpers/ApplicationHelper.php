@@ -267,7 +267,7 @@ class ApplicationHelper
         $query->whereIn('application_status', $this->identifyApplicationStatusesByCategory($status))
             ->where($conditions);
 
-        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()))
+        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()) && !in_array($status, ['approved', 'released', 'expired']))
         {
             $query->where(function ($query) {
                 $query->where('io_user_id', Auth::user()->id)

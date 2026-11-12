@@ -52,7 +52,7 @@ class LtpApplicationController extends Controller
             ]);
         }
 
-        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()) )
+        if(in_array('LTP_APPLICATION_INSPECT', auth()->user()->getUserPermissions()) && !in_array($category, ['approved', 'released', 'expired'])) 
         {
             $ltp_application_query->where(function ($query) {
                 $query->where('io_user_id', Auth::user()->id)
