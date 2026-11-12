@@ -60,6 +60,7 @@ class PaymentOrder extends Model implements Auditable
 
     public function scopePendingOopSignaturesFor($query, $userId)
     {
+        $query->with(['ltpApplication.permittee.user.personalInfo', 'preparedBy.personalInfo', 'approvedBy.personalInfo']);
         return $query->where(function ($q) use ($userId) {
             $q->where('oop_approved_by', $userId)
             ->whereNotNull('prepared_signed')
