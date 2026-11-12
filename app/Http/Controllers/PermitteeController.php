@@ -382,12 +382,15 @@ class PermitteeController extends Controller
     }
 
     public function viewPermit(string $id) {
-
         $permit_id = Crypt::decryptString($id);
         $permittee = Permittee::find($permit_id);
 
         // $path = storage_path('app/private/' . $permittee->document);
+        return Storage::response($permittee->document, $permittee->permit_number.'.pdf', [
+            'Content-Type' => 'application/pdf',
+        ]);
         $path = Storage::disk('s3')->temporaryUrl($permittee->document, now()->addMinutes(30));
+        // return response()->file(Storage::disk('s3')->path($permittee->document));
         return response()->file($path);
     }
 }
