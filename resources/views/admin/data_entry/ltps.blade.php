@@ -49,7 +49,8 @@ Local Transport Permit
                                     <div class="d-flex gap-1" >
                                         @can('viewPermit', $ltp)
                                             {{-- <a href="{{ route('ltps.viewPermit', Crypt::encryptString($ltp->id))}}" class="btn btn-sm btn-outline-primary">View</a> --}}
-                                            <a target="_blank" href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($ltp->id), 'ltp_application_id' => $ltp->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a target="_blank" href="{{ route('ltps.viewSignedPermit', [ 'id' => Crypt::encryptString($ltp->id), 'ltp_application_id' => $ltp->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary">View LTP</a>
+                                            <a target="_blank" href="{{ route('inspection.viewInspectionReport', [ 'id' => Crypt::encryptString($ltp->ltpApplication->inspectionReport->id), 'ltp_application_id' => $ltp->ltpApplication->id ]) }}" class="btn btn-sm btn-outline-primary">View Inspection Report</a>
                                             @include('components.downloadCompleteLtp', ['ltp' => $ltp])
                                         @endcan
                                     </div>

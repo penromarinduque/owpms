@@ -47,39 +47,39 @@
             const mergedPdf = await PDFLib.PDFDocument.create();
 
             for (const url of fileUrls) {
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                console.error(`HTTP Error ${response.status} when fetching: ${url}`);
-                continue;
-            }
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    console.error(`HTTP Error ${response.status} when fetching: ${url}`);
+                    continue;
+                }
 
-            const contentType = response.headers.get('content-type') || '';
-            const fileBytes = await response.arrayBuffer();
+                const contentType = response.headers.get('content-type') || '';
+                const fileBytes = await response.arrayBuffer();
 
-            // Check for HTML response (indicates error page)
-            const textHead = new TextDecoder().decode(fileBytes.slice(0, 15));
-            if (textHead.toLowerCase().includes('<!doctype') || textHead.toLowerCase().includes('<html')) {
-                console.error(`Url returned HTML instead of a file: ${url}`);
-                continue;
-            }
+                // Check for HTML response (indicates error page)
+                const textHead = new TextDecoder().decode(fileBytes.slice(0, 15));
+                if (textHead.toLowerCase().includes('<!doctype') || textHead.toLowerCase().includes('<html')) {
+                    console.error(`Url returned HTML instead of a file: ${url}`);
+                    continue;
+                }
 
-            const cleanUrl = url.split('?')[0].toLowerCase();
+                const cleanUrl = url.split('?')[0].toLowerCase();
 
-            if (cleanUrl.endsWith('.pdf') || contentType.includes('application/pdf')) {
-                const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
-                const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
-                copiedPages.forEach((page) => mergedPdf.addPage(page));
+                if (cleanUrl.endsWith('.pdf') || contentType.includes('application/pdf')) {
+                    const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
+                    const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
 
-            } else if (cleanUrl.match(/\.(png|jpe?g)$/) || contentType.includes('image/')) {
-                const isPng = cleanUrl.endsWith('.png') || contentType.includes('image/png');
-                const image = isPng ? await mergedPdf.embedPng(fileBytes) : await mergedPdf.embedJpg(fileBytes);
+                } else if (cleanUrl.match(/\.(png|jpe?g)$/) || contentType.includes('image/')) {
+                    const isPng = cleanUrl.endsWith('.png') || contentType.includes('image/png');
+                    const image = isPng ? await mergedPdf.embedPng(fileBytes) : await mergedPdf.embedJpg(fileBytes);
 
-                const page = mergedPdf.addPage([image.width, image.height]);
-                page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
-            } else {
-                console.warn(`Skipping unsupported format: ${url}`);
-            }
+                    const page = mergedPdf.addPage([image.width, image.height]);
+                    page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+                } else {
+                    console.warn(`Skipping unsupported format: ${url}`);
+                }
             }
 
             const mergedPdfBytes = await mergedPdf.save();
@@ -99,4 +99,63 @@
             console.error("Error merging files:", error);
         }
     }
+
+    // async function mergeAndOpenFiles(fileUrls, permitNumber) {
+    //     if (!fileUrls || fileUrls.length === 0) return;
+
+    //     try {
+    //         const mergedPdf = await PDFLib.PDFDocument.create();
+
+    //         for (const url of fileUrls) {
+    //             const response = await fetch(url);
+                
+    //             if (!response.ok) {
+    //                 console.error(`HTTP Error ${response.status} when fetching: ${url}`);
+    //                 continue;
+    //             }
+
+    //             const contentType = response.headers.get('content-type') || '';
+    //             const fileBytes = await response.arrayBuffer();
+
+    //             // Check for HTML response (indicates error page)
+    //             const textHead = new TextDecoder().decode(fileBytes.slice(0, 15));
+    //             if (textHead.toLowerCase().includes('<!doctype') || textHead.toLowerCase().includes('<html')) {
+    //                 console.error(`Url returned HTML instead of a file: ${url}`);
+    //                 continue;
+    //             }
+
+    //             const cleanUrl = url.split('?')[0].toLowerCase();
+
+    //             if (cleanUrl.endsWith('.pdf') || contentType.includes('application/pdf')) {
+    //                 const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
+    //                 const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+    //                 copiedPages.forEach((page) => mergedPdf.addPage(page));
+
+    //             } else if (cleanUrl.match(/\.(png|jpe?g)$/) || contentType.includes('image/')) {
+    //                 const isPng = cleanUrl.endsWith('.png') || contentType.includes('image/png');
+    //                 const image = isPng ? await mergedPdf.embedPng(fileBytes) : await mergedPdf.embedJpg(fileBytes);
+
+    //                 const page = mergedPdf.addPage([image.width, image.height]);
+    //                 page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+    //             } else {
+    //                 console.warn(`Skipping unsupported format: ${url}`);
+    //             }
+    //         }
+
+    //         const mergedPdfBytes = await mergedPdf.save();
+    //         const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+    //         const blobUrl = URL.createObjectURL(blob);
+
+    //         // Open the PDF in a new tab
+    //         window.open(blobUrl, '_blank');
+
+    //         // Optional: Revoke the object URL after a short delay to free memory 
+    //         // once the new tab has loaded it.
+    //         setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+
+    //     } catch (error) {
+    //         // Note: Ensure `id` is accessible in this scope if you are using it here
+    //         console.error("Error merging files:", error);
+    //     }
+    // }
 </script>
