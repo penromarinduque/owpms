@@ -242,7 +242,7 @@ active
                     <tfoot>
                         <tr>
                             <td colspan="7" class="text-end">
-                                {{ $ltp_applications->links() }}
+                                {{ $ltp_applications->appends(request()->query())->links() }}
                             </td>
                         </tr>
                     </tfoot>
