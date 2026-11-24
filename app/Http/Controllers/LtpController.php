@@ -17,6 +17,8 @@ use Nette\FileNotFoundException;
 use setasign\Fpdi\Fpdi;
 use Spatie\LaravelPdf\Enums\Unit;
 use Spatie\LaravelPdf\Facades\Pdf;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class LtpController extends Controller
 {
@@ -86,61 +88,149 @@ class LtpController extends Controller
     }
 
     public function ajaxGetAttachments(Request $request, $id)
-    {
-        Gate::authorize('viewPermit', LtpPermit::find(Crypt::decryptString($id)));
-        $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
-        $ltpApplication = $ltpPermit->ltpApplication;
-
-        if (!$ltpPermit) {
-            throw new FileNotFoundException("LTP Permit not found.");
-        }
-
-        $files = [];
-
-        /** START GET LTP */
-        if (!Storage::disk('s3')->exists("ltps/" . $ltpPermit->permit_number . ".pdf")) {
-            $this->sgdGenerateLtp($ltpPermit);
-        }
-        $files[] = Storage::disk('s3')->temporaryUrl("ltps/" . $ltpPermit->permit_number . ".pdf", now()->addMinutes(30));
-        /** END GET LTP */
-
-        /** START GET INSPECTION REPORT */
-        if ($ltpApplication->inspectionReport) {
-            $this->sgdGenerateInspectionReport($ltpApplication->inspectionReport);
-            // if (!Storage::disk('s3')->exists("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf")) {
-            // }
-            $files[] = Storage::disk('s3')->temporaryUrl("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf", now()->addMinutes(30));
-        }
-        /** END GET INSPECTION REPORT */
-
-        /** START GET REQUEST LETTER */
-        $files[] = Storage::disk('s3')->temporaryUrl("request_letters/" . $ltpApplication->id . ".pdf", now()->addMinutes(30));
-        /** END GET REQUEST LETTER */
-
-        /** START OTHER REQUIREMENTS */
-        foreach ($ltpApplication->attachments as $attachment) {
-            $s3Path = $attachment->file_path;
-            $files[] = Storage::disk('s3')->temporaryUrl($s3Path, now()->addMinutes(30));
-        }
-        /** END OTHER REQUIREMENTS */
-
-        /** START WFP AND WCP */
-        $wfp = $ltpApplication->permittee->user->wfp();
-        $files[] = Storage::disk('s3')->temporaryUrl($wfp->document, now()->addMinutes(30));
-
-        $wcp = $ltpApplication->permittee->user->wcp();
-        $files[] = Storage::disk('s3')->temporaryUrl($wcp->document, now()->addMinutes(30));
-        /** END WFP AND WCP */
-
-        /** START RECEIPT */
-        if ($ltpApplication->paymentOrder && $ltpApplication->paymentOrder->receipt_url) {
-            $receiptPath = $ltpApplication->paymentOrder->receipt_url;
-            $files[] = Storage::disk('s3')->temporaryUrl($receiptPath, now()->addMinutes(30));
-        }
-        /** END RECEIPT */
-
-        return response()->json(['attachments' => $files]);
+{
+    try {
+        $decryptedId = Crypt::decryptString($id);
+    } catch (DecryptException $e) {
+        abort(404, 'Invalid permit identifier.');
     }
+
+    // Fetch once with needed relationships to prevent N+1 queries
+    $ltpPermit = LtpPermit::with([
+        'ltpApplication.inspectionReport',
+        'ltpApplication.attachments',
+        'ltpApplication.permittee.user',
+        'ltpApplication.paymentOrder',
+    ])->find($decryptedId);
+
+    if (!$ltpPermit) {
+        throw new FileNotFoundException("LTP Permit not found.");
+    }
+
+    Gate::authorize('viewPermit', $ltpPermit);
+
+    $ltpApplication = $ltpPermit->ltpApplication;
+    if (!$ltpApplication) {
+        throw new ModelNotFoundException("Associated LTP Application not found.");
+    }
+
+    $s3 = Storage::disk('s3');
+    $expiration = now()->addMinutes(30);
+    $files = [];
+
+    /** START GET LTP */
+    $ltpPath = "ltps/{$ltpPermit->permit_number}.pdf";
+    if (!$s3->exists($ltpPath)) {
+        $this->sgdGenerateLtp($ltpPermit);
+    }
+    $files[] = $s3->temporaryUrl($ltpPath, $expiration);
+    /** END GET LTP */
+
+    /** START GET INSPECTION REPORT */
+    if ($ltpApplication->inspectionReport) {
+        $inspectionPath = "inspection_report/{$ltpApplication->inspectionReport->id}.pdf";
+        if (!$s3->exists($inspectionPath)) {
+            $this->sgdGenerateInspectionReport($ltpApplication->inspectionReport);
+        }
+        $files[] = $s3->temporaryUrl($inspectionPath, $expiration);
+    }
+    /** END GET INSPECTION REPORT */
+
+    /** START GET REQUEST LETTER */
+    $requestLetterPath = "request_letters/{$ltpApplication->id}.pdf";
+    if ($s3->exists($requestLetterPath)) {
+        $files[] = $s3->temporaryUrl($requestLetterPath, $expiration);
+    }
+    /** END GET REQUEST LETTER */
+
+    /** START OTHER REQUIREMENTS */
+    foreach ($ltpApplication->attachments as $attachment) {
+        if ($attachment->file_path) {
+            $files[] = $s3->temporaryUrl($attachment->file_path, $expiration);
+        }
+    }
+    /** END OTHER REQUIREMENTS */
+
+    /** START WFP AND WCP */
+    $user = $ltpApplication->permittee?->user;
+    if ($user) {
+        $wfp = $user->wfp();
+        if ($wfp && $wfp->document) {
+            $files[] = $s3->temporaryUrl($wfp->document, $expiration);
+        }
+
+        $wcp = $user->wcp();
+        if ($wcp && $wcp->document) {
+            $files[] = $s3->temporaryUrl($wcp->document, $expiration);
+        }
+    }
+    /** END WFP AND WCP */
+
+    /** START RECEIPT */
+    if ($ltpApplication->paymentOrder?->receipt_url) {
+        $files[] = $s3->temporaryUrl($ltpApplication->paymentOrder->receipt_url, $expiration);
+    }
+    /** END RECEIPT */
+
+    return response()->json(['attachments' => $files]);
+}
+
+    // public function ajaxGetAttachments(Request $request, $id)
+    // {
+    //     Gate::authorize('viewPermit', LtpPermit::find(Crypt::decryptString($id)));
+    //     $ltpPermit = LtpPermit::find(Crypt::decryptString($id));
+    //     $ltpApplication = $ltpPermit->ltpApplication;
+
+    //     if (!$ltpPermit) {
+    //         throw new FileNotFoundException("LTP Permit not found.");
+    //     }
+
+    //     $files = [];
+
+    //     /** START GET LTP */
+    //     if (!Storage::disk('s3')->exists("ltps/" . $ltpPermit->permit_number . ".pdf")) {
+    //         $this->sgdGenerateLtp($ltpPermit);
+    //     }
+    //     $files[] = Storage::disk('s3')->temporaryUrl("ltps/" . $ltpPermit->permit_number . ".pdf", now()->addMinutes(30));
+    //     /** END GET LTP */
+
+    //     /** START GET INSPECTION REPORT */
+    //     if ($ltpApplication->inspectionReport) {
+    //         $this->sgdGenerateInspectionReport($ltpApplication->inspectionReport);
+    //         // if (!Storage::disk('s3')->exists("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf")) {
+    //         // }
+    //         $files[] = Storage::disk('s3')->temporaryUrl("inspection_report/" . $ltpApplication->inspectionReport->id . ".pdf", now()->addMinutes(30));
+    //     }
+    //     /** END GET INSPECTION REPORT */
+
+    //     /** START GET REQUEST LETTER */
+    //     $files[] = Storage::disk('s3')->temporaryUrl("request_letters/" . $ltpApplication->id . ".pdf", now()->addMinutes(30));
+    //     /** END GET REQUEST LETTER */
+
+    //     /** START OTHER REQUIREMENTS */
+    //     foreach ($ltpApplication->attachments as $attachment) {
+    //         $s3Path = $attachment->file_path;
+    //         $files[] = Storage::disk('s3')->temporaryUrl($s3Path, now()->addMinutes(30));
+    //     }
+    //     /** END OTHER REQUIREMENTS */
+
+    //     /** START WFP AND WCP */
+    //     $wfp = $ltpApplication->permittee->user->wfp();
+    //     $files[] = Storage::disk('s3')->temporaryUrl($wfp->document, now()->addMinutes(30));
+
+    //     $wcp = $ltpApplication->permittee->user->wcp();
+    //     $files[] = Storage::disk('s3')->temporaryUrl($wcp->document, now()->addMinutes(30));
+    //     /** END WFP AND WCP */
+
+    //     /** START RECEIPT */
+    //     if ($ltpApplication->paymentOrder && $ltpApplication->paymentOrder->receipt_url) {
+    //         $receiptPath = $ltpApplication->paymentOrder->receipt_url;
+    //         $files[] = Storage::disk('s3')->temporaryUrl($receiptPath, now()->addMinutes(30));
+    //     }
+    //     /** END RECEIPT */
+
+    //     return response()->json(['attachments' => $files]);
+    // }
 
     // public function viewCompletePermit(Request $request, $id)
     // {
