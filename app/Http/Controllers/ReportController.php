@@ -177,7 +177,7 @@ class ReportController extends Controller
                     'prov.province_name',
                     'wf.farm_name',
                     ...$selectedMonthsQuery,
-                    DB::raw("COUNT(CASE WHEN la.application_date BETWEEN '2026-01-01' AND '2026-03-31' THEN 1 END) as mTotal"),
+                    // DB::raw("COUNT(CASE WHEN la.application_date BETWEEN '2026-01-01' AND '2026-03-31' THEN 1 END) as mTotal"),
                     DB::raw("IFNULL(SUM(fees.total_collected), 0) as collected_fees"),
                     DB::raw("IFNULL(SUM(transported.total_transported), 0) as transported_species")
                 ])
@@ -260,7 +260,7 @@ class ReportController extends Controller
                     'pi.middle_name',
                     'pi.last_name',
                     'po.payment_date as issuance_date',
-                    DB::raw('permits.approved_at + INTERVAL 1 MONTH as expiration_date'),
+                    DB::raw('po.payment_date + INTERVAL 1 MONTH as expiration_date'),
                     'provinces.province_name',
                     DB::raw('SUM(las.quantity) as total_species'),
                     'lf.amount'
@@ -273,7 +273,7 @@ class ReportController extends Controller
                 ->leftJoin('provinces', 'provinces.id', '=', 'la.destination')
                 ->join('ltp_application_species as las', 'las.ltp_application_id', '=', 'la.id')
                 ->whereIn('la.application_status', ['expired', 'approved', 'released'])
-                ->whereBetween('la.application_date', [$startDate, $endDate])
+                ->whereBetween('po.payment_date', [$startDate, $endDate])
                 ->groupBy([
                     'la.id',
                     'la.permittee_id',
